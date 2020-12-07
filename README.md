@@ -45,8 +45,71 @@ This project follows the [atomic design](https://cheesecakelabs.com/blog/rethink
 2. **pages:** These are instances of templates where “gaps” are filled with content, resulting in the final view that the user will see.
 3. **util:** this is where all the utility function lives
   
+---
+# 3. Start storybook with expo and control it with web interface
 
-## VSCode Snippets
+first get your device ip address
+
+## for windows:
+```
+$ ipconfig /all | findstr -iv "ipv6 bluetooth Description DHCP Autoconfiguration Netbios routing wins node Connection-specific obtained expires disconnected"
+
+Ethernet adapter VirtualBox Host-Only Network:
+   IPv4 Address. . . . . . . . . . . : 192.168.56.1(Preferred)
+   IPv4 Address. . . . . . . . . . . : 192.168.134.2(Preferred)
+Ethernet adapter Ethernet:
+   IPv4 Address. . . . . . . . . . . : 192.168.0.105(Preferred)
+```
+## for linux 
+```
+$ ip a | grep "inet " | grep -v 127.0.0.1
+
+inet 192.168.0.105/24 brd 192.168.0.255 scope global dynamic
+inet 192.168.56.1/24 brd 192.168.56.255 scope global dynamic
+inet 192.168.134.2/24 brd 192.168.134.255 scope global dynamic
+```
+---
+
+
+don't choose the VirtualBox ip address
+let say we choose the ip ```192.168.0.105``` 
+
+edit the ```storybook/index.ts``` file and change the host to selected host
+```js
+const StorybookUIRoot = getStorybookUI({
+  asyncStorage: null, 
+  port: 7007,
+  host: '192.168.0.105'
+});
+```
+
+
+```cmd
+npm run storybook -- -h 192.168.0.105
+npm run android
+-- or -- 
+yarn storybook -h 192.168.0.105
+yarn android
+```
+
+# 4. Start storybook in web browser (No need for physical device)
+with the help of **```react-native-web```**  to render **React Native** component 
+
+```
+npm run storybook:web
+-- or -- 
+yarn storybook:web
+```
+
+# 5. build storybook
+the build file will be generate at **```storybook-static```** directory
+```
+npm run build-storybook
+-- or -- 
+yarn build-storybook
+```
+
+# 6. TIPS: VSCode Snippets
 ```json
 // press Ctrl+Shift+P and type
 // Preferences: Configure User Snippets
