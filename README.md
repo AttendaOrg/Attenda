@@ -1,6 +1,6 @@
 # Attenda App
 
-### 1. Setup the Repo
+## 1. Setup the Repo
 ---
 ```bash
 npm install
@@ -8,7 +8,7 @@ npm install
 yarn 
 ```
 
-### 2. Understanding The Project file structure
+## 2. Understanding The Project file structure
 ---
 
 This project follows the [atomic design](https://cheesecakelabs.com/blog/rethinking-atomic-design-react-projects/) guideline
@@ -45,9 +45,8 @@ This project follows the [atomic design](https://cheesecakelabs.com/blog/rethink
 2. **pages:** These are instances of templates where “gaps” are filled with content, resulting in the final view that the user will see.
 3. **util:** this is where all the utility function lives
   
----
+
 ## VSCode Snippets
----
 ```json
 // press Ctrl+Shift+P and type
 // Preferences: Configure User Snippets
