@@ -1,6 +1,7 @@
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
+import HelloWorld from './components/atoms/HelloWorld/HelloWorld';
 
 const styles = StyleSheet.create({
   container: {
@@ -14,7 +15,7 @@ const styles = StyleSheet.create({
 const App = (): JSX.Element => {
   return (
     <View style={styles.container}>
-      <Text>Hello World</Text>
+      <HelloWorld />
       {/* eslint-disable-next-line react/style-prop-object */}
       <StatusBar style="auto" />
     </View>

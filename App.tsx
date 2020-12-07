@@ -1,3 +1,5 @@
-import App from './src/App';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+// export { default } from './storybook';
 
-export default App;
+export { default } from './src/App';

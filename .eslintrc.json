@@ -19,6 +19,12 @@
     "project": "./tsconfig.json"
   },
   "rules": {
+    "import/no-extraneous-dependencies": [
+      "off",
+      {
+        "devDependencies": [".storybook/**", "storybook/**", "*.stories.*"]
+      }
+    ],
     "padding-line-between-statements": [
       "error",
       { "blankLine": "always", "prev": "*", "next": "return" }
