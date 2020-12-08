@@ -7,14 +7,6 @@
     "noEmit": true,
     "skipLibCheck": true,
     "resolveJsonModule": true,
-    "strict": true,
-    "baseUrl": "src",
-    "paths": {
-      "@atoms/*": ["./components/atoms/*"],
-      "@molecules/*": ["./components/molecules/*"],
-      "@organisms/*": ["./components/organisms/*"],
-      "@templates/*": ["./components/templates/*"],
-      "@pages/*": ["./pages/*"],
-    }
+    "strict": true
   }
 }

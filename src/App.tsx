@@ -1,24 +1,28 @@
-import { StatusBar } from 'expo-status-bar';
 import React from 'react';
-import { StyleSheet, View } from 'react-native';
-import HelloWorld from '@atoms/HelloWorld';
+import { createStackNavigator } from '@react-navigation/stack';
+import { NavigationContainer } from '@react-navigation/native';
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+import HelloWorldPage, {
+  HelloWorldPageNavigationOptions,
+} from './pages/HelloWorld';
+
+export type RootStackParamList = {
+  HelloWorld: undefined;
+};
+
+export const Stack = createStackNavigator<RootStackParamList>();
 
 const App = (): JSX.Element => {
   return (
-    <View style={styles.container}>
-      <HelloWorld />
-      {/* eslint-disable-next-line react/style-prop-object */}
-      <StatusBar style="auto" />
-    </View>
+    <NavigationContainer>
+      <Stack.Navigator>
+        <Stack.Screen
+          name="HelloWorld"
+          component={HelloWorldPage}
+          options={HelloWorldPageNavigationOptions}
+        />
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 };
 

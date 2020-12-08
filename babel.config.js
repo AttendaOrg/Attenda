@@ -3,19 +3,5 @@ module.exports = function (api) {
 
   return {
     presets: ['babel-preset-expo'],
-    plugins: [
-      [
-        'module-resolver',
-        {
-          alias: {
-            '@atoms/*': './src/components/atoms/*',
-            '@molecules/*': './src/components/molecules/*',
-            '@organisms/*': './src/components/organisms/*',
-            '@templates/*': './src/components/templates/*',
-            '@pages/*': './src/pages/*',
-          },
-        },
-      ],
-    ],
   };
 };
