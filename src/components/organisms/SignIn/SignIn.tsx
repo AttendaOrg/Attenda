@@ -1,25 +1,16 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
-import React, { useEffect } from 'react';
-import {
-  Button,
-  Dimensions,
-  Image,
-  LayoutAnimation,
-  Platform,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  UIManager,
-  View,
-} from 'react-native';
+import React from 'react';
+import { Button, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Input } from 'react-native-elements';
-import useKeyBoardOpenStatus from '../../../util/hooks/KeyBoardOpenStatus';
-import { CustomLayoutLinearConfig } from '../../../util/Styles';
 import DividerText from '../../atoms/DividerText/DividerText';
 import OauthProvider, {
   OauthProviderProps,
 } from '../../molecules/OauthProvider/OauthProvider';
+import KeyboardAdjustImageView from '../../templates/KeyboardAdjustImageView';
+
+// styes.inputContainerStyle does returns number not object thats why for web its gives warning
+// because react-native-element expect array or object as prop type
+const inputContainerStyle = { paddingHorizontal: 0, minHeight: 24 };
 
 const styles = StyleSheet.create({
   container: {
@@ -34,24 +25,10 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 24,
   },
-  imageContainer: {
-    alignItems: 'center',
-  },
-  smallImage: {
-    height: 100,
-    width: 100,
-  },
-  largeImage: {
-    height: Dimensions.get('screen').height * 0.4,
-    width: Dimensions.get('screen').height * 0.4,
-  },
   inputStyle: {
     fontSize: 14,
-    minHeight: 24,
   },
-  inputContainerStyle: {
-    paddingHorizontal: 0,
-  },
+  inputContainerStyle,
   forgotPasswordText: {
     textAlign: 'right',
     marginVertical: 8,
@@ -86,29 +63,9 @@ const SignIn: React.FC<SignInPops> = ({
   password,
   onSignInClick,
 }): JSX.Element => {
-  const keyboardOpened = useKeyBoardOpenStatus();
-
-  useEffect(() => {
-    // for animating the height change
-    LayoutAnimation.configureNext(CustomLayoutLinearConfig);
-
-    if (Platform.OS === 'android') {
-      if (UIManager.setLayoutAnimationEnabledExperimental) {
-        UIManager.setLayoutAnimationEnabledExperimental(true);
-      }
-    }
-  }, [keyboardOpened]);
-
   return (
     <View style={styles.container}>
-      <View style={styles.imageContainer}>
-        <ScrollView>
-          <Image
-            style={keyboardOpened ? styles.smallImage : styles.largeImage}
-            source={imageSource}
-          />
-        </ScrollView>
-      </View>
+      <KeyboardAdjustImageView imageSource={imageSource} />
 
       <View style={styles.signInContainer}>
         <Text style={styles.signInText}>Sign In</Text>
@@ -116,8 +73,8 @@ const SignIn: React.FC<SignInPops> = ({
 
       <View>
         <Input
-          containerStyle={styles.inputContainerStyle}
-          inputStyle={styles.inputStyle}
+          containerStyle={inputContainerStyle}
+          style={styles.inputStyle}
           placeholder="Email"
           textContentType="emailAddress"
           value={email}
@@ -126,8 +83,8 @@ const SignIn: React.FC<SignInPops> = ({
           errorStyle={{ margin: 0 }}
         />
         <Input
-          containerStyle={styles.inputContainerStyle}
-          inputStyle={styles.inputStyle}
+          containerStyle={inputContainerStyle}
+          style={styles.inputStyle}
           placeholder="Password"
           textContentType="password"
           secureTextEntry

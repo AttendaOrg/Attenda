@@ -34,7 +34,7 @@ if (Platform.OS !== 'web') {
     .addDecorator((getStory: any) => <CenterView>{getStory()}</CenterView>)
     .addDecorator(withKnobs)
     .add('Default', Default)
-    .add('Google', Google)
-    .add('FaceBook', Facebook)
-    .add('Twitter', Twitter);
+    .add('Google', () => <Google />)
+    .add('FaceBook', () => <Facebook />)
+    .add('Twitter', () => <Twitter />);
 }
