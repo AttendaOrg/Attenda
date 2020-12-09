@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
-import { Keyboard } from 'react-native';
+import { Keyboard, LayoutAnimation, Platform, UIManager } from 'react-native';
+import { CustomLayoutLinearConfig } from '../Styles';
 
 /**
  * returns keyboard opened status
@@ -18,6 +19,14 @@ const useKeyBoardOpenStatus = (): boolean => {
       'keyboardDidHide',
       () => setOpened(false),
     );
+
+    LayoutAnimation.configureNext(CustomLayoutLinearConfig);
+
+    if (Platform.OS === 'android') {
+      if (UIManager.setLayoutAnimationEnabledExperimental) {
+        UIManager.setLayoutAnimationEnabledExperimental(true);
+      }
+    }
 
     return () => {
       // console.log('flush the event listener');
