@@ -8,6 +8,10 @@ import OauthProvider, {
 } from '../../molecules/OauthProvider/OauthProvider';
 import KeyboardAdjustImageView from '../../templates/KeyboardAdjustImageView';
 
+// styes.inputContainerStyle does returns number not object thats why for web its gives warning
+// because react-native-element expect array or object as prop type
+const inputContainerStyle = { paddingHorizontal: 0, minHeight: 24 };
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -23,11 +27,8 @@ const styles = StyleSheet.create({
   },
   inputStyle: {
     fontSize: 14,
-    minHeight: 24,
   },
-  inputContainerStyle: {
-    paddingHorizontal: 0,
-  },
+  inputContainerStyle,
   forgotPasswordText: {
     textAlign: 'right',
     marginVertical: 8,
@@ -72,8 +73,8 @@ const SignIn: React.FC<SignInPops> = ({
 
       <View>
         <Input
-          containerStyle={styles.inputContainerStyle}
-          inputStyle={styles.inputStyle}
+          containerStyle={inputContainerStyle}
+          style={styles.inputStyle}
           placeholder="Email"
           textContentType="emailAddress"
           value={email}
@@ -82,8 +83,8 @@ const SignIn: React.FC<SignInPops> = ({
           errorStyle={{ margin: 0 }}
         />
         <Input
-          containerStyle={styles.inputContainerStyle}
-          inputStyle={styles.inputStyle}
+          containerStyle={inputContainerStyle}
+          style={styles.inputStyle}
           placeholder="Password"
           textContentType="password"
           secureTextEntry
