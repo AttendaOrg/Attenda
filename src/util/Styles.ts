@@ -1,7 +1,7 @@
-import { LayoutAnimation } from 'react-native';
+import { LayoutAnimation, LayoutAnimationConfig } from 'react-native';
 
-export const CustomLayoutLinearConfig = {
-  duration: 200,
+export const CustomLayoutLinearConfig: LayoutAnimationConfig = {
+  duration: 100,
   create: {
     type: LayoutAnimation.Types.linear,
     property: LayoutAnimation.Properties.opacity,
@@ -11,6 +11,8 @@ export const CustomLayoutLinearConfig = {
   },
 };
 
-export default {
-  CustomLayoutLinearAnimation: CustomLayoutLinearConfig,
-};
+// styes.inputContainerStyle does returns number not object thats why for web its gives warning
+// because react-native-element expect array or object as prop type
+export const inputContainerStyle = { paddingHorizontal: 0, minHeight: 24 };
+
+export default {};
