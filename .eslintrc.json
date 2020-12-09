@@ -19,6 +19,17 @@
     "project": "./tsconfig.json"
   },
   "rules": {
+    "no-restricted-imports": [
+      "error",
+      {
+        "paths": [
+          {
+            "name": "react-native-gesture-handler",
+            "message": "Please Use react-native instead."
+          }
+        ]
+      }
+    ],
     "import/no-extraneous-dependencies": [
       "off",
       {

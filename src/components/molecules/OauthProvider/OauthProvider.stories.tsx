@@ -1,31 +1,28 @@
 import React from 'react';
-import { Button, Platform } from 'react-native';
+import { Platform } from 'react-native';
 import { action } from '@storybook/addon-actions';
-import { text, withKnobs } from '@storybook/addon-knobs';
+import { withKnobs } from '@storybook/addon-knobs';
 import { storiesOf } from '@storybook/react-native';
-import HelloWorld from './HelloWorld';
-import CenterView from '../CenterView';
+import OauthProvider from './OauthProvider';
+import CenterView from '../../atoms/CenterView';
 
-const STORY_NAME = 'HelloWorld';
+const STORY_NAME = 'Molecules/OauthProvider';
 
 // it will only work with web
 // because react native does not supports the modern api
 export default {
   title: STORY_NAME,
   decorators: [withKnobs],
-  component: HelloWorld,
+  component: OauthProvider,
 };
 
 // Default For Web And android Component
 export const Default = (): JSX.Element => (
-  <HelloWorld text={text('Text', 'Hello World')} />
-);
-
-export const WithButton = (): JSX.Element => (
-  <>
-    <Default />
-    <Button title="Click Me" onPress={action('Clicked!')} />
-  </>
+  <OauthProvider
+    onFaceBookClick={() => action('onFaceBookClick')()}
+    onTwitterClick={() => action('onGoogleClick')()}
+    onGoogleClick={() => action('onTwitterClick')()}
+  />
 );
 
 // if the platform is not web only then render it
@@ -36,6 +33,5 @@ if (Platform.OS !== 'web') {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     .addDecorator((getStory: any) => <CenterView>{getStory()}</CenterView>)
     .addDecorator(withKnobs)
-    .add('Default', Default)
-    .add('WithButton', WithButton);
+    .add('Default', Default);
 }
