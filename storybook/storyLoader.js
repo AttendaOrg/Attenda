@@ -9,6 +9,7 @@ function loadStories() {
   require('../src/components/molecules/OauthProvider/OauthProvider.stories');
   require('../src/components/organisms/ForgotPassword/ForgotPassword.stories');
   require('../src/components/organisms/SignIn/SignIn.stories');
+  require('../src/components/organisms/SignUp/SignUp.stories');
 }
 
 const stories = [
@@ -17,6 +18,7 @@ const stories = [
   '../src/components/molecules/OauthProvider/OauthProvider.stories',
   '../src/components/organisms/ForgotPassword/ForgotPassword.stories',
   '../src/components/organisms/SignIn/SignIn.stories',
+  '../src/components/organisms/SignUp/SignUp.stories',
 ];
 
 module.exports = {

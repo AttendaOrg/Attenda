@@ -5,10 +5,14 @@ import SignInPage, { SignInPageNavigationOptions } from './pages/SignInPage';
 import ForgotPasswordPage, {
   ForgotPasswordNavigationOptions,
 } from './pages/ForgotPasswordPage';
+import SignUpPagePage, {
+  SignUpPageNavigationOptions,
+} from './pages/SignUpPage';
 
 export type RootStackParamList = {
   SignIn: undefined;
   ForgotPassword: undefined;
+  SignUp: undefined;
 };
 
 export const Stack = createStackNavigator<RootStackParamList>();
@@ -27,11 +31,16 @@ const App = (): JSX.Element => {
           component={ForgotPasswordPage}
           options={ForgotPasswordNavigationOptions}
         />
+        <Stack.Screen
+          name="SignUp"
+          component={SignUpPagePage}
+          options={SignUpPageNavigationOptions}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );
 };
 
-// const App = (): JSX.Element => <ForgotPassword email="" />;
+// const App = (): JSX.Element => <SignUp />;
 
 export default App;
