@@ -4,7 +4,7 @@ import {
   StackScreenProps,
 } from '@react-navigation/stack';
 import { RootStackParamList } from '../App';
-import SignUpPage from '../components/organisms/SignUp';
+import SignUpPage from '../components/organisms/AppIntro/SignUp';
 import SimpleCloseNavigationOptions from '../components/templates/SimpleCloseNavigationOption';
 
 type Props = StackScreenProps<RootStackParamList, 'SignUp'>;

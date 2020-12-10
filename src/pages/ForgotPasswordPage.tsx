@@ -4,7 +4,7 @@ import {
   StackScreenProps,
 } from '@react-navigation/stack';
 import { RootStackParamList } from '../App';
-import ForgotPassword from '../components/organisms/ForgotPassword';
+import ForgotPassword from '../components/organisms/AppIntro/ForgotPassword';
 import SimpleCloseNavigationOptions from '../components/templates/SimpleCloseNavigationOption';
 
 type Props = StackScreenProps<RootStackParamList, 'ForgotPassword'>;

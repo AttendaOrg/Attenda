@@ -1,7 +1,7 @@
 import React from 'react';
 import { Image, Dimensions, StyleSheet, Text, View } from 'react-native';
 import { FAB } from 'react-native-paper';
-import Arrow from '../../atoms/Icons/Arrow';
+import Arrow from '../../../atoms/Icons/Arrow';
 
 const styles = StyleSheet.create({
   container: {
@@ -40,7 +40,7 @@ const styles = StyleSheet.create({
 });
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const imageSource = require('../../../../assets/images/empty.png');
+const imageSource = require('../../../../../assets/images/empty.png');
 
 export interface EmptyClassPops {
   onFabClick: () => void;

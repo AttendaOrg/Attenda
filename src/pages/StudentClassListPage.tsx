@@ -4,7 +4,7 @@ import {
   StackScreenProps,
 } from '@react-navigation/stack';
 import { RootStackParamList } from '../App';
-import EmptyClass from '../components/organisms/EmptyClass/EmptyClass';
+import EmptyClass from '../components/organisms/common/EmptyClass/EmptyClass';
 import SimpleHeaderNavigationOptions from '../components/templates/SimpleHeaderNavigationOptions';
 
 type Props = StackScreenProps<RootStackParamList, 'StudentClassList'>;

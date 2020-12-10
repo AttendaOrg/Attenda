@@ -3,10 +3,10 @@ import { Platform } from 'react-native';
 import { withKnobs } from '@storybook/addon-knobs';
 import { storiesOf } from '@storybook/react-native';
 import { action } from '@storybook/addon-actions';
-import CenterView from '../../atoms/CenterView';
+import CenterView from '../../../atoms/CenterView';
 import EmptyClass from './EmptyClass';
 
-const STORY_NAME = 'EmptyClass';
+const STORY_NAME = 'Organisms/Common/EmptyClass';
 
 // it will only work with web
 // because react native does not supports the modern api

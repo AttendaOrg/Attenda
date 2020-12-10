@@ -7,22 +7,22 @@ function loadStories() {
   require('../src/components/atoms/DividerText/DividerText.stories');
   require('../src/components/atoms/Icons/Icons.stories');
   require('../src/components/molecules/OauthProvider/OauthProvider.stories');
-  require('../src/components/organisms/ChooseRole/ChooseRole.stories');
-  require('../src/components/organisms/EmptyClass/EmptyClass.stories');
-  require('../src/components/organisms/ForgotPassword/ForgotPassword.stories');
-  require('../src/components/organisms/SignIn/SignIn.stories');
-  require('../src/components/organisms/SignUp/SignUp.stories');
+  require('../src/components/organisms/AppIntro/ChooseRole/ChooseRole.stories');
+  require('../src/components/organisms/AppIntro/ForgotPassword/ForgotPassword.stories');
+  require('../src/components/organisms/AppIntro/SignIn/SignIn.stories');
+  require('../src/components/organisms/AppIntro/SignUp/SignUp.stories');
+  require('../src/components/organisms/common/EmptyClass/EmptyClass.stories');
 }
 
 const stories = [
   '../src/components/atoms/DividerText/DividerText.stories',
   '../src/components/atoms/Icons/Icons.stories',
   '../src/components/molecules/OauthProvider/OauthProvider.stories',
-  '../src/components/organisms/ChooseRole/ChooseRole.stories',
-  '../src/components/organisms/EmptyClass/EmptyClass.stories',
-  '../src/components/organisms/ForgotPassword/ForgotPassword.stories',
-  '../src/components/organisms/SignIn/SignIn.stories',
-  '../src/components/organisms/SignUp/SignUp.stories',
+  '../src/components/organisms/AppIntro/ChooseRole/ChooseRole.stories',
+  '../src/components/organisms/AppIntro/ForgotPassword/ForgotPassword.stories',
+  '../src/components/organisms/AppIntro/SignIn/SignIn.stories',
+  '../src/components/organisms/AppIntro/SignUp/SignUp.stories',
+  '../src/components/organisms/common/EmptyClass/EmptyClass.stories',
 ];
 
 module.exports = {

@@ -59,7 +59,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const imageSource = require('../../../../assets/images/chooseRole.png');
+const imageSource = require('../../../../../assets/images/chooseRole.png');
 
 export enum Role {
   Student,

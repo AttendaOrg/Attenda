@@ -2,8 +2,8 @@
 import React from 'react';
 import { Button, StyleSheet, Text, View } from 'react-native';
 import { Input } from 'react-native-elements';
-import { inputContainerStyle } from '../../../util/Styles';
-import KeyboardAdjustImageView from '../../templates/KeyboardAdjustImageView';
+import { inputContainerStyle } from '../../../../util/Styles';
+import KeyboardAdjustImageView from '../../../templates/KeyboardAdjustImageView';
 
 const styles = StyleSheet.create({
   container: {
@@ -36,7 +36,7 @@ const ForgotPassword: React.FC<ForgotPasswordPops> = ({
   return (
     <View style={styles.container}>
       <KeyboardAdjustImageView
-        imageSource={require('../../../../assets/images/forgot_password.png')}
+        imageSource={require('../../../../../assets/images/forgot_password.png')}
       />
       <View>
         <Text style={styles.textStyle}>Forgot Password ?</Text>

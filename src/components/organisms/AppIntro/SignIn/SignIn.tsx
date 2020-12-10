@@ -2,12 +2,12 @@
 import React from 'react';
 import { Button, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Input } from 'react-native-elements';
-import { inputContainerStyle } from '../../../util/Styles';
-import DividerText from '../../atoms/DividerText/DividerText';
+import { inputContainerStyle } from '../../../../util/Styles';
+import DividerText from '../../../atoms/DividerText/DividerText';
 import OauthProvider, {
   OauthProviderProps,
-} from '../../molecules/OauthProvider/OauthProvider';
-import KeyboardAdjustImageView from '../../templates/KeyboardAdjustImageView';
+} from '../../../molecules/OauthProvider/OauthProvider';
+import KeyboardAdjustImageView from '../../../templates/KeyboardAdjustImageView';
 
 const styles = StyleSheet.create({
   container: {
@@ -35,7 +35,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const imageSource = require('../../../../assets/images/signin.png');
+const imageSource = require('../../../../../assets/images/signin.png');
 
 export interface SignInPops extends OauthProviderProps {
   email: string;
