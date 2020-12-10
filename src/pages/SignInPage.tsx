@@ -22,15 +22,17 @@ const SignInPage: React.FC<Props> = ({ navigation }): JSX.Element => {
       password={password}
       onEmailChange={setEmail}
       onPasswordChange={setPassword}
-      onFaceBookClick={() => null}
       onForgotPasswordClick={() => {
         navigation.push('ForgotPassword');
       }}
       onCreateNewAccountClick={() => {
         navigation.push('SignUp');
       }}
+      onSignInClick={() => {
+        navigation.push('ChooseRole');
+      }}
       onGoogleClick={() => null}
-      onSignInClick={() => null}
+      onFaceBookClick={() => null}
       onTwitterClick={() => null}
     />
   );

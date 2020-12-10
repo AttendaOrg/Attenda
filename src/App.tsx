@@ -8,11 +8,15 @@ import ForgotPasswordPage, {
 import SignUpPagePage, {
   SignUpPageNavigationOptions,
 } from './pages/SignUpPage';
+import ChooseRolePage, {
+  ChooseRoleNavigationOptions,
+} from './pages/ChooseRolePage';
 
 export type RootStackParamList = {
   SignIn: undefined;
   ForgotPassword: undefined;
   SignUp: undefined;
+  ChooseRole: undefined;
 };
 
 export const Stack = createStackNavigator<RootStackParamList>();
@@ -36,11 +40,16 @@ const App = (): JSX.Element => {
           component={SignUpPagePage}
           options={SignUpPageNavigationOptions}
         />
+        <Stack.Screen
+          name="ChooseRole"
+          component={ChooseRolePage}
+          options={ChooseRoleNavigationOptions}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );
 };
 
-// const App = (): JSX.Element => <SignUp />;
+// const App = (): JSX.Element => <ChooseRole />;
 
 export default App;

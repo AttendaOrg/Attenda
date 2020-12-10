@@ -22,14 +22,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     minHeight: 34,
   },
-  forgotPasswordText: {
-    textAlign: 'right',
-    marginVertical: 8,
-    marginTop: 0,
-  },
-  signUpText: {
-    textAlign: 'center',
-  },
   checkBoxStyle: {
     backgroundColor: 'transparent',
     borderWidth: 0,
