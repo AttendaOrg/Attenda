@@ -11,46 +11,54 @@ import SignUpPagePage, {
 import ChooseRolePage, {
   ChooseRoleNavigationOptions,
 } from './pages/ChooseRolePage';
-import EmptyClass from './components/organisms/EmptyClass/EmptyClass';
+import StudentClassListPage, {
+  StudentClassListNavigationOptions,
+} from './pages/StudentClassListPage';
 
 export type RootStackParamList = {
   SignIn: undefined;
   ForgotPassword: undefined;
   SignUp: undefined;
   ChooseRole: undefined;
+  StudentClassList: undefined;
 };
 
 export const Stack = createStackNavigator<RootStackParamList>();
 
-// const App = (): JSX.Element => {
-//   return (
-//     <NavigationContainer>
-//       <Stack.Navigator>
-//         <Stack.Screen
-//           name="SignIn"
-//           component={SignInPage}
-//           options={SignInPageNavigationOptions}
-//         />
-//         <Stack.Screen
-//           name="ForgotPassword"
-//           component={ForgotPasswordPage}
-//           options={ForgotPasswordNavigationOptions}
-//         />
-//         <Stack.Screen
-//           name="SignUp"
-//           component={SignUpPagePage}
-//           options={SignUpPageNavigationOptions}
-//         />
-//         <Stack.Screen
-//           name="ChooseRole"
-//           component={ChooseRolePage}
-//           options={ChooseRoleNavigationOptions}
-//         />
-//       </Stack.Navigator>
-//     </NavigationContainer>
-//   );
-// };
+const App = (): JSX.Element => {
+  return (
+    <NavigationContainer>
+      <Stack.Navigator>
+        <Stack.Screen
+          name="SignIn"
+          component={SignInPage}
+          options={SignInPageNavigationOptions}
+        />
+        <Stack.Screen
+          name="ForgotPassword"
+          component={ForgotPasswordPage}
+          options={ForgotPasswordNavigationOptions}
+        />
+        <Stack.Screen
+          name="SignUp"
+          component={SignUpPagePage}
+          options={SignUpPageNavigationOptions}
+        />
+        <Stack.Screen
+          name="ChooseRole"
+          component={ChooseRolePage}
+          options={ChooseRoleNavigationOptions}
+        />
+        <Stack.Screen
+          name="StudentClassList"
+          component={StudentClassListPage}
+          options={StudentClassListNavigationOptions}
+        />
+      </Stack.Navigator>
+    </NavigationContainer>
+  );
+};
 
-const App = (): JSX.Element => <EmptyClass />;
+// const App = (): JSX.Element => <EmptyClass />;
 
 export default App;

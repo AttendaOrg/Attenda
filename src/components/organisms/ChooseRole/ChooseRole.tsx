@@ -7,8 +7,30 @@ import {
   StyleSheet,
   Text,
   View,
+  StyleProp,
+  ViewStyle,
+  TextStyle,
 } from 'react-native';
 import { CheckBox } from 'react-native-elements';
+
+// styes.checkBoxStyle does returns number not object thats why for web its gives warning
+// because react-native-element expect StyleProp<ViewStyle> as prop type
+const checkBoxStyle: StyleProp<ViewStyle> = {
+  backgroundColor: 'transparent',
+  justifyContent: 'center',
+  borderWidth: 0,
+  padding: 0,
+  marginLeft: 0,
+  marginRight: 0,
+  marginTop: 10,
+};
+
+// styes.checkBoxLabelStyle does returns number not object thats why for web its gives warning
+// because react-native-element expect StyleProp<TextStyle> as prop type
+const checkBoxLabelStyle: StyleProp<TextStyle> = {
+  fontSize: 22,
+  fontWeight: 'normal',
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -29,19 +51,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 30,
     marginBottom: 20,
-  },
-  checkBoxStyle: {
-    backgroundColor: 'transparent',
-    justifyContent: 'center',
-    borderWidth: 0,
-    padding: 0,
-    marginLeft: 0,
-    marginRight: 0,
-    marginTop: 10,
-  },
-  checkBoxLabelStyle: {
-    fontSize: 22,
-    fontWeight: 'normal',
   },
   btnContainerStyle: {
     width: '30%',
@@ -78,16 +87,16 @@ const ChooseRole: React.FC<ChooseRolePops> = ({
         <CheckBox
           title="Teacher"
           checked={selected === Role.Teacher}
-          textStyle={styles.checkBoxLabelStyle}
-          containerStyle={styles.checkBoxStyle}
+          textStyle={checkBoxLabelStyle}
+          containerStyle={checkBoxStyle}
           onPress={() => setSelected(Role.Teacher)}
         />
 
         <CheckBox
           title="Student"
           checked={selected === Role.Student}
-          textStyle={styles.checkBoxLabelStyle}
-          containerStyle={styles.checkBoxStyle}
+          textStyle={checkBoxLabelStyle}
+          containerStyle={checkBoxStyle}
           onPress={() => setSelected(Role.Student)}
         />
 

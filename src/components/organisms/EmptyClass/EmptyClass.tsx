@@ -10,8 +10,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
   largeImage: {
-    height: Dimensions.get('screen').height * 0.4,
-    width: Dimensions.get('screen').width,
+    height: Dimensions.get('window').height * 0.4,
+    width: Dimensions.get('window').width,
   },
   aboveTextContainer: {
     flex: 1,
@@ -39,9 +39,14 @@ const styles = StyleSheet.create({
   },
 });
 
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const imageSource = require('../../../../assets/images/empty.png');
 
-const EmptyClass = () => {
+export interface EmptyClassPops {
+  onFabClick: () => void;
+}
+
+const EmptyClass: React.FC<EmptyClassPops> = ({ onFabClick }): JSX.Element => {
   return (
     <View style={styles.container}>
       <Image source={imageSource} style={styles.largeImage} />
@@ -62,7 +67,7 @@ const EmptyClass = () => {
         style={styles.fab}
         color="#FFFFFF"
         icon="plus"
-        onPress={() => console.log('Pressed')}
+        onPress={onFabClick}
       />
     </View>
   );

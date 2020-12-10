@@ -1,28 +1,24 @@
 import React from 'react';
 import { Platform } from 'react-native';
-import { text, withKnobs } from '@storybook/addon-knobs';
+import { withKnobs } from '@storybook/addon-knobs';
 import { storiesOf } from '@storybook/react-native';
 import { action } from '@storybook/addon-actions';
 import CenterView from '../../atoms/CenterView';
-import ForgotPassword from './ForgotPassword';
+import EmptyClass from './EmptyClass';
 
-const STORY_NAME = 'Organisms/ForgotPassword';
+const STORY_NAME = 'EmptyClass';
 
 // it will only work with web
 // because react native does not supports the modern api
 export default {
   title: STORY_NAME,
   decorators: [withKnobs],
-  component: ForgotPassword,
+  component: EmptyClass,
 };
 
 // Default For Web And android Component
 export const Default = (): JSX.Element => (
-  <ForgotPassword
-    email={text('email', '')}
-    onSend={() => action('onSend')()}
-    onEmailChange={(email: string) => action('onEmailChange')(email)}
-  />
+  <EmptyClass onFabClick={() => action('onFabClick')()} />
 );
 
 // if the platform is not web only then render it

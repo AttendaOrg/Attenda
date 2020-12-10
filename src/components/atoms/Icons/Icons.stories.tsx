@@ -6,6 +6,7 @@ import CenterView from '../CenterView';
 import Google from './Google';
 import Twitter from './Twitter';
 import Facebook from './Facebook';
+import Arrow from './Arrow';
 
 const STORY_NAME = 'Icons';
 
@@ -36,5 +37,6 @@ if (Platform.OS !== 'web') {
     .add('Default', Default)
     .add('Google', () => <Google />)
     .add('FaceBook', () => <Facebook />)
-    .add('Twitter', () => <Twitter />);
+    .add('Twitter', () => <Twitter />)
+    .add('Arrow', () => <Arrow />);
 }
