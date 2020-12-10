@@ -8,24 +8,13 @@ import {
   Text,
   View,
 } from 'react-native';
-import { CheckBox, Icon } from 'react-native-elements';
+import { CheckBox } from 'react-native-elements';
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     // padding: 16,
     backgroundColor: '#fff',
-  },
-  iconContainer: {
-    alignItems: 'flex-start',
-    position: 'absolute',
-    marginLeft: 10,
-    marginTop: 10,
-  },
-  imageContainer: {
-    // alignItems: 'center',
-    position: 'relative',
-    marginTop: 30,
   },
   largeImage: {
     height: Dimensions.get('screen').height * 0.4,
@@ -50,58 +39,67 @@ const styles = StyleSheet.create({
     marginRight: 0,
     marginTop: 10,
   },
+  checkBoxLabelStyle: {
+    fontSize: 22,
+    fontWeight: 'normal',
+  },
+  btnContainerStyle: {
+    width: '30%',
+    marginVertical: 10,
+    marginTop: 40,
+  },
 });
 
 const imageSource = require('../../../../assets/images/chooseRole.png');
 
+export enum Role {
+  Student,
+  Teacher,
+}
+
 export interface ChooseRolePops {
-  onDoneClick?: () => void;
-  onCancelClick?: () => void;
+  onDone: (role: Role) => void;
 }
 
 const ChooseRole: React.FC<ChooseRolePops> = ({
-  onDoneClick = () => null,
-  onCancelClick = () => null,
+  onDone: onDoneClick = () => null,
 }): JSX.Element => {
-  const [teacherChecked, setCheckedTeacher] = useState(false);
-  const [studentChecked, setCheckedStudent] = useState(false);
+  // if the state is null the user didn't chose any role
+  // which is by default null
+  const [selected, setSelected] = useState<Role | null>(null);
 
   return (
     <View style={styles.container}>
-      <View style={styles.imageContainer}>
-        <Image source={imageSource} style={styles.largeImage} />
-        <View style={styles.iconContainer}>
-          <Icon
-            name="cancel"
-            size={30}
-            type="material"
-            color="#67B7D1"
-            onPress={() => onCancelClick()}
-          />
-        </View>
-      </View>
+      <Image source={imageSource} style={styles.largeImage} />
 
       <View style={styles.footerContainer}>
         <Text style={styles.headlineText}>Choose Your Role</Text>
 
         <CheckBox
-          checked={teacherChecked}
           title="Teacher"
-          textStyle={[{ fontSize: 22, fontWeight: 'normal' }]}
+          checked={selected === Role.Teacher}
+          textStyle={styles.checkBoxLabelStyle}
           containerStyle={styles.checkBoxStyle}
-          onPress={() => setCheckedTeacher(!teacherChecked)}
+          onPress={() => setSelected(Role.Teacher)}
         />
 
         <CheckBox
-          checked={studentChecked}
           title="Student"
-          textStyle={[{ fontSize: 22, fontWeight: 'normal' }]}
+          checked={selected === Role.Student}
+          textStyle={styles.checkBoxLabelStyle}
           containerStyle={styles.checkBoxStyle}
-          onPress={() => setCheckedStudent(!studentChecked)}
+          onPress={() => setSelected(Role.Student)}
         />
 
-        <View style={[{ width: '30%', marginVertical: 10, marginTop: 40 }]}>
-          <Button title="Done" onPress={() => onDoneClick()} />
+        <View style={styles.btnContainerStyle}>
+          <Button
+            title="Done"
+            disabled={selected === null}
+            onPress={() => {
+              // if the user did not chose any role don't fire the event
+              if (selected !== null) onDoneClick(selected);
+            }}
+          />
         </View>
       </View>
     </View>
