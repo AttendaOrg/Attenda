@@ -22,6 +22,7 @@ export const Default = (): JSX.Element => (
     email={text('email', '')}
     onSend={() => action('onSend')()}
     onEmailChange={(email: string) => action('onEmailChange')(email)}
+    onCancelClick={() => null}
   />
 );
 
