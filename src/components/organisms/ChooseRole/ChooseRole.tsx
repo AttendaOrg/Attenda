@@ -96,7 +96,7 @@ const ChooseRole: React.FC<ChooseRolePops> = ({
             title="Done"
             disabled={selected === null}
             onPress={() => {
-              // if the user did not chose any role don't fire the event
+              // if the user did not choose any role don't fire the event
               if (selected !== null) onDoneClick(selected);
             }}
           />
