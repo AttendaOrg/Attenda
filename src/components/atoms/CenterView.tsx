@@ -8,6 +8,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   safeView: {
+    flex: 1,
     paddingTop: StatusBar.currentHeight,
     padding: 16,
   },

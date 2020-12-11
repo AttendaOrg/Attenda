@@ -30,11 +30,6 @@ const App = (): JSX.Element => {
     <NavigationContainer>
       <Stack.Navigator>
         <Stack.Screen
-          name="StudentClassList"
-          component={StudentClassListPage}
-          options={StudentClassListNavigationOptions}
-        />
-        <Stack.Screen
           name="SignIn"
           component={SignInPage}
           options={SignInPageNavigationOptions}
@@ -53,6 +48,11 @@ const App = (): JSX.Element => {
           name="ChooseRole"
           component={ChooseRolePage}
           options={ChooseRoleNavigationOptions}
+        />
+        <Stack.Screen
+          name="StudentClassList"
+          component={StudentClassListPage}
+          options={StudentClassListNavigationOptions}
         />
       </Stack.Navigator>
     </NavigationContainer>
