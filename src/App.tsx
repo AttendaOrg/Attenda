@@ -59,6 +59,6 @@ const App = (): JSX.Element => {
   );
 };
 
-// const App = (): JSX.Element => <UnsuccessResponse />;
+// const App = (): JSX.Element => <JoinClassForm />;
 
 export default App;

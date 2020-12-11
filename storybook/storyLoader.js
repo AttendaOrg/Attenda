@@ -14,6 +14,8 @@ function loadStories() {
   require('../src/components/organisms/AppIntro/SignUp/SignUp.stories');
   require('../src/components/organisms/common/EmptyClass/EmptyClass.stories');
   require('../src/components/organisms/Student/GiveResponse/GiveResponse.stories');
+  require('../src/components/organisms/Student/JoinClass/JoinClass.stories');
+  require('../src/components/organisms/Student/JoinClassForm/JoinClassForm.stories');
   require('../src/components/organisms/Student/StudentClassList/StudentClassList.stories');
   require('../src/components/organisms/Student/SuccessResponse/SuccessResponse.stories');
   require('../src/components/organisms/Student/TurnOnWifi/TurnOnWifi.stories');
@@ -31,6 +33,8 @@ const stories = [
   '../src/components/organisms/AppIntro/SignUp/SignUp.stories',
   '../src/components/organisms/common/EmptyClass/EmptyClass.stories',
   '../src/components/organisms/Student/GiveResponse/GiveResponse.stories',
+  '../src/components/organisms/Student/JoinClass/JoinClass.stories',
+  '../src/components/organisms/Student/JoinClassForm/JoinClassForm.stories',
   '../src/components/organisms/Student/StudentClassList/StudentClassList.stories',
   '../src/components/organisms/Student/SuccessResponse/SuccessResponse.stories',
   '../src/components/organisms/Student/TurnOnWifi/TurnOnWifi.stories',

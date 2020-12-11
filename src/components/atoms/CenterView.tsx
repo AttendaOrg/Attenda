@@ -2,11 +2,6 @@ import React from 'react';
 import { StatusBar, StyleSheet, View } from 'react-native';
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
   safeView: {
     flex: 1,
     paddingTop: StatusBar.currentHeight,
@@ -15,18 +10,14 @@ const styles = StyleSheet.create({
 });
 
 export interface CenterViewPops {
+  /**
+   * @deprecated this attribute is deprecated
+   */
   onlySafeView?: boolean;
 }
 
-const CenterView: React.FC<CenterViewPops> = ({
-  children,
-  onlySafeView = false,
-}) => {
-  return (
-    <View style={onlySafeView ? styles.safeView : styles.container}>
-      {children}
-    </View>
-  );
+const CenterView: React.FC<CenterViewPops> = ({ children }) => {
+  return <View style={styles.safeView}>{children}</View>;
 };
 
 export default CenterView;
