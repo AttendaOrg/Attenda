@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View } from 'react-native';
+import { StatusBar, StyleSheet, View } from 'react-native';
 
 const styles = StyleSheet.create({
   container: {
@@ -7,10 +7,25 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  safeView: {
+    paddingTop: StatusBar.currentHeight,
+    padding: 16,
+  },
 });
 
-const CenterView: React.FC = ({ children }) => {
-  return <View style={styles.container}>{children}</View>;
+export interface CenterViewPops {
+  onlySafeView?: boolean;
+}
+
+const CenterView: React.FC<CenterViewPops> = ({
+  children,
+  onlySafeView = false,
+}) => {
+  return (
+    <View style={onlySafeView ? styles.safeView : styles.container}>
+      {children}
+    </View>
+  );
 };
 
 export default CenterView;
