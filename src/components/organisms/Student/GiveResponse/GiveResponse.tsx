@@ -23,11 +23,11 @@ const styles = StyleSheet.create({
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const imageSource = require('../../../../../assets/images/giveResponse.png');
 
-export interface EmptyClassPops {
+export interface GiveResponsePops {
   onPresentClick: () => void;
 }
 
-const GiveResponse: React.FC<EmptyClassPops> = ({
+const GiveResponse: React.FC<GiveResponsePops> = ({
   onPresentClick,
 }): JSX.Element => {
   return (

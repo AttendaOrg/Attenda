@@ -33,21 +33,15 @@ const styles = StyleSheet.create({
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const imageSource = require('../../../../../assets/images/exclamation.png');
 
-const wait = (timeout: number) => {
-  return new Promise(resolve => {
-    setTimeout(resolve, timeout);
-  });
-};
+export interface TurnOnWifiPops {
+  refreshing: boolean;
+  onRefresh: () => void;
+}
 
-const TurnOnWifi = () => {
-  const [refreshing, setRefreshing] = React.useState(false);
-
-  const onRefresh = React.useCallback(() => {
-    setRefreshing(true);
-
-    wait(2000).then(() => setRefreshing(false));
-  }, []);
-
+const TurnOnWifi: React.FC<TurnOnWifiPops> = ({
+  refreshing,
+  onRefresh,
+}): JSX.Element => {
   return (
     <ScrollView
       contentContainerStyle={styles.container}
@@ -57,7 +51,7 @@ const TurnOnWifi = () => {
     >
       <Image source={imageSource} style={styles.largeImage} />
       <View style={styles.textContainer}>
-        <Text style={styles.text}>Turn on your wify</Text>
+        <Text style={styles.text}>Turn on your wifi</Text>
       </View>
     </ScrollView>
   );

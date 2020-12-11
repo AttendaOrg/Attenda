@@ -11,7 +11,7 @@ const styles = StyleSheet.create({
     padding: 16,
     backgroundColor: '#fff',
   },
-  signInContainer: {
+  signUpContainer: {
     marginVertical: 6,
   },
   signInText: {
@@ -59,7 +59,7 @@ const SignUp: React.FC<SignUpPops> = ({
     <View style={styles.container}>
       <KeyboardAdjustImageView imageSource={imageSource} />
 
-      <View style={styles.signInContainer}>
+      <View style={styles.signUpContainer}>
         <Text style={styles.signInText}>Sign Up</Text>
       </View>
 
