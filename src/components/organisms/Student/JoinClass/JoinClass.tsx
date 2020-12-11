@@ -34,12 +34,14 @@ export interface JoinClassPops {
   className: string;
   section: string;
   teacher: string;
+  onDone: () => void;
 }
 
 const JoinClass: React.FC<JoinClassPops> = ({
   className,
   section,
   teacher,
+  onDone,
 }): JSX.Element => {
   return (
     <View style={styles.container}>
@@ -48,7 +50,7 @@ const JoinClass: React.FC<JoinClassPops> = ({
       <Text style={styles.sectionText}>{section}</Text>
       <Text style={styles.teacherNameText}>By: {teacher}</Text>
       <View style={styles.btnContainer}>
-        <Button title="Join" onPress={() => null} />
+        <Button title="Join" onPress={onDone} />
       </View>
     </View>
   );

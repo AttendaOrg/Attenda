@@ -33,12 +33,12 @@ const styles = StyleSheet.create({
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const imageSource = require('../../../../../assets/images/unsuccessResponse.png');
 
-export interface UnsuccessResponsePops {
+export interface UnsuccessfulResponsePops {
   refreshing: boolean;
   onRefresh: () => void;
 }
 
-const UnsuccessResponse: React.FC<UnsuccessResponsePops> = ({
+const UnsuccessfulResponse: React.FC<UnsuccessfulResponsePops> = ({
   refreshing,
   onRefresh,
 }): JSX.Element => {
@@ -57,4 +57,4 @@ const UnsuccessResponse: React.FC<UnsuccessResponsePops> = ({
   );
 };
 
-export default UnsuccessResponse;
+export default UnsuccessfulResponse;

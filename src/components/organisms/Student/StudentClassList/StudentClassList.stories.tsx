@@ -74,6 +74,7 @@ export const dummyStudentClassListData: StudentListDataProps[] = [
 // Default For Web And android Component
 export const Default = (): JSX.Element => (
   <StudentClassList
+    onClassClick={classId => action('onClassClick')(classId)}
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     data={select<StudentListDataProps[]>(
@@ -97,10 +98,15 @@ if (Platform.OS !== 'web') {
     .addDecorator(withKnobs)
     .add('Default', Default)
     .add('Empty List', () => (
-      <StudentClassList data={[]} onFabClick={() => action('onFabClick')()} />
+      <StudentClassList
+        onClassClick={classId => action('onClassClick')(classId)}
+        data={[]}
+        onFabClick={() => action('onFabClick')()}
+      />
     ))
     .add('With Data', () => (
       <StudentClassList
+        onClassClick={classId => action('onClassClick')(classId)}
         data={dummyStudentClassListData}
         onFabClick={() => action('onFabClick')()}
       />

@@ -16,7 +16,7 @@ type Props = StackScreenProps<RootStackParamList, 'StudentClassList'>;
 
 export const StudentClassListNavigationOptions: StackNavigationOptions = SimpleHeaderNavigationOptions;
 
-const StudentClassListPage: React.FC<Props> = (): JSX.Element => {
+const StudentClassListPage: React.FC<Props> = ({ navigation }): JSX.Element => {
   const [data, setData] = useState<StudentListDataProps[]>([]);
 
   useEffect(() => {
@@ -28,7 +28,15 @@ const StudentClassListPage: React.FC<Props> = (): JSX.Element => {
     return () => clearTimeout(timeId);
   });
 
-  return <StudentClassList onFabClick={() => null} data={data} />;
+  return (
+    <StudentClassList
+      onFabClick={() => navigation.push('JoinClassForm', {})}
+      data={data}
+      onClassClick={classId => {
+        navigation.push('GiveResponse', { classId });
+      }}
+    />
+  );
 };
 
 export default StudentClassListPage;

@@ -4,7 +4,7 @@ import { boolean, withKnobs } from '@storybook/addon-knobs';
 import { storiesOf } from '@storybook/react-native';
 import { action } from '@storybook/addon-actions';
 import CenterView from '../../../atoms/CenterView';
-import UnsuccessResponse from './UnsuccessResponse';
+import UnsuccessfulResponse from './UnsuccessfulResponse';
 
 const STORY_NAME = 'Organisms/Student/UnsuccessResponse';
 
@@ -13,12 +13,12 @@ const STORY_NAME = 'Organisms/Student/UnsuccessResponse';
 export default {
   title: STORY_NAME,
   decorators: [withKnobs],
-  component: UnsuccessResponse,
+  component: UnsuccessfulResponse,
 };
 
 // Default For Web And android Component
 export const Default = (): JSX.Element => (
-  <UnsuccessResponse
+  <UnsuccessfulResponse
     refreshing={boolean('Refreshing', false)}
     onRefresh={() => action('onRefresh')()}
   />
