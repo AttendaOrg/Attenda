@@ -11,45 +11,58 @@ import SignUpPagePage, {
 import ChooseRolePage, {
   ChooseRoleNavigationOptions,
 } from './pages/ChooseRolePage';
+import StudentClassListPage, {
+  StudentClassListNavigationOptions,
+} from './pages/StudentClassListPage';
+import TurnOnWifi from './components/organisms/Student/TurnOnWifi/TurnOnWifi';
+import GiveResponse from './components/organisms/Student/GiveResponse/GiveResponse';
+import SuccessResponse from './components/organisms/Student/SuccessResponse/SuccessResponse';
+import UnsuccessResponse from './components/organisms/Student/UnsuccessResponse/UnsuccessResponse';
 
 export type RootStackParamList = {
   SignIn: undefined;
   ForgotPassword: undefined;
   SignUp: undefined;
   ChooseRole: undefined;
+  StudentClassList: undefined;
 };
 
 export const Stack = createStackNavigator<RootStackParamList>();
 
-const App = (): JSX.Element => {
-  return (
-    <NavigationContainer>
-      <Stack.Navigator>
-        <Stack.Screen
-          name="SignIn"
-          component={SignInPage}
-          options={SignInPageNavigationOptions}
-        />
-        <Stack.Screen
-          name="ForgotPassword"
-          component={ForgotPasswordPage}
-          options={ForgotPasswordNavigationOptions}
-        />
-        <Stack.Screen
-          name="SignUp"
-          component={SignUpPagePage}
-          options={SignUpPageNavigationOptions}
-        />
-        <Stack.Screen
-          name="ChooseRole"
-          component={ChooseRolePage}
-          options={ChooseRoleNavigationOptions}
-        />
-      </Stack.Navigator>
-    </NavigationContainer>
-  );
-};
+// const App = (): JSX.Element => {
+//   return (
+//     <NavigationContainer>
+//       <Stack.Navigator>
+//         <Stack.Screen
+//           name="SignIn"
+//           component={SignInPage}
+//           options={SignInPageNavigationOptions}
+//         />
+//         <Stack.Screen
+//           name="ForgotPassword"
+//           component={ForgotPasswordPage}
+//           options={ForgotPasswordNavigationOptions}
+//         />
+//         <Stack.Screen
+//           name="SignUp"
+//           component={SignUpPagePage}
+//           options={SignUpPageNavigationOptions}
+//         />
+//         <Stack.Screen
+//           name="ChooseRole"
+//           component={ChooseRolePage}
+//           options={ChooseRoleNavigationOptions}
+//         />
+//         <Stack.Screen
+//           name="StudentClassList"
+//           component={StudentClassListPage}
+//           options={StudentClassListNavigationOptions}
+//         />
+//       </Stack.Navigator>
+//     </NavigationContainer>
+//   );
+// };
 
-// const App = (): JSX.Element => <ChooseRole />;
+const App = (): JSX.Element => <UnsuccessResponse />;
 
 export default App;

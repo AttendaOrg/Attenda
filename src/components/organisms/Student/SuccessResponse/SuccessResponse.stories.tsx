@@ -3,22 +3,22 @@ import { Platform } from 'react-native';
 import { withKnobs } from '@storybook/addon-knobs';
 import { storiesOf } from '@storybook/react-native';
 import { action } from '@storybook/addon-actions';
-import CenterView from '../../atoms/CenterView';
-import ChooseRole from './ChooseRole';
+import CenterView from '../../../atoms/CenterView';
+import SuccessResponse from './SuccessResponse';
 
-const STORY_NAME = 'organisms/ChooseRole';
+const STORY_NAME = 'Organisms/Common/SuccessResponse';
 
 // it will only work with web
 // because react native does not supports the modern api
 export default {
   title: STORY_NAME,
   decorators: [withKnobs],
-  component: ChooseRole,
+  component: SuccessResponse,
 };
 
 // Default For Web And android Component
 export const Default = (): JSX.Element => (
-  <ChooseRole onDone={role => action('onDone')(role)} />
+  <SuccessResponse onDoneClick={() => action('onDoneClick')()} />
 );
 
 // if the platform is not web only then render it

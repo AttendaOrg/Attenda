@@ -5,7 +5,7 @@ import { action } from '@storybook/addon-actions';
 import { storiesOf } from '@storybook/react-native';
 import SignIn from './SignIn';
 
-const STORY_NAME = 'Organisms/SignIn';
+const STORY_NAME = 'Organisms/AppIntro/SignIn';
 
 // it will only work with web
 // because react native does not supports the modern api

@@ -2,8 +2,8 @@
 import React, { useState } from 'react';
 import { Button, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { CheckBox, Input } from 'react-native-elements';
-import { inputContainerStyle } from '../../../util/Styles';
-import KeyboardAdjustImageView from '../../templates/KeyboardAdjustImageView';
+import { inputContainerStyle } from '../../../../util/Styles';
+import KeyboardAdjustImageView from '../../../templates/KeyboardAdjustImageView';
 
 const styles = StyleSheet.create({
   container: {
@@ -40,7 +40,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const imageSource = require('../../../../assets/images/SignUp.png');
+const imageSource = require('../../../../../assets/images/SignUp.png');
 
 export interface SignUpPops {
   onSubmit: (email: string, password: string, acceptTerms: boolean) => void;

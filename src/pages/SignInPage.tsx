@@ -4,7 +4,7 @@ import {
   StackScreenProps,
 } from '@react-navigation/stack';
 import { RootStackParamList } from '../App';
-import SignIn from '../components/organisms/SignIn';
+import SignIn from '../components/organisms/AppIntro/SignIn';
 
 type Props = StackScreenProps<RootStackParamList, 'SignIn'>;
 
