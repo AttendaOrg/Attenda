@@ -15,6 +15,7 @@ import StudentClassListPage, {
   StudentClassListNavigationOptions,
 } from './pages/StudentClassListPage';
 import TurnOnWifi from './components/organisms/Student/TurnOnWifi/TurnOnWifi';
+import GiveResponse from './components/organisms/Student/GiveResponse/GiveResponse';
 
 export type RootStackParamList = {
   SignIn: undefined;
@@ -60,6 +61,6 @@ export const Stack = createStackNavigator<RootStackParamList>();
 //   );
 // };
 
-const App = (): JSX.Element => <TurnOnWifi />;
+const App = (): JSX.Element => <GiveResponse />;
 
 export default App;
