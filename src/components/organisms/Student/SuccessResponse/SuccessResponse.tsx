@@ -1,5 +1,12 @@
 import React from 'react';
-import { StyleSheet, View, Image, Dimensions, Button } from 'react-native';
+import {
+  Dimensions,
+  StyleSheet,
+  View,
+  Image,
+  Button,
+  Text,
+} from 'react-native';
 
 const styles = StyleSheet.create({
   container: {
@@ -10,8 +17,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   largeImage: {
-    height: Dimensions.get('window').height * 0.6,
+    height: Dimensions.get('window').height * 0.4,
     width: Dimensions.get('window').width,
+  },
+  textContainer: {
+    marginTop: 20,
+  },
+  text: {
+    fontWeight: 'normal',
+    fontSize: 20,
   },
   btnContainerStyle: {
     width: '50%',
@@ -21,24 +35,28 @@ const styles = StyleSheet.create({
 });
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const imageSource = require('../../../../../assets/images/giveResponse.png');
+const imageSource = require('../../../../../assets/images/successResponse.jpg');
 
 export interface EmptyClassPops {
-  onPresentClick: () => void;
+  onDoneClick: () => void;
 }
 
-const GiveResponse: React.FC<EmptyClassPops> = ({
-  onPresentClick,
+const SuccessResponse: React.FC<EmptyClassPops> = ({
+  onDoneClick,
 }): JSX.Element => {
   return (
     <View style={styles.container}>
       <Image source={imageSource} style={styles.largeImage} />
 
+      <View style={styles.textContainer}>
+        <Text style={styles.text}>Your response is recorded</Text>
+      </View>
+
       <View style={styles.btnContainerStyle}>
-        <Button title="PRESENT" onPress={onPresentClick} />
+        <Button title="DONE" onPress={onDoneClick} />
       </View>
     </View>
   );
 };
 
-export default GiveResponse;
+export default SuccessResponse;

@@ -16,6 +16,7 @@ import StudentClassListPage, {
 } from './pages/StudentClassListPage';
 import TurnOnWifi from './components/organisms/Student/TurnOnWifi/TurnOnWifi';
 import GiveResponse from './components/organisms/Student/GiveResponse/GiveResponse';
+import SuccessResponse from './components/organisms/Student/SuccessResponse/SuccessResponse';
 
 export type RootStackParamList = {
   SignIn: undefined;
@@ -61,6 +62,6 @@ export const Stack = createStackNavigator<RootStackParamList>();
 //   );
 // };
 
-const App = (): JSX.Element => <GiveResponse />;
+const App = (): JSX.Element => <SuccessResponse />;
 
 export default App;
