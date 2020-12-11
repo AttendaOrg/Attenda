@@ -14,6 +14,7 @@ import ChooseRolePage, {
 import StudentClassListPage, {
   StudentClassListNavigationOptions,
 } from './pages/StudentClassListPage';
+import TurnOnWifi from './components/organisms/Student/TurnOnWifi/TurnOnWifi';
 
 export type RootStackParamList = {
   SignIn: undefined;
@@ -25,40 +26,40 @@ export type RootStackParamList = {
 
 export const Stack = createStackNavigator<RootStackParamList>();
 
-const App = (): JSX.Element => {
-  return (
-    <NavigationContainer>
-      <Stack.Navigator>
-        <Stack.Screen
-          name="SignIn"
-          component={SignInPage}
-          options={SignInPageNavigationOptions}
-        />
-        <Stack.Screen
-          name="ForgotPassword"
-          component={ForgotPasswordPage}
-          options={ForgotPasswordNavigationOptions}
-        />
-        <Stack.Screen
-          name="SignUp"
-          component={SignUpPagePage}
-          options={SignUpPageNavigationOptions}
-        />
-        <Stack.Screen
-          name="ChooseRole"
-          component={ChooseRolePage}
-          options={ChooseRoleNavigationOptions}
-        />
-        <Stack.Screen
-          name="StudentClassList"
-          component={StudentClassListPage}
-          options={StudentClassListNavigationOptions}
-        />
-      </Stack.Navigator>
-    </NavigationContainer>
-  );
-};
+// const App = (): JSX.Element => {
+//   return (
+//     <NavigationContainer>
+//       <Stack.Navigator>
+//         <Stack.Screen
+//           name="SignIn"
+//           component={SignInPage}
+//           options={SignInPageNavigationOptions}
+//         />
+//         <Stack.Screen
+//           name="ForgotPassword"
+//           component={ForgotPasswordPage}
+//           options={ForgotPasswordNavigationOptions}
+//         />
+//         <Stack.Screen
+//           name="SignUp"
+//           component={SignUpPagePage}
+//           options={SignUpPageNavigationOptions}
+//         />
+//         <Stack.Screen
+//           name="ChooseRole"
+//           component={ChooseRolePage}
+//           options={ChooseRoleNavigationOptions}
+//         />
+//         <Stack.Screen
+//           name="StudentClassList"
+//           component={StudentClassListPage}
+//           options={StudentClassListNavigationOptions}
+//         />
+//       </Stack.Navigator>
+//     </NavigationContainer>
+//   );
+// };
 
-// const App = (): JSX.Element => <EmptyClass />;
+const App = (): JSX.Element => <TurnOnWifi />;
 
 export default App;
