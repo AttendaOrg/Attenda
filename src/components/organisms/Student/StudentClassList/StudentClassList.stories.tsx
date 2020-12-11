@@ -95,5 +95,14 @@ if (Platform.OS !== 'web') {
       <CenterView onlySafeView>{getStory()}</CenterView>
     ))
     .addDecorator(withKnobs)
-    .add('Default', Default);
+    .add('Default', Default)
+    .add('Empty List', () => (
+      <StudentClassList data={[]} onFabClick={() => action('onFabClick')()} />
+    ))
+    .add('With Data', () => (
+      <StudentClassList
+        data={dummyStudentClassListData}
+        onFabClick={() => action('onFabClick')()}
+      />
+    ));
 }

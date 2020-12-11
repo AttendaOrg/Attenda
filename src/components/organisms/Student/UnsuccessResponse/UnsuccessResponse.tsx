@@ -33,21 +33,15 @@ const styles = StyleSheet.create({
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const imageSource = require('../../../../../assets/images/unsuccessResponse.png');
 
-const wait = (timeout: number) => {
-  return new Promise(resolve => {
-    setTimeout(resolve, timeout);
-  });
-};
+export interface UnsuccessResponsePops {
+  refreshing: boolean;
+  onRefresh: () => void;
+}
 
-const UnsuccessResponse = () => {
-  const [refreshing, setRefreshing] = React.useState(false);
-
-  const onRefresh = React.useCallback(() => {
-    setRefreshing(true);
-
-    wait(2000).then(() => setRefreshing(false));
-  }, []);
-
+const UnsuccessResponse: React.FC<UnsuccessResponsePops> = ({
+  refreshing,
+  onRefresh,
+}): JSX.Element => {
   return (
     <ScrollView
       contentContainerStyle={styles.container}

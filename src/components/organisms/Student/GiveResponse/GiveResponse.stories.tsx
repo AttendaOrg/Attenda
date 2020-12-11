@@ -6,7 +6,7 @@ import { action } from '@storybook/addon-actions';
 import CenterView from '../../../atoms/CenterView';
 import GiveResponse from './GiveResponse';
 
-const STORY_NAME = 'Organisms/Common/GiveResponse';
+const STORY_NAME = 'Organisms/Student/GiveResponse';
 
 // it will only work with web
 // because react native does not supports the modern api

@@ -6,7 +6,7 @@ import { action } from '@storybook/addon-actions';
 import CenterView from '../../../atoms/CenterView';
 import SuccessResponse from './SuccessResponse';
 
-const STORY_NAME = 'Organisms/Common/SuccessResponse';
+const STORY_NAME = 'Organisms/Student/SuccessResponse';
 
 // it will only work with web
 // because react native does not supports the modern api
@@ -27,7 +27,9 @@ export const Default = (): JSX.Element => (
 if (Platform.OS !== 'web') {
   storiesOf(STORY_NAME, module)
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    .addDecorator((getStory: any) => <CenterView>{getStory()}</CenterView>)
+    .addDecorator((getStory: any) => (
+      <CenterView onlySafeView>{getStory()}</CenterView>
+    ))
     .addDecorator(withKnobs)
     .add('Default', Default);
 }
