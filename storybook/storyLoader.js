@@ -19,7 +19,8 @@ function loadStories() {
   require('../src/components/organisms/Student/StudentClassList/StudentClassList.stories');
   require('../src/components/organisms/Student/SuccessResponse/SuccessResponse.stories');
   require('../src/components/organisms/Student/TurnOnWifi/TurnOnWifi.stories');
-  require('../src/components/organisms/Student/UnsuccessResponse/UnsuccessResponse.stories');
+  require('../src/components/organisms/Student/UnsuccessfulResponse/UnsuccessfulResponse.stories');
+  require('../src/components/organisms/Teacher/StudentsEmptyList/StudentsEmptyList.stories');
 }
 
 const stories = [
@@ -38,7 +39,8 @@ const stories = [
   '../src/components/organisms/Student/StudentClassList/StudentClassList.stories',
   '../src/components/organisms/Student/SuccessResponse/SuccessResponse.stories',
   '../src/components/organisms/Student/TurnOnWifi/TurnOnWifi.stories',
-  '../src/components/organisms/Student/UnsuccessResponse/UnsuccessResponse.stories',
+  '../src/components/organisms/Student/UnsuccessfulResponse/UnsuccessfulResponse.stories',
+  '../src/components/organisms/Teacher/StudentsEmptyList/StudentsEmptyList.stories',
 ];
 
 module.exports = {
