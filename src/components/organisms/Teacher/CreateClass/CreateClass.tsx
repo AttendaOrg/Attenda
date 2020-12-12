@@ -1,6 +1,6 @@
 /* eslint-disable global-require */
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { Button } from 'react-native-paper';
 import { Input } from 'react-native-elements';
 import { inputContainerStyle } from '../../../../util/Styles';
@@ -61,7 +61,12 @@ const CreateClass: React.FC<CreateClassPops> = ({
         />
       </View>
       <View style={styles.btnContainerStyle}>
-        <Button style={{ width: '40%' }} mode="contained" color="#2196f3">
+        <Button
+          style={{ width: '40%' }}
+          mode="contained"
+          color="#2196f3"
+          onPress={onDone}
+        >
           Done
         </Button>
       </View>
