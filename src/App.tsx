@@ -32,6 +32,7 @@ import SuccessResponsePage, {
 import UnsuccessfulResponsePage, {
   UnsuccessfulResponseNavigationOptions,
 } from './pages/Student/UnsuccessfulResponsePage';
+import CreateClass from './components/organisms/Teacher/CreateClass/CreateClass';
 
 export type RootStackParamList = {
   SignIn: undefined;
@@ -131,6 +132,6 @@ const App = (): JSX.Element => {
   );
 };
 
-// const App = (): JSX.Element => <JoinClassForm />;
+// const App = (): JSX.Element => <CreateClass />;
 
 export default App;
