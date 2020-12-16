@@ -35,6 +35,9 @@ const StudentClassListPage: React.FC<Props> = ({ navigation }): JSX.Element => {
       onClassClick={classId => {
         navigation.push('GiveResponse', { classId });
       }}
+      onMoreIconClick={() =>
+        navigation.push('StudentAttendanceRecord', { classId: 'undefined' })
+      }
     />
   );
 };
