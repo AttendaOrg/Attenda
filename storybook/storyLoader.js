@@ -26,6 +26,7 @@ function loadStories() {
   require('../src/components/organisms/Teacher/CreateClass/CreateClass.stories');
   require('../src/components/organisms/Teacher/StartAttendanceSession/StartAttendanceSession.stories');
   require('../src/components/organisms/Teacher/StudentsEmptyList/StudentsEmptyList.stories');
+  require('../src/components/organisms/Teacher/TeacherClassList/TeacherClassList.stories');
 }
 
 const stories = [
@@ -51,6 +52,7 @@ const stories = [
   '../src/components/organisms/Teacher/CreateClass/CreateClass.stories',
   '../src/components/organisms/Teacher/StartAttendanceSession/StartAttendanceSession.stories',
   '../src/components/organisms/Teacher/StudentsEmptyList/StudentsEmptyList.stories',
+  '../src/components/organisms/Teacher/TeacherClassList/TeacherClassList.stories',
 ];
 
 module.exports = {

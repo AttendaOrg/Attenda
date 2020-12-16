@@ -35,6 +35,9 @@ import UnsuccessfulResponsePage, {
 import AttendanceRecordPage, {
   AttendanceRecordNavigationOptions,
 } from './pages/Student/AttendanceRecordPage';
+import TeacherClassListPage, {
+  TeacherClassListNavigationOptions,
+} from './pages/Teacher/TeacherClassListPage';
 
 export type RootStackParamList = {
   SignIn: undefined;
@@ -58,6 +61,7 @@ export type RootStackParamList = {
   StudentAttendanceRecord: {
     classId: string;
   };
+  TeacherClassList: undefined;
 };
 
 export const Stack = createStackNavigator<RootStackParamList>();
@@ -135,6 +139,14 @@ const App = (): JSX.Element => {
             name="StudentAttendanceRecord"
             component={AttendanceRecordPage}
             options={AttendanceRecordNavigationOptions}
+          />
+        </>
+        {/* Teacher */}
+        <>
+          <Stack.Screen
+            name="TeacherClassList"
+            component={TeacherClassListPage}
+            options={TeacherClassListNavigationOptions}
           />
         </>
       </Stack.Navigator>
