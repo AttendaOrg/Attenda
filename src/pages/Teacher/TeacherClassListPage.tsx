@@ -29,7 +29,7 @@ const TeacherClassListPage: React.FC<Props> = ({ navigation }): JSX.Element => {
 
   return (
     <StudentClassList
-      onFabClick={() => navigation.push('JoinClassForm', {})}
+      onFabClick={() => navigation.push('InviteStudent')}
       data={data}
       onClassClick={() => {
         // navigation.push('GiveResponse', { classId });

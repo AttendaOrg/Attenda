@@ -41,6 +41,9 @@ import TeacherClassListPage, {
 import EditStudentAttendanceRecordPage, {
   EditStudentAttendanceRecordNavigationOptions,
 } from './pages/Teacher/EditStudentAttendanceRecordPage';
+import InviteStudentPage, {
+  InviteStudentNavigationOptions,
+} from './pages/Teacher/InviteStudentPage';
 
 export type RootStackParamList = {
   SignIn: undefined;
@@ -69,6 +72,7 @@ export type RootStackParamList = {
     classId: string;
     studentId: string;
   };
+  InviteStudent: undefined;
 };
 
 export const Stack = createStackNavigator<RootStackParamList>();
@@ -160,12 +164,17 @@ const App = (): JSX.Element => {
             component={EditStudentAttendanceRecordPage}
             options={EditStudentAttendanceRecordNavigationOptions}
           />
+          <Stack.Screen
+            name="InviteStudent"
+            component={InviteStudentPage}
+            options={InviteStudentNavigationOptions}
+          />
         </>
       </Stack.Navigator>
     </NavigationContainer>
   );
 };
 
-// const App = (): JSX.Element => <></>;
+// const App = (): JSX.Element => <InviteStudent onInvite={console.log} />;
 
 export default App;
