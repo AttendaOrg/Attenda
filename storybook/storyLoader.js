@@ -9,6 +9,8 @@ function loadStories() {
   require('../src/components/molecules/ClassCard/ClassCard.stories');
   require('../src/components/molecules/ClassDetails/ClassDetails.stories');
   require('../src/components/molecules/OauthProvider/OauthProvider.stories');
+  require('../src/components/molecules/UserInfo/UserInfo.stories');
+  require('../src/components/molecules/UserPresentEditPopup/UserPresentEditPopup.stories');
   require('../src/components/molecules/UserPresentPopup/UserPresentPopup.stories');
   require('../src/components/organisms/AppIntro/ChooseRole/ChooseRole.stories');
   require('../src/components/organisms/AppIntro/ForgotPassword/ForgotPassword.stories');
@@ -24,6 +26,7 @@ function loadStories() {
   require('../src/components/organisms/Student/TurnOnWifi/TurnOnWifi.stories');
   require('../src/components/organisms/Student/UnsuccessfulResponse/UnsuccessfulResponse.stories');
   require('../src/components/organisms/Teacher/CreateClass/CreateClass.stories');
+  require('../src/components/organisms/Teacher/EditStudentAttendanceRecord/EditStudentAttendanceRecord.stories');
   require('../src/components/organisms/Teacher/StartAttendanceSession/StartAttendanceSession.stories');
   require('../src/components/organisms/Teacher/StudentsEmptyList/StudentsEmptyList.stories');
   require('../src/components/organisms/Teacher/TeacherClassList/TeacherClassList.stories');
@@ -35,6 +38,8 @@ const stories = [
   '../src/components/molecules/ClassCard/ClassCard.stories',
   '../src/components/molecules/ClassDetails/ClassDetails.stories',
   '../src/components/molecules/OauthProvider/OauthProvider.stories',
+  '../src/components/molecules/UserInfo/UserInfo.stories',
+  '../src/components/molecules/UserPresentEditPopup/UserPresentEditPopup.stories',
   '../src/components/molecules/UserPresentPopup/UserPresentPopup.stories',
   '../src/components/organisms/AppIntro/ChooseRole/ChooseRole.stories',
   '../src/components/organisms/AppIntro/ForgotPassword/ForgotPassword.stories',
@@ -50,6 +55,7 @@ const stories = [
   '../src/components/organisms/Student/TurnOnWifi/TurnOnWifi.stories',
   '../src/components/organisms/Student/UnsuccessfulResponse/UnsuccessfulResponse.stories',
   '../src/components/organisms/Teacher/CreateClass/CreateClass.stories',
+  '../src/components/organisms/Teacher/EditStudentAttendanceRecord/EditStudentAttendanceRecord.stories',
   '../src/components/organisms/Teacher/StartAttendanceSession/StartAttendanceSession.stories',
   '../src/components/organisms/Teacher/StudentsEmptyList/StudentsEmptyList.stories',
   '../src/components/organisms/Teacher/TeacherClassList/TeacherClassList.stories',

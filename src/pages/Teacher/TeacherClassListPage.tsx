@@ -35,7 +35,10 @@ const TeacherClassListPage: React.FC<Props> = ({ navigation }): JSX.Element => {
         // navigation.push('GiveResponse', { classId });
       }}
       onMoreIconClick={() => {
-        // navigation.push('StudentAttendanceRecord', { classId: 'undefined' });
+        navigation.push('EditStudentAttendanceRecord', {
+          classId: '',
+          studentId: '',
+        });
       }}
     />
   );

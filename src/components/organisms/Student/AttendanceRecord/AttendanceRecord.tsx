@@ -28,14 +28,14 @@ const styles = StyleSheet.create({
   },
 });
 
-const present = { key: 'present', color: 'green' };
-const absent = { key: 'absent', color: 'red' };
+export const presentDot = { key: 'present', color: 'green' };
+export const absentDot = { key: 'absent', color: 'red' };
 
 interface MarkDate {
   [key: string]: boolean;
 }
 
-interface MarkedDates {
+export interface MarkedDates {
   [date: string]: MarkDate;
 }
 
@@ -45,7 +45,7 @@ export interface AttendanceRecordPops extends ClassDetailsPops {
   percentage: string;
 }
 
-interface markedDatesProps {
+export interface markedDatesProps {
   [date: string]: MultiDotMarking;
 }
 
@@ -58,8 +58,8 @@ const convertData = (markedDates: MarkedDates = {}): markedDatesProps => {
     const dots = Object.values(markDate).map(active =>
       active
         ? // for some reason present key is duplicating
-          { ...present, key: `present-${markDateKey}-${Math.random()}` }
-        : absent,
+          { ...presentDot, key: `present-${markDateKey}-${Math.random()}` }
+        : absentDot,
     );
 
     newDates[markDateKey] = { dots };

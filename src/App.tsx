@@ -38,6 +38,9 @@ import AttendanceRecordPage, {
 import TeacherClassListPage, {
   TeacherClassListNavigationOptions,
 } from './pages/Teacher/TeacherClassListPage';
+import EditStudentAttendanceRecordPage, {
+  EditStudentAttendanceRecordNavigationOptions,
+} from './pages/Teacher/EditStudentAttendanceRecordPage';
 
 export type RootStackParamList = {
   SignIn: undefined;
@@ -62,6 +65,10 @@ export type RootStackParamList = {
     classId: string;
   };
   TeacherClassList: undefined;
+  EditStudentAttendanceRecord: {
+    classId: string;
+    studentId: string;
+  };
 };
 
 export const Stack = createStackNavigator<RootStackParamList>();
@@ -148,12 +155,17 @@ const App = (): JSX.Element => {
             component={TeacherClassListPage}
             options={TeacherClassListNavigationOptions}
           />
+          <Stack.Screen
+            name="EditStudentAttendanceRecord"
+            component={EditStudentAttendanceRecordPage}
+            options={EditStudentAttendanceRecordNavigationOptions}
+          />
         </>
       </Stack.Navigator>
     </NavigationContainer>
   );
 };
 
-// const App = (): JSX.Element => <StartAttendanceSession />;
+// const App = (): JSX.Element => <></>;
 
 export default App;
