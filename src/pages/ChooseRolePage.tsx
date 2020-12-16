@@ -29,6 +29,15 @@ const ChooseRolePage: React.FC<Props> = ({ navigation }): JSX.Element => {
             );
             break;
           default:
+            // resetting the navigation stack for performance reason
+            // this will cause the app to forgot previous items in stack
+            // for this if the use click back from next screen it will cause the app to exit
+            navigation.dispatch(
+              CommonActions.reset({
+                index: 0,
+                routes: [{ name: 'TeacherClassList' }],
+              }),
+            );
             break;
         }
       }}
