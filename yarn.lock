@@ -11546,10 +11546,10 @@ react-native-animatable@1.3.3:
   dependencies:
     prop-types "^15.7.2"
 
-react-native-calendars@^1.824.0:
-  version "1.824.0"
-  resolved "https://registry.yarnpkg.com/react-native-calendars/-/react-native-calendars-1.824.0.tgz#1dcec714f487f42f07ede7407fb35123084bb761"
-  integrity sha512-qhxfYnkW48fba31tnxiX9KMZVe4ZthZxfn1Z4UeUXQ6dzIZ5iqqzFwpmiKq6DiLoxRiN7A46gVOt6sfl6yxsXA==
+react-native-calendars@^1.846.0:
+  version "1.846.0"
+  resolved "https://registry.yarnpkg.com/react-native-calendars/-/react-native-calendars-1.846.0.tgz#3f4f66d4c7031333eef67c8b90815fe8cf994b4a"
+  integrity sha512-R/bdCKEDU9R0nez6liKVZCVVAOD+jLsZpBqV3E4oz1HKm07sQ54i0/phbsYQ8syMjHWcp5lCjK0QNfy4hJj9HA==
   dependencies:
     hoist-non-react-statics "^3.3.1"
     immutable "^4.0.0-rc.12"

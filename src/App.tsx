@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react';
+import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 import { NavigationContainer } from '@react-navigation/native';
 import SignInPage, { SignInPageNavigationOptions } from './pages/SignInPage';
@@ -32,8 +32,9 @@ import SuccessResponsePage, {
 import UnsuccessfulResponsePage, {
   UnsuccessfulResponseNavigationOptions,
 } from './pages/Student/UnsuccessfulResponsePage';
-import CreateClass from './components/organisms/Teacher/CreateClass/CreateClass';
-import StartAttendanceSession from './components/organisms/Teacher/StartAttendanceSession/StartAttendanceSession';
+import AttendanceRecordPage, {
+  AttendanceRecordNavigationOptions,
+} from './pages/Student/AttendanceRecordPage';
 
 export type RootStackParamList = {
   SignIn: undefined;
@@ -54,6 +55,9 @@ export type RootStackParamList = {
   };
   SuccessResponse: undefined;
   UnsuccessfulResponse: undefined;
+  StudentAttendanceRecord: {
+    classId: string;
+  };
 };
 
 export const Stack = createStackNavigator<RootStackParamList>();
@@ -126,6 +130,11 @@ const App = (): JSX.Element => {
             name="UnsuccessfulResponse"
             component={UnsuccessfulResponsePage}
             options={UnsuccessfulResponseNavigationOptions}
+          />
+          <Stack.Screen
+            name="StudentAttendanceRecord"
+            component={AttendanceRecordPage}
+            options={AttendanceRecordNavigationOptions}
           />
         </>
       </Stack.Navigator>

@@ -14,10 +14,18 @@ export interface CenterViewPops {
    * @deprecated this attribute is deprecated
    */
   onlySafeView?: boolean;
+  noPadding?: boolean;
 }
 
-const CenterView: React.FC<CenterViewPops> = ({ children }) => {
-  return <View style={styles.safeView}>{children}</View>;
+const CenterView: React.FC<CenterViewPops> = ({
+  children,
+  noPadding = false,
+}) => {
+  return (
+    <View style={[styles.safeView, noPadding ? { padding: 0 } : null]}>
+      {children}
+    </View>
+  );
 };
 
 export default CenterView;

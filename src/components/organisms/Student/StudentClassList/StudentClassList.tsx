@@ -29,12 +29,14 @@ export interface StudentClassListPops {
   data: StudentListDataProps[];
   onFabClick: () => void;
   onClassClick: (classId: string) => void;
+  onMoreIconClick?: () => void;
 }
 
 const StudentClassList: React.FC<StudentClassListPops> = ({
   data = [],
   onFabClick,
   onClassClick,
+  onMoreIconClick = () => null,
 }): JSX.Element => {
   if (data.length === 0) return <EmptyClass onFabClick={onFabClick} />;
 
@@ -51,7 +53,7 @@ const StudentClassList: React.FC<StudentClassListPops> = ({
             attendance={item.attendance}
             isSessionLive={item.isSessionLive}
             onCardClick={() => onClassClick(item.key)}
-            onMoreIconClick={() => null}
+            onMoreIconClick={onMoreIconClick}
             backgroundImage={item.backgroundImage}
           />
         )}
