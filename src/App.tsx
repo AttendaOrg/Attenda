@@ -154,6 +154,6 @@ const App = (): JSX.Element => {
   );
 };
 
-// const App = (): JSX.Element => <StartAttendanceSession />;
+// const App = (): JSX.Element => <ClassSettings />;
 
 export default App;
