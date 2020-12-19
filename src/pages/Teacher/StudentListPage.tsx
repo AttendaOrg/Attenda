@@ -125,12 +125,14 @@ const StudentListPage: React.FC<Props> = ({
         <Dialog.Title>Delete Students</Dialog.Title>
         <Dialog.Content>
           <Paragraph>
-            Are you sure you want to delete the students from class
+            Are you sure you want to delete selected students from class ?
           </Paragraph>
         </Dialog.Content>
         <Dialog.Actions>
           <Button onPress={dismissDialog}>Cancel</Button>
-          <Button onPress={deleteSelectedStudents}>Delete</Button>
+          <Button onPress={deleteSelectedStudents} color="red">
+            Delete
+          </Button>
         </Dialog.Actions>
       </Dialog>
     </>
