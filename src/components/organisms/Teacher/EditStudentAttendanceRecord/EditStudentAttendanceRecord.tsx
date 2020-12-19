@@ -32,7 +32,9 @@ const styles = StyleSheet.create({
   },
 });
 
-const convertData = (markedDates: MarkedDates = {}): markedDatesProps => {
+export const convertData = (
+  markedDates: MarkedDates = {},
+): markedDatesProps => {
   const newDates: markedDatesProps = {};
 
   Object.keys(markedDates).forEach(markDateKey => {
@@ -51,7 +53,7 @@ const convertData = (markedDates: MarkedDates = {}): markedDatesProps => {
   return newDates;
 };
 
-const convertDateFormat = (date: Date): string =>
+export const convertDateFormat = (date: Date): string =>
   `${date.getFullYear()}-${date.getMonth() + 1}-${
     date.getDate() < 10 ? `0${date.getDate()}` : date.getDate()
   }`;

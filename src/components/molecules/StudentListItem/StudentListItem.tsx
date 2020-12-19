@@ -33,9 +33,10 @@ export interface StudentListPops {
   rollNo: string;
   checked: boolean;
   showChecked?: boolean;
-  onChangeChecked: (active: boolean) => void;
+  onChangeChecked?: (active: boolean) => void;
   onProfileClick: () => void;
-  onLogPress: () => void;
+  onLogPress?: () => void;
+  percentage?: string;
 }
 
 const StudentListItem: React.FC<StudentListPops> = ({
@@ -43,16 +44,32 @@ const StudentListItem: React.FC<StudentListPops> = ({
   name,
   rollNo,
   checked,
-  showChecked,
-  onChangeChecked,
-  onLogPress,
+  showChecked = false,
+  onChangeChecked = () => null,
+  onLogPress = () => null,
   onProfileClick,
+  percentage,
 }): JSX.Element => {
   const userProfileImage = avatar ? (
     <Image source={avatar} />
   ) : (
     <MaterialIcons name="account-circle" size={34} />
   );
+
+  const checkboxContainer = showChecked ? (
+    <IconButton
+      icon={() => (
+        <MaterialIcons
+          name={checked ? 'radio-button-checked' : 'radio-button-unchecked'}
+          size={24}
+          color={primaryColor}
+        />
+      )}
+      onPress={() => onChangeChecked(!checked)}
+    />
+  ) : null;
+
+  const rightSide = percentage ? <Text>{percentage}</Text> : checkboxContainer;
 
   return (
     <TouchableRipple
@@ -73,20 +90,7 @@ const StudentListItem: React.FC<StudentListPops> = ({
           </View>
         </View>
 
-        {showChecked && (
-          <IconButton
-            icon={() => (
-              <MaterialIcons
-                name={
-                  checked ? 'radio-button-checked' : 'radio-button-unchecked'
-                }
-                size={24}
-                color={primaryColor}
-              />
-            )}
-            onPress={() => onChangeChecked(!checked)}
-          />
-        )}
+        {rightSide}
       </View>
     </TouchableRipple>
   );

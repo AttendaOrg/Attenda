@@ -15,6 +15,7 @@ export interface StudentListData {
   name: string;
   rollNo: string;
   checked: boolean;
+  percentage?: string;
   key: string;
 }
 
@@ -48,6 +49,7 @@ const StudentList: React.FC<StudentListPops> = ({
             name={data.item.name}
             rollNo={data.item.rollNo}
             checked={data.item.checked}
+            percentage={data.item.percentage}
             onChangeChecked={() =>
               onChangeChecked(data.item.rollNo, !data.item.checked)
             }

@@ -34,13 +34,13 @@ interface SelectedDate {
   [date: string]: boolean;
 }
 
-export interface UserPresentEditPopupPops {
+export interface UserPresentEditPopupProps {
   date: string;
   selectedDates: SelectedDate;
   onChangeAttendance: (date: string, time: string, status: boolean) => void;
 }
 
-const UserPresentEditPopup: React.FC<UserPresentEditPopupPops> = ({
+const UserPresentEditPopup: React.FC<UserPresentEditPopupProps> = ({
   date,
   selectedDates,
   onChangeAttendance = () => null,

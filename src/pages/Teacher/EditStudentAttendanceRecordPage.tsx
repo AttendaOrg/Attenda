@@ -7,7 +7,7 @@ import { RootStackParamList } from '../../App';
 import EditStudentAttendanceRecord, {
   EditStudentAttendanceRecordPops,
 } from '../../components/organisms/Teacher/EditStudentAttendanceRecord';
-import SimpleHeaderNavigationOptions from '../../components/templates/SimpleHeaderNavigationOptions';
+import { SimpleHeaderBackNavigationOptions } from '../../components/templates/SimpleHeaderNavigationOptions';
 
 type Props = StackScreenProps<
   RootStackParamList,
@@ -15,7 +15,7 @@ type Props = StackScreenProps<
 >;
 
 export const EditStudentAttendanceRecordNavigationOptions: StackNavigationOptions = {
-  ...SimpleHeaderNavigationOptions,
+  ...SimpleHeaderBackNavigationOptions,
   title: 'Student Attendance record',
 };
 
