@@ -32,7 +32,11 @@ const TeacherClassListPage: React.FC<Props> = ({ navigation }): JSX.Element => {
       onFabClick={() => navigation.push('InviteStudent')}
       data={data}
       onClassClick={() => {
-        // navigation.push('GiveResponse', { classId });
+        navigation.push('StudentList', {
+          classId: '',
+          showDeleteDialog: false,
+          totalSelected: 0,
+        });
       }}
       onMoreIconClick={() => {
         navigation.push('EditStudentAttendanceRecord', {

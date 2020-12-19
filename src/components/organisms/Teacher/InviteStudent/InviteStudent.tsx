@@ -101,11 +101,7 @@ const InputEmail: React.FC<{
 const InviteStudent: React.FC<InviteStudentPops> = ({
   onInvite,
 }): JSX.Element => {
-  const [emails, setEmails] = useState<string[]>([
-    'sadasdsad@jsfd.com',
-    'ashdjkas@jkfsh.com',
-    'jasd@bda.com',
-  ]);
+  const [emails, setEmails] = useState<string[]>([]);
 
   const addEmail = (email: string) => {
     setEmails([...emails, email]);
