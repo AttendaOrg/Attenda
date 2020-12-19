@@ -11,6 +11,7 @@ import StudentList, {
   StudentListData,
 } from '../../components/organisms/Teacher/StudentList';
 import { SimpleHeaderBackNavigationOptions } from '../../components/templates/SimpleHeaderNavigationOptions';
+import StudentsEmptyList from '../../components/organisms/Teacher/StudentsEmptyList/StudentsEmptyList';
 
 type Props = StackScreenProps<RootStackParamList, 'StudentList'>;
 type OptionsProps = (props: Props) => StackNavigationOptions;
@@ -106,6 +107,13 @@ const StudentListPage: React.FC<Props> = ({
     setListItems(newListItems);
     updateHeaderActions(newListItems);
   };
+
+  if (listItems.length === 0)
+    return (
+      <StudentsEmptyList
+        onInviteClick={() => navigation.push('InviteStudent')}
+      />
+    );
 
   return (
     <>
