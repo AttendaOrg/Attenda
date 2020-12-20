@@ -1,6 +1,6 @@
 import React from 'react';
 import { Platform } from 'react-native';
-import { withKnobs } from '@storybook/addon-knobs';
+import { text, withKnobs } from '@storybook/addon-knobs';
 import { storiesOf } from '@storybook/react-native';
 import { action } from '@storybook/addon-actions';
 import CenterView from '../../../atoms/CenterView';
@@ -19,13 +19,12 @@ export default {
 // Default For Web And android Component
 export const Default = (): JSX.Element => (
   <MyAccount
-    username="Aditiya jhv"
-    email="adi@gmail.com"
-    // eslint-disable-next-line jsx-a11y/aria-role
-    role="student"
-    onEditUsernameClick={() => action('onEditUsernameClick')}
-    onChangePasswordClick={() => action('onChangePasswordClick')}
-    onLogOutClick={() => action('onLogOutClick')}
+    username={text('username', 'Aditiya jhv')}
+    email={text('email', 'adi@gmail.com')}
+    studentRole={text('studentRole', 'student')}
+    onEditUsernameClick={() => action('onEditUsernameClick')()}
+    onChangePasswordClick={() => action('onChangePasswordClick')()}
+    onLogOutClick={() => action('onLogOutClick')()}
   />
 );
 
@@ -36,7 +35,7 @@ if (Platform.OS !== 'web') {
   storiesOf(STORY_NAME, module)
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     .addDecorator((getStory: any) => (
-      <CenterView onlySafeView>{getStory()}</CenterView>
+      <CenterView noPadding>{getStory()}</CenterView>
     ))
     .addDecorator(withKnobs)
     .add('Default', Default);

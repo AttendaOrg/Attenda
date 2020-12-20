@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import AntIcon from 'react-native-vector-icons/AntDesign';
+import { AntDesign } from '@expo/vector-icons';
 import KeyboardAdjustImageView from '../../../templates/KeyboardAdjustImageView';
 
 const styles = StyleSheet.create({
@@ -57,7 +57,7 @@ const imageSrc = require('../../../../../assets/images/study.png');
 export interface MyAccountPops {
   username: string;
   email: string;
-  role: string;
+  studentRole: string;
   onEditUsernameClick: () => void;
   onChangePasswordClick: () => void;
   onLogOutClick: () => void;
@@ -66,7 +66,7 @@ export interface MyAccountPops {
 const MyAccount: React.FC<MyAccountPops> = ({
   username,
   email,
-  role,
+  studentRole,
   onEditUsernameClick,
   onChangePasswordClick,
   onLogOutClick,
@@ -79,10 +79,10 @@ const MyAccount: React.FC<MyAccountPops> = ({
         <Text style={styles.infoTitle}>Username</Text>
         <View style={styles.infoValueRow}>
           <Text style={styles.infoValue}>{username} </Text>
-          <AntIcon
+          <AntDesign
             name="edit"
             color="#6A6A6A"
-            size={25}
+            size={24}
             onPress={onEditUsernameClick}
           />
         </View>
@@ -94,7 +94,7 @@ const MyAccount: React.FC<MyAccountPops> = ({
         <View style={styles.divider} />
         <Text style={styles.infoTitle}>Role</Text>
         <View style={styles.infoValueRow}>
-          <Text style={styles.infoValue}>{role}</Text>
+          <Text style={styles.infoValue}>{studentRole}</Text>
         </View>
         <View style={styles.divider} />
       </View>
@@ -102,16 +102,14 @@ const MyAccount: React.FC<MyAccountPops> = ({
       <View style={styles.touchableOpacityContainer}>
         <TouchableOpacity onPress={onChangePasswordClick}>
           <View style={styles.touchableOpacityRow}>
-            <AntIcon name="unlock" color="#6A6A6A" size={25} />
-            <Text style={styles.touchableOpacityText}>
-              {'    '} Changen Password
-            </Text>
+            <AntDesign name="unlock" color="#6A6A6A" size={24} />
+            <Text style={styles.touchableOpacityText}> Change Password</Text>
           </View>
         </TouchableOpacity>
         <TouchableOpacity onPress={onLogOutClick}>
           <View style={styles.touchableOpacityRow}>
-            <AntIcon name="logout" color="#6A6A6A" size={22} />
-            <Text style={styles.touchableOpacityText}>{'    '} Log out</Text>
+            <AntDesign name="logout" color="#6A6A6A" size={24} />
+            <Text style={styles.touchableOpacityText}> Log out</Text>
           </View>
         </TouchableOpacity>
       </View>
