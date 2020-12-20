@@ -50,6 +50,8 @@ import StudentListPage, {
 import TeacherAttendanceRecordPage, {
   TeacherAttendanceRecordNavigationOptions,
 } from './pages/Teacher/AttendanceRecordPage';
+import MyAccount from './components/organisms/common/MyAccount/MyAccount';
+import ChangePassword from './components/organisms/common/ChangePassword/ChangePassword';
 
 export type RootStackParamList = {
   SignIn: undefined;
@@ -199,6 +201,6 @@ const App = (): JSX.Element => {
   );
 };
 
-// const App = (): JSX.Element => <InviteStudent onInvite={console.log} />;
+// const App = (): JSX.Element => <ChangePassword />;
 
 export default App;

@@ -18,7 +18,9 @@ function loadStories() {
   require('../src/components/organisms/AppIntro/ForgotPassword/ForgotPassword.stories');
   require('../src/components/organisms/AppIntro/SignIn/SignIn.stories');
   require('../src/components/organisms/AppIntro/SignUp/SignUp.stories');
+  require('../src/components/organisms/common/ChangePassword/ChangePassword.stories');
   require('../src/components/organisms/common/EmptyClass/EmptyClass.stories');
+  require('../src/components/organisms/common/MyAccount/MyAccount.stories');
   require('../src/components/organisms/Student/AttendanceRecord/AttendanceRecord.stories');
   require('../src/components/organisms/Student/GiveResponse/GiveResponse.stories');
   require('../src/components/organisms/Student/JoinClass/JoinClass.stories');
@@ -53,7 +55,9 @@ const stories = [
   '../src/components/organisms/AppIntro/ForgotPassword/ForgotPassword.stories',
   '../src/components/organisms/AppIntro/SignIn/SignIn.stories',
   '../src/components/organisms/AppIntro/SignUp/SignUp.stories',
+  '../src/components/organisms/common/ChangePassword/ChangePassword.stories',
   '../src/components/organisms/common/EmptyClass/EmptyClass.stories',
+  '../src/components/organisms/common/MyAccount/MyAccount.stories',
   '../src/components/organisms/Student/AttendanceRecord/AttendanceRecord.stories',
   '../src/components/organisms/Student/GiveResponse/GiveResponse.stories',
   '../src/components/organisms/Student/JoinClass/JoinClass.stories',
