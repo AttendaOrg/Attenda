@@ -48,11 +48,19 @@ export const TeacherAttendanceRecordNavigationOptions: StackNavigationOptions = 
 
 const Tab = createMaterialTopTabNavigator();
 
-const AttendanceSessionRecordTab = () => (
+// using stack props for getting the navigation autocomplete
+// the route props will give wrong autocomplete
+// preferably use the MaterialTopTabBarProps
+const AttendanceSessionRecordTab: React.FC<Props> = ({ navigation }) => (
   <AttendanceSessionRecord
     markedDates={dummyMarkedDates}
     onMonthChange={() => null}
-    onTimeSelect={() => null}
+    onTimeSelect={date =>
+      navigation.navigate('EditAttendanceSession', {
+        sessionId: '',
+        date: new Date(date),
+      })
+    }
   />
 );
 

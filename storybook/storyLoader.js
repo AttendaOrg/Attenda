@@ -11,6 +11,7 @@ function loadStories() {
   require('../src/components/molecules/OauthProvider/OauthProvider.stories');
   require('../src/components/molecules/SelectTimeEditPopup/SelectTimeEditPopup.stories');
   require('../src/components/molecules/StudentListItem/StudentListItem.stories');
+  require('../src/components/molecules/StudentPresentListItem/StudentPresentListItem.stories');
   require('../src/components/molecules/UserInfo/UserInfo.stories');
   require('../src/components/molecules/UserPresentEditPopup/UserPresentEditPopup.stories');
   require('../src/components/molecules/UserPresentPopup/UserPresentPopup.stories');
@@ -32,6 +33,7 @@ function loadStories() {
   require('../src/components/organisms/Teacher/AttendanceRecordStudentList/AttendanceRecordStudentList.stories');
   require('../src/components/organisms/Teacher/AttendanceSessionRecord/AttendanceSessionRecord.stories');
   require('../src/components/organisms/Teacher/CreateClass/CreateClass.stories');
+  require('../src/components/organisms/Teacher/EditAttendanceSession/EditAttendanceSession.stories');
   require('../src/components/organisms/Teacher/EditStudentAttendanceRecord/EditStudentAttendanceRecord.stories');
   require('../src/components/organisms/Teacher/InviteStudent/InviteStudent.stories');
   require('../src/components/organisms/Teacher/StartAttendanceSession/StartAttendanceSession.stories');
@@ -48,6 +50,7 @@ const stories = [
   '../src/components/molecules/OauthProvider/OauthProvider.stories',
   '../src/components/molecules/SelectTimeEditPopup/SelectTimeEditPopup.stories',
   '../src/components/molecules/StudentListItem/StudentListItem.stories',
+  '../src/components/molecules/StudentPresentListItem/StudentPresentListItem.stories',
   '../src/components/molecules/UserInfo/UserInfo.stories',
   '../src/components/molecules/UserPresentEditPopup/UserPresentEditPopup.stories',
   '../src/components/molecules/UserPresentPopup/UserPresentPopup.stories',
@@ -69,6 +72,7 @@ const stories = [
   '../src/components/organisms/Teacher/AttendanceRecordStudentList/AttendanceRecordStudentList.stories',
   '../src/components/organisms/Teacher/AttendanceSessionRecord/AttendanceSessionRecord.stories',
   '../src/components/organisms/Teacher/CreateClass/CreateClass.stories',
+  '../src/components/organisms/Teacher/EditAttendanceSession/EditAttendanceSession.stories',
   '../src/components/organisms/Teacher/EditStudentAttendanceRecord/EditStudentAttendanceRecord.stories',
   '../src/components/organisms/Teacher/InviteStudent/InviteStudent.stories',
   '../src/components/organisms/Teacher/StartAttendanceSession/StartAttendanceSession.stories',

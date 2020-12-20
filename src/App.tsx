@@ -50,8 +50,9 @@ import StudentListPage, {
 import TeacherAttendanceRecordPage, {
   TeacherAttendanceRecordNavigationOptions,
 } from './pages/Teacher/AttendanceRecordPage';
-import MyAccount from './components/organisms/common/MyAccount/MyAccount';
-import ChangePassword from './components/organisms/common/ChangePassword/ChangePassword';
+import EditAttendanceSessionPage, {
+  EditAttendanceSessionNavigationOptions,
+} from './pages/Teacher/EditAttendanceSessionPage';
 
 export type RootStackParamList = {
   SignIn: undefined;
@@ -88,6 +89,10 @@ export type RootStackParamList = {
   };
   TeacherAttendanceRecord: {
     classId: string;
+  };
+  EditAttendanceSession: {
+    sessionId: string;
+    date: Date;
   };
 };
 
@@ -194,6 +199,11 @@ const App = (): JSX.Element => {
             name="TeacherAttendanceRecord"
             component={TeacherAttendanceRecordPage}
             options={TeacherAttendanceRecordNavigationOptions}
+          />
+          <Stack.Screen
+            name="EditAttendanceSession"
+            component={EditAttendanceSessionPage}
+            options={EditAttendanceSessionNavigationOptions}
           />
         </>
       </Stack.Navigator>

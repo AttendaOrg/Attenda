@@ -1,24 +1,29 @@
 import React from 'react';
 import { Platform } from 'react-native';
-import { withKnobs } from '@storybook/addon-knobs';
+import { boolean, text, withKnobs } from '@storybook/addon-knobs';
 import { storiesOf } from '@storybook/react-native';
 import { action } from '@storybook/addon-actions';
-import CenterView from '../../../atoms/CenterView';
-import InviteStudent from './InviteStudent';
+import CenterView from '../../atoms/CenterView';
+import StudentPresentListItem from './StudentPresentListItem';
 
-const STORY_NAME = 'Organisms/Teacher/InviteStudent';
+const STORY_NAME = 'Molecules/StudentPresentListItem';
 
 // it will only work with web
 // because react native does not supports the modern api
 export default {
   title: STORY_NAME,
   decorators: [withKnobs],
-  component: InviteStudent,
+  component: StudentPresentListItem,
 };
 
 // Default For Web And android Component
 export const Default = (): JSX.Element => (
-  <InviteStudent onInvite={(emails: string[]) => action('onInvite')(emails)} />
+  <StudentPresentListItem
+    name={text('name', 'Prasanta Barman')}
+    rollNo={text('rollNo', 'ITI-1545445')}
+    onPresentChange={(present: boolean) => action('onPresentChange')(present)}
+    present={boolean('present', true)}
+  />
 );
 
 // if the platform is not web only then render it
