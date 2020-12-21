@@ -55,6 +55,9 @@ import TeacherAttendanceRecordPage, {
 import EditAttendanceSessionPage, {
   EditAttendanceSessionNavigationOptions,
 } from './pages/Teacher/EditAttendanceSessionPage';
+import ClassSettingsPage, {
+  ClassSettingsNavigationOptions,
+} from './pages/Teacher/ClassSettingsPage';
 
 export type RootStackParamList = {
   SignIn: undefined;
@@ -96,6 +99,9 @@ export type RootStackParamList = {
   EditAttendanceSession: {
     sessionId: string;
     date: Date;
+  };
+  ClassSettings: {
+    classId: string;
   };
 };
 
@@ -208,6 +214,11 @@ const App = (): JSX.Element => {
               name="EditAttendanceSession"
               component={EditAttendanceSessionPage}
               options={EditAttendanceSessionNavigationOptions}
+            />
+            <Stack.Screen
+              name="ClassSettings"
+              component={ClassSettingsPage}
+              options={ClassSettingsNavigationOptions}
             />
           </>
         </Stack.Navigator>

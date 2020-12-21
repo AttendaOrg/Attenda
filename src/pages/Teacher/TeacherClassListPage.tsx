@@ -60,7 +60,10 @@ const TeacherClassListPage: React.FC<Props> = ({ navigation }): JSX.Element => {
               selectedTab: 'Students',
             }),
         },
-        { title: 'Settings', onPress: () => null },
+        {
+          title: 'Settings',
+          onPress: () => navigation.push('ClassSettings', { classId: '' }),
+        },
         { title: 'Share invitation link', onPress: () => null },
       ]}
     />
