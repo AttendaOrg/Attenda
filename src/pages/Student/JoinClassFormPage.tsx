@@ -23,7 +23,7 @@ const JoinClassFormPage: React.FC<Props> = ({
     <JoinClassForm
       joinCode={_classCode}
       onSubmit={(classCode, rollNo) =>
-        navigation.navigate('JoinClass', { classCode, rollNo })
+        navigation.navigate('JoinClassFinal', { classCode, rollNo })
       }
     />
   );

@@ -18,9 +18,9 @@ import StudentClassListPage, {
 import JoinClassFormPage, {
   JoinClassFormNavigationOptions,
 } from './pages/Student/JoinClassFormPage';
-import JoinClassPage, {
-  JoinClassNavigationOptions,
-} from './pages/Student/JoinClassPage';
+import JoinClassFinalPage, {
+  JoinClassFinalNavigationOptions,
+} from './pages/Student/JoinClassFinalPage';
 import TurnOnWifiPage, {
   TurnOnWifiNavigationOptions,
 } from './pages/Student/TurnOnWifiPage';
@@ -68,7 +68,7 @@ export type RootStackParamList = {
   JoinClassForm: {
     classCode?: string;
   };
-  JoinClass: {
+  JoinClassFinal: {
     classCode: string;
     rollNo: string;
   };
@@ -144,9 +144,9 @@ const App = (): JSX.Element => {
             />
 
             <Stack.Screen
-              name="JoinClass"
-              component={JoinClassPage}
-              options={JoinClassNavigationOptions}
+              name="JoinClassFinal"
+              component={JoinClassFinalPage}
+              options={JoinClassFinalNavigationOptions}
             />
 
             <Stack.Screen

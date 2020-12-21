@@ -4,12 +4,12 @@ import {
   StackScreenProps,
 } from '@react-navigation/stack';
 import { RootStackParamList } from '../../App';
-import JoinClass from '../../components/organisms/Student/JoinClass';
+import JoinClassFinal from '../../components/organisms/Student/JoinClassFinal';
 import SimpleCloseNavigationOptions from '../../components/templates/SimpleCloseNavigationOption';
 
-type Props = StackScreenProps<RootStackParamList, 'JoinClass'>;
+type Props = StackScreenProps<RootStackParamList, 'JoinClassFinal'>;
 
-export const JoinClassNavigationOptions: StackNavigationOptions = SimpleCloseNavigationOptions;
+export const JoinClassFinalNavigationOptions: StackNavigationOptions = SimpleCloseNavigationOptions;
 
 const defaultClassInfo = {
   teacher: 'Aditya Bhargava',
@@ -17,9 +17,9 @@ const defaultClassInfo = {
   className: 'Computer science data structures and algorithms',
 };
 
-const JoinClassPage: React.FC<Props> = ({ navigation }): JSX.Element => {
+const JoinClassFinalPage: React.FC<Props> = ({ navigation }): JSX.Element => {
   return (
-    <JoinClass
+    <JoinClassFinal
       className={defaultClassInfo.className}
       section={defaultClassInfo.section}
       teacher={defaultClassInfo.teacher}
@@ -28,4 +28,4 @@ const JoinClassPage: React.FC<Props> = ({ navigation }): JSX.Element => {
   );
 };
 
-export default JoinClassPage;
+export default JoinClassFinalPage;

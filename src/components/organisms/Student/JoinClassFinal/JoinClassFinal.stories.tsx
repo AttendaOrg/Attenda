@@ -4,21 +4,21 @@ import { withKnobs } from '@storybook/addon-knobs';
 import { storiesOf } from '@storybook/react-native';
 import { action } from '@storybook/addon-actions';
 import CenterView from '../../../atoms/CenterView';
-import JoinClass from './JoinClass';
+import JoinClassFinal from './JoinClassFinal';
 
-const STORY_NAME = 'Organisms/Student/JoinClass';
+const STORY_NAME = 'Organisms/Student/JoinClassFinal';
 
 // it will only work with web
 // because react native does not supports the modern api
 export default {
   title: STORY_NAME,
   decorators: [withKnobs],
-  component: JoinClass,
+  component: JoinClassFinal,
 };
 
 // Default For Web And android Component
 export const Default = (): JSX.Element => (
-  <JoinClass
+  <JoinClassFinal
     onDone={() => action('onDone')}
     teacher="Aditya Bhargava"
     section="CED/COE"

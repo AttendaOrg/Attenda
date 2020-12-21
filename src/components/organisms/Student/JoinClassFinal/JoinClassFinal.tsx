@@ -30,14 +30,14 @@ const styles = StyleSheet.create({
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const imageSrc = require('../../../../../assets/images/study.png');
 
-export interface JoinClassPops {
+export interface JoinClassFinalPops {
   className: string;
   section: string;
   teacher: string;
   onDone: () => void;
 }
 
-const JoinClass: React.FC<JoinClassPops> = ({
+const JoinClassFinal: React.FC<JoinClassFinalPops> = ({
   className,
   section,
   teacher,
@@ -56,4 +56,4 @@ const JoinClass: React.FC<JoinClassPops> = ({
   );
 };
 
-export default JoinClass;
+export default JoinClassFinal;
