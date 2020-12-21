@@ -32,7 +32,10 @@ const TeacherClassListPage: React.FC<Props> = ({ navigation }): JSX.Element => {
       onFabClick={() => navigation.push('InviteStudent')}
       data={data}
       onClassClick={() => {
-        navigation.push('TeacherAttendanceRecord', { classId: '' });
+        navigation.push('TeacherAttendanceRecord', {
+          classId: '',
+          selectedTab: 'Sessions',
+        });
       }}
       onMoreIconClick={() => {
         navigation.push('EditStudentAttendanceRecord', {
@@ -40,6 +43,26 @@ const TeacherClassListPage: React.FC<Props> = ({ navigation }): JSX.Element => {
           studentId: '',
         });
       }}
+      options={[
+        {
+          title: 'Attendance Record',
+          onPress: () =>
+            navigation.push('TeacherAttendanceRecord', {
+              classId: '',
+              selectedTab: 'Sessions',
+            }),
+        },
+        {
+          title: 'Students',
+          onPress: () =>
+            navigation.push('TeacherAttendanceRecord', {
+              classId: '',
+              selectedTab: 'Students',
+            }),
+        },
+        { title: 'Settings', onPress: () => null },
+        { title: 'Share invitation link', onPress: () => null },
+      ]}
     />
   );
 };

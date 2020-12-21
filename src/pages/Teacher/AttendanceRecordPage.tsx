@@ -46,6 +46,8 @@ export const TeacherAttendanceRecordNavigationOptions: StackNavigationOptions = 
   title: 'Attendance Record',
 };
 
+export type AttendanceRecordTabProps = 'Sessions' | 'Students';
+
 const Tab = createMaterialTopTabNavigator();
 
 // using stack props for getting the navigation autocomplete
@@ -79,9 +81,13 @@ const AttendanceRecordStudentListTab: React.FC<Props> = ({ navigation }) => (
   />
 );
 
-const TeacherAttendanceRecordPage: React.FC<Props> = (): JSX.Element => {
+const TeacherAttendanceRecordPage: React.FC<Props> = ({
+  route: {
+    params: { selectedTab },
+  },
+}): JSX.Element => {
   return (
-    <Tab.Navigator>
+    <Tab.Navigator initialRouteName={selectedTab || 'Sessions'}>
       <Tab.Screen name="Sessions" component={AttendanceSessionRecordTab} />
       <Tab.Screen name="Students" component={AttendanceRecordStudentListTab} />
     </Tab.Navigator>

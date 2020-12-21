@@ -1,6 +1,7 @@
 import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 import { NavigationContainer } from '@react-navigation/native';
+import { MenuProvider } from 'react-native-popup-menu';
 import SignInPage, { SignInPageNavigationOptions } from './pages/SignInPage';
 import ForgotPasswordPage, {
   ForgotPasswordNavigationOptions,
@@ -48,6 +49,7 @@ import StudentListPage, {
   StudentListNavigationOptions,
 } from './pages/Teacher/StudentListPage';
 import TeacherAttendanceRecordPage, {
+  AttendanceRecordTabProps,
   TeacherAttendanceRecordNavigationOptions,
 } from './pages/Teacher/AttendanceRecordPage';
 import EditAttendanceSessionPage, {
@@ -89,6 +91,7 @@ export type RootStackParamList = {
   };
   TeacherAttendanceRecord: {
     classId: string;
+    selectedTab: AttendanceRecordTabProps;
   };
   EditAttendanceSession: {
     sessionId: string;
@@ -100,114 +103,116 @@ export const Stack = createStackNavigator<RootStackParamList>();
 
 const App = (): JSX.Element => {
   return (
-    <NavigationContainer>
-      <Stack.Navigator>
-        {/* App Intro */}
-        <>
-          <Stack.Screen
-            name="SignIn"
-            component={SignInPage}
-            options={SignInPageNavigationOptions}
-          />
-          <Stack.Screen
-            name="ForgotPassword"
-            component={ForgotPasswordPage}
-            options={ForgotPasswordNavigationOptions}
-          />
-          <Stack.Screen
-            name="SignUp"
-            component={SignUpPagePage}
-            options={SignUpPageNavigationOptions}
-          />
-          <Stack.Screen
-            name="ChooseRole"
-            component={ChooseRolePage}
-            options={ChooseRoleNavigationOptions}
-          />
-        </>
-        {/* student */}
-        <>
-          <Stack.Screen
-            name="StudentClassList"
-            component={StudentClassListPage}
-            options={StudentClassListNavigationOptions}
-          />
+    <MenuProvider>
+      <NavigationContainer>
+        <Stack.Navigator>
+          {/* App Intro */}
+          <>
+            <Stack.Screen
+              name="SignIn"
+              component={SignInPage}
+              options={SignInPageNavigationOptions}
+            />
+            <Stack.Screen
+              name="ForgotPassword"
+              component={ForgotPasswordPage}
+              options={ForgotPasswordNavigationOptions}
+            />
+            <Stack.Screen
+              name="SignUp"
+              component={SignUpPagePage}
+              options={SignUpPageNavigationOptions}
+            />
+            <Stack.Screen
+              name="ChooseRole"
+              component={ChooseRolePage}
+              options={ChooseRoleNavigationOptions}
+            />
+          </>
+          {/* student */}
+          <>
+            <Stack.Screen
+              name="StudentClassList"
+              component={StudentClassListPage}
+              options={StudentClassListNavigationOptions}
+            />
 
-          <Stack.Screen
-            name="JoinClass"
-            component={JoinClassPage}
-            options={JoinClassNavigationOptions}
-          />
+            <Stack.Screen
+              name="JoinClass"
+              component={JoinClassPage}
+              options={JoinClassNavigationOptions}
+            />
 
-          <Stack.Screen
-            name="JoinClassForm"
-            component={JoinClassFormPage}
-            options={JoinClassFormNavigationOptions}
-          />
+            <Stack.Screen
+              name="JoinClassForm"
+              component={JoinClassFormPage}
+              options={JoinClassFormNavigationOptions}
+            />
 
-          <Stack.Screen
-            name="TurnOnWifi"
-            component={TurnOnWifiPage}
-            options={TurnOnWifiNavigationOptions}
-          />
+            <Stack.Screen
+              name="TurnOnWifi"
+              component={TurnOnWifiPage}
+              options={TurnOnWifiNavigationOptions}
+            />
 
-          <Stack.Screen
-            name="GiveResponse"
-            component={GiveResponsePage}
-            options={GiveResponseNavigationOptions}
-          />
+            <Stack.Screen
+              name="GiveResponse"
+              component={GiveResponsePage}
+              options={GiveResponseNavigationOptions}
+            />
 
-          <Stack.Screen
-            name="SuccessResponse"
-            component={SuccessResponsePage}
-            options={SuccessResponseNavigationOptions}
-          />
-          <Stack.Screen
-            name="UnsuccessfulResponse"
-            component={UnsuccessfulResponsePage}
-            options={UnsuccessfulResponseNavigationOptions}
-          />
-          <Stack.Screen
-            name="StudentAttendanceRecord"
-            component={AttendanceRecordPage}
-            options={AttendanceRecordNavigationOptions}
-          />
-        </>
-        {/* Teacher */}
-        <>
-          <Stack.Screen
-            name="TeacherClassList"
-            component={TeacherClassListPage}
-            options={TeacherClassListNavigationOptions}
-          />
-          <Stack.Screen
-            name="EditStudentAttendanceRecord"
-            component={EditStudentAttendanceRecordPage}
-            options={EditStudentAttendanceRecordNavigationOptions}
-          />
-          <Stack.Screen
-            name="InviteStudent"
-            component={InviteStudentPage}
-            options={InviteStudentNavigationOptions}
-          />
-          <Stack.Screen
-            name="StudentList"
-            component={StudentListPage}
-            options={StudentListNavigationOptions}
-          />
-          <Stack.Screen
-            name="TeacherAttendanceRecord"
-            component={TeacherAttendanceRecordPage}
-            options={TeacherAttendanceRecordNavigationOptions}
-          />
-          <Stack.Screen
-            name="EditAttendanceSession"
-            component={EditAttendanceSessionPage}
-            options={EditAttendanceSessionNavigationOptions}
-          />
-        </>
-      </Stack.Navigator>
-    </NavigationContainer>
+            <Stack.Screen
+              name="SuccessResponse"
+              component={SuccessResponsePage}
+              options={SuccessResponseNavigationOptions}
+            />
+            <Stack.Screen
+              name="UnsuccessfulResponse"
+              component={UnsuccessfulResponsePage}
+              options={UnsuccessfulResponseNavigationOptions}
+            />
+            <Stack.Screen
+              name="StudentAttendanceRecord"
+              component={AttendanceRecordPage}
+              options={AttendanceRecordNavigationOptions}
+            />
+          </>
+          {/* Teacher */}
+          <>
+            <Stack.Screen
+              name="TeacherClassList"
+              component={TeacherClassListPage}
+              options={TeacherClassListNavigationOptions}
+            />
+            <Stack.Screen
+              name="EditStudentAttendanceRecord"
+              component={EditStudentAttendanceRecordPage}
+              options={EditStudentAttendanceRecordNavigationOptions}
+            />
+            <Stack.Screen
+              name="InviteStudent"
+              component={InviteStudentPage}
+              options={InviteStudentNavigationOptions}
+            />
+            <Stack.Screen
+              name="StudentList"
+              component={StudentListPage}
+              options={StudentListNavigationOptions}
+            />
+            <Stack.Screen
+              name="TeacherAttendanceRecord"
+              component={TeacherAttendanceRecordPage}
+              options={TeacherAttendanceRecordNavigationOptions}
+            />
+            <Stack.Screen
+              name="EditAttendanceSession"
+              component={EditAttendanceSessionPage}
+              options={EditAttendanceSessionNavigationOptions}
+            />
+          </>
+        </Stack.Navigator>
+      </NavigationContainer>
+    </MenuProvider>
   );
 };
 

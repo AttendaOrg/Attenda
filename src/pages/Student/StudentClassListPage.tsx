@@ -38,6 +38,14 @@ const StudentClassListPage: React.FC<Props> = ({ navigation }): JSX.Element => {
       onMoreIconClick={() =>
         navigation.push('StudentAttendanceRecord', { classId: 'undefined' })
       }
+      options={[
+        {
+          onPress: () =>
+            navigation.push('StudentAttendanceRecord', { classId: '' }),
+          title: 'Attendance Record',
+        },
+        { onPress: () => null, title: 'Un-Enroll' },
+      ]}
     />
   );
 };
