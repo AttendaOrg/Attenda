@@ -3,9 +3,8 @@ import {
   StackNavigationOptions,
   StackScreenProps,
 } from '@react-navigation/stack';
-import { Share } from 'react-native';
+import { Share, View } from 'react-native';
 import { IconButton } from 'react-native-paper';
-import { View } from 'native-base';
 import { RootStackParamList } from '../../App';
 import ClassSettings from '../../components/organisms/Teacher/ClassSettings';
 import { SimpleHeaderBackNavigationOptions } from '../../components/templates/SimpleHeaderNavigationOptions';
