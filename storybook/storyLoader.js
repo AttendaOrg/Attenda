@@ -8,8 +8,11 @@ function loadStories() {
   require('../src/components/atoms/Icons/Icons.stories');
   require('../src/components/molecules/ClassCard/ClassCard.stories');
   require('../src/components/molecules/ClassDetails/ClassDetails.stories');
+  require('../src/components/molecules/DoubleButtonPopup/DoubleButtonPopup.stories');
+  require('../src/components/molecules/NoAttendancePopup/NoAttendancePopup.stories');
   require('../src/components/molecules/OauthProvider/OauthProvider.stories');
   require('../src/components/molecules/SelectTimeEditPopup/SelectTimeEditPopup.stories');
+  require('../src/components/molecules/SingleButtonPopup/SingleButtonPopup.stories');
   require('../src/components/molecules/StudentListItem/StudentListItem.stories');
   require('../src/components/molecules/StudentPresentListItem/StudentPresentListItem.stories');
   require('../src/components/molecules/UserInfo/UserInfo.stories');
@@ -47,8 +50,11 @@ const stories = [
   '../src/components/atoms/Icons/Icons.stories',
   '../src/components/molecules/ClassCard/ClassCard.stories',
   '../src/components/molecules/ClassDetails/ClassDetails.stories',
+  '../src/components/molecules/DoubleButtonPopup/DoubleButtonPopup.stories',
+  '../src/components/molecules/NoAttendancePopup/NoAttendancePopup.stories',
   '../src/components/molecules/OauthProvider/OauthProvider.stories',
   '../src/components/molecules/SelectTimeEditPopup/SelectTimeEditPopup.stories',
+  '../src/components/molecules/SingleButtonPopup/SingleButtonPopup.stories',
   '../src/components/molecules/StudentListItem/StudentListItem.stories',
   '../src/components/molecules/StudentPresentListItem/StudentPresentListItem.stories',
   '../src/components/molecules/UserInfo/UserInfo.stories',

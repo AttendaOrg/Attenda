@@ -53,6 +53,12 @@ import TeacherAttendanceRecordPage, {
 import EditAttendanceSessionPage, {
   EditAttendanceSessionNavigationOptions,
 } from './pages/Teacher/EditAttendanceSessionPage';
+import UserPresentPopup from './components/molecules/UserPresentPopup';
+import UserInfo from './components/molecules/UserInfo';
+import MyAccount from './components/organisms/common/MyAccount/MyAccount';
+import SingleButtonPopup from './components/molecules/SingleButtonPopup/SingleButtonPopup';
+import DoubleButtonPopup from './components/molecules/DoubleButtonPopup/DoubleButtonPopup';
+import NoAttendancePopup from './components/molecules/NoAttendancePopup/NoAttendancePopup';
 
 export type RootStackParamList = {
   SignIn: undefined;
@@ -211,6 +217,6 @@ const App = (): JSX.Element => {
   );
 };
 
-// const App = (): JSX.Element => <ChangePassword />;
+// const App = (): JSX.Element => <NoAttendancePopup />;
 
 export default App;
