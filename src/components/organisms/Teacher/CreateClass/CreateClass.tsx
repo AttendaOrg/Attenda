@@ -1,5 +1,5 @@
 /* eslint-disable global-require */
-import React from 'react';
+import React, { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Button } from 'react-native-paper';
 import { Input } from 'react-native-elements';
@@ -22,20 +22,13 @@ const styles = StyleSheet.create({
 });
 
 export interface CreateClassPops {
-  title: string;
-  onTitleChange: (title: string) => void;
-  section: string;
-  onSectionChange: (section: string) => void;
-  onDone: () => void;
+  onDone: (title: string, section: string) => void;
 }
 
-const CreateClass: React.FC<CreateClassPops> = ({
-  title,
-  onTitleChange,
-  section,
-  onSectionChange,
-  onDone,
-}): JSX.Element => {
+const CreateClass: React.FC<CreateClassPops> = ({ onDone }): JSX.Element => {
+  const [title, setTitle] = useState('');
+  const [section, setSection] = useState('');
+
   return (
     <View style={styles.container}>
       <KeyboardAdjustImageView
@@ -44,18 +37,16 @@ const CreateClass: React.FC<CreateClassPops> = ({
       <View>
         <Input
           value={title}
-          keyboardType="name-phone-pad"
           style={styles.inputStyle}
-          onChangeText={onTitleChange}
+          onChangeText={setTitle}
           containerStyle={inputContainerStyle}
           placeholder="Title"
         />
 
         <Input
           value={section}
-          keyboardType="name-phone-pad"
           style={styles.inputStyle}
-          onChangeText={onSectionChange}
+          onChangeText={setSection}
           containerStyle={inputContainerStyle}
           placeholder="Section"
         />
@@ -65,7 +56,7 @@ const CreateClass: React.FC<CreateClassPops> = ({
           style={{ width: '40%' }}
           mode="contained"
           color="#2196f3"
-          onPress={onDone}
+          onPress={() => onDone(title, section)}
         >
           Done
         </Button>

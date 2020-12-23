@@ -54,7 +54,7 @@ const convertTime = (date: Date): string =>
       : padNumber(date.getHours())
   }:${padNumber(date.getMinutes())} ${isAm(date.getHours()) ? 'AM' : 'PM'}`;
 
-const CreateClass: React.FC<StartAttendanceSessionPops> = ({
+const StartAttendanceSession: React.FC<StartAttendanceSessionPops> = ({
   onStartSession,
   title,
 }): JSX.Element => {
@@ -160,4 +160,4 @@ const CreateClass: React.FC<StartAttendanceSessionPops> = ({
   );
 };
 
-export default CreateClass;
+export default StartAttendanceSession;

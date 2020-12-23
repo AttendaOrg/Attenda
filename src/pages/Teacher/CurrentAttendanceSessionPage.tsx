@@ -85,7 +85,7 @@ const CurrentAttendanceSessionPage: React.FC<Props> = ({
       showPopup={route.params.showStopDialog}
       onDismissPopup={() => navigation.setParams({ showStopDialog: false })}
       onPositivePopupClick={() => {
-        // TODO: end page
+        navigation.navigate('TeacherClassList');
       }}
     />
   );

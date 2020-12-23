@@ -64,6 +64,9 @@ import StartAttendanceSessionPage, {
 import CurrentAttendanceSessionPage, {
   CurrentAttendanceSessionNavigationOptions,
 } from './pages/Teacher/CurrentAttendanceSessionPage';
+import CreateClassPage, {
+  CreateClassNavigationOptions,
+} from './pages/Teacher/CreateClassPage';
 
 export type RootStackParamList = {
   SignIn: undefined;
@@ -116,6 +119,7 @@ export type RootStackParamList = {
     classId: string;
     showStopDialog: boolean;
   };
+  CreateClass: undefined;
 };
 
 export const Stack = createStackNavigator<RootStackParamList>();
@@ -242,6 +246,11 @@ const App = (): JSX.Element => {
               name="CurrentAttendanceSession"
               component={CurrentAttendanceSessionPage}
               options={CurrentAttendanceSessionNavigationOptions}
+            />
+            <Stack.Screen
+              name="CreateClass"
+              component={CreateClassPage}
+              options={CreateClassNavigationOptions}
             />
           </>
         </Stack.Navigator>
