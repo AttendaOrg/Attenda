@@ -44,11 +44,11 @@ const imageSource = require('../../../../../assets/images/SignUp.png');
 
 export interface SignUpPops {
   onSubmit: (email: string, password: string, acceptTerms: boolean) => void;
-  onSignInClick: () => void;
+  onSignUpClick: () => void;
 }
 
 const SignUp: React.FC<SignUpPops> = ({
-  onSignInClick,
+  onSignUpClick,
   onSubmit,
 }): JSX.Element => {
   const [acceptTerms, setChecked] = useState(false);
@@ -100,7 +100,7 @@ const SignUp: React.FC<SignUpPops> = ({
         </View>
       </View>
       <View style={styles.goBackContainer}>
-        <TouchableOpacity onPress={onSignInClick}>
+        <TouchableOpacity onPress={onSignUpClick}>
           <Text
             style={{
               margin: 10,

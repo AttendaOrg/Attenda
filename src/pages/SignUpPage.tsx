@@ -12,7 +12,7 @@ type Props = StackScreenProps<RootStackParamList, 'SignUp'>;
 export const SignUpPageNavigationOptions: StackNavigationOptions = SimpleCloseNavigationOptions;
 
 const SignUpPagePage: React.FC<Props> = ({ navigation }): JSX.Element => {
-  return <SignUpPage onSignInClick={navigation.goBack} onSubmit={() => null} />;
+  return <SignUpPage onSignUpClick={navigation.goBack} onSubmit={() => null} />;
 };
 
 export default SignUpPagePage;
