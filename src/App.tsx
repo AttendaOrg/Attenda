@@ -61,6 +61,9 @@ import ClassSettingsPage, {
 import StartAttendanceSessionPage, {
   StartAttendanceSessionNavigationOptions,
 } from './pages/Teacher/StartAttendanceSessionPage';
+import CurrentAttendanceSessionPage, {
+  CurrentAttendanceSessionNavigationOptions,
+} from './pages/Teacher/CurrentAttendanceSessionPage';
 
 export type RootStackParamList = {
   SignIn: undefined;
@@ -108,6 +111,10 @@ export type RootStackParamList = {
   };
   StartAttendanceSession: {
     classId: string;
+  };
+  CurrentAttendanceSession: {
+    classId: string;
+    showStopDialog: boolean;
   };
 };
 
@@ -230,6 +237,11 @@ const App = (): JSX.Element => {
               name="StartAttendanceSession"
               component={StartAttendanceSessionPage}
               options={StartAttendanceSessionNavigationOptions}
+            />
+            <Stack.Screen
+              name="CurrentAttendanceSession"
+              component={CurrentAttendanceSessionPage}
+              options={CurrentAttendanceSessionNavigationOptions}
             />
           </>
         </Stack.Navigator>

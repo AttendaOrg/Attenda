@@ -14,11 +14,18 @@ export const StartAttendanceSessionNavigationOptions: StackNavigationOptions = {
   title: 'Start Attendance',
 };
 
-const StartAttendanceSessionPage: React.FC<Props> = (): JSX.Element => {
+const StartAttendanceSessionPage: React.FC<Props> = ({
+  navigation,
+}): JSX.Element => {
   return (
     <StartAttendanceSession
       title="Computer science data structures and algorithms"
-      onStartSession={() => null}
+      onStartSession={() =>
+        navigation.replace('CurrentAttendanceSession', {
+          classId: '',
+          showStopDialog: false,
+        })
+      }
     />
   );
 };
