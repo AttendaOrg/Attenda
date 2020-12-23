@@ -238,6 +238,6 @@ const App = (): JSX.Element => {
   );
 };
 
-// const App = (): JSX.Element => <ChangePassword />;
+// const App = (): JSX.Element => <NoAttendancePopup />;
 
 export default App;
