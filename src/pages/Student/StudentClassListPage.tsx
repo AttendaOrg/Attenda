@@ -13,8 +13,9 @@ import StudentClassList, {
 import { dummyStudentClassListData } from '../../components/organisms/Student/StudentClassList/StudentClassList.stories';
 
 type Props = StackScreenProps<RootStackParamList, 'StudentClassList'>;
+type OptionsProps = (props: Props) => StackNavigationOptions;
 
-export const StudentClassListNavigationOptions: StackNavigationOptions = SimpleHeaderNavigationOptions;
+export const StudentClassListNavigationOptions: OptionsProps = SimpleHeaderNavigationOptions;
 
 const StudentClassListPage: React.FC<Props> = ({ navigation }): JSX.Element => {
   const [data, setData] = useState<StudentListDataProps[]>([]);

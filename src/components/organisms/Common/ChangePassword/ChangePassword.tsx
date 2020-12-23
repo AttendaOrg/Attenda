@@ -28,27 +28,22 @@ export interface ChangePasswordPops {
 
 const ChangePassword: React.FC<ChangePasswordPops> = ({
   onDone,
-  currentPassword = '',
-  newPassword = '',
-  confirmPassword = '',
 }): JSX.Element => {
-  const [currentPass, setCurrentPass] = useState(currentPassword);
-  const [newPass, setNewPass] = useState(newPassword);
-  const [confirmPass, setConfirmPass] = useState(confirmPassword);
+  const [currentPass, setCurrentPass] = useState('');
+  const [newPass, setNewPass] = useState('');
+  const [confirmPass, setConfirmPass] = useState('');
 
   return (
     <View style={styles.container}>
       <KeyboardAdjustImageView imageSource={imageSrc} />
-      {!currentPassword && (
-        <Input
-          placeholder="Current Password"
-          containerStyle={inputContainerStyle}
-          style={styles.inputStyle}
-          labelStyle={{ margin: 0 }}
-          errorStyle={{ margin: 0 }}
-          onChangeText={setCurrentPass}
-        />
-      )}
+      <Input
+        placeholder="Current Password"
+        containerStyle={inputContainerStyle}
+        style={styles.inputStyle}
+        labelStyle={{ margin: 0 }}
+        errorStyle={{ margin: 0 }}
+        onChangeText={setCurrentPass}
+      />
       <Input
         placeholder="New Password"
         containerStyle={inputContainerStyle}
@@ -65,16 +60,7 @@ const ChangePassword: React.FC<ChangePasswordPops> = ({
         <Button
           title="DONE"
           onPress={() => {
-            if (
-              (currentPassword || currentPass) &&
-              (newPassword || newPass) &&
-              (confirmPassword || confirmPass)
-            )
-              onDone(
-                currentPassword || currentPass,
-                newPassword || newPass,
-                confirmPassword || confirmPass,
-              );
+            onDone(currentPass, newPass, confirmPass);
           }}
         />
       </View>

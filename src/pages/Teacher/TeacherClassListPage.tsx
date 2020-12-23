@@ -12,8 +12,9 @@ import { dummyTeacherClassListData } from '../../components/organisms/Teacher/Te
 import SimpleHeaderNavigationOptions from '../../components/templates/SimpleHeaderNavigationOptions';
 
 type Props = StackScreenProps<RootStackParamList, 'TeacherClassList'>;
+type OptionsProps = (props: Props) => StackNavigationOptions;
 
-export const TeacherClassListNavigationOptions: StackNavigationOptions = SimpleHeaderNavigationOptions;
+export const TeacherClassListNavigationOptions: OptionsProps = SimpleHeaderNavigationOptions;
 
 const TeacherClassListPage: React.FC<Props> = ({ navigation }): JSX.Element => {
   const [data, setData] = useState<StudentListDataProps[]>([]);

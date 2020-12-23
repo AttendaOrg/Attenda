@@ -2,6 +2,7 @@ import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 import { NavigationContainer } from '@react-navigation/native';
 import { MenuProvider } from 'react-native-popup-menu';
+import { createDrawerNavigator } from '@react-navigation/drawer';
 import SignInPage, { SignInPageNavigationOptions } from './pages/SignInPage';
 import ForgotPasswordPage, {
   ForgotPasswordNavigationOptions,
@@ -67,6 +68,13 @@ import CurrentAttendanceSessionPage, {
 import CreateClassPage, {
   CreateClassNavigationOptions,
 } from './pages/Teacher/CreateClassPage';
+import DrawerContentPage from './pages/Commons/DrawerContentPage';
+import ChangePasswordPage, {
+  ChangePasswordNavigationOptions,
+} from './pages/Commons/ChangePassword';
+import MyAccountPage, {
+  MyAccountNavigationOptions,
+} from './pages/Commons/MyAccountPage';
 
 export type RootStackParamList = {
   SignIn: undefined;
@@ -120,14 +128,17 @@ export type RootStackParamList = {
     showStopDialog: boolean;
   };
   CreateClass: undefined;
+  // drawer
+  MyAccount: undefined;
+  ChangePassword: undefined;
 };
 
 export const Stack = createStackNavigator<RootStackParamList>();
 
-const App = (): JSX.Element => {
+const StackScreens = (): JSX.Element => {
   return (
     <MenuProvider>
-      <NavigationContainer>
+      <>
         <Stack.Navigator>
           {/* App Intro */}
           <>
@@ -253,12 +264,40 @@ const App = (): JSX.Element => {
               options={CreateClassNavigationOptions}
             />
           </>
+          {/* Commons */}
+
+          <Stack.Screen
+            name="MyAccount"
+            component={MyAccountPage}
+            options={MyAccountNavigationOptions}
+          />
+          <Stack.Screen
+            name="ChangePassword"
+            component={ChangePasswordPage}
+            options={ChangePasswordNavigationOptions}
+          />
         </Stack.Navigator>
-      </NavigationContainer>
+      </>
     </MenuProvider>
   );
 };
 
-// const App = (): JSX.Element => <NoAttendancePopup />;
+const Drawer = createDrawerNavigator();
+
+const App = (): JSX.Element => (
+  <NavigationContainer>
+    <Drawer.Navigator drawerStyle={{}} drawerContent={DrawerContentPage}>
+      <Drawer.Screen name="App" component={StackScreens} />
+    </Drawer.Navigator>
+  </NavigationContainer>
+);
+
+// const App2 = (): JSX.Element => (
+//   <DrawerContent
+//     name="Prasanta Barman"
+//     email="test@server.com"
+//     onListItemCLick={console.log}
+//   />
+// );
 
 export default App;
