@@ -15,7 +15,7 @@ const styles = StyleSheet.create({
   },
   headlineText: {
     fontWeight: 'bold',
-    color: '#2536CE',
+    color: '#2196F3',
     fontSize: 24,
   },
   captionContainer: {
@@ -132,7 +132,7 @@ const ClassSettings: React.FC<ClassSettingsPops> = ({
         <Icon
           name="share"
           type="font-awesome"
-          color="#413EDA"
+          color="#2196F3"
           style={{ marginRight: 8 }}
           onPress={onCodeShare}
         />
@@ -145,7 +145,7 @@ const ClassSettings: React.FC<ClassSettingsPops> = ({
         <Icon
           name="share"
           type="font-awesome"
-          color="#413EDA"
+          color="#2196F3"
           style={{ marginEnd: 8 }}
           onPress={onLinkShare}
         />

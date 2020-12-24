@@ -22,6 +22,7 @@ export const Default = (): JSX.Element => (
     username={text('username', 'Aditiya jhv')}
     email={text('email', 'adi@gmail.com')}
     studentRole={text('studentRole', 'student')}
+    onEditProfilePictureClick={() => action('onEditProfilePictureClick')()}
     onEditUsernameClick={() => action('onEditUsernameClick')()}
     onChangePasswordClick={() => action('onChangePasswordClick')()}
     onLogOutClick={() => action('onLogOutClick')()}

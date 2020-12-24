@@ -24,6 +24,7 @@ const MyAccountPage: React.FC<Props> = ({ navigation }): JSX.Element => {
       onChangePasswordClick={() => navigation.push('ChangePassword')}
       // QUESTION: should reset the stack ?
       onLogOutClick={() => navigation.navigate('SignIn')}
+      onEditProfilePictureClick={() => null}
     />
   );
 };

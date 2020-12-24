@@ -12250,6 +12250,11 @@ ripemd160@^2.0.0, ripemd160@^2.0.1:
     hash-base "^3.0.0"
     inherits "^2.0.1"
 
+rn-avatar@^1.0.3:
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/rn-avatar/-/rn-avatar-1.0.3.tgz#15360332fbbca5d42d94916ec94329705972865a"
+  integrity sha512-NW0FVaT7jkDdh8r9KVEDpwPYj1r26nbr71+JqWdkpyusbFp/2DGBq62siYluElX4UXTPTYxBcJk9+vVJ1lS9XA==
+
 rsvp@^4.8.4:
   version "4.8.5"
   resolved "https://registry.yarnpkg.com/rsvp/-/rsvp-4.8.5.tgz#c8f155311d167f68f21e168df71ec5b083113734"

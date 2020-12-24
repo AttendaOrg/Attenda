@@ -58,6 +58,7 @@
     "react-native-tab-view": "^2.15.2",
     "react-native-vector-icons": "^7.1.0",
     "react-native-web": "~0.13.12",
+    "rn-avatar": "^1.0.3",
     "toggle-switch-react-native": "^2.3.0"
   },
   "devDependencies": {
