@@ -7,10 +7,14 @@ import { RootStackParamList } from '../App';
 import ForgotPassword from '../components/organisms/AppIntro/ForgotPassword';
 import SimpleCloseNavigationOptions from '../components/templates/SimpleCloseNavigationOption';
 import SingleButtonPopup from '../components/molecules/SingleButtonPopup';
+import { HEADER_AB_TEST_NEW } from '../util/constant';
+import { SimpleHeaderBackNavigationOptions } from '../components/templates/SimpleHeaderNavigationOptions';
 
 type Props = StackScreenProps<RootStackParamList, 'ForgotPassword'>;
 
-export const ForgotPasswordNavigationOptions: StackNavigationOptions = SimpleCloseNavigationOptions;
+export const ForgotPasswordNavigationOptions: StackNavigationOptions = HEADER_AB_TEST_NEW
+  ? { ...SimpleHeaderBackNavigationOptions, title: 'Forgot Password' }
+  : SimpleCloseNavigationOptions;
 
 const ForgotPasswordPage: React.FC<Props> = ({ navigation }): JSX.Element => {
   const [email, setEmail] = useState('');

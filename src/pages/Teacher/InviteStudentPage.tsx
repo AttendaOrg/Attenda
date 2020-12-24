@@ -6,12 +6,14 @@ import {
 import { RootStackParamList } from '../../App';
 import InviteStudent from '../../components/organisms/Teacher/InviteStudent';
 import { withSimpleCloseNavigationOptions } from '../../components/templates/SimpleCloseNavigationOption';
+import { HEADER_AB_TEST_NEW } from '../../util/constant';
+import { SimpleHeaderBackNavigationOptions } from '../../components/templates/SimpleHeaderNavigationOptions';
 
 type Props = StackScreenProps<RootStackParamList, 'InviteStudent'>;
 
-export const InviteStudentNavigationOptions: StackNavigationOptions = withSimpleCloseNavigationOptions(
-  'Invite Students',
-);
+export const InviteStudentNavigationOptions: StackNavigationOptions = HEADER_AB_TEST_NEW
+  ? { ...SimpleHeaderBackNavigationOptions, title: 'Invite Student' }
+  : withSimpleCloseNavigationOptions('Invite Students');
 
 const InviteStudentPage: React.FC<Props> = ({ navigation }): JSX.Element => {
   return (
