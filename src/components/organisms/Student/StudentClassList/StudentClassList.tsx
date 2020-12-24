@@ -3,7 +3,8 @@ import { FlatList, StyleSheet, View } from 'react-native';
 import { FAB } from 'react-native-paper';
 import ClassCard from '../../../molecules/ClassCard';
 import { ClassCardPops } from '../../../molecules/ClassCard/ClassCard';
-import EmptyClass from '../../common/EmptyClass';
+import EmptyClass from '../../Common/EmptyClass';
+import { MenuOptionsPopoverDataProps } from '../../../molecules/MenuOptionsPopover';
 
 const styles = StyleSheet.create({
   container: {
@@ -29,7 +30,12 @@ export interface StudentClassListPops {
   data: StudentListDataProps[];
   onFabClick: () => void;
   onClassClick: (classId: string) => void;
+  /**
+   * @deprecated this function is deprecated
+   * @use options props
+   */
   onMoreIconClick?: () => void;
+  options?: MenuOptionsPopoverDataProps[];
 }
 
 const StudentClassList: React.FC<StudentClassListPops> = ({
@@ -37,6 +43,7 @@ const StudentClassList: React.FC<StudentClassListPops> = ({
   onFabClick,
   onClassClick,
   onMoreIconClick = () => null,
+  options = [],
 }): JSX.Element => {
   if (data.length === 0) return <EmptyClass onFabClick={onFabClick} />;
 
@@ -53,6 +60,7 @@ const StudentClassList: React.FC<StudentClassListPops> = ({
             attendance={item.attendance}
             isSessionLive={item.isSessionLive}
             onCardClick={() => onClassClick(item.key)}
+            options={options}
             onMoreIconClick={onMoreIconClick}
             backgroundImage={item.backgroundImage}
           />

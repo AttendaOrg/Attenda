@@ -8,7 +8,7 @@ import CenterView from '../../../atoms/CenterView';
 import TeacherClassList from './TeacherClassList';
 import { StudentListDataProps } from '../../Student/StudentClassList';
 
-const STORY_NAME = 'TeacherClassList';
+const STORY_NAME = 'Organisms/Teacher/TeacherClassList';
 
 // it will only work with web
 // because react native does not supports the modern api

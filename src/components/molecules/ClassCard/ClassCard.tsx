@@ -7,7 +7,9 @@ import {
   TouchableOpacity,
   ImageSourcePropType,
 } from 'react-native';
-import { MaterialIcons } from '@expo/vector-icons';
+import MenuOptionsPopover, {
+  MenuOptionsPopoverDataProps,
+} from '../MenuOptionsPopover';
 
 const styles = StyleSheet.create({
   container: {
@@ -55,8 +57,13 @@ export interface ClassCardPops {
 }
 
 interface Props extends ClassCardPops {
+  /**
+   * @deprecated this function is deprecated
+   * @use options props
+   */
   onMoreIconClick: () => void;
   onCardClick: () => void;
+  options?: MenuOptionsPopoverDataProps[];
 }
 
 const ClassCard: React.FC<Props> = ({
@@ -65,9 +72,9 @@ const ClassCard: React.FC<Props> = ({
   isSessionLive = false,
   section,
   teacherName,
-  onMoreIconClick,
   backgroundImage,
   onCardClick,
+  options = [],
 }): JSX.Element => {
   return (
     <TouchableOpacity onPress={onCardClick}>
@@ -83,9 +90,9 @@ const ClassCard: React.FC<Props> = ({
           <Text style={styles.liveText}>
             {isSessionLive && 'Attendance session is live'}
           </Text>
-          <TouchableOpacity style={styles.moreIcon} onPress={onMoreIconClick}>
-            <MaterialIcons name="more-vert" size={24} color="#fff" />
-          </TouchableOpacity>
+          <View style={styles.moreIcon}>
+            <MenuOptionsPopover options={options} />
+          </View>
         </View>
         {backgroundImage && (
           <Image source={backgroundImage} style={styles.image} />

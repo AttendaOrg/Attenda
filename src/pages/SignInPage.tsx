@@ -5,12 +5,16 @@ import {
 } from '@react-navigation/stack';
 import { RootStackParamList } from '../App';
 import SignIn from '../components/organisms/AppIntro/SignIn';
+import { HEADER_AB_TEST_NEW } from '../util/constant';
+import { SimpleHeaderBackNavigationOptions } from '../components/templates/SimpleHeaderNavigationOptions';
 
 type Props = StackScreenProps<RootStackParamList, 'SignIn'>;
 
-export const SignInPageNavigationOptions: StackNavigationOptions = {
-  headerShown: false,
-};
+export const SignInPageNavigationOptions: StackNavigationOptions = HEADER_AB_TEST_NEW
+  ? { ...SimpleHeaderBackNavigationOptions, title: 'Sign In' }
+  : {
+      headerShown: false,
+    };
 
 const SignInPage: React.FC<Props> = ({ navigation }): JSX.Element => {
   const [email, setEmail] = useState('');

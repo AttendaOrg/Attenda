@@ -12,8 +12,9 @@ import { dummyTeacherClassListData } from '../../components/organisms/Teacher/Te
 import SimpleHeaderNavigationOptions from '../../components/templates/SimpleHeaderNavigationOptions';
 
 type Props = StackScreenProps<RootStackParamList, 'TeacherClassList'>;
+type OptionsProps = (props: Props) => StackNavigationOptions;
 
-export const TeacherClassListNavigationOptions: StackNavigationOptions = SimpleHeaderNavigationOptions;
+export const TeacherClassListNavigationOptions: OptionsProps = SimpleHeaderNavigationOptions;
 
 const TeacherClassListPage: React.FC<Props> = ({ navigation }): JSX.Element => {
   const [data, setData] = useState<StudentListDataProps[]>([]);
@@ -29,14 +30,38 @@ const TeacherClassListPage: React.FC<Props> = ({ navigation }): JSX.Element => {
 
   return (
     <StudentClassList
-      onFabClick={() => navigation.push('JoinClassForm', {})}
+      onFabClick={() => navigation.push('CreateClass')}
       data={data}
       onClassClick={() => {
-        // navigation.push('GiveResponse', { classId });
+        navigation.push('StartAttendanceSession', {
+          classId: '',
+        });
       }}
-      onMoreIconClick={() => {
-        // navigation.push('StudentAttendanceRecord', { classId: 'undefined' });
-      }}
+      onMoreIconClick={() => null}
+      options={[
+        {
+          title: 'Attendance Record',
+          onPress: () =>
+            navigation.push('TeacherAttendanceRecord', {
+              classId: '',
+              selectedTab: 'Sessions',
+            }),
+        },
+        {
+          title: 'Students',
+          onPress: () =>
+            navigation.push('StudentList', {
+              classId: '',
+              showDeleteDialog: false,
+              totalSelected: 0,
+            }),
+        },
+        {
+          title: 'Settings',
+          onPress: () => navigation.push('ClassSettings', { classId: '' }),
+        },
+        { title: 'Share invitation link', onPress: () => null },
+      ]}
     />
   );
 };

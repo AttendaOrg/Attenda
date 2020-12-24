@@ -1,6 +1,6 @@
 import React from 'react';
 import { Platform } from 'react-native';
-import { text, withKnobs } from '@storybook/addon-knobs';
+import { withKnobs } from '@storybook/addon-knobs';
 import { storiesOf } from '@storybook/react-native';
 import { action } from '@storybook/addon-actions';
 import CenterView from '../../../atoms/CenterView';
@@ -19,11 +19,9 @@ export default {
 // Default For Web And android Component
 export const Default = (): JSX.Element => (
   <CreateClass
-    title={text('title', '')}
-    section={text('section', '')}
-    onTitleChange={(title: string) => action('onTitleChange')(title)}
-    onSectionChange={(section: string) => action('onSectionchange')(section)}
-    onDone={() => action('onDone')()}
+    onDone={(title: string, section: string) =>
+      action('onDone')(title, section)
+    }
   />
 );
 

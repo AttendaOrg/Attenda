@@ -3,7 +3,7 @@ import { FlatList, StyleSheet, View } from 'react-native';
 import { FAB } from 'react-native-paper';
 import ClassCard from '../../../molecules/ClassCard';
 import { ClassCardPops } from '../../../molecules/ClassCard/ClassCard';
-import EmptyClass from '../../common/EmptyClass';
+import EmptyClass from '../../Common/EmptyClass';
 
 const styles = StyleSheet.create({
   container: {

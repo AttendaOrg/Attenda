@@ -19,11 +19,8 @@ export default {
 // Default For Web And android Component
 export const Default = (): JSX.Element => (
   <StartAttendanceSession
-    date={text('date', '')}
-    time={text('time', '')}
-    onDateChange={(date: string) => action('onDateChange')(date)}
-    onTimeChange={(time: string) => action('onTimeChange')(time)}
-    onStartSession={() => action('onStartSession')()}
+    title={text('title', 'Computer science data structures and algorithms')}
+    onStartSession={date => action('onStartSession')(date)}
   />
 );
 
