@@ -2,6 +2,7 @@ import {
   DrawerContentComponentProps,
   DrawerContentOptions,
 } from '@react-navigation/drawer';
+import { DrawerActions } from '@react-navigation/native';
 import React from 'react';
 import { Linking } from 'react-native';
 import DrawerContent, {
@@ -19,6 +20,9 @@ const DrawerContentPage: React.FC<Props> = ({ navigation }): JSX.Element => {
   const onListItemCLick = (item: DrawerListItems) => {
     switch (item) {
       case DrawerListItems.CLASSES:
+        // temporary solution is to close the drawer
+        // FIXME: detect the role (student/teacher) and navigate to correct class list
+        navigation.dispatch(DrawerActions.closeDrawer());
         break;
       case DrawerListItems.MY_ACCOUNT:
         navigation.navigate('App', { screen: 'MyAccount' });

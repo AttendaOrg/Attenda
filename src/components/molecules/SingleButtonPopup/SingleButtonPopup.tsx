@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, TouchableHighlight, View } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Dialog } from 'react-native-paper';
 
 const styles = StyleSheet.create({
@@ -56,9 +56,9 @@ const SingleButtonPopup: React.FC<SingleButtonPopupPops> = ({
         <Text style={styles.popupTitle}>{title}</Text>
         <Text style={styles.popupText}>{text}</Text>
 
-        <TouchableHighlight style={styles.button} onPress={onButtonClick}>
+        <TouchableOpacity style={styles.button} onPress={onButtonClick}>
           <Text style={styles.buttonText}>{buttonText}</Text>
-        </TouchableHighlight>
+        </TouchableOpacity>
       </View>
     </Dialog>
   );
