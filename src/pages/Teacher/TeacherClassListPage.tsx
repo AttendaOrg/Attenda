@@ -50,9 +50,10 @@ const TeacherClassListPage: React.FC<Props> = ({ navigation }): JSX.Element => {
         {
           title: 'Students',
           onPress: () =>
-            navigation.push('TeacherAttendanceRecord', {
+            navigation.push('StudentList', {
               classId: '',
-              selectedTab: 'Students',
+              showDeleteDialog: false,
+              totalSelected: 0,
             }),
         },
         {

@@ -28,13 +28,13 @@ export const StudentListNavigationOptions: OptionsProps = ({
 }) => ({
   ...SimpleHeaderBackNavigationOptions,
   title: 'Students',
-  headerRight: () => (
+  headerRight: ({ tintColor }) => (
     <View style={{ flexDirection: 'row' }}>
       <TouchableOpacity
         style={styles.actionIcons}
         onPress={() => navigation.push('InviteStudent')}
       >
-        <MaterialIcons name="person-add" size={24} />
+        <MaterialIcons name="person-add" size={24} color={tintColor} />
       </TouchableOpacity>
       {route.params.totalSelected > 0 && (
         <TouchableOpacity
@@ -43,7 +43,7 @@ export const StudentListNavigationOptions: OptionsProps = ({
             navigation.setParams({ ...route.params, showDeleteDialog: true })
           }
         >
-          <MaterialIcons name="delete" color="red" size={24} />
+          <MaterialIcons name="delete" color={tintColor} size={24} />
         </TouchableOpacity>
       )}
     </View>

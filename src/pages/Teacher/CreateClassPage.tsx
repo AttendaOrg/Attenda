@@ -18,9 +18,10 @@ const CreateClassPage: React.FC<Props> = ({ navigation }): JSX.Element => {
   return (
     <CreateClass
       onDone={() =>
-        navigation.replace('TeacherAttendanceRecord', {
+        navigation.replace('StudentList', {
           classId: '',
-          selectedTab: 'Students',
+          showDeleteDialog: false,
+          totalSelected: 0,
         })
       }
     />

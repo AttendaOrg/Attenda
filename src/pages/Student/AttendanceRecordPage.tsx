@@ -3,31 +3,19 @@ import {
   StackNavigationOptions,
   StackScreenProps,
 } from '@react-navigation/stack';
-import { MaterialIcons } from '@expo/vector-icons';
-import { TouchableOpacity } from 'react-native';
 import { RootStackParamList } from '../../App';
 import AttendanceRecord, {
   AttendanceRecordPops,
 } from '../../components/organisms/Student/AttendanceRecord';
-import SimpleHeaderNavigationOptions from '../../components/templates/SimpleHeaderNavigationOptions';
-import { lightColor } from '../../util/Colors';
+import { SimpleHeaderBackNavigationOptions } from '../../components/templates/SimpleHeaderNavigationOptions';
 
 type Props = StackScreenProps<RootStackParamList, 'StudentAttendanceRecord'>;
 
 type OptionsProps = (props: Props) => StackNavigationOptions;
 
-export const AttendanceRecordNavigationOptions: OptionsProps = (
-  props: Props,
-) => ({
-  ...SimpleHeaderNavigationOptions,
+export const AttendanceRecordNavigationOptions: OptionsProps = () => ({
+  ...SimpleHeaderBackNavigationOptions,
   title: 'Attendance Record',
-  headerLeft: () => (
-    <TouchableOpacity
-      onPress={() => props.navigation.canGoBack() && props.navigation.goBack()}
-    >
-      <MaterialIcons name="arrow-back" size={24} color={lightColor} />
-    </TouchableOpacity>
-  ),
 });
 
 const dummyData: AttendanceRecordPops = {
