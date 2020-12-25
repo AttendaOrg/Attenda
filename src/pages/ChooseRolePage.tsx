@@ -12,9 +12,10 @@ import { SimpleHeaderBackNavigationOptions } from '../components/templates/Simpl
 
 type Props = StackScreenProps<RootStackParamList, 'ChooseRole'>;
 
-export const ChooseRoleNavigationOptions: StackNavigationOptions = HEADER_AB_TEST_NEW
-  ? { ...SimpleHeaderBackNavigationOptions, title: 'Choose Role' }
-  : SimpleCloseNavigationOptions;
+export const ChooseRoleNavigationOptions: StackNavigationOptions = SimpleCloseNavigationOptions;
+// HEADER_AB_TEST_NEW
+//   ? { ...SimpleHeaderBackNavigationOptions, title: 'Choose Role' }
+//   : SimpleCloseNavigationOptions;
 
 const ChooseRolePage: React.FC<Props> = ({ navigation }): JSX.Element => {
   return (

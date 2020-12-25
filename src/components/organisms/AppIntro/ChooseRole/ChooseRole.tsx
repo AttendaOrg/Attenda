@@ -39,6 +39,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
   largeImage: {
+    marginTop: 30,
     height: Dimensions.get('screen').height * 0.4,
     width: Dimensions.get('screen').width,
   },

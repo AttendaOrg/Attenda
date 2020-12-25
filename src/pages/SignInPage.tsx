@@ -10,11 +10,13 @@ import { SimpleHeaderBackNavigationOptions } from '../components/templates/Simpl
 
 type Props = StackScreenProps<RootStackParamList, 'SignIn'>;
 
-export const SignInPageNavigationOptions: StackNavigationOptions = HEADER_AB_TEST_NEW
-  ? { ...SimpleHeaderBackNavigationOptions, title: 'Sign In' }
-  : {
-      headerShown: false,
-    };
+export const SignInPageNavigationOptions: StackNavigationOptions =
+  // HEADER_AB_TEST_NEW
+  //   ? { ...SimpleHeaderBackNavigationOptions, title: 'Sign In' }
+  //   :
+  {
+    headerShown: false,
+  };
 
 const SignInPage: React.FC<Props> = ({ navigation }): JSX.Element => {
   const [email, setEmail] = useState('');
