@@ -7,8 +7,6 @@ import { CommonActions } from '@react-navigation/native';
 import { RootStackParamList } from '../App';
 import ChooseRole, { Role } from '../components/organisms/AppIntro/ChooseRole';
 import SimpleCloseNavigationOptions from '../components/templates/SimpleCloseNavigationOption';
-import { HEADER_AB_TEST_NEW } from '../util/constant';
-import { SimpleHeaderBackNavigationOptions } from '../components/templates/SimpleHeaderNavigationOptions';
 
 type Props = StackScreenProps<RootStackParamList, 'ChooseRole'>;
 

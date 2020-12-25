@@ -6,8 +6,6 @@ import {
 import { RootStackParamList } from '../App';
 import SignUpPage from '../components/organisms/AppIntro/SignUp';
 import SimpleCloseNavigationOptions from '../components/templates/SimpleCloseNavigationOption';
-import { HEADER_AB_TEST_NEW } from '../util/constant';
-import { SimpleHeaderBackNavigationOptions } from '../components/templates/SimpleHeaderNavigationOptions';
 
 type Props = StackScreenProps<RootStackParamList, 'SignUp'>;
 
