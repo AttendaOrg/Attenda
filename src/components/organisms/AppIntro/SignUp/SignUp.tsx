@@ -31,8 +31,8 @@ const styles = StyleSheet.create({
     marginTop: 0,
   },
   btnContainer: {
-    alignItems: 'center',
-    marginVertical: 10,
+    // alignItems: 'flex-end',
+    marginTop: 15,
   },
   goBackContainer: {
     justifyContent: 'flex-end',
@@ -57,7 +57,9 @@ const SignUp: React.FC<SignUpPops> = ({
 
   return (
     <View style={styles.container}>
-      <KeyboardAdjustImageView imageSource={imageSource} />
+      <View style={{ marginTop: 30 }}>
+        <KeyboardAdjustImageView imageSource={imageSource} />
+      </View>
 
       <View style={styles.signUpContainer}>
         <Text style={styles.signInText}>Sign Up</Text>

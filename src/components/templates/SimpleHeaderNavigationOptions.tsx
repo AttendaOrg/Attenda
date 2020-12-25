@@ -38,8 +38,8 @@ const SimpleHeaderNavigationOptions = <T extends keyof RootStackParamList>({
 
 export const SimpleHeaderBackNavigationOptions: StackNavigationOptions = {
   headerLeftContainerStyle: {
-    margin: 16,
-    marginRight: 0,
+    // margin: 16,
+    // marginRight: 0,
   },
   headerStyle: {
     backgroundColor: primaryColor,

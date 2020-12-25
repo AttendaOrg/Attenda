@@ -30,8 +30,9 @@ const styles = StyleSheet.create({
     marginVertical: 8,
     marginTop: 0,
   },
-  signUpText: {
-    textAlign: 'center',
+  goSignUpContainer: {
+    justifyContent: 'flex-end',
+    flex: 1,
   },
 });
 
@@ -61,7 +62,9 @@ const SignIn: React.FC<SignInPops> = ({
 }): JSX.Element => {
   return (
     <View style={styles.container}>
-      <KeyboardAdjustImageView imageSource={imageSource} />
+      <View style={{ marginTop: 20 }}>
+        <KeyboardAdjustImageView imageSource={imageSource} />
+      </View>
 
       <View style={styles.signInContainer}>
         <Text style={styles.signInText}>Sign In</Text>
@@ -104,9 +107,15 @@ const SignIn: React.FC<SignInPops> = ({
           onGoogleClick={onGoogleClick}
           onTwitterClick={onTwitterClick}
         />
-
+      </View>
+      <View style={styles.goSignUpContainer}>
         <TouchableOpacity onPress={onCreateNewAccountClick}>
-          <Text style={styles.signUpText}>
+          <Text
+            style={{
+              margin: 10,
+              textAlign: 'center',
+            }}
+          >
             {/* eslint-disable-next-line react/no-unescaped-entities */}
             Don't have an account? Create new
           </Text>
