@@ -2,6 +2,7 @@ import React from 'react';
 import { StackNavigationOptions } from '@react-navigation/stack';
 import { StatusBar, Text, TouchableOpacity, View } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
+import { lightColor } from '../../util/Colors';
 
 const SimpleCloseNavigationOptions: StackNavigationOptions = {
   headerTransparent: true,
@@ -11,6 +12,13 @@ const SimpleCloseNavigationOptions: StackNavigationOptions = {
         <MaterialIcons name="close" size={24} style={{ margin: 16 }} />
       </TouchableOpacity>
     </View>
+  ),
+};
+
+export const NoHeaderNavigationOptions: StackNavigationOptions = {
+  headerTransparent: true,
+  header: () => (
+    <StatusBar barStyle="dark-content" backgroundColor={lightColor} />
   ),
 };
 

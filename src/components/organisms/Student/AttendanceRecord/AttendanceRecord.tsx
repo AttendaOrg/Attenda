@@ -95,36 +95,36 @@ const AttendanceRecord: React.FC<AttendanceRecordPops> = ({
   const mDates = convertData(markedDates);
 
   return (
-    <ScrollView style={styles.container}>
-      <ClassDetails
-        className={className}
-        section={section}
-        teacherName={teacherName}
-        rollNo={rollNo}
-      />
-      <View style={styles.percentageContainer}>
-        <Text style={[styles.percentageText, styles.percentageLabel]}>
-          Attendance:
-        </Text>
-        <Text style={[styles.percentageText, styles.percentageValue]}>
-          {percentage}
-        </Text>
-      </View>
-
-      <Calendar
-        onMonthChange={date => onMonthChange(new Date(date.dateString))}
-        onDayPress={onDateClick}
-        markedDates={mDates}
-        markingType="multi-dot"
-      />
-
+    <View style={styles.container}>
+      <ScrollView>
+        <ClassDetails
+          className={className}
+          section={section}
+          teacherName={teacherName}
+          rollNo={rollNo}
+        />
+        <View style={styles.percentageContainer}>
+          <Text style={[styles.percentageText, styles.percentageLabel]}>
+            Attendance:
+          </Text>
+          <Text style={[styles.percentageText, styles.percentageValue]}>
+            {percentage}
+          </Text>
+        </View>
+        <Calendar
+          onMonthChange={date => onMonthChange(new Date(date.dateString))}
+          onDayPress={onDateClick}
+          markedDates={mDates}
+          markingType="multi-dot"
+        />
+      </ScrollView>
       <Dialog visible={visible} onDismiss={() => setVisible(false)}>
         <UserPresent
           date="2020-12-12"
           selectedDates={markedDates[currentDate] || {}}
         />
       </Dialog>
-    </ScrollView>
+    </View>
   );
 };
 
