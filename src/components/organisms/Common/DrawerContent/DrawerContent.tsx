@@ -62,7 +62,7 @@ export interface DrawerContentPops {
 const DrawerContent: React.FC<DrawerContentPops> = ({
   name,
   email,
-  avatar = require('../../../../../assets/icon.png'),
+  avatar = require('../../../../../assets/images/user.jpg'),
   onListItemCLick,
 }): JSX.Element => {
   return (

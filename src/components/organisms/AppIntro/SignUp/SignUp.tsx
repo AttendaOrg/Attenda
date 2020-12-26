@@ -90,7 +90,7 @@ const SignUp: React.FC<SignUpPops> = ({
 
         <CheckBox
           checked={acceptTerms}
-          title="I accept the policy and terms"
+          title="I accept the privacy policy and terms of service"
           containerStyle={styles.checkBoxStyle}
           onPress={() => setChecked(!acceptTerms)}
         />

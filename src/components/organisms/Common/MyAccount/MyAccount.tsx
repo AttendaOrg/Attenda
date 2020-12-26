@@ -36,8 +36,8 @@ const styles = StyleSheet.create({
   iconContainer: {
     backgroundColor: '#fff',
     position: 'absolute',
-    right: 15 + 25,
-    bottom: 15 + 25,
+    right: 15 + 20,
+    bottom: 15 + 20,
     borderRadius: 100,
     padding: 8,
   },
@@ -61,12 +61,12 @@ const styles = StyleSheet.create({
   touchableOpacityContainer: {
     flex: 1,
     margin: 16,
-    justifyContent: 'center',
+    // justifyContent: 'flex-end',
   },
   touchableOpacityRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginTop: 12,
+    marginTop: 18,
   },
   touchableOpacityText: {
     fontSize: 18,
@@ -82,7 +82,7 @@ const styles = StyleSheet.create({
 });
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const imageSrc = require('../../../../../assets/images/drawer-back.png');
+const imageSrc = require('../../../../../assets/images/user.jpg');
 
 export interface MyAccountPops {
   username: string;
@@ -107,7 +107,7 @@ const MyAccount: React.FC<MyAccountPops> = ({
     <View style={styles.container}>
       <View style={styles.blurImageContainer}>
         <Image
-          blurRadius={Platform.OS === 'ios' ? 25 : 15}
+          blurRadius={Platform.OS === 'ios' ? 10 : 5}
           source={imageSrc}
           style={styles.blurBackground}
         />

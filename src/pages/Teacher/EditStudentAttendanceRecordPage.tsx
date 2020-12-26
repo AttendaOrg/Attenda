@@ -20,7 +20,7 @@ export const EditStudentAttendanceRecordNavigationOptions: StackNavigationOption
 };
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const imageSrc = require('../../../assets/images/study.png');
+const imageSrc = require('../../../assets/images/user.jpg');
 
 const dummyData: EditStudentAttendanceRecordPops = {
   userInfo: {

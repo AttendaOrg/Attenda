@@ -39,7 +39,7 @@ const styles = StyleSheet.create({
 });
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const imageSrc = require('../../../../assets/images/study.png');
+const imageSrc = require('../../../../assets/images/user.jpg');
 
 export interface UserInfoPops {
   userImage: ImageSource;
