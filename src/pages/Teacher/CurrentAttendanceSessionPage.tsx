@@ -3,8 +3,8 @@ import {
   StackNavigationOptions,
   StackScreenProps,
 } from '@react-navigation/stack';
-import { Button, View } from 'react-native';
-import { IconButton } from 'react-native-paper';
+import { View } from 'react-native';
+import { Button, IconButton } from 'react-native-paper';
 import { RootStackParamList } from '../../App';
 import CurrentAttendanceSession, {
   CurrentAttendanceSessionDataProps,
@@ -19,15 +19,15 @@ export const CurrentAttendanceSessionNavigationOptions: OptionsProps = ({
   navigation,
 }) => ({
   ...SimpleHeaderBackNavigationOptions,
-  title: 'Current session',
+  title: 'Current Session',
   headerStyle: {
     backgroundColor: lightColor,
     elevation: 0,
     shadowColor: lightColor,
-    borderBottomColor: '#ddd',
-    borderBottomWidth: 1,
+    // borderBottomColor: '#ddd',
+    // borderBottomWidth: 1,
   },
-  headerTitleStyle: { color: '#000' },
+  headerTitleStyle: { color: '#000', marginTop: 20 },
   headerLeft: () => (
     <IconButton
       icon="close"
@@ -35,16 +35,31 @@ export const CurrentAttendanceSessionNavigationOptions: OptionsProps = ({
       color="#000"
     />
   ),
+  headerLeftContainerStyle: {
+    marginTop: 20,
+  },
   headerRight: () => (
     <View style={{ paddingRight: 16 }}>
-      <Button
+      {/* <Button
         title="stop"
         onPress={() =>
           navigation.setParams({
             showStopDialog: true,
           })
         }
-      />
+      /> */}
+      <Button
+        // style={{ width: '70%' }}
+        mode="contained"
+        color="#2196f3"
+        onPress={() =>
+          navigation.setParams({
+            showStopDialog: true,
+          })
+        }
+      >
+        STOP
+      </Button>
     </View>
   ),
 });
@@ -66,7 +81,7 @@ const CurrentAttendanceSessionPage: React.FC<Props> = ({
       name: 'Apurba Roy',
       rollNo: 'IIT2441454',
       key: 'IIT2441454',
-      present: false,
+      present: true,
     },
   ]);
 

@@ -26,8 +26,8 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
   image: {
-    height: 60,
-    width: 60,
+    height: 200,
+    width: 200,
     borderRadius: 100,
   },
   editRollContainer: {
@@ -74,7 +74,7 @@ const UserInfo: React.FC<UserInfoPops> = ({
       style={{ marginHorizontal: 6 }}
       onPress={() => setIsRollNoEditing(true)}
     >
-      <MaterialIcons name="edit" size={20} />
+      <MaterialIcons name="edit" color="#6A6A6A" size={20} />
     </TouchableOpacity>
   );
 
