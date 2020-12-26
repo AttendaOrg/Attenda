@@ -23,7 +23,7 @@ const GiveResponsePage: React.FC<Props> = ({ navigation }): JSX.Element => {
   return (
     <GiveResponse
       onPresentClick={() => {
-        if (Math.random() > 0.5) navigation.push('SuccessResponse');
+        if (Math.random() > 0.5) navigation.replace('SuccessResponse');
         else navigation.push('UnsuccessfulResponse');
       }}
     />
