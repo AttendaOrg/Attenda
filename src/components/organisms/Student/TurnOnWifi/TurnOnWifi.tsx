@@ -5,13 +5,12 @@ import {
   View,
   Image,
   Text,
-  RefreshControl,
-  ScrollView,
+  TouchableOpacity,
 } from 'react-native';
+import { MaterialIcons } from '@expo/vector-icons';
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     padding: 16,
     backgroundColor: '#fff',
     justifyContent: 'center',
@@ -19,14 +18,18 @@ const styles = StyleSheet.create({
   },
   largeImage: {
     height: Dimensions.get('window').height * 0.4,
-    width: Dimensions.get('window').width,
-  },
-  textContainer: {
-    marginTop: 20,
+    width: Dimensions.get('window').width * 0.8,
   },
   text: {
     fontWeight: 'normal',
+    marginTop: 16,
     fontSize: 20,
+  },
+  closeIcon: {
+    position: 'absolute',
+    right: 16,
+    top: 16,
+    zIndex: 10,
   },
 });
 
@@ -34,26 +37,30 @@ const styles = StyleSheet.create({
 const imageSource = require('../../../../../assets/images/exclamation.png');
 
 export interface TurnOnWifiPops {
-  refreshing: boolean;
-  onRefresh: () => void;
+  /**
+   * this method is deprecated
+   * @deprecated
+   */
+  refreshing?: boolean;
+  /**
+   * this method is deprecated
+   * @deprecated
+   */
+  onRefresh?: () => void;
+  onCloseBtnClick: () => void;
 }
 
 const TurnOnWifi: React.FC<TurnOnWifiPops> = ({
-  refreshing,
-  onRefresh,
+  onCloseBtnClick,
 }): JSX.Element => {
   return (
-    <ScrollView
-      contentContainerStyle={styles.container}
-      refreshControl={
-        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-      }
-    >
+    <View style={styles.container}>
+      <TouchableOpacity onPress={onCloseBtnClick} style={styles.closeIcon}>
+        <MaterialIcons size={24} name="close" />
+      </TouchableOpacity>
       <Image source={imageSource} style={styles.largeImage} />
-      <View style={styles.textContainer}>
-        <Text style={styles.text}>Turn on your wifi</Text>
-      </View>
-    </ScrollView>
+      <Text style={styles.text}>Turn on your wifi</Text>
+    </View>
   );
 };
 
