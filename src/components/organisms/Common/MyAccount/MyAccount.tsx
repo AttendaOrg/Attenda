@@ -61,7 +61,7 @@ const styles = StyleSheet.create({
   touchableOpacityContainer: {
     flex: 1,
     margin: 16,
-    justifyContent: 'flex-end',
+    justifyContent: 'center',
   },
   touchableOpacityRow: {
     flexDirection: 'row',

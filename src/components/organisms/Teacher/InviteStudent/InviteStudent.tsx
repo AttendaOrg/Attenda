@@ -98,7 +98,7 @@ const InputEmail: React.FC<{
       autoCapitalize="none"
       autoCompleteType="email"
       keyboardType="email-address"
-      placeholder="Please enter an email"
+      placeholder="Enter an email"
       onSubmitEditing={onSubmitEditing}
       containerStyle={{ paddingHorizontal: 0, paddingVertical: 0 }}
       onChangeText={(_email: string) => {
@@ -109,7 +109,9 @@ const InputEmail: React.FC<{
           if (isValidEmail(email)) setError('');
         }
       }}
-      rightIcon={<IconButton icon="plus" onPress={onSubmitEditing} />}
+      rightIcon={
+        <IconButton icon="plus" color="#6A6A6A" onPress={onSubmitEditing} />
+      }
     />
   );
 };

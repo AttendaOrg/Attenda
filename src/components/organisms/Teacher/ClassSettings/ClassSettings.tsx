@@ -15,7 +15,7 @@ const styles = StyleSheet.create({
   },
   headlineText: {
     fontWeight: 'bold',
-    color: '#2196F3',
+    color: '#2196f3',
     fontSize: 24,
   },
   captionContainer: {
@@ -82,7 +82,8 @@ const ClassSettings: React.FC<ClassSettingsPops> = ({
         <Input
           containerStyle={inputContainerStyle}
           style={styles.inputStyle}
-          placeholder="Title"
+          label="Title"
+          // placeholder="Enter title"
           textContentType="name"
           keyboardType="name-phone-pad"
           value={title}
@@ -91,7 +92,8 @@ const ClassSettings: React.FC<ClassSettingsPops> = ({
         <Input
           containerStyle={inputContainerStyle}
           style={styles.inputStyle}
-          placeholder="Section"
+          label="Section"
+          // placeholder="Enter section"
           textContentType="name"
           keyboardType="name-phone-pad"
           value={section}
