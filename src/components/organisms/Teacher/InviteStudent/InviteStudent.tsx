@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
 import { Input } from 'react-native-elements';
-import { Button, Chip } from 'react-native-paper';
+import { Button, Chip, IconButton } from 'react-native-paper';
 import { isValidEmail } from '../../../../util';
 import { lightColor, primaryColor } from '../../../../util/Colors';
 
@@ -36,20 +36,32 @@ const Emails: React.FC<{
 }> = React.memo(({ emails = [], removeEmail }) => {
   // console.log('Re Rendering', 'Emails');
 
+  const [ref, setRef] = useState<ScrollView | null>(null);
+
+  const onContentSizeChange = () => {
+    ref?.scrollToEnd({ animated: true });
+  };
+
+  const Body = (
+    <View style={styles.emailsContainer}>
+      {emails.map(email => (
+        <Chip
+          key={email}
+          style={styles.emailChip}
+          icon="account-circle"
+          onClose={() => removeEmail(email)}
+        >
+          {email}
+        </Chip>
+      ))}
+    </View>
+  );
+
+  if (emails.length === 0) return <View>{Body}</View>;
+
   return (
-    <ScrollView>
-      <View style={styles.emailsContainer}>
-        {emails.map(email => (
-          <Chip
-            key={email}
-            style={styles.emailChip}
-            icon="account-circle"
-            onClose={() => removeEmail(email)}
-          >
-            {email}
-          </Chip>
-        ))}
-      </View>
+    <ScrollView ref={setRef} onContentSizeChange={onContentSizeChange}>
+      {Body}
     </ScrollView>
   );
 });
@@ -97,6 +109,7 @@ const InputEmail: React.FC<{
           if (isValidEmail(email)) setError('');
         }
       }}
+      rightIcon={<IconButton icon="plus" onPress={onSubmitEditing} />}
     />
   );
 };
@@ -124,6 +137,7 @@ const InviteStudent: React.FC<InviteStudentPops> = ({
           mode="contained"
           color={primaryColor}
           onPress={() => onInvite(emails)}
+          disabled={emails.length === 0}
         >
           Invite
         </Button>
