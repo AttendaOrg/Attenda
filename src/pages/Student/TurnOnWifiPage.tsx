@@ -16,7 +16,7 @@ export const TurnOnWifiNavigationOptions: StackNavigationOptions = HEADER_AB_TES
   : SimpleCloseNavigationOptions;
 
 const TurnOnWifiPage: React.FC<Props> = (): JSX.Element => {
-  return <TurnOnWifi onRefresh={() => null} refreshing={false} />;
+  return <TurnOnWifi onCloseBtnClick={() => null} />;
 };
 
 export default TurnOnWifiPage;

@@ -40,11 +40,11 @@ const ForgotPassword: React.FC<ForgotPasswordPops> = ({
 }): JSX.Element => {
   return (
     <View style={styles.container}>
-      <View style={{ marginTop: 20 }}>
-        <KeyboardAdjustImageView
-          imageSource={require('../../../../../assets/images/forgot_password.png')}
-        />
-      </View>
+      {/* <View style={{ marginTop: 20 }}> */}
+      <KeyboardAdjustImageView
+        imageSource={require('../../../../../assets/images/forgot_password.png')}
+      />
+      {/* </View> */}
 
       <View>
         <Text style={styles.textStyle}>Forgot Password ?</Text>
