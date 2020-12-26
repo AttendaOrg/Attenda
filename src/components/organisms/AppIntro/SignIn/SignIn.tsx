@@ -32,7 +32,7 @@ const styles = StyleSheet.create({
   },
   goSignUpContainer: {
     justifyContent: 'flex-end',
-    flex: 1,
+    // flex: 1,
   },
 });
 
@@ -62,9 +62,9 @@ const SignIn: React.FC<SignInPops> = ({
 }): JSX.Element => {
   return (
     <View style={styles.container}>
-      <View style={{ marginTop: 20 }}>
-        <KeyboardAdjustImageView imageSource={imageSource} />
-      </View>
+      {/* <View style={{ marginTop: 20 }}> */}
+      <KeyboardAdjustImageView imageSource={imageSource} />
+      {/* </View> */}
 
       <View style={styles.signInContainer}>
         <Text style={styles.signInText}>Sign In</Text>

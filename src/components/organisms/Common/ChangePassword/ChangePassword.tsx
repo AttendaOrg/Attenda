@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { Button, StyleSheet, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { Input } from 'react-native-elements';
+import { Button } from 'react-native-paper';
 import { inputContainerStyle } from '../../../../util/Styles';
 import KeyboardAdjustImageView from '../../../templates/KeyboardAdjustImageView';
 
@@ -13,6 +14,9 @@ const styles = StyleSheet.create({
   inputStyle: {
     fontSize: 14,
     minHeight: 34,
+  },
+  buttonContainer: {
+    alignItems: 'flex-end',
   },
 });
 
@@ -36,6 +40,7 @@ const ChangePassword: React.FC<ChangePasswordPops> = ({
   return (
     <View style={styles.container}>
       <KeyboardAdjustImageView imageSource={imageSrc} />
+      <View style={{ marginTop: 30 }} />
       <Input
         placeholder="Current Password"
         containerStyle={inputContainerStyle}
@@ -56,13 +61,17 @@ const ChangePassword: React.FC<ChangePasswordPops> = ({
         style={styles.inputStyle}
         onChangeText={setConfirmPass}
       />
-      <View style={{ alignItems: 'flex-end' }}>
+      <View style={styles.buttonContainer}>
         <Button
-          title="DONE"
+          style={{ width: '30%' }}
+          mode="contained"
+          color="#2196f3"
           onPress={() => {
             onDone(currentPass, newPass, confirmPass);
           }}
-        />
+        >
+          RESET
+        </Button>
       </View>
     </View>
   );

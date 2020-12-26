@@ -7,27 +7,25 @@ const styles = StyleSheet.create({
   centeredView: {
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 20,
+    padding: 16,
   },
   icon: {
     position: 'absolute',
-    right: 20,
-    top: 20,
+    right: 7,
+    top: 7,
   },
   largeImage: {
-    height: Dimensions.get('window').height * 0.3,
-    width: Dimensions.get('window').width * 0.6,
+    height: Dimensions.get('window').height * 0.4,
+    width: Dimensions.get('window').width * 0.8,
   },
   popupTitle: {
     fontWeight: 'bold',
     fontSize: 20,
-    marginBottom: 5,
     marginTop: 15,
-    textAlign: 'center',
+    marginBottom: 5,
   },
   popupText: {
     fontSize: 15,
-    textAlign: 'center',
   },
 });
 
@@ -48,6 +46,7 @@ const NoAttendancePopup: React.FC<NoAttendancePopupPops> = ({
   return (
     <Dialog visible={visible} onDismiss={onDismiss}>
       <View style={styles.centeredView}>
+        <Image source={imageSource} style={styles.largeImage} />
         <View style={styles.icon}>
           <AntIcon
             name="close"
@@ -56,7 +55,6 @@ const NoAttendancePopup: React.FC<NoAttendancePopupPops> = ({
             onPress={onCancelClick}
           />
         </View>
-        <Image source={imageSource} style={styles.largeImage} />
         <Text style={styles.popupTitle}>Oopss....</Text>
         <Text style={styles.popupText}>No attendance session is going on</Text>
       </View>

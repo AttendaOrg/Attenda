@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { Button, StyleSheet, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { Input } from 'react-native-elements';
+import { Button } from 'react-native-paper';
 import { inputContainerStyle } from '../../../../util/Styles';
 import KeyboardAdjustImageView from '../../../templates/KeyboardAdjustImageView';
 
@@ -13,6 +14,9 @@ const styles = StyleSheet.create({
   inputStyle: {
     fontSize: 14,
     minHeight: 34,
+  },
+  buttonContainer: {
+    alignItems: 'flex-end',
   },
 });
 
@@ -50,7 +54,7 @@ const JoinClassForm: React.FC<JoinClassFormPops> = ({
         style={styles.inputStyle}
         onChangeText={setRollNo}
       />
-      <View style={{ alignItems: 'flex-end' }}>
+      {/* <View style={{ alignItems: 'flex-end' }}>
         <Button
           title="DONE"
           onPress={() => {
@@ -58,6 +62,19 @@ const JoinClassForm: React.FC<JoinClassFormPops> = ({
               onSubmit(joinCode || classCode, rollNo);
           }}
         />
+      </View> */}
+      <View style={styles.buttonContainer}>
+        <Button
+          style={{ width: '30%' }}
+          mode="contained"
+          color="#2196f3"
+          onPress={() => {
+            if ((joinCode || classCode) && rollNo)
+              onSubmit(joinCode || classCode, rollNo);
+          }}
+        >
+          DONE
+        </Button>
       </View>
     </View>
   );

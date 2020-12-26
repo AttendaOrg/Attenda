@@ -57,9 +57,9 @@ const SignUp: React.FC<SignUpPops> = ({
 
   return (
     <View style={styles.container}>
-      <View style={{ marginTop: 30 }}>
-        <KeyboardAdjustImageView imageSource={imageSource} />
-      </View>
+      {/* <View style={{ marginTop: 30 }}> */}
+      <KeyboardAdjustImageView imageSource={imageSource} />
+      {/* </View> */}
 
       <View style={styles.signUpContainer}>
         <Text style={styles.signInText}>Sign Up</Text>

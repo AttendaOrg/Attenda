@@ -11,18 +11,20 @@ const styles = StyleSheet.create({
   },
   classNameText: {
     textAlign: 'center',
-    fontSize: 16,
+    fontSize: 20,
     fontWeight: '600',
   },
   sectionText: {
     marginVertical: 4,
+    fontSize: 15,
     color: '#6A6A6A',
   },
   teacherNameText: {
+    // fontSize: 15,
     fontWeight: '600',
   },
   btnContainer: {
-    marginTop: 8,
+    marginTop: 15,
     width: '50%',
   },
 });
