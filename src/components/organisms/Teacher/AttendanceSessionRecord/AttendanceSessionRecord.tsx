@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { ScrollView, StyleSheet } from 'react-native';
 import { Calendar, DateObject } from 'react-native-calendars';
 import { Dialog } from 'react-native-paper';
 import { lightColor } from '../../../../util/Colors';
+import ClassDetails from '../../../molecules/ClassDetails';
 import SelectTimeEditPopup from '../../../molecules/SelectTimeEditPopup';
 import { MarkedDates } from '../../Student/AttendanceRecord';
 import { convertData, convertDateFormat } from '../EditStudentAttendanceRecord';
@@ -15,6 +16,8 @@ const styles = StyleSheet.create({
 });
 
 export interface AttendanceSessionRecordPops {
+  className: string;
+  section: string;
   markedDates: MarkedDates;
   onMonthChange: (date: Date) => void;
   onTimeSelect: (date: string, time: string) => void;
@@ -24,6 +27,8 @@ const AttendanceSessionRecord: React.FC<AttendanceSessionRecordPops> = ({
   markedDates,
   onTimeSelect,
   onMonthChange,
+  className,
+  section,
 }): JSX.Element => {
   const [popupVisible, setPopupVisible] = useState(false);
   const [currentDate, setCurrentDate] = useState<string>('');
@@ -37,7 +42,8 @@ const AttendanceSessionRecord: React.FC<AttendanceSessionRecordPops> = ({
   };
 
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container}>
+      <ClassDetails className={className} section={section} />
       <Calendar
         onMonthChange={date => onMonthChange(new Date(date.dateString))}
         onDayPress={onDateClick}
@@ -56,7 +62,7 @@ const AttendanceSessionRecord: React.FC<AttendanceSessionRecordPops> = ({
           }}
         />
       </Dialog>
-    </View>
+    </ScrollView>
   );
 };
 

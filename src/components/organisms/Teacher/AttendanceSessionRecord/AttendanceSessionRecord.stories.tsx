@@ -1,6 +1,6 @@
 import React from 'react';
 import { Platform } from 'react-native';
-import { object, withKnobs } from '@storybook/addon-knobs';
+import { object, text, withKnobs } from '@storybook/addon-knobs';
 import { storiesOf } from '@storybook/react-native';
 import { action } from '@storybook/addon-actions';
 import CenterView from '../../../atoms/CenterView';
@@ -31,6 +31,11 @@ export const Default = (): JSX.Element => {
 
   return (
     <AttendanceSessionRecord
+      className={text(
+        'className',
+        'Computer science data structures and algorithms',
+      )}
+      section={text('section', 'CED/COE')}
       onTimeSelect={(date, time) => action('onTimeSelect')(date, time)}
       onMonthChange={date => action('onMonthChange')(date)}
       markedDates={object('markedDates', markedDates)}
