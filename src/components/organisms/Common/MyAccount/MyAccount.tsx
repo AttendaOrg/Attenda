@@ -6,8 +6,6 @@ import {
   View,
   Image,
   Platform,
-  Dimensions,
-  ScrollView,
 } from 'react-native';
 import { AntDesign } from '@expo/vector-icons';
 import { Icon } from 'react-native-elements';
@@ -15,14 +13,20 @@ import { Icon } from 'react-native-elements';
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+  },
+  blurImageContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   blurBackground: {
     position: 'absolute',
     alignItems: 'center',
     justifyContent: 'center',
-    height: Dimensions.get('screen').height * 0.35,
-    width: Dimensions.get('screen').width,
+    height: '100%',
+    width: '100%',
+  },
+  profileImgContainer: {
+    padding: 25,
   },
   profileImg: {
     height: 200,
@@ -32,15 +36,13 @@ const styles = StyleSheet.create({
   iconContainer: {
     backgroundColor: '#fff',
     position: 'absolute',
-    right: 15,
-    bottom: 15,
-    borderRadius: 15,
-    padding: 2,
+    right: 15 + 25,
+    bottom: 15 + 25,
+    borderRadius: 100,
+    padding: 8,
   },
   infoContainer: {
-    marginTop: Dimensions.get('screen').height * 0.35 + 25,
-    marginEnd: 26,
-    marginStart: 26,
+    margin: 16,
   },
   infoTitle: {
     fontSize: 14,
@@ -58,9 +60,8 @@ const styles = StyleSheet.create({
   },
   touchableOpacityContainer: {
     flex: 1,
-    justifyContent: 'center',
-    marginEnd: 26,
-    marginStart: 26,
+    margin: 16,
+    justifyContent: 'flex-end',
   },
   touchableOpacityRow: {
     flexDirection: 'row',
@@ -103,15 +104,14 @@ const MyAccount: React.FC<MyAccountPops> = ({
   onLogOutClick,
 }): JSX.Element => {
   return (
-    <ScrollView style={styles.container}>
-      <View style={styles.blurBackground}>
+    <View style={styles.container}>
+      <View style={styles.blurImageContainer}>
         <Image
           blurRadius={Platform.OS === 'ios' ? 25 : 15}
           source={imageSrc}
           style={styles.blurBackground}
         />
-        {/* <Image source={imageSrc} style={styles.profileImg} /> */}
-        <View>
+        <View style={styles.profileImgContainer}>
           <Image source={imageSrc} style={styles.profileImg} />
           <Icon
             name="edit"
@@ -160,7 +160,7 @@ const MyAccount: React.FC<MyAccountPops> = ({
           </View>
         </TouchableOpacity>
       </View>
-    </ScrollView>
+    </View>
   );
 };
 

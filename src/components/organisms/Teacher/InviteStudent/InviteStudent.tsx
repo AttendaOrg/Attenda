@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { ScrollView, StyleSheet, View } from 'react-native';
 import { Input } from 'react-native-elements';
 import { Button, Chip } from 'react-native-paper';
 import { isValidEmail } from '../../../../util';
@@ -17,6 +17,7 @@ const styles = StyleSheet.create({
   },
   emailChip: {
     marginVertical: 4,
+    marginLeft: 4,
   },
   inviteContainer: {
     justifyContent: 'flex-end',
@@ -36,18 +37,20 @@ const Emails: React.FC<{
   // console.log('Re Rendering', 'Emails');
 
   return (
-    <View style={styles.emailsContainer}>
-      {emails.map(email => (
-        <Chip
-          key={email}
-          style={styles.emailChip}
-          icon="account-circle"
-          onClose={() => removeEmail(email)}
-        >
-          {email}
-        </Chip>
-      ))}
-    </View>
+    <ScrollView>
+      <View style={styles.emailsContainer}>
+        {emails.map(email => (
+          <Chip
+            key={email}
+            style={styles.emailChip}
+            icon="account-circle"
+            onClose={() => removeEmail(email)}
+          >
+            {email}
+          </Chip>
+        ))}
+      </View>
+    </ScrollView>
   );
 });
 

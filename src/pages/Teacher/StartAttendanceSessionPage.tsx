@@ -21,7 +21,7 @@ const StartAttendanceSessionPage: React.FC<Props> = ({
     <StartAttendanceSession
       title="Computer science data structures and algorithms"
       onStartSession={() =>
-        navigation.replace('CurrentAttendanceSession', {
+        navigation.push('CurrentAttendanceSession', {
           classId: '',
           showStopDialog: false,
         })
