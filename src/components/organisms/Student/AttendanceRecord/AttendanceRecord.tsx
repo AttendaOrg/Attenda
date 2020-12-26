@@ -12,6 +12,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   percentageContainer: {
+    // alignSelf: 'flex-end',
     flexDirection: 'row',
   },
   percentageText: {

@@ -89,6 +89,10 @@ export type RootStackParamList = {
     classCode: string;
     rollNo: string;
   };
+  /**
+   * using Popup instated
+   * @deprecated route
+   */
   TurnOnWifi: undefined;
   GiveResponse: {
     classId: string;
@@ -183,6 +187,7 @@ const StackScreens = (): JSX.Element => {
               options={JoinClassFormNavigationOptions}
             />
 
+            {/* this route is deprecated using popup instead */}
             <Stack.Screen
               name="TurnOnWifi"
               component={TurnOnWifiPage}

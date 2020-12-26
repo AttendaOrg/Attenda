@@ -13,7 +13,8 @@ const SimpleCloseNavigationOptions: StackNavigationOptions = {
     const navigation = useNavigation();
 
     return (
-      <View style={{ marginTop: (StatusBar.currentHeight || 0) / 2 }}>
+      // style={{ marginTop: (StatusBar.currentHeight || 0) / 2 }} FIXME: pick an appropriate value
+      <View>
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <MaterialIcons
             name="close"
@@ -25,6 +26,18 @@ const SimpleCloseNavigationOptions: StackNavigationOptions = {
       </View>
     );
   },
+  header: props => (
+    // <View style={{ marginTop: (StatusBar.currentHeight || 0) / 2 }}>
+    <View>
+      <TouchableOpacity onPress={() => props.navigation.goBack()}>
+        <MaterialIcons
+          name="close"
+          size={24}
+          style={{ marginLeft: 16, marginTop: 5 }}
+        />
+      </TouchableOpacity>
+    </View>
+  ),
 };
 
 export const NoHeaderNavigationOptions: StackNavigationOptions = {

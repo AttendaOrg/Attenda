@@ -4,13 +4,13 @@ import {
   StackScreenProps,
 } from '@react-navigation/stack';
 import { RootStackParamList } from '../../App';
-import SimpleCloseNavigationOptions from '../../components/templates/SimpleCloseNavigationOption';
 import ChangePassword from '../../components/organisms/Common/ChangePassword';
+import { SimpleHeaderBackNavigationOptions } from '../../components/templates/SimpleHeaderNavigationOptions';
 
 type Props = StackScreenProps<RootStackParamList, 'ChangePassword'>;
 
 export const ChangePasswordNavigationOptions: StackNavigationOptions = {
-  ...SimpleCloseNavigationOptions,
+  ...SimpleHeaderBackNavigationOptions,
   title: 'Change Password',
 };
 

@@ -23,7 +23,7 @@ const styles = StyleSheet.create({
   },
   largeImage: {
     height: Dimensions.get('screen').height * 0.4,
-    width: Dimensions.get('screen').height * 0.4,
+    width: Dimensions.get('screen').height * 0.44,
   },
 });
 
