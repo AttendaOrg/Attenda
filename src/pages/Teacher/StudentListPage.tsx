@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useLayoutEffect, useState } from 'react';
 import {
   StackNavigationOptions,
   StackScreenProps,
@@ -22,34 +22,25 @@ const styles = StyleSheet.create({
   },
 });
 
-export const StudentListNavigationOptions: OptionsProps = ({
-  navigation,
-  route,
-}) => ({
+export const StudentListNavigationOptions: OptionsProps = () => ({
   ...SimpleHeaderBackNavigationOptions,
   title: 'Students',
-  headerRight: ({ tintColor }) => (
-    <View style={{ flexDirection: 'row' }}>
-      <TouchableOpacity
-        style={styles.actionIcons}
-        onPress={() => navigation.push('InviteStudent')}
-      >
-        <MaterialIcons name="person-add" size={24} color={tintColor} />
-      </TouchableOpacity>
-      {route.params.totalSelected > 0 && (
-        <TouchableOpacity
-          style={styles.actionIcons}
-          onPress={() =>
-            navigation.setParams({ ...route.params, showDeleteDialog: true })
-          }
-        >
-          <MaterialIcons name="delete" color={tintColor} size={24} />
-        </TouchableOpacity>
-      )}
-    </View>
-  ),
 });
 
+const initialListData = [
+  {
+    name: 'Prasanta Barman',
+    rollNo: 'IIT2154',
+    key: 'IIT2154',
+    checked: false,
+  },
+  {
+    name: 'Apurba Roy',
+    rollNo: 'IIT2441454',
+    key: 'IIT2441454',
+    checked: false,
+  },
+];
 const StudentListPage: React.FC<Props> = ({
   navigation,
   route,
@@ -58,35 +49,49 @@ const StudentListPage: React.FC<Props> = ({
     params: { classId },
   } = route;
   const [showChecked, setShowChecked] = useState(false);
-  const [listItems, setListItems] = useState<StudentListData[]>([
-    {
-      name: 'Prasanta Barman',
-      rollNo: 'IIT2154',
-      key: 'IIT2154',
-      checked: false,
-    },
-    {
-      name: 'Apurba Roy',
-      rollNo: 'IIT2441454',
-      key: 'IIT2441454',
-      checked: false,
-    },
-  ]);
+  const [listItems, setListItems] = useState<StudentListData[]>(
+    initialListData,
+  );
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
+  /**
+   * hides the radio button for all items if no item is selected
+   * @param newListItems list of items
+   */
   const updateHeaderActions = (newListItems: StudentListData[]) => {
     const matched = newListItems.filter(item => item.checked === true);
 
-    if (matched.length > 0) {
-      setShowChecked(true);
-      navigation.setParams({ totalSelected: matched.length });
-    } else {
-      setShowChecked(false);
-      navigation.setParams({ totalSelected: matched.length });
-    }
+    setShowChecked(matched.length > 0);
   };
 
+  useLayoutEffect(() => {
+    const totalSelected = listItems.filter(item => item.checked === true)
+      .length;
+
+    navigation.setOptions({
+      headerRight: ({ tintColor }) => (
+        <View style={{ flexDirection: 'row' }}>
+          <TouchableOpacity
+            style={styles.actionIcons}
+            onPress={() => navigation.push('InviteStudent')}
+          >
+            <MaterialIcons name="person-add" size={24} color={tintColor} />
+          </TouchableOpacity>
+          {totalSelected > 0 && (
+            <TouchableOpacity
+              style={styles.actionIcons}
+              onPress={() => setShowDeleteDialog(true)}
+            >
+              <MaterialIcons name="delete" color={tintColor} size={24} />
+            </TouchableOpacity>
+          )}
+        </View>
+      ),
+    });
+  }, [listItems, navigation]);
+
   const dismissDialog = () => {
-    navigation.setParams({ showDeleteDialog: false });
+    setShowDeleteDialog(false);
   };
 
   const deleteSelectedStudents = () => {
@@ -129,7 +134,7 @@ const StudentListPage: React.FC<Props> = ({
           })
         }
       />
-      <Dialog visible={route.params.showDeleteDialog} onDismiss={dismissDialog}>
+      <Dialog visible={showDeleteDialog} onDismiss={dismissDialog}>
         <Dialog.Title>Delete Students</Dialog.Title>
         <Dialog.Content>
           <Paragraph>

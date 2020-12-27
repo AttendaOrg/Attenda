@@ -114,8 +114,6 @@ export type RootStackParamList = {
   InviteStudent: undefined;
   StudentList: {
     classId: string;
-    totalSelected: number;
-    showDeleteDialog: boolean;
   };
   TeacherAttendanceRecord: {
     classId: string;
