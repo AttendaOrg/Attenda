@@ -10,6 +10,7 @@ import SimpleCloseNavigationOptions from '../../components/templates/SimpleClose
 import { HEADER_AB_TEST_NEW } from '../../util/constant';
 import { SimpleHeaderBackNavigationOptions } from '../../components/templates/SimpleHeaderNavigationOptions';
 import TurnOnWifi from '../../components/organisms/Student/TurnOnWifi';
+import { useConfirmBack } from '../../util/hooks/useConfirmBack';
 
 type Props = StackScreenProps<RootStackParamList, 'GiveResponse'>;
 
@@ -24,6 +25,8 @@ const GiveResponsePage: React.FC<Props> = ({ navigation }): JSX.Element => {
     setShowTurnOnWifiPopUp(true);
   }, []);
 
+  useConfirmBack(navigation);
+
   return (
     <>
       <GiveResponse
@@ -32,7 +35,10 @@ const GiveResponsePage: React.FC<Props> = ({ navigation }): JSX.Element => {
           else navigation.push('UnsuccessfulResponse');
         }}
       />
-      <Dialog visible={showTurnOnWifiPopUp}>
+      <Dialog
+        visible={showTurnOnWifiPopUp}
+        onDismiss={() => setShowTurnOnWifiPopUp(false)}
+      >
         <TurnOnWifi onCloseBtnClick={() => setShowTurnOnWifiPopUp(false)} />
       </Dialog>
     </>
