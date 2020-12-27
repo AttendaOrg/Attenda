@@ -76,6 +76,10 @@ import MyAccountPage, {
   MyAccountNavigationOptions,
 } from './pages/Commons/MyAccountPage';
 
+export type TeacherClassListNavigationProps = {
+  withDismiss?: boolean;
+};
+
 export type RootStackParamList = {
   SignIn: undefined;
   ForgotPassword: undefined;
@@ -102,7 +106,7 @@ export type RootStackParamList = {
   StudentAttendanceRecord: {
     classId: string;
   };
-  TeacherClassList: undefined;
+  TeacherClassList: TeacherClassListNavigationProps;
   EditStudentAttendanceRecord: {
     classId: string;
     studentId: string;
@@ -130,6 +134,7 @@ export type RootStackParamList = {
   CurrentAttendanceSession: {
     classId: string;
     showStopDialog: boolean;
+    sessionTime: string;
   };
   CreateClass: undefined;
   // drawer

@@ -4,6 +4,7 @@ import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Button, TextInput } from 'react-native-paper';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import KeyboardAdjustImageView from '../../../templates/KeyboardAdjustImageView';
+import { convertDate, convertTime } from '../../../../util';
 
 const styles = StyleSheet.create({
   container: {
@@ -35,24 +36,6 @@ export interface StartAttendanceSessionPops {
   title: string;
   onStartSession: (date: Date) => void;
 }
-
-/**
- * prefix the number with '0' if it is single digit
- * @param num number
- */
-const padNumber = (num: number): string => (num < 10 ? `0${num}` : `${num}`);
-
-const convertDate = (date: Date): string =>
-  `${padNumber(date.getDate())}/${date.getMonth() + 1}/${date.getFullYear()}`;
-
-const isAm = (hour: number): boolean => hour <= 12;
-
-const convertTime = (date: Date): string =>
-  `${
-    date.getHours() > 12
-      ? padNumber(date.getHours() % 12)
-      : padNumber(date.getHours())
-  }:${padNumber(date.getMinutes())} ${isAm(date.getHours()) ? 'AM' : 'PM'}`;
 
 const StartAttendanceSession: React.FC<StartAttendanceSessionPops> = ({
   onStartSession,

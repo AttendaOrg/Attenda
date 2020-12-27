@@ -3,14 +3,14 @@ import { useEffect } from 'react';
 import { Alert, Platform } from 'react-native';
 
 // find a better way to get the prop of callback
-type callbackProps = EventArg<
+// eslint-disable-next-line @typescript-eslint/ban-types
+export type NavigationEventListenerCallback<T = object> = EventArg<
   'beforeRemove',
   true,
   {
     action: Readonly<{
       type: string;
-      // eslint-disable-next-line @typescript-eslint/ban-types
-      payload?: object | undefined;
+      payload?: T | undefined;
       source?: string | undefined;
       target?: string | undefined;
     }>;
@@ -24,7 +24,7 @@ type callbackProps = EventArg<
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const useConfirmBack = (navigation: NavigationProp<any>): void => {
   useEffect(() => {
-    const callback = (e: callbackProps) => {
+    const callback = (e: NavigationEventListenerCallback) => {
       e.preventDefault();
 
       if (Platform.OS === 'web') {
