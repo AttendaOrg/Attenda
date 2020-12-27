@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ScrollView, StyleSheet } from 'react-native';
+import { ScrollView, StyleSheet, View } from 'react-native';
 import { Calendar, DateObject } from 'react-native-calendars';
 import { Dialog } from 'react-native-paper';
 import { lightColor } from '../../../../util/Colors';
@@ -42,14 +42,16 @@ const AttendanceSessionRecord: React.FC<AttendanceSessionRecordPops> = ({
   };
 
   return (
-    <ScrollView style={styles.container}>
-      <ClassDetails className={className} section={section} />
-      <Calendar
-        onMonthChange={date => onMonthChange(new Date(date.dateString))}
-        onDayPress={onDateClick}
-        markedDates={mDates}
-        markingType="multi-dot"
-      />
+    <View style={styles.container}>
+      <ScrollView>
+        <ClassDetails className={className} section={section} />
+        <Calendar
+          onMonthChange={date => onMonthChange(new Date(date.dateString))}
+          onDayPress={onDateClick}
+          markedDates={mDates}
+          markingType="multi-dot"
+        />
+      </ScrollView>
       <Dialog visible={popupVisible} onDismiss={() => setPopupVisible(false)}>
         <SelectTimeEditPopup
           date={currentDate}
@@ -62,7 +64,7 @@ const AttendanceSessionRecord: React.FC<AttendanceSessionRecordPops> = ({
           }}
         />
       </Dialog>
-    </ScrollView>
+    </View>
   );
 };
 

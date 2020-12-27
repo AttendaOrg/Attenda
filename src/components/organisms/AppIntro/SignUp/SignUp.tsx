@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { Button, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { CheckBox, Input } from 'react-native-elements';
+import { primaryColor } from '../../../../util/Colors';
 import { inputContainerStyle } from '../../../../util/Styles';
 import KeyboardAdjustImageView from '../../../templates/KeyboardAdjustImageView';
 
@@ -38,6 +39,9 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
     flex: 1,
   },
+  linkText: {
+    color: primaryColor,
+  },
 });
 
 const imageSource = require('../../../../../assets/images/SignUp.png');
@@ -45,11 +49,15 @@ const imageSource = require('../../../../../assets/images/SignUp.png');
 export interface SignUpPops {
   onSubmit: (email: string, password: string, acceptTerms: boolean) => void;
   onSignUpClick: () => void;
+  onPrivacyPolicyClick: () => void;
+  onTermsClick: () => void;
 }
 
 const SignUp: React.FC<SignUpPops> = ({
   onSignUpClick,
   onSubmit,
+  onPrivacyPolicyClick,
+  onTermsClick,
 }): JSX.Element => {
   const [acceptTerms, setChecked] = useState(false);
   const [email, setEmail] = useState('');
@@ -90,9 +98,20 @@ const SignUp: React.FC<SignUpPops> = ({
 
         <CheckBox
           checked={acceptTerms}
-          title="I accept the privacy policy and terms of service"
           containerStyle={styles.checkBoxStyle}
           onPress={() => setChecked(!acceptTerms)}
+          title={
+            <Text>
+              I accept the
+              <TouchableOpacity onPress={onPrivacyPolicyClick}>
+                <Text style={styles.linkText}> privacy policy </Text>
+              </TouchableOpacity>
+              and
+              <TouchableOpacity onPress={onTermsClick}>
+                <Text style={styles.linkText}> terms of service</Text>
+              </TouchableOpacity>
+            </Text>
+          }
         />
         <View style={styles.btnContainer}>
           <Button

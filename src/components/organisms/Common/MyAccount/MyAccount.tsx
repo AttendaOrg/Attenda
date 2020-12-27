@@ -43,6 +43,7 @@ const styles = StyleSheet.create({
   },
   infoContainer: {
     margin: 16,
+    marginBottom: 0,
   },
   infoTitle: {
     fontSize: 14,
@@ -60,7 +61,8 @@ const styles = StyleSheet.create({
   },
   touchableOpacityContainer: {
     flex: 1,
-    margin: 16,
+    marginHorizontal: 16,
+
     // justifyContent: 'flex-end',
   },
   touchableOpacityRow: {
