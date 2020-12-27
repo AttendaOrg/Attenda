@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback, useState } from 'react';
 import {
   StackNavigationOptions,
   StackScreenProps,
@@ -15,18 +15,18 @@ type Props = StackScreenProps<RootStackParamList, 'ClassSettings'>;
 export const ClassSettingsNavigationOptions: StackNavigationOptions = {
   ...SimpleHeaderBackNavigationOptions,
   title: 'Class Settings',
-  headerRight: ({ tintColor }) => (
-    <View>
-      <IconButton
-        color={tintColor || lightColor}
-        icon="check"
-        onPress={() => null}
-      />
-    </View>
-  ),
 };
 
-const ClassSettingsPage: React.FC<Props> = (): JSX.Element => {
+const ClassSettingsPage: React.FC<Props> = ({ navigation }): JSX.Element => {
+  const [initialTitle, setInitialTitle] = useState(
+    'Computer science data structures and algorithms',
+  );
+  const [initialSection, setInitialSection] = useState('CED/COE');
+  const [title, setTitle] = useState(initialTitle);
+  const [section, setSection] = useState(initialSection);
+  const [sectionErrorMsg, setSectionErrorMsg] = useState('');
+  const [titleErrorMsg, setTitleErrorMsg] = useState('');
+
   const onCodeShare = () => {
     try {
       Share.share({ message: 'A454SDS', title: 'Class Code' });
@@ -47,16 +47,77 @@ const ClassSettingsPage: React.FC<Props> = (): JSX.Element => {
     }
   };
 
+  const showSaveBtn = useCallback(
+    (): boolean => initialTitle !== title || initialSection !== section,
+    [initialSection, initialTitle, section, title],
+  );
+
+  const updateClassInfo = useCallback(() => {
+    setInitialSection(section);
+    setInitialTitle(title);
+  }, [section, title]);
+
+  React.useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRight: ({ tintColor }) => (
+        <View style={{ display: showSaveBtn() ? 'flex' : 'none' }}>
+          <IconButton
+            color={tintColor || lightColor}
+            icon="check"
+            onPress={updateClassInfo}
+          />
+        </View>
+      ),
+    });
+  }, [navigation, showSaveBtn, updateClassInfo]);
+
+  /**
+   * show error message if the class title/section is empty
+   * @param param \{ title = undefined, section = undefined}
+   */
+  const showErrorMsg = ({
+    title: _title = undefined,
+    section: _section = undefined,
+  }: {
+    title?: string;
+    section?: string;
+  }) => {
+    if (_section !== undefined) {
+      if (_section === '') setSectionErrorMsg("Section can't be Empty");
+      else setSectionErrorMsg('');
+    }
+    if (_title !== undefined) {
+      if (_title === '') setTitleErrorMsg("Class Title can't be empty");
+      else setTitleErrorMsg('');
+    }
+  };
+
+  const onTitleChange = (text: string) => {
+    setTitle(text);
+    showErrorMsg({
+      title: text,
+    });
+  };
+
+  const onSectionChange = (text: string) => {
+    setSection(text);
+    showErrorMsg({
+      section: text,
+    });
+  };
+
   return (
     <ClassSettings
-      title="Computer science data structures and algorithms"
-      section="CED/COE"
+      title={title}
+      titleErrorMsg={titleErrorMsg}
+      section={section}
+      sectionErrorMsg={sectionErrorMsg}
       isCodeEnabled
       isLinkEnabled
       code="A454SDS"
       link="https://attenda.app.to/A454SDS"
-      onNameChange={() => null}
-      onSectionChange={() => null}
+      onTitleChange={onTitleChange}
+      onSectionChange={onSectionChange}
       toggleCodeSwitch={() => null}
       toggleLinkSwitch={() => null}
       onCodeShare={onCodeShare}
