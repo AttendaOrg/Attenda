@@ -74,7 +74,7 @@ const UserInfo: React.FC<UserInfoPops> = ({
       style={{ marginHorizontal: 6 }}
       onPress={() => setIsRollNoEditing(true)}
     >
-      <MaterialIcons name="edit" color="#6A6A6A" size={20} />
+      <MaterialIcons name="edit" size={20} />
     </TouchableOpacity>
   );
 

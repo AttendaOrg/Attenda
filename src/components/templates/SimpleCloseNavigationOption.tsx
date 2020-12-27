@@ -20,24 +20,15 @@ const SimpleCloseNavigationOptions: StackNavigationOptions = {
             name="close"
             size={24}
             color={tintColor}
-            style={{ margin: 16 }}
+            style={{
+              margin: 16,
+              marginTop: (StatusBar.currentHeight || 0) / 2,
+            }}
           />
         </TouchableOpacity>
       </View>
     );
   },
-  header: props => (
-    // <View style={{ marginTop: (StatusBar.currentHeight || 0) / 2 }}>
-    <View>
-      <TouchableOpacity onPress={() => props.navigation.goBack()}>
-        <MaterialIcons
-          name="close"
-          size={24}
-          style={{ marginLeft: 16, marginTop: 5 }}
-        />
-      </TouchableOpacity>
-    </View>
-  ),
 };
 
 export const NoHeaderNavigationOptions: StackNavigationOptions = {
