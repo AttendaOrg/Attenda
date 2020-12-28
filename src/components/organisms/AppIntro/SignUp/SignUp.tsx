@@ -101,16 +101,16 @@ const SignUp: React.FC<SignUpPops> = ({
           containerStyle={styles.checkBoxStyle}
           onPress={() => setChecked(!acceptTerms)}
           title={
-            <Text>
-              I accept the
+            <View style={{ flexDirection: 'row' }}>
+              <Text>I accept the</Text>
               <TouchableOpacity onPress={onPrivacyPolicyClick}>
                 <Text style={styles.linkText}> privacy policy </Text>
               </TouchableOpacity>
-              and
+              <Text>and</Text>
               <TouchableOpacity onPress={onTermsClick}>
                 <Text style={styles.linkText}> terms of service</Text>
               </TouchableOpacity>
-            </Text>
+            </View>
           }
         />
         <View style={styles.btnContainer}>
