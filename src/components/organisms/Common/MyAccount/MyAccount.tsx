@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import { AntDesign } from '@expo/vector-icons';
 import { Icon } from 'react-native-elements';
+import DoubleButtonPopup from '../../../molecules/DoubleButtonPopup';
 
 const styles = StyleSheet.create({
   container: {
@@ -94,6 +95,9 @@ export interface MyAccountPops {
   onEditUsernameClick: () => void;
   onChangePasswordClick: () => void;
   onLogOutClick: () => void;
+  showPopup: boolean;
+  onDismissPopup: () => void;
+  onPositivePopupClick: () => void;
 }
 
 const MyAccount: React.FC<MyAccountPops> = ({
@@ -104,6 +108,9 @@ const MyAccount: React.FC<MyAccountPops> = ({
   onEditUsernameClick,
   onChangePasswordClick,
   onLogOutClick,
+  onDismissPopup,
+  onPositivePopupClick,
+  showPopup,
 }): JSX.Element => {
   return (
     <View style={styles.container}>
@@ -162,6 +169,17 @@ const MyAccount: React.FC<MyAccountPops> = ({
           </View>
         </TouchableOpacity>
       </View>
+
+      <DoubleButtonPopup
+        visible={showPopup}
+        title="Log out"
+        text="Are you sure to log out? "
+        positiveButtonText="Ok"
+        negativeButtonText="Cancel"
+        onNegativeButtonClick={onDismissPopup}
+        onPositiveButtonClick={onPositivePopupClick}
+        onDismiss={onDismissPopup}
+      />
     </View>
   );
 };
