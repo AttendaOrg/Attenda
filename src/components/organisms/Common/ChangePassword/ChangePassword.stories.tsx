@@ -22,9 +22,6 @@ export const Default = (): JSX.Element => (
     currentPassword={text('CurrentPassword', '')}
     newPassword={text('newPassword', '')}
     confirmPassword={text('confirmPassword', '')}
-    showPopup={boolean('showPopup', false)}
-    onPositivePopupClick={() => action('onPositivePopupClick')()}
-    onDismissPopup={() => action('onDismissPopup')()}
     onDone={(currentPass, newPass, confirmPass) =>
       action('onDone')(currentPass, newPass, confirmPass)
     }

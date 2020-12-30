@@ -6,6 +6,7 @@ import {
 import { RootStackParamList } from '../../App';
 import ChangePassword from '../../components/organisms/Common/ChangePassword';
 import { SimpleHeaderBackNavigationOptions } from '../../components/templates/SimpleHeaderNavigationOptions';
+import SingleButtonPopup from '../../components/molecules/SingleButtonPopup';
 
 type Props = StackScreenProps<RootStackParamList, 'ChangePassword'>;
 
@@ -18,16 +19,18 @@ const ChangePasswordPage: React.FC<Props> = ({ navigation }): JSX.Element => {
   const [showChangePasswordPopup, setShowChangePasswordPopup] = useState(false);
 
   return (
-    <ChangePassword
-      showPopup={showChangePasswordPopup}
-      onDismissPopup={() => setShowChangePasswordPopup(false)}
-      onPositivePopupClick={() => {
-        // navigation.navigate('TeacherClassList', { withDismiss: true });
-        navigation.goBack();
-      }}
-      // onDone={() => navigation.goBack()}
-      onDone={() => setShowChangePasswordPopup(true)}
-    />
+    <>
+      <ChangePassword onDone={() => setShowChangePasswordPopup(true)} />
+
+      <SingleButtonPopup
+        visible={showChangePasswordPopup}
+        title="Success"
+        text="Your password has changed."
+        buttonText="Ok"
+        onDismiss={() => setShowChangePasswordPopup(false)}
+        onButtonClick={() => navigation.goBack()}
+      />
+    </>
   );
 };
 
