@@ -9,6 +9,8 @@ import { RootStackParamList } from '../../App';
 import ClassSettings from '../../components/organisms/Teacher/ClassSettings';
 import { SimpleHeaderBackNavigationOptions } from '../../components/templates/SimpleHeaderNavigationOptions';
 import { lightColor } from '../../util/Colors';
+import DoubleButtonPopup from '../../components/molecules/DoubleButtonPopup';
+import { NavigationEventListenerCallback } from '../../util/hooks/useConfirmBack';
 
 type Props = StackScreenProps<RootStackParamList, 'ClassSettings'>;
 
@@ -18,14 +20,15 @@ export const ClassSettingsNavigationOptions: StackNavigationOptions = {
 };
 
 const ClassSettingsPage: React.FC<Props> = ({ navigation }): JSX.Element => {
-  const [initialTitle, setInitialTitle] = useState(
+  const [prevTitle, setPrevTitle] = useState(
     'Computer science data structures and algorithms',
   );
-  const [initialSection, setInitialSection] = useState('CED/COE');
-  const [title, setTitle] = useState(initialTitle);
-  const [section, setSection] = useState(initialSection);
+  const [prevSection, setPrevSection] = useState('CED/COE');
+  const [currentTitle, setCurrentTitle] = useState(prevTitle);
+  const [currentSection, setCurrentSection] = useState(prevSection);
   const [sectionErrorMsg, setSectionErrorMsg] = useState('');
   const [titleErrorMsg, setTitleErrorMsg] = useState('');
+  const [showSaveDialog, setShowSaveDialog] = useState(false);
 
   const onCodeShare = () => {
     try {
@@ -47,20 +50,41 @@ const ClassSettingsPage: React.FC<Props> = ({ navigation }): JSX.Element => {
     }
   };
 
-  const showSaveBtn = useCallback(
-    (): boolean => initialTitle !== title || initialSection !== section,
-    [initialSection, initialTitle, section, title],
+  const hasUnsavedChanges = useCallback(
+    (): boolean => prevTitle !== currentTitle || prevSection !== currentSection,
+    [prevSection, prevTitle, currentSection, currentTitle],
   );
 
   const updateClassInfo = useCallback(() => {
-    setInitialSection(section);
-    setInitialTitle(title);
-  }, [section, title]);
+    setPrevSection(currentSection);
+    setPrevTitle(currentTitle);
+  }, [currentSection, currentTitle]);
+
+  const dismissSaveDialog = () => setShowSaveDialog(false);
+
+  const discardChanges = () => {
+    setCurrentSection(prevSection);
+    setCurrentTitle(prevTitle);
+    setShowSaveDialog(false);
+  };
+
+  const onPositiveButtonClick = () => {
+    updateClassInfo();
+    dismissSaveDialog();
+  };
+
+  const onGoBack = useCallback(() => {
+    if (hasUnsavedChanges()) {
+      setShowSaveDialog(true);
+    } else {
+      navigation.goBack();
+    }
+  }, [hasUnsavedChanges, navigation]);
 
   React.useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: ({ tintColor }) => (
-        <View style={{ display: showSaveBtn() ? 'flex' : 'none' }}>
+        <View style={{ display: hasUnsavedChanges() ? 'flex' : 'none' }}>
           <IconButton
             color={tintColor || lightColor}
             icon="check"
@@ -69,7 +93,24 @@ const ClassSettingsPage: React.FC<Props> = ({ navigation }): JSX.Element => {
         </View>
       ),
     });
-  }, [navigation, showSaveBtn, updateClassInfo]);
+
+    const callback = (e: NavigationEventListenerCallback) => {
+      if (hasUnsavedChanges()) {
+        setShowSaveDialog(true);
+        // prevent from going back
+        e.preventDefault();
+      }
+    };
+
+    // BUG: for some reason react-navigation is not showing the correct return type
+    // expected () => removeListener(type, callback); but got () => void
+    // so we are using remove listener method to clean up the event listener
+    navigation.addListener('beforeRemove', callback);
+
+    // it is necessary to remove the event free up the listener
+    // or every data change useEffect will reattach the event listener with the old event
+    return () => navigation.removeListener('beforeRemove', callback);
+  }, [navigation, hasUnsavedChanges, updateClassInfo, onGoBack]);
 
   /**
    * show error message if the class title/section is empty
@@ -93,36 +134,48 @@ const ClassSettingsPage: React.FC<Props> = ({ navigation }): JSX.Element => {
   };
 
   const onTitleChange = (text: string) => {
-    setTitle(text);
+    setCurrentTitle(text);
     showErrorMsg({
       title: text,
     });
   };
 
   const onSectionChange = (text: string) => {
-    setSection(text);
+    setCurrentSection(text);
     showErrorMsg({
       section: text,
     });
   };
 
   return (
-    <ClassSettings
-      title={title}
-      titleErrorMsg={titleErrorMsg}
-      section={section}
-      sectionErrorMsg={sectionErrorMsg}
-      isCodeEnabled
-      isLinkEnabled
-      code="A454SDS"
-      link="https://attenda.app.to/A454SDS"
-      onTitleChange={onTitleChange}
-      onSectionChange={onSectionChange}
-      toggleCodeSwitch={() => null}
-      toggleLinkSwitch={() => null}
-      onCodeShare={onCodeShare}
-      onLinkShare={onLinkShare}
-    />
+    <>
+      <ClassSettings
+        title={currentTitle}
+        titleErrorMsg={titleErrorMsg}
+        section={currentSection}
+        sectionErrorMsg={sectionErrorMsg}
+        isCodeEnabled
+        isLinkEnabled
+        code="A454SDS"
+        link="https://attenda.app.to/A454SDS"
+        onTitleChange={onTitleChange}
+        onSectionChange={onSectionChange}
+        toggleCodeSwitch={() => null}
+        toggleLinkSwitch={() => null}
+        onCodeShare={onCodeShare}
+        onLinkShare={onLinkShare}
+      />
+      <DoubleButtonPopup
+        onDismiss={dismissSaveDialog}
+        visible={showSaveDialog}
+        negativeButtonText="Discard"
+        onPositiveButtonClick={onPositiveButtonClick}
+        onNegativeButtonClick={discardChanges}
+        positiveButtonText="Save"
+        title="Discard Changes ?"
+        text="You have some unsaved changes."
+      />
+    </>
   );
 };
 
