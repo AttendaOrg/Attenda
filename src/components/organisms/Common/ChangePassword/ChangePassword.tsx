@@ -4,6 +4,7 @@ import { Input } from 'react-native-elements';
 import { Button } from 'react-native-paper';
 import { inputContainerStyle } from '../../../../util/Styles';
 import KeyboardAdjustImageView from '../../../templates/KeyboardAdjustImageView';
+import DoubleButtonPopup from '../../../molecules/DoubleButtonPopup';
 
 const styles = StyleSheet.create({
   container: {
@@ -27,10 +28,16 @@ export interface ChangePasswordPops {
   currentPassword?: string;
   newPassword?: string;
   confirmPassword?: string;
+  showPopup: boolean;
+  onDismissPopup: () => void;
+  onPositivePopupClick: () => void;
   onDone: (currentPass: string, newPass: string, confirmPass: string) => void;
 }
 
 const ChangePassword: React.FC<ChangePasswordPops> = ({
+  onDismissPopup,
+  onPositivePopupClick,
+  showPopup,
   onDone,
 }): JSX.Element => {
   const [currentPass, setCurrentPass] = useState('');
@@ -73,6 +80,17 @@ const ChangePassword: React.FC<ChangePasswordPops> = ({
           RESET
         </Button>
       </View>
+
+      <DoubleButtonPopup
+        visible={showPopup}
+        title="Change password"
+        text="Are you sure to change? "
+        positiveButtonText="Ok"
+        negativeButtonText="Cancel"
+        onNegativeButtonClick={onDismissPopup}
+        onPositiveButtonClick={onPositivePopupClick}
+        onDismiss={onDismissPopup}
+      />
     </View>
   );
 };

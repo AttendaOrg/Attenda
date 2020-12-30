@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   StackNavigationOptions,
   StackScreenProps,
@@ -15,7 +15,20 @@ export const ChangePasswordNavigationOptions: StackNavigationOptions = {
 };
 
 const ChangePasswordPage: React.FC<Props> = ({ navigation }): JSX.Element => {
-  return <ChangePassword onDone={() => navigation.goBack()} />;
+  const [showChangePasswordPopup, setShowChangePasswordPopup] = useState(false);
+
+  return (
+    <ChangePassword
+      showPopup={showChangePasswordPopup}
+      onDismissPopup={() => setShowChangePasswordPopup(false)}
+      onPositivePopupClick={() => {
+        // navigation.navigate('TeacherClassList', { withDismiss: true });
+        navigation.goBack();
+      }}
+      // onDone={() => navigation.goBack()}
+      onDone={() => setShowChangePasswordPopup(true)}
+    />
+  );
 };
 
 export default ChangePasswordPage;
