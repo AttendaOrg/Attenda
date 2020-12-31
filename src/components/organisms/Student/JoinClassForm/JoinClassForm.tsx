@@ -33,7 +33,17 @@ const JoinClassForm: React.FC<JoinClassFormPops> = ({
   joinCode = '',
 }): JSX.Element => {
   const [classCode, setClassCode] = useState(joinCode);
+  const [jonCodeError, setJonCodeError] = useState('');
   const [rollNo, setRollNo] = useState('');
+
+  const onClassCodeChangeText = (text: string) => {
+    if (text === '') {
+      setJonCodeError('Please enter a valid class code');
+    } else if (jonCodeError !== '') {
+      setJonCodeError('');
+    }
+    setClassCode(text);
+  };
 
   return (
     <View style={styles.container}>
@@ -45,7 +55,8 @@ const JoinClassForm: React.FC<JoinClassFormPops> = ({
           style={styles.inputStyle}
           labelStyle={{ margin: 0 }}
           errorStyle={{ margin: 0 }}
-          onChangeText={setClassCode}
+          onChangeText={onClassCodeChangeText}
+          errorMessage={jonCodeError}
         />
       )}
       <Input
@@ -69,8 +80,12 @@ const JoinClassForm: React.FC<JoinClassFormPops> = ({
           mode="contained"
           color="#2196f3"
           onPress={() => {
-            if ((joinCode || classCode) && rollNo)
+            if ((joinCode || classCode) && rollNo) {
               onSubmit(joinCode || classCode, rollNo);
+            }
+            if (joinCode === '') {
+              setJonCodeError('Please enter a valid class code');
+            }
           }}
         >
           DONE
