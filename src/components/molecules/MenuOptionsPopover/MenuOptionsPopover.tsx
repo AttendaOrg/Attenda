@@ -50,6 +50,11 @@ const MenuOptionsPopover: React.FC<MenuOptionsPopoverProps> = ({
             key={option.title}
             text={option.title}
             onSelect={option.onPress}
+            customStyles={{
+              optionText: {
+                fontSize: 15,
+              },
+            }}
             style={{
               height: 40,
               justifyContent: 'center',
