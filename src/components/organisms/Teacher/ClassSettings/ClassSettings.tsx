@@ -1,6 +1,7 @@
 import React from 'react';
-import { StyleSheet, View, Text, Switch } from 'react-native';
+import { StyleSheet, View, ScrollView, Text, Switch } from 'react-native';
 import { Input, Icon } from 'react-native-elements';
+// import { ScrollView } from 'react-native-gesture-handler';
 import { inputContainerStyle } from '../../../../util/Styles';
 
 const styles = StyleSheet.create({
@@ -23,6 +24,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginVertical: 5,
+    marginEnd: 8,
   },
   captionText: {
     width: '90%',
@@ -40,14 +42,16 @@ export interface ClassSettingsPops {
   titleErrorMsg?: string;
   section: string;
   sectionErrorMsg?: string;
-  isCodeEnabled: boolean;
-  isLinkEnabled: boolean;
+  description: string;
+  isShareOptionEnabled: boolean;
+  // isLinkEnabled: boolean;
   code: string;
   link: string;
   onTitleChange: (title: string) => void;
   onSectionChange: (section: string) => void;
-  toggleCodeSwitch: (isCodeEnabled: boolean) => void;
-  toggleLinkSwitch: (isLinkEnabled: boolean) => void;
+  onDescriptionChange: (description: string) => void;
+  toggleShareSwitch: (isShareOptionEnabled: boolean) => void;
+  // toggleLinkSwitch: (isLinkEnabled: boolean) => void;
   onCodeShare: () => void;
   onLinkShare: () => void;
 }
@@ -57,25 +61,26 @@ const ClassSettings: React.FC<ClassSettingsPops> = ({
   titleErrorMsg,
   section,
   sectionErrorMsg,
-  isCodeEnabled,
-  isLinkEnabled,
+  description,
+  isShareOptionEnabled,
   code,
   link,
   onTitleChange,
   onSectionChange,
-  toggleCodeSwitch,
-  toggleLinkSwitch,
+  onDescriptionChange,
+  toggleShareSwitch,
   onCodeShare,
   onLinkShare,
 }): JSX.Element => {
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container}>
       <View style={styles.headlineTextContainer}>
         <Text style={styles.headlineText}>Class Info</Text>
       </View>
 
       <View>
         <Input
+          multiline
           containerStyle={inputContainerStyle}
           style={styles.inputStyle}
           label="Title"
@@ -87,6 +92,7 @@ const ClassSettings: React.FC<ClassSettingsPops> = ({
           errorMessage={titleErrorMsg}
         />
         <Input
+          multiline
           containerStyle={inputContainerStyle}
           style={styles.inputStyle}
           label="Section"
@@ -97,6 +103,17 @@ const ClassSettings: React.FC<ClassSettingsPops> = ({
           onChangeText={onSectionChange}
           errorMessage={sectionErrorMsg}
         />
+        <Input
+          multiline
+          containerStyle={inputContainerStyle}
+          style={styles.inputStyle}
+          label="Description"
+          // placeholder="Enter section"
+          textContentType="name"
+          keyboardType="name-phone-pad"
+          value={description}
+          onChangeText={onDescriptionChange}
+        />
       </View>
 
       <View style={styles.headlineTextContainer}>
@@ -104,17 +121,18 @@ const ClassSettings: React.FC<ClassSettingsPops> = ({
       </View>
 
       <View style={styles.captionContainer}>
-        <Text style={styles.captionText}>Disable code</Text>
+        <Text style={styles.captionText}>Disable code and link</Text>
         <Switch
           trackColor={{ false: '#767577', true: '#81b0ff' }}
           thumbColor="#f4f3f4"
           ios_backgroundColor="#3e3e3e"
-          onValueChange={toggleCodeSwitch}
-          value={isCodeEnabled}
+          // style={{ marginEnd: 90 }}
+          onValueChange={toggleShareSwitch}
+          value={isShareOptionEnabled}
         />
       </View>
 
-      <View style={styles.captionContainer}>
+      {/* <View style={styles.captionContainer}>
         <Text style={styles.captionText}>Disable link</Text>
         <Switch
           trackColor={{ false: '#767577', true: '#81b0ff' }}
@@ -123,7 +141,7 @@ const ClassSettings: React.FC<ClassSettingsPops> = ({
           onValueChange={toggleLinkSwitch}
           value={isLinkEnabled}
         />
-      </View>
+      </View> */}
 
       <View style={styles.captionContainer}>
         <Text style={styles.captionText} numberOfLines={1}>
@@ -139,7 +157,16 @@ const ClassSettings: React.FC<ClassSettingsPops> = ({
       </View>
 
       <View style={styles.captionContainer}>
-        <Text style={styles.captionText} numberOfLines={1}>
+        <Text
+          style={{
+            width: '90%',
+            fontWeight: 'normal',
+            color: '#000000',
+            fontSize: 18,
+            marginBottom: 25,
+          }}
+          numberOfLines={1}
+        >
           Invitation link : {link}
         </Text>
         <Icon
@@ -150,7 +177,7 @@ const ClassSettings: React.FC<ClassSettingsPops> = ({
           onPress={onLinkShare}
         />
       </View>
-    </View>
+    </ScrollView>
   );
 };
 
