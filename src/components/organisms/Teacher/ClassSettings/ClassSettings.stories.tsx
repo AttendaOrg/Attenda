@@ -25,7 +25,7 @@ export const Default = (): JSX.Element => (
     isLinkEnabled={boolean('isLinkEnabled', false)}
     code={text('code', '')}
     link={text('link', '')}
-    onNameChange={(title: string) => action('onTitleChange')(title)}
+    onTitleChange={(title: string) => action('onTitleChange')(title)}
     onSectionChange={(section: string) => action('onSectionChange')(section)}
     toggleCodeSwitch={(isCodeEnabled: boolean) =>
       action('toggleCodeSwitch')(isCodeEnabled)

@@ -1,6 +1,7 @@
 /* eslint-disable global-require */
 import React from 'react';
-import { Button, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
+import { Button } from 'react-native-paper';
 import { Input } from 'react-native-elements';
 import { inputContainerStyle } from '../../../../util/Styles';
 import KeyboardAdjustImageView from '../../../templates/KeyboardAdjustImageView';
@@ -15,10 +16,14 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 24,
     textAlign: 'center',
-    marginVertical: 10,
+    // marginVertical: 10,
   },
   inputStyle: {
+    marginTop: 20,
     fontSize: 14,
+  },
+  buttonContainer: {
+    alignItems: 'flex-end',
   },
 });
 
@@ -35,9 +40,12 @@ const ForgotPassword: React.FC<ForgotPasswordPops> = ({
 }): JSX.Element => {
   return (
     <View style={styles.container}>
+      {/* <View style={{ marginTop: 20 }}> */}
       <KeyboardAdjustImageView
         imageSource={require('../../../../../assets/images/forgot_password.png')}
       />
+      {/* </View> */}
+
       <View>
         <Text style={styles.textStyle}>Forgot Password ?</Text>
         <Input
@@ -48,7 +56,16 @@ const ForgotPassword: React.FC<ForgotPasswordPops> = ({
           containerStyle={inputContainerStyle}
           placeholder="Enter Your Email Address"
         />
-        <Button title="Send" onPress={onSend} />
+      </View>
+      <View style={styles.buttonContainer}>
+        <Button
+          style={{ width: '40%' }}
+          mode="contained"
+          color="#2196f3"
+          onPress={onSend}
+        >
+          Send
+        </Button>
       </View>
     </View>
   );

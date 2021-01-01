@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { Button, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { CheckBox, Input } from 'react-native-elements';
+import { primaryColor } from '../../../../util/Colors';
 import { inputContainerStyle } from '../../../../util/Styles';
 import KeyboardAdjustImageView from '../../../templates/KeyboardAdjustImageView';
 
@@ -31,12 +32,15 @@ const styles = StyleSheet.create({
     marginTop: 0,
   },
   btnContainer: {
-    alignItems: 'center',
-    marginVertical: 10,
+    // alignItems: 'flex-end',
+    marginTop: 15,
   },
   goBackContainer: {
     justifyContent: 'flex-end',
     flex: 1,
+  },
+  linkText: {
+    color: primaryColor,
   },
 });
 
@@ -45,11 +49,15 @@ const imageSource = require('../../../../../assets/images/SignUp.png');
 export interface SignUpPops {
   onSubmit: (email: string, password: string, acceptTerms: boolean) => void;
   onSignUpClick: () => void;
+  onPrivacyPolicyClick: () => void;
+  onTermsClick: () => void;
 }
 
 const SignUp: React.FC<SignUpPops> = ({
   onSignUpClick,
   onSubmit,
+  onPrivacyPolicyClick,
+  onTermsClick,
 }): JSX.Element => {
   const [acceptTerms, setChecked] = useState(false);
   const [email, setEmail] = useState('');
@@ -57,7 +65,9 @@ const SignUp: React.FC<SignUpPops> = ({
 
   return (
     <View style={styles.container}>
+      {/* <View style={{ marginTop: 30 }}> */}
       <KeyboardAdjustImageView imageSource={imageSource} />
+      {/* </View> */}
 
       <View style={styles.signUpContainer}>
         <Text style={styles.signInText}>Sign Up</Text>
@@ -88,9 +98,20 @@ const SignUp: React.FC<SignUpPops> = ({
 
         <CheckBox
           checked={acceptTerms}
-          title="I accept the policy and terms"
           containerStyle={styles.checkBoxStyle}
           onPress={() => setChecked(!acceptTerms)}
+          title={
+            <View style={{ flexDirection: 'row' }}>
+              <Text>I accept the</Text>
+              <TouchableOpacity onPress={onPrivacyPolicyClick}>
+                <Text style={styles.linkText}> privacy policy </Text>
+              </TouchableOpacity>
+              <Text>and</Text>
+              <TouchableOpacity onPress={onTermsClick}>
+                <Text style={styles.linkText}> terms of service</Text>
+              </TouchableOpacity>
+            </View>
+          }
         />
         <View style={styles.btnContainer}>
           <Button

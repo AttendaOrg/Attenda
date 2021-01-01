@@ -1,6 +1,6 @@
 import React from 'react';
 import { Platform } from 'react-native';
-import { boolean, withKnobs } from '@storybook/addon-knobs';
+import { withKnobs } from '@storybook/addon-knobs';
 import { storiesOf } from '@storybook/react-native';
 import { action } from '@storybook/addon-actions';
 import CenterView from '../../../atoms/CenterView';
@@ -18,10 +18,7 @@ export default {
 
 // Default For Web And android Component
 export const Default = (): JSX.Element => (
-  <TurnOnWifi
-    refreshing={boolean('Refreshing', false)}
-    onRefresh={() => action('onRefresh')()}
-  />
+  <TurnOnWifi onCloseBtnClick={() => action('onCloseBtnClick')()} />
 );
 
 // if the platform is not web only then render it

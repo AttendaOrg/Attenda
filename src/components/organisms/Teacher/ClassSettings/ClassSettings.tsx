@@ -15,7 +15,7 @@ const styles = StyleSheet.create({
   },
   headlineText: {
     fontWeight: 'bold',
-    color: '#2196F3',
+    color: '#2196f3',
     fontSize: 24,
   },
   captionContainer: {
@@ -37,12 +37,14 @@ const styles = StyleSheet.create({
 
 export interface ClassSettingsPops {
   title: string;
+  titleErrorMsg?: string;
   section: string;
+  sectionErrorMsg?: string;
   isCodeEnabled: boolean;
   isLinkEnabled: boolean;
   code: string;
   link: string;
-  onNameChange: (title: string) => void;
+  onTitleChange: (title: string) => void;
   onSectionChange: (section: string) => void;
   toggleCodeSwitch: (isCodeEnabled: boolean) => void;
   toggleLinkSwitch: (isLinkEnabled: boolean) => void;
@@ -52,26 +54,20 @@ export interface ClassSettingsPops {
 
 const ClassSettings: React.FC<ClassSettingsPops> = ({
   title,
+  titleErrorMsg,
   section,
+  sectionErrorMsg,
   isCodeEnabled,
   isLinkEnabled,
   code,
   link,
-  onNameChange,
+  onTitleChange,
   onSectionChange,
   toggleCodeSwitch,
   toggleLinkSwitch,
   onCodeShare,
   onLinkShare,
 }): JSX.Element => {
-  // const [isCodeEnabled, setIsCodeEnabled] = useState(false);
-  // const toggleCodeSwitch = () =>
-  //   setIsCodeEnabled(previousState => !previousState);
-
-  // const [isLinkEnabled, setIsLinkEnabled] = useState(false);
-  // const toggleLinkSwitch = () =>
-  //   setIsLinkEnabled(previousState => !previousState);
-
   return (
     <View style={styles.container}>
       <View style={styles.headlineTextContainer}>
@@ -82,20 +78,24 @@ const ClassSettings: React.FC<ClassSettingsPops> = ({
         <Input
           containerStyle={inputContainerStyle}
           style={styles.inputStyle}
-          placeholder="Title"
+          label="Title"
+          // placeholder="Enter title"
           textContentType="name"
           keyboardType="name-phone-pad"
           value={title}
-          onChangeText={onNameChange}
+          onChangeText={onTitleChange}
+          errorMessage={titleErrorMsg}
         />
         <Input
           containerStyle={inputContainerStyle}
           style={styles.inputStyle}
-          placeholder="Section"
+          label="Section"
+          // placeholder="Enter section"
           textContentType="name"
           keyboardType="name-phone-pad"
           value={section}
           onChangeText={onSectionChange}
+          errorMessage={sectionErrorMsg}
         />
       </View>
 

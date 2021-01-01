@@ -30,11 +30,17 @@ const styles = StyleSheet.create({
     height: 80,
     width: 80,
     borderRadius: 100,
+    marginBottom: 10,
   },
-  textContent: {
-    fontSize: 16,
+  textName: {
+    fontSize: 18,
     color: lightColor,
-    marginTop: 6,
+    // marginTop: 6,
+  },
+  textEmail: {
+    fontSize: 15,
+    color: lightColor,
+    // marginTop: 6,
   },
 });
 
@@ -56,7 +62,7 @@ export interface DrawerContentPops {
 const DrawerContent: React.FC<DrawerContentPops> = ({
   name,
   email,
-  avatar = require('../../../../../assets/icon.png'),
+  avatar = require('../../../../../assets/images/user.jpg'),
   onListItemCLick,
 }): JSX.Element => {
   return (
@@ -68,8 +74,8 @@ const DrawerContent: React.FC<DrawerContentPops> = ({
         />
         <View style={styles.imageContainer}>
           <Image source={avatar} style={styles.avatarImage} />
-          <Text style={styles.textContent}>{name}</Text>
-          <Text style={styles.textContent}>{email}</Text>
+          <Text style={styles.textName}>{name}</Text>
+          <Text style={styles.textEmail}>{email}</Text>
         </View>
       </View>
       <List.Item

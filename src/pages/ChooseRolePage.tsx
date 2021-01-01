@@ -7,14 +7,13 @@ import { CommonActions } from '@react-navigation/native';
 import { RootStackParamList } from '../App';
 import ChooseRole, { Role } from '../components/organisms/AppIntro/ChooseRole';
 import SimpleCloseNavigationOptions from '../components/templates/SimpleCloseNavigationOption';
-import { HEADER_AB_TEST_NEW } from '../util/constant';
-import { SimpleHeaderBackNavigationOptions } from '../components/templates/SimpleHeaderNavigationOptions';
 
 type Props = StackScreenProps<RootStackParamList, 'ChooseRole'>;
 
-export const ChooseRoleNavigationOptions: StackNavigationOptions = HEADER_AB_TEST_NEW
-  ? { ...SimpleHeaderBackNavigationOptions, title: 'Choose Role' }
-  : SimpleCloseNavigationOptions;
+export const ChooseRoleNavigationOptions: StackNavigationOptions = SimpleCloseNavigationOptions;
+// HEADER_AB_TEST_NEW
+//   ? { ...SimpleHeaderBackNavigationOptions, title: 'Choose Role' }
+//   : SimpleCloseNavigationOptions;
 
 const ChooseRolePage: React.FC<Props> = ({ navigation }): JSX.Element => {
   return (

@@ -5,7 +5,7 @@ import StudentListItem from '../../../molecules/StudentListItem';
 
 const styles = StyleSheet.create({
   container: {
-    paddingHorizontal: 4,
+    paddingHorizontal: 10,
     backgroundColor: lightColor,
     flex: 1,
   },

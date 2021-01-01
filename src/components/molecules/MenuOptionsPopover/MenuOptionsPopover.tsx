@@ -37,7 +37,12 @@ const MenuOptionsPopover: React.FC<MenuOptionsPopoverProps> = ({
           },
         }}
       >
-        <MaterialIcons name="more-vert" size={24} color={lightColor} />
+        <MaterialIcons
+          name="more-vert"
+          size={24}
+          color={lightColor}
+          style={{ paddingBottom: 10, paddingLeft: 10 }}
+        />
       </MenuTrigger>
       <MenuOptions>
         {options.map(option => (
@@ -45,8 +50,13 @@ const MenuOptionsPopover: React.FC<MenuOptionsPopoverProps> = ({
             key={option.title}
             text={option.title}
             onSelect={option.onPress}
+            customStyles={{
+              optionText: {
+                fontSize: 15,
+              },
+            }}
             style={{
-              height: 36,
+              height: 40,
               justifyContent: 'center',
               paddingHorizontal: 10,
             }}

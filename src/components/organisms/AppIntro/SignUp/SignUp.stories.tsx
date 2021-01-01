@@ -22,7 +22,9 @@ export const Default = (): JSX.Element => (
     onSubmit={(email, password, acceptTerms) =>
       action('onSubmit')(email, password, acceptTerms)
     }
-    onSignUpClick={action('onSignUpClick')}
+    onSignUpClick={() => action('onSignUpClick')()}
+    onPrivacyPolicyClick={() => action('onPrivacyPolicyClick')}
+    onTermsClick={() => action('onTermsClick')}
   />
 );
 

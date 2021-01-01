@@ -12,7 +12,10 @@ const styles = StyleSheet.create({
   summeryContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    paddingHorizontal: 10,
+    // paddingHorizontal: 50,
+    padding: 10,
+    borderBottomColor: '#ddd',
+    borderBottomWidth: 1,
   },
 });
 
@@ -44,8 +47,8 @@ const CurrentAttendanceSession: React.FC<CurrentAttendanceSessionPops> = ({
   return (
     <View style={styles.container}>
       <View style={styles.summeryContainer}>
-        <Text>Present: {present}</Text>
         <Text>Absent: {absent}</Text>
+        <Text>Present: {present}</Text>
       </View>
       <FlatList
         data={studentList}

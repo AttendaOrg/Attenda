@@ -76,6 +76,10 @@ import MyAccountPage, {
   MyAccountNavigationOptions,
 } from './pages/Commons/MyAccountPage';
 
+export type TeacherClassListNavigationProps = {
+  withDismiss?: boolean;
+};
+
 export type RootStackParamList = {
   SignIn: undefined;
   ForgotPassword: undefined;
@@ -89,6 +93,10 @@ export type RootStackParamList = {
     classCode: string;
     rollNo: string;
   };
+  /**
+   * using Popup instated
+   * @deprecated route
+   */
   TurnOnWifi: undefined;
   GiveResponse: {
     classId: string;
@@ -98,7 +106,7 @@ export type RootStackParamList = {
   StudentAttendanceRecord: {
     classId: string;
   };
-  TeacherClassList: undefined;
+  TeacherClassList: TeacherClassListNavigationProps;
   EditStudentAttendanceRecord: {
     classId: string;
     studentId: string;
@@ -106,8 +114,6 @@ export type RootStackParamList = {
   InviteStudent: undefined;
   StudentList: {
     classId: string;
-    totalSelected: number;
-    showDeleteDialog: boolean;
   };
   TeacherAttendanceRecord: {
     classId: string;
@@ -115,7 +121,7 @@ export type RootStackParamList = {
   };
   EditAttendanceSession: {
     sessionId: string;
-    date: Date;
+    date: string;
   };
   ClassSettings: {
     classId: string;
@@ -126,6 +132,7 @@ export type RootStackParamList = {
   CurrentAttendanceSession: {
     classId: string;
     showStopDialog: boolean;
+    sessionTime: string;
   };
   CreateClass: undefined;
   // drawer
@@ -183,6 +190,7 @@ const StackScreens = (): JSX.Element => {
               options={JoinClassFormNavigationOptions}
             />
 
+            {/* this route is deprecated using popup instead */}
             <Stack.Screen
               name="TurnOnWifi"
               component={TurnOnWifiPage}

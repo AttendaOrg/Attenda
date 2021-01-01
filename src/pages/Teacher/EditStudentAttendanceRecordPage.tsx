@@ -16,11 +16,11 @@ type Props = StackScreenProps<
 
 export const EditStudentAttendanceRecordNavigationOptions: StackNavigationOptions = {
   ...SimpleHeaderBackNavigationOptions,
-  title: 'Student Attendance record',
+  title: 'Attendance record',
 };
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const imageSrc = require('../../../assets/images/study.png');
+const imageSrc = require('../../../assets/images/user.jpg');
 
 const dummyData: EditStudentAttendanceRecordPops = {
   userInfo: {

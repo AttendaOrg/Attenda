@@ -28,19 +28,19 @@ const styles = StyleSheet.create({
     marginVertical: 6,
   },
   image: {
-    height: 60,
-    width: 60,
-    borderRadius: 100,
+    height: 200,
+    width: 350,
+    // borderRadius: 100,
   },
 });
 
-const imageSrc = require('../../../../assets/images/study.png');
+const imageSrc = require('../../../../assets/images/attendanceRecord.png');
 
 export interface ClassDetailsPops {
   className: string;
   section: string;
-  teacherName: string;
-  rollNo: string;
+  teacherName?: string;
+  rollNo?: string;
 }
 
 const ClassDetails: React.FC<ClassDetailsPops> = ({
@@ -54,8 +54,8 @@ const ClassDetails: React.FC<ClassDetailsPops> = ({
       <Image source={imageSrc} style={styles.image} />
       <Text style={styles.className}>{className}</Text>
       <Text style={styles.section}>{section}</Text>
-      <Text style={styles.teacherName}>By: {teacherName}</Text>
-      <Text style={styles.rollNo}>Roll No: {rollNo}</Text>
+      {teacherName && <Text style={styles.teacherName}>By: {teacherName}</Text>}
+      {rollNo && <Text style={styles.rollNo}>Your roll no: {rollNo}</Text>}
     </View>
   );
 };

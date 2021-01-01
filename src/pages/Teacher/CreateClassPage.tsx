@@ -20,8 +20,6 @@ const CreateClassPage: React.FC<Props> = ({ navigation }): JSX.Element => {
       onDone={() =>
         navigation.replace('StudentList', {
           classId: '',
-          showDeleteDialog: false,
-          totalSelected: 0,
         })
       }
     />
