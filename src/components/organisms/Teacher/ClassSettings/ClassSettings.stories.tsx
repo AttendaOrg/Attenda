@@ -21,17 +21,17 @@ export const Default = (): JSX.Element => (
   <ClassSettings
     title={text('title', '')}
     section={text('section', '')}
-    isCodeEnabled={boolean('isCodeEnabled', false)}
-    isLinkEnabled={boolean('isLinkEnabled', false)}
+    description={text('description', '')}
+    isShareOptionEnabled={boolean('isShareOptionEnabled', false)}
     code={text('code', '')}
     link={text('link', '')}
     onTitleChange={(title: string) => action('onTitleChange')(title)}
     onSectionChange={(section: string) => action('onSectionChange')(section)}
-    toggleCodeSwitch={(isCodeEnabled: boolean) =>
-      action('toggleCodeSwitch')(isCodeEnabled)
+    onDescriptionChange={(description: string) =>
+      action('onDescriptionChange')(description)
     }
-    toggleLinkSwitch={(isLinkEnabled: boolean) =>
-      action('toggleLinkSwitch')(isLinkEnabled)
+    toggleShareSwitch={(isShareOptionEnabled: boolean) =>
+      action('toggleShareSwitch')(isShareOptionEnabled)
     }
     onCodeShare={() => action('onCodeShare')()}
     onLinkShare={() => action('onLinkShare')()}
