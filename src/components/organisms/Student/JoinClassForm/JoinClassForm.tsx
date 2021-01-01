@@ -70,6 +70,7 @@ const JoinClassForm: React.FC<JoinClassFormPops> = ({
           errorMessage={jonCodeError}
         />
       )}
+
       <Input
         placeholder="Your Roll No"
         containerStyle={inputContainerStyle}
