@@ -14,6 +14,7 @@ const styles = StyleSheet.create({
   inputStyle: {
     fontSize: 14,
     minHeight: 34,
+    marginTop: 10,
   },
   buttonContainer: {
     alignItems: 'flex-end',
@@ -35,14 +36,24 @@ const JoinClassForm: React.FC<JoinClassFormPops> = ({
   const [classCode, setClassCode] = useState(joinCode);
   const [jonCodeError, setJonCodeError] = useState('');
   const [rollNo, setRollNo] = useState('');
+  const [rollNoError, setRollNoError] = useState('');
 
   const onClassCodeChangeText = (text: string) => {
     if (text === '') {
-      setJonCodeError('Please enter a valid class code');
+      setJonCodeError('Class code can not be empty');
     } else if (jonCodeError !== '') {
       setJonCodeError('');
     }
     setClassCode(text);
+  };
+
+  const onRollNoChangeText = (text: string) => {
+    if (text === '') {
+      setRollNoError('Roll no can not be empty');
+    } else if (rollNoError !== '') {
+      setRollNoError('');
+    }
+    setRollNo(text);
   };
 
   return (
@@ -59,21 +70,15 @@ const JoinClassForm: React.FC<JoinClassFormPops> = ({
           errorMessage={jonCodeError}
         />
       )}
+
       <Input
         placeholder="Your Roll No"
         containerStyle={inputContainerStyle}
         style={styles.inputStyle}
-        onChangeText={setRollNo}
+        onChangeText={onRollNoChangeText}
+        errorMessage={rollNoError}
       />
-      {/* <View style={{ alignItems: 'flex-end' }}>
-        <Button
-          title="DONE"
-          onPress={() => {
-            if ((joinCode || classCode) && rollNo)
-              onSubmit(joinCode || classCode, rollNo);
-          }}
-        />
-      </View> */}
+
       <View style={styles.buttonContainer}>
         <Button
           style={{ width: '30%' }}
@@ -83,8 +88,11 @@ const JoinClassForm: React.FC<JoinClassFormPops> = ({
             if ((joinCode || classCode) && rollNo) {
               onSubmit(joinCode || classCode, rollNo);
             }
-            if (joinCode === '') {
-              setJonCodeError('Please enter a valid class code');
+            if (classCode === '') {
+              setJonCodeError('Class code can not be empty.');
+            }
+            if (rollNo === '') {
+              setRollNoError('Roll no can not be empty');
             }
           }}
         >
