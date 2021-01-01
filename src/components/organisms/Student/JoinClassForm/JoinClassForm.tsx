@@ -87,7 +87,7 @@ const JoinClassForm: React.FC<JoinClassFormPops> = ({
             if ((joinCode || classCode) && rollNo) {
               onSubmit(joinCode || classCode, rollNo);
             }
-            if (joinCode === '' && classCode === '') {
+            if (classCode === '') {
               setJonCodeError('Class code can not be empty.');
             }
             if (rollNo === '') {
