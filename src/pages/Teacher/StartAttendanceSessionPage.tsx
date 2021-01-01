@@ -20,10 +20,11 @@ const StartAttendanceSessionPage: React.FC<Props> = ({
   return (
     <StartAttendanceSession
       title="Computer science data structures and algorithms"
-      onStartSession={() =>
-        navigation.replace('CurrentAttendanceSession', {
+      onStartSession={date =>
+        navigation.push('CurrentAttendanceSession', {
           classId: '',
           showStopDialog: false,
+          sessionTime: date.toISOString(),
         })
       }
     />

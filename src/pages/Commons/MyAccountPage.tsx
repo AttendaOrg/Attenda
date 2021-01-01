@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   StackNavigationOptions,
   StackScreenProps,
@@ -15,6 +15,8 @@ export const MyAccountNavigationOptions: StackNavigationOptions = {
 };
 
 const MyAccountPage: React.FC<Props> = ({ navigation }): JSX.Element => {
+  const [showLogOutPopup, setShowLogOutPopup] = useState(false);
+
   return (
     <MyAccount
       username="Aditiya jhv"
@@ -23,7 +25,13 @@ const MyAccountPage: React.FC<Props> = ({ navigation }): JSX.Element => {
       onEditUsernameClick={() => null}
       onChangePasswordClick={() => navigation.push('ChangePassword')}
       // QUESTION: should reset the stack ?
-      onLogOutClick={() => navigation.navigate('SignIn')}
+      showPopup={showLogOutPopup}
+      onDismissPopup={() => setShowLogOutPopup(false)}
+      onPositivePopupClick={() => {
+        navigation.navigate('SignIn');
+      }}
+      // onLogOutClick={() => navigation.navigate('SignIn')}
+      onLogOutClick={() => setShowLogOutPopup(true)}
       onEditProfilePictureClick={() => null}
     />
   );

@@ -31,7 +31,7 @@ const styles = StyleSheet.create({
 });
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const imageSource = require('../../../../../assets/images/unsuccessResponse.png');
+const imageSource = require('../../../../../assets/images/exclamation.png');
 
 export interface UnsuccessfulResponsePops {
   refreshing: boolean;

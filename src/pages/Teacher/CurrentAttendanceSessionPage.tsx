@@ -1,31 +1,33 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
+  HeaderTitle,
   StackNavigationOptions,
   StackScreenProps,
 } from '@react-navigation/stack';
-import { Button, View } from 'react-native';
-import { IconButton } from 'react-native-paper';
-import { RootStackParamList } from '../../App';
+import { Text, View } from 'react-native';
+import { Button, IconButton } from 'react-native-paper';
+import { RootStackParamList, TeacherClassListNavigationProps } from '../../App';
 import CurrentAttendanceSession, {
   CurrentAttendanceSessionDataProps,
 } from '../../components/organisms/Teacher/CurrentAttendanceSession';
 import { SimpleHeaderBackNavigationOptions } from '../../components/templates/SimpleHeaderNavigationOptions';
 import { lightColor } from '../../util/Colors';
+import { convertDateTime } from '../../util';
+import { NavigationEventListenerCallback } from '../../util/hooks/useConfirmBack';
 
 type Props = StackScreenProps<RootStackParamList, 'CurrentAttendanceSession'>;
 type OptionsProps = (props: Props) => StackNavigationOptions;
 
 export const CurrentAttendanceSessionNavigationOptions: OptionsProps = ({
   navigation,
+  route,
 }) => ({
   ...SimpleHeaderBackNavigationOptions,
-  title: 'Current session',
+  title: 'Current Session',
   headerStyle: {
     backgroundColor: lightColor,
-    elevation: 0,
-    shadowColor: lightColor,
-    borderBottomColor: '#ddd',
-    borderBottomWidth: 1,
+    // borderBottomColor: '#ddd',
+    // borderBottomWidth: 1,
   },
   headerTitleStyle: { color: '#000' },
   headerLeft: () => (
@@ -35,16 +37,25 @@ export const CurrentAttendanceSessionNavigationOptions: OptionsProps = ({
       color="#000"
     />
   ),
+  headerTitle: ({ children, style }) => (
+    <>
+      <HeaderTitle style={style}>{children}</HeaderTitle>
+      <Text>{convertDateTime(new Date(route.params.sessionTime))}</Text>
+    </>
+  ),
   headerRight: () => (
     <View style={{ paddingRight: 16 }}>
       <Button
-        title="stop"
+        mode="contained"
+        color="#2196f3"
         onPress={() =>
           navigation.setParams({
             showStopDialog: true,
           })
         }
-      />
+      >
+        STOP
+      </Button>
     </View>
   ),
 });
@@ -66,7 +77,7 @@ const CurrentAttendanceSessionPage: React.FC<Props> = ({
       name: 'Apurba Roy',
       rollNo: 'IIT2441454',
       key: 'IIT2441454',
-      present: false,
+      present: true,
     },
   ]);
 
@@ -78,14 +89,47 @@ const CurrentAttendanceSessionPage: React.FC<Props> = ({
     setListItems(newList);
   };
 
+  useEffect(() => {
+    const callback = (e: NavigationEventListenerCallback) => {
+      e.preventDefault();
+      const {
+        data: { action },
+      } = e;
+
+      // if the payload contains withDismiss === true that means
+      // it was fired by popup positive btn click
+      // so go back from the screen
+      if (
+        (action.payload as {
+          params: TeacherClassListNavigationProps;
+        })?.params?.withDismiss
+      ) {
+        navigation.dispatch(action);
+      } else {
+        navigation.setParams({ showStopDialog: true });
+      }
+    };
+
+    // BUG: for some reason react-navigation is not showing the correct return type
+    // expected () => removeListener(type, callback); but got () => void
+    // so we are using remove listener method to clean up the event listener
+    navigation.addListener('beforeRemove', callback);
+
+    // it is necessary to remove the event free up the listener
+    // or every data change useEffect will reattach the event listener with the old event
+    return () => navigation.removeListener('beforeRemove', callback);
+  }, [navigation]);
+
   return (
     <CurrentAttendanceSession
       studentList={listItems}
       onPresentChange={onPresentChange}
       showPopup={route.params.showStopDialog}
-      onDismissPopup={() => navigation.setParams({ showStopDialog: false })}
+      onDismissPopup={() => {
+        navigation.setParams({ showStopDialog: false });
+      }}
       onPositivePopupClick={() => {
-        navigation.navigate('TeacherClassList');
+        navigation.navigate('TeacherClassList', { withDismiss: true });
       }}
     />
   );

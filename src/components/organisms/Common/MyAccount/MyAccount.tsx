@@ -6,23 +6,28 @@ import {
   View,
   Image,
   Platform,
-  Dimensions,
-  ScrollView,
 } from 'react-native';
 import { AntDesign } from '@expo/vector-icons';
 import { Icon } from 'react-native-elements';
+import DoubleButtonPopup from '../../../molecules/DoubleButtonPopup';
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+  },
+  blurImageContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   blurBackground: {
     position: 'absolute',
     alignItems: 'center',
     justifyContent: 'center',
-    height: Dimensions.get('screen').height * 0.35,
-    width: Dimensions.get('screen').width,
+    height: '100%',
+    width: '100%',
+  },
+  profileImgContainer: {
+    padding: 25,
   },
   profileImg: {
     height: 200,
@@ -32,15 +37,14 @@ const styles = StyleSheet.create({
   iconContainer: {
     backgroundColor: '#fff',
     position: 'absolute',
-    right: 15,
-    bottom: 15,
-    borderRadius: 15,
-    padding: 2,
+    right: 15 + 20,
+    bottom: 15 + 20,
+    borderRadius: 100,
+    padding: 8,
   },
   infoContainer: {
-    marginTop: Dimensions.get('screen').height * 0.35 + 25,
-    marginEnd: 26,
-    marginStart: 26,
+    margin: 16,
+    marginBottom: 0,
   },
   infoTitle: {
     fontSize: 14,
@@ -58,14 +62,14 @@ const styles = StyleSheet.create({
   },
   touchableOpacityContainer: {
     flex: 1,
-    justifyContent: 'center',
-    marginEnd: 26,
-    marginStart: 26,
+    marginHorizontal: 16,
+
+    // justifyContent: 'flex-end',
   },
   touchableOpacityRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginTop: 12,
+    marginTop: 18,
   },
   touchableOpacityText: {
     fontSize: 18,
@@ -81,7 +85,7 @@ const styles = StyleSheet.create({
 });
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const imageSrc = require('../../../../../assets/images/drawer-back.png');
+const imageSrc = require('../../../../../assets/images/user.jpg');
 
 export interface MyAccountPops {
   username: string;
@@ -91,6 +95,9 @@ export interface MyAccountPops {
   onEditUsernameClick: () => void;
   onChangePasswordClick: () => void;
   onLogOutClick: () => void;
+  showPopup: boolean;
+  onDismissPopup: () => void;
+  onPositivePopupClick: () => void;
 }
 
 const MyAccount: React.FC<MyAccountPops> = ({
@@ -101,17 +108,19 @@ const MyAccount: React.FC<MyAccountPops> = ({
   onEditUsernameClick,
   onChangePasswordClick,
   onLogOutClick,
+  onDismissPopup,
+  onPositivePopupClick,
+  showPopup,
 }): JSX.Element => {
   return (
-    <ScrollView style={styles.container}>
-      <View style={styles.blurBackground}>
+    <View style={styles.container}>
+      <View style={styles.blurImageContainer}>
         <Image
-          blurRadius={Platform.OS === 'ios' ? 25 : 15}
+          blurRadius={Platform.OS === 'ios' ? 10 : 5}
           source={imageSrc}
           style={styles.blurBackground}
         />
-        {/* <Image source={imageSrc} style={styles.profileImg} /> */}
-        <View>
+        <View style={styles.profileImgContainer}>
           <Image source={imageSrc} style={styles.profileImg} />
           <Icon
             name="edit"
@@ -160,7 +169,18 @@ const MyAccount: React.FC<MyAccountPops> = ({
           </View>
         </TouchableOpacity>
       </View>
-    </ScrollView>
+
+      <DoubleButtonPopup
+        visible={showPopup}
+        title="Log out"
+        text="Are you sure to log out? "
+        positiveButtonText="Ok"
+        negativeButtonText="Cancel"
+        onNegativeButtonClick={onDismissPopup}
+        onPositiveButtonClick={onPositivePopupClick}
+        onDismiss={onDismissPopup}
+      />
+    </View>
   );
 };
 

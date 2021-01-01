@@ -12,7 +12,7 @@ import { SimpleHeaderBackNavigationOptions } from '../../components/templates/Si
 type Props = StackScreenProps<RootStackParamList, 'UnsuccessfulResponse'>;
 
 export const UnsuccessfulResponseNavigationOptions: StackNavigationOptions = HEADER_AB_TEST_NEW
-  ? { ...SimpleHeaderBackNavigationOptions, title: 'Attendance Unsuccessful' }
+  ? { ...SimpleHeaderBackNavigationOptions, title: 'Error' }
   : SimpleCloseNavigationOptions;
 
 const UnsuccessfulResponsePage: React.FC<Props> = (): JSX.Element => {

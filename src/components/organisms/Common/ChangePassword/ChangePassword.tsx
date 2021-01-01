@@ -4,6 +4,7 @@ import { Input } from 'react-native-elements';
 import { Button } from 'react-native-paper';
 import { inputContainerStyle } from '../../../../util/Styles';
 import KeyboardAdjustImageView from '../../../templates/KeyboardAdjustImageView';
+import DoubleButtonPopup from '../../../molecules/DoubleButtonPopup';
 
 const styles = StyleSheet.create({
   container: {

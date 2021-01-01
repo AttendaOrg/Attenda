@@ -55,12 +55,14 @@ const Tab = createMaterialTopTabNavigator();
 // preferably use the MaterialTopTabBarProps
 const AttendanceSessionRecordTab: React.FC<Props> = ({ navigation }) => (
   <AttendanceSessionRecord
+    className="Computer science data structures and algorithms"
+    section="CED/COE"
     markedDates={dummyMarkedDates}
     onMonthChange={() => null}
     onTimeSelect={date =>
       navigation.navigate('EditAttendanceSession', {
         sessionId: '',
-        date: new Date(date),
+        date: new Date(date).toString(),
       })
     }
   />

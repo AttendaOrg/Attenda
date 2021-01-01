@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { ScrollView, StyleSheet, View } from 'react-native';
 import { Input } from 'react-native-elements';
-import { Button, Chip } from 'react-native-paper';
+import { Button, Chip, IconButton } from 'react-native-paper';
 import { isValidEmail } from '../../../../util';
 import { lightColor, primaryColor } from '../../../../util/Colors';
 
@@ -17,6 +17,7 @@ const styles = StyleSheet.create({
   },
   emailChip: {
     marginVertical: 4,
+    marginLeft: 4,
   },
   inviteContainer: {
     justifyContent: 'flex-end',
@@ -35,7 +36,13 @@ const Emails: React.FC<{
 }> = React.memo(({ emails = [], removeEmail }) => {
   // console.log('Re Rendering', 'Emails');
 
-  return (
+  const [ref, setRef] = useState<ScrollView | null>(null);
+
+  const onContentSizeChange = () => {
+    ref?.scrollToEnd({ animated: true });
+  };
+
+  const Body = (
     <View style={styles.emailsContainer}>
       {emails.map(email => (
         <Chip
@@ -48,6 +55,14 @@ const Emails: React.FC<{
         </Chip>
       ))}
     </View>
+  );
+
+  if (emails.length === 0) return <View>{Body}</View>;
+
+  return (
+    <ScrollView ref={setRef} onContentSizeChange={onContentSizeChange}>
+      {Body}
+    </ScrollView>
   );
 });
 
@@ -83,7 +98,7 @@ const InputEmail: React.FC<{
       autoCapitalize="none"
       autoCompleteType="email"
       keyboardType="email-address"
-      placeholder="Please enter an email"
+      placeholder="Enter an email"
       onSubmitEditing={onSubmitEditing}
       containerStyle={{ paddingHorizontal: 0, paddingVertical: 0 }}
       onChangeText={(_email: string) => {
@@ -94,6 +109,9 @@ const InputEmail: React.FC<{
           if (isValidEmail(email)) setError('');
         }
       }}
+      rightIcon={
+        <IconButton icon="plus" color="#6A6A6A" onPress={onSubmitEditing} />
+      }
     />
   );
 };
@@ -121,6 +139,7 @@ const InviteStudent: React.FC<InviteStudentPops> = ({
           mode="contained"
           color={primaryColor}
           onPress={() => onInvite(emails)}
+          disabled={emails.length === 0}
         >
           Invite
         </Button>

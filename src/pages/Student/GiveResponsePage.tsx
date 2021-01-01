@@ -28,11 +28,14 @@ const GiveResponsePage: React.FC<Props> = ({ navigation }): JSX.Element => {
     <>
       <GiveResponse
         onPresentClick={() => {
-          if (Math.random() > 0.5) navigation.push('SuccessResponse');
-          else navigation.push('UnsuccessfulResponse');
+          if (Math.random() > 0.5) navigation.replace('SuccessResponse');
+          else navigation.replace('UnsuccessfulResponse');
         }}
       />
-      <Dialog visible={showTurnOnWifiPopUp}>
+      <Dialog
+        visible={showTurnOnWifiPopUp}
+        onDismiss={() => setShowTurnOnWifiPopUp(false)}
+      >
         <TurnOnWifi onCloseBtnClick={() => setShowTurnOnWifiPopUp(false)} />
       </Dialog>
     </>
