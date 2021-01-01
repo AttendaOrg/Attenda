@@ -14,4 +14,4 @@ web-build/
 .eslintcache
 
 # 
-debug.log
+*debug.log
