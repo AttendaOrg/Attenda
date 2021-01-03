@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 import { NavigationContainer } from '@react-navigation/native';
 import { MenuProvider } from 'react-native-popup-menu';
 import { createDrawerNavigator } from '@react-navigation/drawer';
+import firebase from 'firebase';
 import SignInPage, { SignInPageNavigationOptions } from './pages/SignInPage';
 import ForgotPasswordPage, {
   ForgotPasswordNavigationOptions,
@@ -75,6 +76,8 @@ import ChangePasswordPage, {
 import MyAccountPage, {
   MyAccountNavigationOptions,
 } from './pages/Commons/MyAccountPage';
+import AuthApi from './api/AuthApi';
+import { UserType } from './api';
 
 export type TeacherClassListNavigationProps = {
   withDismiss?: boolean;
@@ -142,151 +145,198 @@ export type RootStackParamList = {
 
 export const Stack = createStackNavigator<RootStackParamList>();
 
-const StackScreens = (): JSX.Element => {
-  return (
+const AuthProvider = () => {
+  const [isSignedIn, setIsSignedIn] = useState(false);
+  const [userType, setUserType] = useState<UserType | null>(null);
+
+  useEffect(() => {
+    const unsubscribe = firebase
+      .auth()
+      .onAuthStateChanged((user: firebase.User | null) => {
+        setIsSignedIn(user !== null);
+      });
+
+    return unsubscribe;
+  }, []);
+
+  useEffect(() => {
+    const auth = new AuthApi();
+
+    (async () => {
+      const [type, error] = await auth.getUserType();
+
+      if (!error) {
+        setUserType(type);
+      }
+    })();
+  }, [isSignedIn]);
+
+  const commons = (
+    <>
+      <Stack.Screen
+        name="MyAccount"
+        component={MyAccountPage}
+        options={MyAccountNavigationOptions}
+      />
+      <Stack.Screen
+        name="ChangePassword"
+        component={ChangePasswordPage}
+        options={ChangePasswordNavigationOptions}
+      />
+    </>
+  );
+
+  const student = (
     <MenuProvider>
-      <>
-        <Stack.Navigator>
-          {/* App Intro */}
-          <>
-            <Stack.Screen
-              name="SignIn"
-              component={SignInPage}
-              options={SignInPageNavigationOptions}
-            />
-            <Stack.Screen
-              name="ForgotPassword"
-              component={ForgotPasswordPage}
-              options={ForgotPasswordNavigationOptions}
-            />
-            <Stack.Screen
-              name="SignUp"
-              component={SignUpPagePage}
-              options={SignUpPageNavigationOptions}
-            />
-            <Stack.Screen
-              name="ChooseRole"
-              component={ChooseRolePage}
-              options={ChooseRoleNavigationOptions}
-            />
-          </>
-          {/* student */}
-          <>
-            <Stack.Screen
-              name="StudentClassList"
-              component={StudentClassListPage}
-              options={StudentClassListNavigationOptions}
-            />
+      <Stack.Navigator>
+        {/* student */}
+        <Stack.Screen
+          name="StudentClassList"
+          component={StudentClassListPage}
+          options={StudentClassListNavigationOptions}
+        />
 
-            <Stack.Screen
-              name="JoinClassFinal"
-              component={JoinClassFinalPage}
-              options={JoinClassFinalNavigationOptions}
-            />
+        <Stack.Screen
+          name="JoinClassFinal"
+          component={JoinClassFinalPage}
+          options={JoinClassFinalNavigationOptions}
+        />
 
-            <Stack.Screen
-              name="JoinClassForm"
-              component={JoinClassFormPage}
-              options={JoinClassFormNavigationOptions}
-            />
+        <Stack.Screen
+          name="JoinClassForm"
+          component={JoinClassFormPage}
+          options={JoinClassFormNavigationOptions}
+        />
 
-            {/* this route is deprecated using popup instead */}
-            <Stack.Screen
-              name="TurnOnWifi"
-              component={TurnOnWifiPage}
-              options={TurnOnWifiNavigationOptions}
-            />
+        {/* this route is deprecated using popup instead */}
+        <Stack.Screen
+          name="TurnOnWifi"
+          component={TurnOnWifiPage}
+          options={TurnOnWifiNavigationOptions}
+        />
 
-            <Stack.Screen
-              name="GiveResponse"
-              component={GiveResponsePage}
-              options={GiveResponseNavigationOptions}
-            />
+        <Stack.Screen
+          name="GiveResponse"
+          component={GiveResponsePage}
+          options={GiveResponseNavigationOptions}
+        />
 
-            <Stack.Screen
-              name="SuccessResponse"
-              component={SuccessResponsePage}
-              options={SuccessResponseNavigationOptions}
-            />
-            <Stack.Screen
-              name="UnsuccessfulResponse"
-              component={UnsuccessfulResponsePage}
-              options={UnsuccessfulResponseNavigationOptions}
-            />
-            <Stack.Screen
-              name="StudentAttendanceRecord"
-              component={AttendanceRecordPage}
-              options={AttendanceRecordNavigationOptions}
-            />
-          </>
-          {/* Teacher */}
-          <>
-            <Stack.Screen
-              name="TeacherClassList"
-              component={TeacherClassListPage}
-              options={TeacherClassListNavigationOptions}
-            />
-            <Stack.Screen
-              name="EditStudentAttendanceRecord"
-              component={EditStudentAttendanceRecordPage}
-              options={EditStudentAttendanceRecordNavigationOptions}
-            />
-            <Stack.Screen
-              name="InviteStudent"
-              component={InviteStudentPage}
-              options={InviteStudentNavigationOptions}
-            />
-            <Stack.Screen
-              name="StudentList"
-              component={StudentListPage}
-              options={StudentListNavigationOptions}
-            />
-            <Stack.Screen
-              name="TeacherAttendanceRecord"
-              component={TeacherAttendanceRecordPage}
-              options={TeacherAttendanceRecordNavigationOptions}
-            />
-            <Stack.Screen
-              name="EditAttendanceSession"
-              component={EditAttendanceSessionPage}
-              options={EditAttendanceSessionNavigationOptions}
-            />
-            <Stack.Screen
-              name="ClassSettings"
-              component={ClassSettingsPage}
-              options={ClassSettingsNavigationOptions}
-            />
-            <Stack.Screen
-              name="StartAttendanceSession"
-              component={StartAttendanceSessionPage}
-              options={StartAttendanceSessionNavigationOptions}
-            />
-            <Stack.Screen
-              name="CurrentAttendanceSession"
-              component={CurrentAttendanceSessionPage}
-              options={CurrentAttendanceSessionNavigationOptions}
-            />
-            <Stack.Screen
-              name="CreateClass"
-              component={CreateClassPage}
-              options={CreateClassNavigationOptions}
-            />
-          </>
-          {/* Commons */}
-
-          <Stack.Screen
-            name="MyAccount"
-            component={MyAccountPage}
-            options={MyAccountNavigationOptions}
-          />
-          <Stack.Screen
-            name="ChangePassword"
-            component={ChangePasswordPage}
-            options={ChangePasswordNavigationOptions}
-          />
-        </Stack.Navigator>
-      </>
+        <Stack.Screen
+          name="SuccessResponse"
+          component={SuccessResponsePage}
+          options={SuccessResponseNavigationOptions}
+        />
+        <Stack.Screen
+          name="UnsuccessfulResponse"
+          component={UnsuccessfulResponsePage}
+          options={UnsuccessfulResponseNavigationOptions}
+        />
+        <Stack.Screen
+          name="StudentAttendanceRecord"
+          component={AttendanceRecordPage}
+          options={AttendanceRecordNavigationOptions}
+        />
+        {commons}
+      </Stack.Navigator>
     </MenuProvider>
+  );
+
+  const teacher = (
+    <MenuProvider>
+      <Stack.Navigator>
+        {/* Teacher */}
+        <>
+          <Stack.Screen
+            name="TeacherClassList"
+            component={TeacherClassListPage}
+            options={TeacherClassListNavigationOptions}
+          />
+          <Stack.Screen
+            name="EditStudentAttendanceRecord"
+            component={EditStudentAttendanceRecordPage}
+            options={EditStudentAttendanceRecordNavigationOptions}
+          />
+          <Stack.Screen
+            name="InviteStudent"
+            component={InviteStudentPage}
+            options={InviteStudentNavigationOptions}
+          />
+          <Stack.Screen
+            name="StudentList"
+            component={StudentListPage}
+            options={StudentListNavigationOptions}
+          />
+          <Stack.Screen
+            name="TeacherAttendanceRecord"
+            component={TeacherAttendanceRecordPage}
+            options={TeacherAttendanceRecordNavigationOptions}
+          />
+          <Stack.Screen
+            name="EditAttendanceSession"
+            component={EditAttendanceSessionPage}
+            options={EditAttendanceSessionNavigationOptions}
+          />
+          <Stack.Screen
+            name="ClassSettings"
+            component={ClassSettingsPage}
+            options={ClassSettingsNavigationOptions}
+          />
+          <Stack.Screen
+            name="StartAttendanceSession"
+            component={StartAttendanceSessionPage}
+            options={StartAttendanceSessionNavigationOptions}
+          />
+          <Stack.Screen
+            name="CurrentAttendanceSession"
+            component={CurrentAttendanceSessionPage}
+            options={CurrentAttendanceSessionNavigationOptions}
+          />
+          <Stack.Screen
+            name="CreateClass"
+            component={CreateClassPage}
+            options={CreateClassNavigationOptions}
+          />
+        </>
+        {commons}
+      </Stack.Navigator>
+    </MenuProvider>
+  );
+
+  if (isSignedIn) {
+    if (userType === UserType.STUDENT) {
+      return student;
+    }
+    if (userType === UserType.TEACHER) {
+      return teacher;
+    }
+  }
+
+  return (
+    <Stack.Navigator>
+      {/* App Intro */}
+      <>
+        <Stack.Screen
+          name="SignIn"
+          component={SignInPage}
+          options={SignInPageNavigationOptions}
+        />
+        <Stack.Screen
+          name="ForgotPassword"
+          component={ForgotPasswordPage}
+          options={ForgotPasswordNavigationOptions}
+        />
+        <Stack.Screen
+          name="SignUp"
+          component={SignUpPagePage}
+          options={SignUpPageNavigationOptions}
+        />
+        <Stack.Screen
+          name="ChooseRole"
+          component={ChooseRolePage}
+          options={ChooseRoleNavigationOptions}
+        />
+      </>
+    </Stack.Navigator>
   );
 };
 
@@ -295,51 +345,45 @@ const Drawer = createDrawerNavigator();
 const App = (): JSX.Element => (
   <NavigationContainer>
     <Drawer.Navigator drawerStyle={{}} drawerContent={DrawerContentPage}>
-      <Drawer.Screen name="App" component={StackScreens} />
+      <Drawer.Screen name="App" component={AuthProvider} />
     </Drawer.Navigator>
   </NavigationContainer>
 );
 
-// const App2 = (): JSX.Element => (
-//   <DrawerContent
-//     name="Prasanta Barman"
-//     email="test@server.com"
-//     onListItemCLick={console.log}
-//   />
-// );
-
-// (async () => {
-//   const auth = new AuthApi();
-//   const teacher = new TeacherApi();
-//   const success = await auth.signUpWithEmailAndPassword(
-//     'prasantabarman06@gmail.com',
-//     '123456',
-//   );
-
-//   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-//   // @ts-ignore
-//   window.teacher = teacher;
-//   const [userId] = await teacher.createUser('Prasanta Barman');
-
-//   if (userId) {
-//     const [classId] = await teacher.createClass(
-//       userId,
-//       new TeacherClass({
-//         title: 'Mathematics And Science',
-//         section: 'CE/PE',
-//       }),
-//     );
-
-//     if (classId) {
-//       const c = await teacher.isClassExist(userId, classId);
-
-//       console.log(c);
-//     }
-//   }
-
-//   // console.table({ success, errors });
-
-//   // console.log(success);
-// })();
+(async () => {
+  // const auth = new AuthApi();
+  // const teacher = new TeacherApi();
+  // const [success, error] = await auth.signUpWithEmailAndPassword(
+  //   'prasantabarman06@gmail.com',
+  //   '123456',
+  // );
+  // const [success2, error2] = await auth.loginWithEmailAndPassword(
+  //   'prasantabarman06@gmail.com',
+  //   '123456',
+  // );
+  // console.log(success, convertErrorToMsg(error));
+  // console.log(success2, convertErrorToMsg(error2));
+  // const [a] = await auth.getUseType();
+  // console.log(a);
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
+  // window.auth = auth;
+  // const [userId] = await teacher.createUser('Prasanta Barman');
+  // if (userId) {
+  //   const [classId] = await teacher.createClass(
+  //     userId,
+  //     new TeacherClass({
+  //       title: 'Mathematics And Science',
+  //       section: 'CE/PE',
+  //     }),
+  //   );
+  //   if (classId) {
+  //     const c = await teacher.isClassExist(userId, classId);
+  //     console.log(c);
+  //   }
+  // }
+  // console.table({ success, errors });
+  // console.log(success);
+})();
 
 export default App;

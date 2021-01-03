@@ -1,6 +1,8 @@
 import firebase from 'firebase';
 import { firebaseConfig } from '../util/configs/firebase';
 
+const DEFAULT_HOST = '192.168.0.106';
+
 export interface BaseApiOptions {
   /**
    * for using the firebase emulator
@@ -17,7 +19,27 @@ export interface BaseApiOptions {
 export enum BasicErrors {
   USER_NOT_AUTHENTICATED,
   EXCEPTION,
+  AUTH_EMAIL_ALREADY_IN_USE,
+  AUTH_WRONG_PASSWORD,
+  AUTH_USER_NOT_FOUND,
 }
+
+export const convertErrorToMsg = (errCode: BasicErrors | null): string => {
+  switch (errCode) {
+    case BasicErrors.USER_NOT_AUTHENTICATED:
+      return 'USER_NOT_AUTHENTICATED';
+    case BasicErrors.EXCEPTION:
+      return 'EXCEPTION';
+    case BasicErrors.AUTH_EMAIL_ALREADY_IN_USE:
+      return 'AUTH_EMAIL_ALREADY_IN_USE';
+    case BasicErrors.AUTH_WRONG_PASSWORD:
+      return 'AUTH_WRONG_PASSWORD';
+    case BasicErrors.AUTH_USER_NOT_FOUND:
+      return 'AUTH_USER_NOT_FOUND';
+    default:
+      return 'unknown';
+  }
+};
 
 export type WithError<Success, Error = BasicErrors> = [
   Success | null,
@@ -30,7 +52,7 @@ class BaseApi {
   static readonly BasicErrors = BasicErrors;
 
   static defaultOptions: BaseApiOptions = {
-    host: 'localhost',
+    host: DEFAULT_HOST,
     useEmulator: process.env.NODE_ENV === 'development',
   };
 
@@ -41,7 +63,9 @@ class BaseApi {
 
       firebase.initializeApp(firebaseConfig);
 
-      const host: string = options.host || 'localhost';
+      const host: string = options.host || DEFAULT_HOST;
+
+      firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL);
 
       firebase.firestore().useEmulator(host, 8080);
       firebase.database().useEmulator(host, 9000);
@@ -67,5 +91,8 @@ class BaseApi {
     return [success, null];
   };
 }
+
+// eslint-disable-next-line no-new
+new BaseApi();
 
 export default BaseApi;
