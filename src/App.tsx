@@ -308,4 +308,38 @@ const App = (): JSX.Element => (
 //   />
 // );
 
+// (async () => {
+//   const auth = new AuthApi();
+//   const teacher = new TeacherApi();
+//   const success = await auth.signUpWithEmailAndPassword(
+//     'prasantabarman06@gmail.com',
+//     '123456',
+//   );
+
+//   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+//   // @ts-ignore
+//   window.teacher = teacher;
+//   const [userId] = await teacher.createUser('Prasanta Barman');
+
+//   if (userId) {
+//     const [classId] = await teacher.createClass(
+//       userId,
+//       new TeacherClass({
+//         title: 'Mathematics And Science',
+//         section: 'CE/PE',
+//       }),
+//     );
+
+//     if (classId) {
+//       const c = await teacher.isClassExist(userId, classId);
+
+//       console.log(c);
+//     }
+//   }
+
+//   // console.table({ success, errors });
+
+//   // console.log(success);
+// })();
+
 export default App;

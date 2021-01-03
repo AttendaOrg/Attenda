@@ -14,8 +14,20 @@ export interface BaseApiOptions {
   host?: string;
 }
 
+export enum BasicErrors {
+  USER_NOT_AUTHENTICATED,
+  EXCEPTION,
+}
+
+export type WithError<Success, Error = BasicErrors> = [
+  Success | null,
+  Error | null,
+];
+
 class BaseApi {
   options?: BaseApiOptions;
+
+  static readonly BasicErrors = BasicErrors;
 
   static defaultOptions: BaseApiOptions = {
     host: 'localhost',
@@ -46,6 +58,14 @@ class BaseApi {
       firebase.auth().useEmulator(`http://${host}:9099`, disableWarnings);
     }
   }
+
+  error = <T>(error: T): WithError<null, T> => {
+    return [null, error];
+  };
+
+  success = <T>(success: T): WithError<T, null> => {
+    return [success, null];
+  };
 }
 
 export default BaseApi;

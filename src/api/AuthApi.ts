@@ -18,4 +18,19 @@ export default class AuthApi extends BaseApi {
 
     return false;
   };
+
+  signUpWithEmailAndPassword = async (
+    email: string,
+    password: string,
+  ): Promise<boolean> => {
+    try {
+      await firebase.auth().createUserWithEmailAndPassword(email, password);
+
+      return true;
+    } catch (error) {
+      // console.log(error);
+
+      return false;
+    }
+  };
 }
