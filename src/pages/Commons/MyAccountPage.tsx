@@ -6,6 +6,7 @@ import {
 import { RootStackParamList } from '../../App';
 import MyAccount from '../../components/organisms/Common/MyAccount';
 import { SimpleHeaderBackNavigationOptions } from '../../components/templates/SimpleHeaderNavigationOptions';
+import { authApi } from '../../api/AuthApi';
 
 type Props = StackScreenProps<RootStackParamList, 'MyAccount'>;
 
@@ -31,7 +32,9 @@ const MyAccountPage: React.FC<Props> = ({ navigation }): JSX.Element => {
         navigation.navigate('SignIn');
       }}
       // onLogOutClick={() => navigation.navigate('SignIn')}
-      onLogOutClick={() => setShowLogOutPopup(true)}
+      onLogOutClick={async () => {
+        await authApi.logOut();
+      }}
       onEditProfilePictureClick={() => null}
     />
   );

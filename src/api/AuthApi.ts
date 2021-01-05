@@ -7,7 +7,7 @@ export enum AuthErrors {
   EMAIL_ALREADY_IN_USE,
 }
 
-export default class AuthApi extends BaseApi {
+class AuthApi extends BaseApi {
   static readonly META_DATA_COLLECTION_NAME = 'metadata';
 
   static readonly error = AuthErrors;
@@ -103,10 +103,14 @@ export default class AuthApi extends BaseApi {
 
       const metaData = new MetaData((doc.data() as unknown) as MetaData);
 
-      const role: UserType =
-        metaData.role === 'teacher' ? UserType.TEACHER : UserType.STUDENT;
-
-      return this.success(role);
+      switch (metaData.role) {
+        case 'student':
+          return this.success(UserType.STUDENT);
+        case 'teacher':
+          return this.success(UserType.TEACHER);
+        default:
+          return this.success(UserType.UNKNOWN);
+      }
     }
     // console.log('no login user');
 
@@ -117,3 +121,7 @@ export default class AuthApi extends BaseApi {
     await firebase.auth().signOut();
   };
 }
+
+export const authApi = new AuthApi();
+
+export default AuthApi;

@@ -1,8 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
-import { NavigationContainer } from '@react-navigation/native';
+import { CommonActions, NavigationContainer } from '@react-navigation/native';
 import { MenuProvider } from 'react-native-popup-menu';
-import { createDrawerNavigator } from '@react-navigation/drawer';
+import {
+  createDrawerNavigator,
+  DrawerScreenProps,
+} from '@react-navigation/drawer';
 import firebase from 'firebase';
 import SignInPage, { SignInPageNavigationOptions } from './pages/SignInPage';
 import ForgotPasswordPage, {
@@ -76,8 +79,9 @@ import ChangePasswordPage, {
 import MyAccountPage, {
   MyAccountNavigationOptions,
 } from './pages/Commons/MyAccountPage';
-import AuthApi from './api/AuthApi';
 import { UserType } from './api';
+import LoadingPage from './pages/LoadingPage';
+import { authApi } from './api/AuthApi';
 
 export type TeacherClassListNavigationProps = {
   withDismiss?: boolean;
@@ -141,109 +145,136 @@ export type RootStackParamList = {
   // drawer
   MyAccount: undefined;
   ChangePassword: undefined;
+  Loading: undefined;
 };
 
 export const Stack = createStackNavigator<RootStackParamList>();
 
-const AuthProvider = () => {
+type Props = DrawerScreenProps<RootStackParamList, 'JoinClassFinal'>;
+
+const AuthProvider: React.FC<Props> = ({ navigation }) => {
   const [isSignedIn, setIsSignedIn] = useState(false);
-  const [userType, setUserType] = useState<UserType | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const unsubscribe = firebase
       .auth()
-      .onAuthStateChanged((user: firebase.User | null) => {
+      .onAuthStateChanged(async (user: firebase.User | null) => {
         setIsSignedIn(user !== null);
+        setIsLoading(false);
       });
 
     return unsubscribe;
   }, []);
 
   useEffect(() => {
-    const auth = new AuthApi();
-
     (async () => {
-      const [type, error] = await auth.getUserType();
+      // TODO: handel error case
+      const [role] = await authApi.getUserType();
 
-      if (!error) {
-        setUserType(type);
+      // if the auth is not auth loading is not finished
+      // we don't need to navigate to any screen
+      // show some loading page
+      if (isLoading) return;
+
+      // if user role is UNKNOWN and user is not signed in
+      // reset the navigation stack to Sign In page
+      if (!role && !isSignedIn) {
+        navigation.dispatch(
+          CommonActions.reset({
+            index: 1,
+            routes: [{ name: 'SignIn' }],
+          }),
+        );
+
+        return;
       }
+
+      // if user role is selected and user is signed in
+      // reset the navigation stack to Sign In page
+      if (role && !isSignedIn) {
+        navigation.dispatch(
+          CommonActions.reset({
+            index: 1,
+            routes: [{ name: 'SignIn' }],
+          }),
+        );
+
+        return;
+      }
+
+      // if user role is UNKNOWN and user is signed in
+      // reset the navigation stack to Sign In page and go to ChooseRole page
+      if (!role && isSignedIn) {
+        navigation.dispatch(
+          CommonActions.reset({
+            index: 1,
+            routes: [{ name: 'SignIn' }, { name: 'ChooseRole' }],
+          }),
+        );
+
+        return;
+      }
+
+      // if the role is selected and user signed in
+      // go to roles respected page
+      if (role && isSignedIn) {
+        // if the role is teacher go to TeacherClassList
+        if (role === UserType.TEACHER) {
+          navigation.dispatch(
+            CommonActions.reset({
+              index: 1,
+              routes: [{ name: 'TeacherClassList' }],
+            }),
+          );
+
+          return;
+        }
+        // if the role is teacher go to StudentClassList
+        if (role === UserType.STUDENT) {
+          navigation.dispatch(
+            CommonActions.reset({
+              index: 1,
+              routes: [{ name: 'StudentClassList' }],
+            }),
+          );
+
+          return;
+        }
+      }
+
+      // eslint-disable-next-line no-console
+      console.log('something bad has happened no navigation was triggered');
     })();
-  }, [isSignedIn]);
+  }, [isLoading, isSignedIn, navigation]);
 
-  const commons = (
-    <>
-      <Stack.Screen
-        name="MyAccount"
-        component={MyAccountPage}
-        options={MyAccountNavigationOptions}
-      />
-      <Stack.Screen
-        name="ChangePassword"
-        component={ChangePasswordPage}
-        options={ChangePasswordNavigationOptions}
-      />
-    </>
-  );
-
-  const student = (
+  return (
     <MenuProvider>
       <Stack.Navigator>
-        {/* student */}
-        <Stack.Screen
-          name="StudentClassList"
-          component={StudentClassListPage}
-          options={StudentClassListNavigationOptions}
-        />
-
-        <Stack.Screen
-          name="JoinClassFinal"
-          component={JoinClassFinalPage}
-          options={JoinClassFinalNavigationOptions}
-        />
-
-        <Stack.Screen
-          name="JoinClassForm"
-          component={JoinClassFormPage}
-          options={JoinClassFormNavigationOptions}
-        />
-
-        {/* this route is deprecated using popup instead */}
-        <Stack.Screen
-          name="TurnOnWifi"
-          component={TurnOnWifiPage}
-          options={TurnOnWifiNavigationOptions}
-        />
-
-        <Stack.Screen
-          name="GiveResponse"
-          component={GiveResponsePage}
-          options={GiveResponseNavigationOptions}
-        />
-
-        <Stack.Screen
-          name="SuccessResponse"
-          component={SuccessResponsePage}
-          options={SuccessResponseNavigationOptions}
-        />
-        <Stack.Screen
-          name="UnsuccessfulResponse"
-          component={UnsuccessfulResponsePage}
-          options={UnsuccessfulResponseNavigationOptions}
-        />
-        <Stack.Screen
-          name="StudentAttendanceRecord"
-          component={AttendanceRecordPage}
-          options={AttendanceRecordNavigationOptions}
-        />
-        {commons}
-      </Stack.Navigator>
-    </MenuProvider>
-  );
-
-  const teacher = (
-    <MenuProvider>
-      <Stack.Navigator>
+        {/* App Intro */}
+        <>
+          <Stack.Screen name="Loading" component={LoadingPage} />
+          <Stack.Screen
+            name="SignIn"
+            component={SignInPage}
+            options={SignInPageNavigationOptions}
+          />
+          <Stack.Screen
+            name="ForgotPassword"
+            component={ForgotPasswordPage}
+            options={ForgotPasswordNavigationOptions}
+          />
+          <Stack.Screen
+            name="SignUp"
+            component={SignUpPagePage}
+            options={SignUpPageNavigationOptions}
+          />
+          <Stack.Screen
+            name="ChooseRole"
+            component={ChooseRolePage}
+            options={ChooseRoleNavigationOptions}
+          />
+        </>
         {/* Teacher */}
         <>
           <Stack.Screen
@@ -297,46 +328,68 @@ const AuthProvider = () => {
             options={CreateClassNavigationOptions}
           />
         </>
-        {commons}
+        {/* student */}
+        <Stack.Screen
+          name="StudentClassList"
+          component={StudentClassListPage}
+          options={StudentClassListNavigationOptions}
+        />
+
+        <Stack.Screen
+          name="JoinClassFinal"
+          component={JoinClassFinalPage}
+          options={JoinClassFinalNavigationOptions}
+        />
+
+        <Stack.Screen
+          name="JoinClassForm"
+          component={JoinClassFormPage}
+          options={JoinClassFormNavigationOptions}
+        />
+
+        {/* this route is deprecated using popup instead */}
+        <Stack.Screen
+          name="TurnOnWifi"
+          component={TurnOnWifiPage}
+          options={TurnOnWifiNavigationOptions}
+        />
+
+        <Stack.Screen
+          name="GiveResponse"
+          component={GiveResponsePage}
+          options={GiveResponseNavigationOptions}
+        />
+
+        <Stack.Screen
+          name="SuccessResponse"
+          component={SuccessResponsePage}
+          options={SuccessResponseNavigationOptions}
+        />
+        <Stack.Screen
+          name="UnsuccessfulResponse"
+          component={UnsuccessfulResponsePage}
+          options={UnsuccessfulResponseNavigationOptions}
+        />
+        <Stack.Screen
+          name="StudentAttendanceRecord"
+          component={AttendanceRecordPage}
+          options={AttendanceRecordNavigationOptions}
+        />
+        <>
+          {/* account */}
+          <Stack.Screen
+            name="MyAccount"
+            component={MyAccountPage}
+            options={MyAccountNavigationOptions}
+          />
+          <Stack.Screen
+            name="ChangePassword"
+            component={ChangePasswordPage}
+            options={ChangePasswordNavigationOptions}
+          />
+        </>
       </Stack.Navigator>
     </MenuProvider>
-  );
-
-  if (isSignedIn) {
-    if (userType === UserType.STUDENT) {
-      return student;
-    }
-    if (userType === UserType.TEACHER) {
-      return teacher;
-    }
-  }
-
-  return (
-    <Stack.Navigator>
-      {/* App Intro */}
-      <>
-        <Stack.Screen
-          name="SignIn"
-          component={SignInPage}
-          options={SignInPageNavigationOptions}
-        />
-        <Stack.Screen
-          name="ForgotPassword"
-          component={ForgotPasswordPage}
-          options={ForgotPasswordNavigationOptions}
-        />
-        <Stack.Screen
-          name="SignUp"
-          component={SignUpPagePage}
-          options={SignUpPageNavigationOptions}
-        />
-        <Stack.Screen
-          name="ChooseRole"
-          component={ChooseRolePage}
-          options={ChooseRoleNavigationOptions}
-        />
-      </>
-    </Stack.Navigator>
   );
 };
 
@@ -349,41 +402,5 @@ const App = (): JSX.Element => (
     </Drawer.Navigator>
   </NavigationContainer>
 );
-
-(async () => {
-  // const auth = new AuthApi();
-  // const teacher = new TeacherApi();
-  // const [success, error] = await auth.signUpWithEmailAndPassword(
-  //   'prasantabarman06@gmail.com',
-  //   '123456',
-  // );
-  // const [success2, error2] = await auth.loginWithEmailAndPassword(
-  //   'prasantabarman06@gmail.com',
-  //   '123456',
-  // );
-  // console.log(success, convertErrorToMsg(error));
-  // console.log(success2, convertErrorToMsg(error2));
-  // const [a] = await auth.getUseType();
-  // console.log(a);
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
-  // window.auth = auth;
-  // const [userId] = await teacher.createUser('Prasanta Barman');
-  // if (userId) {
-  //   const [classId] = await teacher.createClass(
-  //     userId,
-  //     new TeacherClass({
-  //       title: 'Mathematics And Science',
-  //       section: 'CE/PE',
-  //     }),
-  //   );
-  //   if (classId) {
-  //     const c = await teacher.isClassExist(userId, classId);
-  //     console.log(c);
-  //   }
-  // }
-  // console.table({ success, errors });
-  // console.log(success);
-})();
 
 export default App;
