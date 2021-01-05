@@ -190,7 +190,7 @@ const AuthProvider: React.FC<Props> = ({ navigation }) => {
         return;
       }
 
-      // if user role is selected and user is signed in
+      // if user role is selected and user is not signed in
       // reset the navigation stack to Sign In page
       if (role && !isSignedIn) {
         navigation.dispatch(

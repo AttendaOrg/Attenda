@@ -88,33 +88,39 @@ class AuthApi extends BaseApi {
   };
 
   getUserType = async (): Promise<WithError<UserType>> => {
-    const user = firebase.auth().currentUser;
+    try {
+      const user = firebase.auth().currentUser;
 
-    if (user) {
-      const doc = await firebase
-        .firestore()
-        .collection(AuthApi.META_DATA_COLLECTION_NAME)
-        .doc(user.uid)
-        .get();
-      const data = doc.data();
+      if (user) {
+        const doc = await firebase
+          .firestore()
+          .collection(AuthApi.META_DATA_COLLECTION_NAME)
+          .doc(user.uid)
+          .get();
+        const data = doc.data();
 
-      // path not found the data was not initialized
-      if (!data) return this.error(BasicErrors.EXCEPTION);
+        // path not found the data was not initialized
+        // return UNKNOWN ?
+        if (!data) return this.success(UserType.UNKNOWN);
 
-      const metaData = new MetaData((doc.data() as unknown) as MetaData);
+        const metaData = new MetaData((doc.data() as unknown) as MetaData);
 
-      switch (metaData.role) {
-        case 'student':
-          return this.success(UserType.STUDENT);
-        case 'teacher':
-          return this.success(UserType.TEACHER);
-        default:
-          return this.success(UserType.UNKNOWN);
+        switch (metaData.role) {
+          case 'student':
+            return this.success(UserType.STUDENT);
+          case 'teacher':
+            return this.success(UserType.TEACHER);
+          default:
+            return this.success(UserType.UNKNOWN);
+        }
       }
-    }
-    // console.log('no login user');
+      // console.log('no login user');
 
-    return this.error(BasicErrors.USER_NOT_AUTHENTICATED);
+      return this.error(BasicErrors.USER_NOT_AUTHENTICATED);
+    } catch (ex) {
+      // console.error(ex);
+      return this.error(BasicErrors.EXCEPTION);
+    }
   };
 
   logOut = async (): Promise<void> => {
