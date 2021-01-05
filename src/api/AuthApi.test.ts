@@ -66,4 +66,10 @@ test('check if setUserType, getUserType works', async () => {
   const [userType2] = await authApi.getUserType();
 
   expect(userType2).toBe(UserType.TEACHER);
+
+  await authApi.setUserType(UserType.STUDENT);
+
+  const [userType3] = await authApi.getUserType();
+
+  expect(userType3).toBe(UserType.STUDENT);
 });
