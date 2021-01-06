@@ -1,16 +1,18 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import {
+  StackNavigationOptions,
+  StackScreenProps,
+} from '@react-navigation/stack';
+import { RootStackParamList } from '../App';
+import Loading from '../components/organisms/AppIntro/Loading/Loading';
+import { NoHeaderNavigationOptions } from '../components/templates/SimpleCloseNavigationOption';
 
-const styles = StyleSheet.create({
-  container: {},
-});
+type Props = StackScreenProps<RootStackParamList, 'Loading'>;
 
-const LoadingPage = (): JSX.Element => {
-  return (
-    <View style={styles.container}>
-      <Text>Loading</Text>
-    </View>
-  );
+export const LoadindPageNavigationOptions: StackNavigationOptions = NoHeaderNavigationOptions;
+
+const LoadingPage: React.FC<Props> = (): JSX.Element => {
+  return <Loading />;
 };
 
 export default LoadingPage;
