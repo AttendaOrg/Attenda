@@ -9,7 +9,7 @@ import { NoHeaderNavigationOptions } from '../components/templates/SimpleCloseNa
 
 type Props = StackScreenProps<RootStackParamList, 'Loading'>;
 
-export const LoadindPageNavigationOptions: StackNavigationOptions = NoHeaderNavigationOptions;
+export const LoadingPageNavigationOptions: StackNavigationOptions = NoHeaderNavigationOptions;
 
 const LoadingPage: React.FC<Props> = (): JSX.Element => {
   return <Loading />;

@@ -80,7 +80,7 @@ import MyAccountPage, {
   MyAccountNavigationOptions,
 } from './pages/Commons/MyAccountPage';
 import { UserType } from './api';
-import LoadingPage, { LoadindPageNavigationOptions } from './pages/LoadingPage';
+import LoadingPage, { LoadingPageNavigationOptions } from './pages/LoadingPage';
 import { authApi } from './api/AuthApi';
 
 export type TeacherClassListNavigationProps = {
@@ -161,7 +161,6 @@ const AuthProvider: React.FC<Props> = ({ navigation }) => {
       .auth()
       .onAuthStateChanged(async (user: firebase.User | null) => {
         setIsSignedIn(user !== null);
-        console.log(user);
         setIsLoading(false);
       });
 
@@ -257,7 +256,7 @@ const AuthProvider: React.FC<Props> = ({ navigation }) => {
           <Stack.Screen
             name="Loading"
             component={LoadingPage}
-            options={LoadindPageNavigationOptions}
+            options={LoadingPageNavigationOptions}
           />
           <Stack.Screen
             name="SignIn"

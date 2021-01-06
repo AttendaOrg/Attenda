@@ -10,9 +10,6 @@ const styles = StyleSheet.create({
   },
   aboveTextContainer: {
     alignItems: 'center', // horizontally centered
-  },
-  belowTextContainer: {
-    alignItems: 'center', // horizontally centered
     marginBottom: 16,
   },
   text: {
@@ -35,9 +32,6 @@ const Loading = (): JSX.Element => {
 
       <View style={styles.aboveTextContainer}>
         <Text>From</Text>
-      </View>
-
-      <View style={styles.belowTextContainer}>
         <Text style={styles.text}>Softland</Text>
       </View>
     </View>
