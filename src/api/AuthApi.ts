@@ -1,13 +1,78 @@
 import firebase from 'firebase';
 import { UserType } from '.';
 import BaseApi, { BasicErrors, WithError } from './BaseApi';
+import AccountInfo from './model/AccountInfo';
 import MetaData, { UserRole } from './model/MetaData';
 
 export enum AuthErrors {
   EMAIL_ALREADY_IN_USE,
 }
 
-class AuthApi extends BaseApi {
+interface AuthApiInterface {
+  /**
+   * gets the user role
+   * @returns UserType
+   * ```ts
+   * UserType.UNKNOWN
+   * UserType.STUDENT
+   * UserType.TEACHER
+   * ```
+   */
+  getUserType(): Promise<WithError<UserType>>;
+  /**
+   * sets the user role
+   * @param type user role ```UserType.STUDENT | UserType.TEACHER```
+   */
+  setUserType(type: UserType): Promise<WithError<boolean>>;
+
+  /**
+   * sign up with email and password
+   * @param email
+   * @param password
+   */
+  signUpWithEmailAndPassword(
+    email: string,
+    password: string,
+  ): Promise<WithError<boolean>>;
+  /**
+   * login with email and password
+   * @param email
+   * @param password
+   */
+  loginWithEmailAndPassword(
+    email: string,
+    password: string,
+  ): Promise<WithError<boolean>>;
+  /**
+   * checks if the user is logged in or not
+   * @bug
+   * it some time doesn't update immediately after login or sign up
+   */
+  isLoggedIn(): Promise<boolean>;
+  /**
+   * log out form the current session
+   */
+  logOut(): Promise<void>;
+  /**
+   * change the logged in user password\
+   * for this method to work user have to already logged in
+   * @param newPassword new password
+   */
+  changePassword(newPassword: string): Promise<WithError<boolean>>;
+
+  /**
+   * gets the account info of logged in user\
+   * @see AccountInfo for props
+   */
+  getAccountInfo(): Promise<WithError<AccountInfo>>;
+  /**
+   * updates the account info(name/email/role)
+   * @param accountInfo account info can handle partial account data
+   */
+  updateAccountInfo(accountInfo: AccountInfo): Promise<WithError<boolean>>;
+}
+
+class AuthApi extends BaseApi implements AuthApiInterface {
   static readonly META_DATA_COLLECTION_NAME = 'metadata';
 
   static readonly error = AuthErrors;
@@ -125,6 +190,18 @@ class AuthApi extends BaseApi {
 
   logOut = async (): Promise<void> => {
     await firebase.auth().signOut();
+  };
+
+  changePassword = async (): Promise<WithError<boolean>> => {
+    throw new Error('Method not implemented.');
+  };
+
+  getAccountInfo = async (): Promise<WithError<AccountInfo>> => {
+    throw new Error('Method not implemented.');
+  };
+
+  updateAccountInfo = async (): Promise<WithError<boolean>> => {
+    throw new Error('Method not implemented.');
   };
 }
 
