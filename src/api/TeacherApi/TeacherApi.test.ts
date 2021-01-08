@@ -70,3 +70,29 @@ test('able to get class info', async () => {
 
   expect(classModel).toBeInstanceOf(TeacherClassModel);
 });
+
+test('able to update class info', async () => {
+  const class1 = new TeacherClassModel({ section: 'Section', title: 'Title' });
+
+  const [classId] = await teacherApi.createClass(class1);
+
+  const updatedClass = TeacherClassModel.PartialData({
+    section: 'Section Updated',
+    title: 'Title Updated',
+    description: 'Description Updated',
+  });
+
+  const [success] = await teacherApi.updateClass(
+    classId as string,
+    updatedClass,
+  );
+
+  expect(success).toBe(true);
+
+  const [classModel] = await teacherApi.getClassInfo(classId as string);
+
+  expect(classModel).toBeInstanceOf(TeacherClassModel);
+  expect(classModel?.title).toBe(updatedClass.title);
+  expect(classModel?.section).toBe(updatedClass.section);
+  expect(classModel?.description).toBe(updatedClass.description);
+});
