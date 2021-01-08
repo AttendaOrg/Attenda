@@ -1,8 +1,7 @@
 import firebase from 'firebase';
-import { UserType } from '.';
+import { UserRole } from '.';
 import BaseApi, { BasicErrors, WithError } from './BaseApi';
-import AccountInfo from './model/AccountInfo';
-import MetaData, { UserRole } from './model/MetaData';
+import AccountInfo, { AccountInfoProps } from './model/AccountInfo';
 
 export enum AuthErrors {
   EMAIL_ALREADY_IN_USE,
@@ -11,20 +10,20 @@ export enum AuthErrors {
 interface AuthApiInterface {
   /**
    * gets the user role
-   * @returns UserType
+   * @returns UserRole
    * ```ts
-   * UserType.UNKNOWN
-   * UserType.STUDENT
-   * UserType.TEACHER
+   * UserRole.UNKNOWN
+   * UserRole.STUDENT
+   * UserRole.TEACHER
    * ```
    */
-  getUserType(): Promise<WithError<UserType>>;
+  getUserRole(): Promise<WithError<UserRole>>;
 
   /**
    * sets the user role
-   * @param type user role ```UserType.STUDENT | UserType.TEACHER```
+   * @param type user role *UserRole.STUDENT | UserRole.TEACHER*
    */
-  setUserType(type: UserType): Promise<WithError<boolean>>;
+  setUserRole(type: UserRole): Promise<WithError<boolean>>;
 
   /**
    * sign up with email and password
@@ -65,6 +64,8 @@ interface AuthApiInterface {
    */
   changePassword(newPassword: string): Promise<WithError<boolean>>;
 
+  createAccountInfo(accountInfo: AccountInfo): Promise<WithError<boolean>>;
+
   /**
    * gets the account info of logged in user\
    * @see AccountInfo for props
@@ -84,12 +85,12 @@ interface AuthApiInterface {
 }
 
 class AuthApi extends BaseApi implements AuthApiInterface {
-  static readonly META_DATA_COLLECTION_NAME = 'metadata';
+  static readonly ROOT_COLLECTION_NAME = 'acc_metadata';
 
   static readonly error = AuthErrors;
 
-  static readonly isRoleSelected = (userRole: UserType | null): boolean =>
-    userRole === UserType.TEACHER || userRole === UserType.STUDENT;
+  static readonly isRoleSelected = (userRole: UserRole | null): boolean =>
+    userRole === UserRole.TEACHER || userRole === UserRole.STUDENT;
 
   public isLoggedIn = async (): Promise<boolean> => {
     return firebase.auth().currentUser !== null;
@@ -150,56 +151,57 @@ class AuthApi extends BaseApi implements AuthApiInterface {
     }
   };
 
-  setUserType = async (type: UserType): Promise<WithError<boolean>> => {
-    const user = firebase.auth().currentUser;
+  setUserRole = async (type: UserRole): Promise<WithError<boolean>> => {
+    try {
+      const userId = this.getUserUid();
 
-    const role: UserRole = type === UserType.TEACHER ? 'teacher' : 'student';
-    const data = new MetaData({ role });
+      const updateInfo = new AccountInfo({ role: type });
 
-    if (user) {
+      if (userId === null)
+        return this.error(BasicErrors.USER_NOT_AUTHENTICATED);
+
       await firebase
         .firestore()
-        .collection(AuthApi.META_DATA_COLLECTION_NAME)
-        .doc(user.uid)
-        .set(data.toJson());
+        .collection(AuthApi.ROOT_COLLECTION_NAME)
+        .doc(userId)
+        .update(updateInfo.toJson());
 
       return this.success(true);
+    } catch (ex) {
+      // console.error(ex);
+      return this.error(BasicErrors.EXCEPTION);
     }
-    // console.log('no login user');
-
-    return this.error(BasicErrors.USER_NOT_AUTHENTICATED);
   };
 
-  getUserType = async (): Promise<WithError<UserType>> => {
+  getUserRole = async (): Promise<WithError<UserRole>> => {
     try {
-      const user = firebase.auth().currentUser;
+      const userId = this.getUserUid();
 
-      if (user) {
-        const doc = await firebase
-          .firestore()
-          .collection(AuthApi.META_DATA_COLLECTION_NAME)
-          .doc(user.uid)
-          .get();
-        const data = doc.data();
+      if (userId === null)
+        return this.error(BasicErrors.USER_NOT_AUTHENTICATED);
 
-        // path not found the data was not initialized
-        // return UNKNOWN ?
-        if (!data) return this.success(UserType.UNKNOWN);
+      const doc = await firebase
+        .firestore()
+        .collection(AuthApi.ROOT_COLLECTION_NAME)
+        .doc(userId)
+        .get();
+      const data = doc.data();
 
-        const metaData = new MetaData((doc.data() as unknown) as MetaData);
+      // path not found the data was not initialized
+      // return UNKNOWN ?
+      if (!data) return this.success(UserRole.UNKNOWN);
 
-        switch (metaData.role) {
-          case 'student':
-            return this.success(UserType.STUDENT);
-          case 'teacher':
-            return this.success(UserType.TEACHER);
-          default:
-            return this.success(UserType.UNKNOWN);
-        }
+      const info = new AccountInfo((doc.data() as unknown) as AccountInfoProps);
+
+      switch (info.role) {
+        case 'student':
+          return this.success(UserRole.STUDENT);
+        case 'teacher':
+          return this.success(UserRole.TEACHER);
+        default:
+          return this.success(UserRole.UNKNOWN);
       }
       // console.log('no login user');
-
-      return this.error(BasicErrors.USER_NOT_AUTHENTICATED);
     } catch (ex) {
       // console.error(ex);
       return this.error(BasicErrors.EXCEPTION);
@@ -220,6 +222,27 @@ class AuthApi extends BaseApi implements AuthApiInterface {
 
   updateAccountInfo = async (): Promise<WithError<boolean>> => {
     throw new Error('Method not implemented.');
+  };
+
+  createAccountInfo = async (
+    accountInfo: AccountInfo,
+  ): Promise<WithError<boolean>> => {
+    try {
+      const userId = this.getUserUid();
+
+      if (userId === null)
+        return this.error(BasicErrors.USER_NOT_AUTHENTICATED);
+
+      await firebase
+        .firestore()
+        .collection(AuthApi.ROOT_COLLECTION_NAME)
+        .doc(userId)
+        .set(accountInfo.toJson());
+
+      return this.success(true);
+    } catch (e) {
+      return this.error(BasicErrors.EXCEPTION);
+    }
   };
 }
 

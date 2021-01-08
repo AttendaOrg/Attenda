@@ -1,12 +1,14 @@
 /* eslint-disable import/first */
 import firebase from 'firebase';
+import * as admin from 'firebase-admin';
+import AuthApi from './AuthApi';
+import { UserRole } from '.';
+import BaseApi, { BasicErrors } from './BaseApi';
+import AccountInfo from './model/AccountInfo';
+import { deleteAllUser } from './util';
 
 process.env.FIREBASE_AUTH_EMULATOR_HOST = 'localhost:9099';
 process.env.FIRESTORE_EMULATOR_HOST = 'localhost:8080';
-import * as admin from 'firebase-admin';
-import AuthApi from './AuthApi';
-import { UserType } from '.';
-import BaseApi, { BasicErrors } from './BaseApi';
 
 admin.initializeApp({
   projectId: 'attenda-6c9ad',
@@ -19,36 +21,15 @@ const authApi = new AuthApi(BaseApi.testOptions);
 
 afterAll(async () => {
   //#region delete all existing user
-  const { users } = await admin.auth().listUsers();
+  const newUsers = await deleteAllUser();
 
-  users.forEach(user => {
-    admin.auth().deleteUser(user.uid);
-  });
-  const { users: newUsers } = await admin.auth().listUsers();
-
-  expect(newUsers.length).toBe(0);
+  expect(newUsers).toBe(0);
   //#endregion
 
   //#region delete all firestore collection
-  const db = admin.firestore();
-  const collections = await db.listCollections();
-
-  await Promise.all(
-    collections.map(async coll => {
-      // Get a new write batch
-      const batch = admin.firestore().batch();
-      const documents = await coll.listDocuments();
-
-      documents.forEach(doc => {
-        batch.delete(doc);
-      });
-      await batch.commit();
-    }),
-  );
-
-  const newCollections = await db.listCollections();
-
-  expect(newCollections.length).toBe(0);
+  // const newCollections = await deleteAllFirestoreCollection();
+  //
+  // expect(newCollections).toBe(0);
   //#endregion
 });
 
@@ -151,28 +132,38 @@ test('get user id works', async () => {
   expect(newUserId).toBe(user.uid);
 });
 
+test('check if account info creation works', async () => {
+  await authApi.loginWithEmailAndPassword(TEST_EMAIL, TEST_PASSWORD);
+  const acc = new AccountInfo({
+    name: 'Prasanta Barman',
+  });
+  const [success] = await authApi.createAccountInfo(acc);
+
+  expect(success).toBe(true);
+});
+
 test('check if setUserType, getUserType works', async () => {
   //#region test for UserType.UNKNOWN
   await authApi.loginWithEmailAndPassword(TEST_EMAIL, TEST_PASSWORD);
 
-  const [userType1] = await authApi.getUserType();
+  const [userType1] = await authApi.getUserRole();
 
-  expect(userType1).toBe(UserType.UNKNOWN);
+  expect(userType1).toBe(UserRole.UNKNOWN);
   //#endregion
 
   //#region test for UserType.TEACHER
-  await authApi.setUserType(UserType.TEACHER);
+  await authApi.setUserRole(UserRole.TEACHER);
 
-  const [userType2] = await authApi.getUserType();
+  const [userType2] = await authApi.getUserRole();
 
-  expect(userType2).toBe(UserType.TEACHER);
+  expect(userType2).toBe(UserRole.TEACHER);
   //#endregion
 
   //#region test for UserType.STUDENT
-  await authApi.setUserType(UserType.STUDENT);
+  await authApi.setUserRole(UserRole.STUDENT);
 
-  const [userType3] = await authApi.getUserType();
+  const [userType3] = await authApi.getUserRole();
 
-  expect(userType3).toBe(UserType.STUDENT);
+  expect(userType3).toBe(UserRole.STUDENT);
   //#endregion
 });

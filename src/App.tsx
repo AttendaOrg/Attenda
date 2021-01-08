@@ -79,7 +79,7 @@ import ChangePasswordPage, {
 import MyAccountPage, {
   MyAccountNavigationOptions,
 } from './pages/Commons/MyAccountPage';
-import { UserType } from './api';
+import { UserRole } from './api';
 import LoadingPage, { LoadingPageNavigationOptions } from './pages/LoadingPage';
 import AuthApi from './api/AuthApi';
 
@@ -170,7 +170,7 @@ const AuthProvider: React.FC<Props> = ({ navigation }) => {
   useEffect(() => {
     (async () => {
       // TODO: handle error case
-      const [role] = await authApi.getUserType();
+      const [role] = await authApi.getUserRole();
 
       // if the auth is not auth loading is not finished
       // we don't need to navigate to any screen
@@ -221,7 +221,7 @@ const AuthProvider: React.FC<Props> = ({ navigation }) => {
       // go to roles respected page
       if (AuthApi.isRoleSelected(role) && isSignedIn) {
         // if the role is teacher go to TeacherClassList
-        if (role === UserType.TEACHER) {
+        if (role === UserRole.TEACHER) {
           navigation.dispatch(
             CommonActions.reset({
               index: 1,
@@ -232,7 +232,7 @@ const AuthProvider: React.FC<Props> = ({ navigation }) => {
           return;
         }
         // if the role is teacher go to StudentClassList
-        if (role === UserType.STUDENT) {
+        if (role === UserRole.STUDENT) {
           navigation.dispatch(
             CommonActions.reset({
               index: 1,
