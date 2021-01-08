@@ -6,7 +6,7 @@ process.env.FIRESTORE_EMULATOR_HOST = 'localhost:8080';
 import * as admin from 'firebase-admin';
 import AuthApi from './AuthApi';
 import { UserType } from '.';
-import BaseApi from './BaseApi';
+import BaseApi, { BasicErrors } from './BaseApi';
 
 admin.initializeApp({
   projectId: 'attenda-6c9ad',
@@ -53,10 +53,40 @@ afterEach(async () => {
 });
 
 test('creation of an account', async () => {
-  await authApi.signUpWithEmailAndPassword(TEST_EMAIL, TEST_PASSWORD);
   const { users } = await admin.auth().listUsers();
 
-  expect(users.length).toBe(1);
+  expect(users.length).toBe(0);
+
+  try {
+    // successful account creation
+    const [success, error] = await authApi.signUpWithEmailAndPassword(
+      TEST_EMAIL,
+      TEST_PASSWORD,
+    );
+
+    expect(success).toBe(true);
+    expect(error).toBe(null);
+  } catch (e) {
+    expect(e).toBeInstanceOf(Error);
+  }
+
+  try {
+    // account with same email address is already created
+    // it should return correct error code
+    const [success, error] = await authApi.signUpWithEmailAndPassword(
+      TEST_EMAIL,
+      TEST_PASSWORD,
+    );
+
+    expect(success).toBe(null);
+    expect(error).toBe(BasicErrors.AUTH_EMAIL_ALREADY_IN_USE);
+  } catch (e) {
+    expect(e).toBeInstanceOf(Error);
+  }
+
+  const { users: newUsers } = await admin.auth().listUsers();
+
+  expect(newUsers.length).toBe(1);
 });
 
 test('check if login, logout works', async () => {
