@@ -95,6 +95,20 @@ test('check if login, logout works', async () => {
   isLoggedIn = await authApi.isLoggedIn();
   expect(isLoggedIn).toBe(false);
 
+  const [, wrongEmail] = await authApi.loginWithEmailAndPassword(
+    'wrong@email.com',
+    TEST_PASSWORD,
+  );
+
+  expect(wrongEmail).toBe(BasicErrors.AUTH_USER_NOT_FOUND);
+
+  const [, wrongPassword] = await authApi.loginWithEmailAndPassword(
+    TEST_EMAIL,
+    'wrong password',
+  );
+
+  expect(wrongPassword).toBe(BasicErrors.AUTH_WRONG_PASSWORD);
+
   await authApi.loginWithEmailAndPassword(TEST_EMAIL, TEST_PASSWORD);
   isLoggedIn = await authApi.isLoggedIn();
   expect(isLoggedIn).toBe(true);
