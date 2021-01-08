@@ -1,4 +1,6 @@
 /* eslint-disable import/first */
+import firebase from 'firebase';
+
 process.env.FIREBASE_AUTH_EMULATOR_HOST = 'localhost:9099';
 process.env.FIRESTORE_EMULATOR_HOST = 'localhost:8080';
 import * as admin from 'firebase-admin';
@@ -32,7 +34,7 @@ afterAll(async () => {
 });
 
 afterEach(async () => {
-  await authApi.logOut();
+  await firebase.auth().signOut();
 });
 
 test('creation of an account', async () => {
