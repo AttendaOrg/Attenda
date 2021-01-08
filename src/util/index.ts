@@ -1,5 +1,5 @@
 export const isValidEmail = (email: string): boolean => {
-  const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+  const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
   return re.test(email);
 };
@@ -39,5 +39,18 @@ export const convertTime = (date: Date): string =>
  */
 export const convertDateTime = (date: Date = new Date()): string =>
   `${convertDate(date)} ${convertTime(date)}`;
+
+/**
+ * wait for certain amount of time
+ * @param time in milliseconds
+ * @param resolves if the promise resolves or not
+ */
+export const wait = (time: number, resolves = true): Promise<void> =>
+  new Promise((resolve, reject) =>
+    setTimeout(() => {
+      if (resolves) resolve();
+      else reject();
+    }, time),
+  );
 
 export default {};

@@ -98,6 +98,10 @@ test('check if login, logout works', async () => {
   await authApi.loginWithEmailAndPassword(TEST_EMAIL, TEST_PASSWORD);
   isLoggedIn = await authApi.isLoggedIn();
   expect(isLoggedIn).toBe(true);
+
+  await authApi.logOut();
+  isLoggedIn = await authApi.isLoggedIn();
+  expect(isLoggedIn).toBe(false);
 });
 
 test('check if setUserType, getUserType works', async () => {
