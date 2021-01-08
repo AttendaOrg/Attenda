@@ -55,7 +55,7 @@ const AttendanceSessionRecord: React.FC<AttendanceSessionRecordPops> = ({
       <Dialog visible={popupVisible} onDismiss={() => setPopupVisible(false)}>
         <SelectTimeEditPopup
           date={currentDate}
-          selectedDateTimes={Object.keys(markedDates[currentDate] || {})}
+          selectedDateTimes={Object.keys(markedDates[currentDate] ?? {})}
           onSelectTime={(date, time) => {
             setPopupVisible(false);
             onTimeSelect(date, time);

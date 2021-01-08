@@ -17,9 +17,9 @@ export default class AccountInfo implements Partial<AccountInfoProps> {
   role = UserType.UNKNOWN;
 
   constructor(data: Partial<AccountInfoProps> = {}) {
-    this.name = data.name || '';
-    this.email = data.email || '';
-    this.role = data.role || UserType.UNKNOWN;
+    this.name = data.name ?? '';
+    this.email = data.email ?? '';
+    this.role = data.role ?? UserType.UNKNOWN;
   }
 
   toJson(): AccountInfoProps {

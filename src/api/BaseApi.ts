@@ -8,18 +8,18 @@ export interface BaseApiOptions {
    * for using the firebase emulator
    * @default false
    */
-  useEmulator?: boolean;
+  useEmulator: boolean;
   /**
    * host for firebase emulator
    * @default localhost
    */
-  host?: string;
+  host: string;
 
   /**
    * store the user login session
    * for test files disable it
    */
-  persistence?: boolean;
+  persistence: boolean;
 }
 
 export enum BasicErrors {
@@ -65,16 +65,16 @@ class BaseApi {
     persistence: true,
   };
 
-  constructor(options: BaseApiOptions = {}) {
+  constructor(options: Partial<BaseApiOptions> = {}) {
     // firebase has not been initialized
 
     if (firebase.apps.length === 0) {
       this.options = { ...BaseApi.defaultOptions, ...options };
       firebase.initializeApp(firebaseConfig);
 
-      const host: string = options.host || DEFAULT_HOST;
+      const host: string = options.host ?? DEFAULT_HOST;
 
-      if (options.persistence) {
+      if (options.persistence ?? BaseApi.defaultOptions.persistence) {
         firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL);
       }
 

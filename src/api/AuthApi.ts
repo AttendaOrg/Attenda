@@ -77,6 +77,13 @@ class AuthApi extends BaseApi implements AuthApiInterface {
 
   static readonly error = AuthErrors;
 
+  static readonly isRoleSelected = (userRole: UserType | null): boolean => {
+    if (userRole === UserType.TEACHER) return true;
+    if (userRole === UserType.STUDENT) return true;
+
+    return false;
+  };
+
   isLoggedIn = async (): Promise<boolean> => {
     return firebase.auth().currentUser !== null;
   };

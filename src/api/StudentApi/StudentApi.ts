@@ -6,7 +6,7 @@ export default class StudentApi extends AuthApi {
   static readonly ROOT_COLLECTION_NAME = 'teachers';
 
   createUser = async (name: string): Promise<WithError<boolean>> => {
-    if (this.isLoggedIn()) {
+    if (await this.isLoggedIn()) {
       try {
         await firebase
           .firestore()

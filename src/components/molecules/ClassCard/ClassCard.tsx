@@ -94,7 +94,7 @@ const ClassCard: React.FC<Props> = ({
             <MenuOptionsPopover options={options} />
           </View>
         </View>
-        {backgroundImage && (
+        {backgroundImage !== undefined && (
           <Image source={backgroundImage} style={styles.image} />
         )}
       </View>

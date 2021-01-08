@@ -30,13 +30,13 @@ export default class TeacherClass implements TeacherClassProps {
   isLive: boolean;
 
   constructor(data?: TeacherClassProps) {
-    this.classCode = data?.classCode || '';
-    this.description = data?.description || '';
-    this.inviteLink = data?.inviteLink || '';
-    this.isActiveInvite = data?.isActiveInvite || false;
-    this.section = data?.section || '';
-    this.title = data?.title || '';
-    this.isLive = data?.isLive || false;
+    this.classCode = data?.classCode ?? '';
+    this.description = data?.description ?? '';
+    this.inviteLink = data?.inviteLink ?? '';
+    this.isActiveInvite = data?.isActiveInvite ?? false;
+    this.section = data?.section ?? '';
+    this.title = data?.title ?? '';
+    this.isLive = data?.isLive ?? false;
   }
 
   toJson = (): TeacherClassProps => {

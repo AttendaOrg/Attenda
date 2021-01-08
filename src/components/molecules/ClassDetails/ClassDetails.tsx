@@ -54,8 +54,12 @@ const ClassDetails: React.FC<ClassDetailsPops> = ({
       <Image source={imageSrc} style={styles.image} />
       <Text style={styles.className}>{className}</Text>
       <Text style={styles.section}>{section}</Text>
-      {teacherName && <Text style={styles.teacherName}>By: {teacherName}</Text>}
-      {rollNo && <Text style={styles.rollNo}>Your roll no: {rollNo}</Text>}
+      {teacherName !== undefined && (
+        <Text style={styles.teacherName}>By: {teacherName}</Text>
+      )}
+      {rollNo !== undefined && (
+        <Text style={styles.rollNo}>Your roll no: {rollNo}</Text>
+      )}
     </View>
   );
 };

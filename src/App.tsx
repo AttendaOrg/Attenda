@@ -81,7 +81,7 @@ import MyAccountPage, {
 } from './pages/Commons/MyAccountPage';
 import { UserType } from './api';
 import LoadingPage, { LoadingPageNavigationOptions } from './pages/LoadingPage';
-import { authApi } from './api/AuthApi';
+import AuthApi, { authApi } from './api/AuthApi';
 
 export type TeacherClassListNavigationProps = {
   withDismiss?: boolean;
@@ -179,7 +179,8 @@ const AuthProvider: React.FC<Props> = ({ navigation }) => {
 
       // if user role is UNKNOWN and user is not signed in
       // reset the navigation stack to Sign In page
-      if (!role && !isSignedIn) {
+
+      if (AuthApi.isRoleSelected(role) === false && !isSignedIn) {
         navigation.dispatch(
           CommonActions.reset({
             index: 1,
@@ -192,7 +193,7 @@ const AuthProvider: React.FC<Props> = ({ navigation }) => {
 
       // if user role is selected and user is not signed in
       // reset the navigation stack to Sign In page
-      if (role && !isSignedIn) {
+      if (AuthApi.isRoleSelected(role) === true && !isSignedIn) {
         navigation.dispatch(
           CommonActions.reset({
             index: 1,
@@ -205,7 +206,7 @@ const AuthProvider: React.FC<Props> = ({ navigation }) => {
 
       // if user role is UNKNOWN and user is signed in
       // reset the navigation stack to Sign In page and go to ChooseRole page
-      if (!role && isSignedIn) {
+      if (AuthApi.isRoleSelected(role) === false && isSignedIn) {
         navigation.dispatch(
           CommonActions.reset({
             index: 1,
@@ -218,7 +219,7 @@ const AuthProvider: React.FC<Props> = ({ navigation }) => {
 
       // if the role is selected and user signed in
       // go to roles respected page
-      if (role && isSignedIn) {
+      if (AuthApi.isRoleSelected(role) === true && isSignedIn) {
         // if the role is teacher go to TeacherClassList
         if (role === UserType.TEACHER) {
           navigation.dispatch(

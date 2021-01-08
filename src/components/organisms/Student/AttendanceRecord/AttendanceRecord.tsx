@@ -122,7 +122,7 @@ const AttendanceRecord: React.FC<AttendanceRecordPops> = ({
       <Dialog visible={visible} onDismiss={() => setVisible(false)}>
         <UserPresent
           date="2020-12-12"
-          selectedDates={markedDates[currentDate] || {}}
+          selectedDates={markedDates[currentDate] ?? {}}
         />
       </Dialog>
     </View>

@@ -9,7 +9,7 @@ export default class TeacherApi extends AuthApi {
   static readonly CLASSES_COLLECTION_NAME = 'classes';
 
   createUser = async (name: string): Promise<WithError<string>> => {
-    if (this.isLoggedIn()) {
+    if (await this.isLoggedIn()) {
       try {
         const doc = await firebase
           .firestore()
@@ -101,7 +101,7 @@ export default class TeacherApi extends AuthApi {
         )
         .add({
           class_code: '',
-          description: description || '',
+          description: description ?? '',
           invite_link: '',
           isActiveInvite: false,
           section,
