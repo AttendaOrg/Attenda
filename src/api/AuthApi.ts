@@ -80,7 +80,7 @@ interface AuthApiInterface {
   /**
    * @returns **userId** of the logged in user
    */
-  getUserId(): string | null;
+  getUserUid(): string | null;
 }
 
 class AuthApi extends BaseApi implements AuthApiInterface {
@@ -95,7 +95,7 @@ class AuthApi extends BaseApi implements AuthApiInterface {
     return firebase.auth().currentUser !== null;
   };
 
-  getUserId = (): string | null => {
+  getUserUid = (): string | null => {
     return firebase.auth().currentUser?.uid ?? null;
   };
 

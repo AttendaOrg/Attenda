@@ -171,7 +171,7 @@ export default class TeacherApi extends AuthApi implements TeacherApiInterface {
     teacherClass: TeacherClass,
   ): Promise<WithError<string>> => {
     try {
-      const userId = this.getUserId();
+      const userId = this.getUserUid();
 
       if (userId === null)
         return this.error(BasicErrors.USER_NOT_AUTHENTICATED);
@@ -196,7 +196,7 @@ export default class TeacherApi extends AuthApi implements TeacherApiInterface {
     teacherClass: TeacherClass,
   ): Promise<WithError<boolean>> => {
     try {
-      const userId = this.getUserId();
+      const userId = this.getUserUid();
 
       if (userId === null)
         return this.error(BasicErrors.USER_NOT_AUTHENTICATED);
@@ -219,7 +219,7 @@ export default class TeacherApi extends AuthApi implements TeacherApiInterface {
 
   isClassExist = async (classId: string): Promise<WithError<boolean>> => {
     try {
-      const userId = this.getUserId();
+      const userId = this.getUserUid();
 
       if (userId === null)
         return this.error(BasicErrors.USER_NOT_AUTHENTICATED);
@@ -246,7 +246,7 @@ export default class TeacherApi extends AuthApi implements TeacherApiInterface {
 
   getAllClass = async (): Promise<WithError<TeacherClass[]>> => {
     try {
-      const userId = this.getUserId();
+      const userId = this.getUserUid();
 
       if (userId === null)
         return this.error(BasicErrors.USER_NOT_AUTHENTICATED);

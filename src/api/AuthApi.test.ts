@@ -118,6 +118,18 @@ test('check if login, logout works', async () => {
   expect(isLoggedIn).toBe(false);
 });
 
+test('get user id works', async () => {
+  const userId = authApi.getUserUid();
+
+  expect(userId).toBe(null);
+
+  await authApi.loginWithEmailAndPassword(TEST_EMAIL, TEST_PASSWORD);
+  const user = await admin.auth().getUserByEmail(TEST_EMAIL);
+  const newUserId = authApi.getUserUid();
+
+  expect(newUserId).toBe(user.uid);
+});
+
 test('check if setUserType, getUserType works', async () => {
   await authApi.loginWithEmailAndPassword(TEST_EMAIL, TEST_PASSWORD);
 
