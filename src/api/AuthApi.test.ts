@@ -18,19 +18,34 @@ const TEST_PASSWORD = '123456';
 const authApi = new AuthApi(BaseApi.testOptions);
 
 afterAll(async () => {
-  const result = await admin.auth().listUsers();
+  const { users } = await admin.auth().listUsers();
 
-  result.users.forEach(user => {
+  users.forEach(user => {
     admin.auth().deleteUser(user.uid);
   });
-  const { users } = await admin.auth().listUsers();
+  const { users: newUsers } = await admin.auth().listUsers();
+
+  expect(newUsers.length).toBe(0);
 
   const db = admin.firestore();
   const collections = await db.listCollections();
 
-  collections.forEach(collection => collection.doc().delete());
+  await Promise.all(
+    collections.map(async coll => {
+      // Get a new write batch
+      const batch = admin.firestore().batch();
+      const documents = await coll.listDocuments();
 
-  expect(users.length).toBe(0);
+      documents.forEach(doc => {
+        batch.delete(doc);
+      });
+      await batch.commit();
+    }),
+  );
+
+  const newCollections = await db.listCollections();
+
+  expect(newCollections.length).toBe(0);
 });
 
 afterEach(async () => {
