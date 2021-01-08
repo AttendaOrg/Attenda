@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import firebase from 'firebase';
 import AuthApi from '../AuthApi';
-import { BasicErrors, WithError } from '../BaseApi';
+import { WithError } from '../BaseApi';
 
 interface StudentApiInterface {
   /**
@@ -13,6 +12,7 @@ interface StudentApiInterface {
     classCode: string,
     rollNo: string,
   ): Promise<WithError<boolean>>;
+
   /**
    * join the class
    * @param classCode
@@ -42,6 +42,7 @@ interface StudentApiInterface {
     sessionId: string,
     macId: string,
   ): Promise<WithError<boolean>>;
+
   /**
    * get attendance report of a class
    * @param classId
@@ -50,24 +51,23 @@ interface StudentApiInterface {
   getAttendanceReport(classId: string): Promise<WithError<unknown>>;
 }
 
+// noinspection JSUnusedLocalSymbols
 export default class StudentApi extends AuthApi implements StudentApiInterface {
   validateClassJoin = (
     classCode: string,
     rollNo: string,
-  ): Promise<WithError<boolean, BasicErrors>> => {
+  ): Promise<WithError<boolean>> => {
     throw new Error('Method not implemented.');
   };
 
   joinClass = (
     classCode: string,
     rollNo: string,
-  ): Promise<WithError<boolean, BasicErrors>> => {
+  ): Promise<WithError<boolean>> => {
     throw new Error('Method not implemented.');
   };
 
-  getEnrolledClassList = (
-    page: string,
-  ): Promise<WithError<unknown[], BasicErrors>> => {
+  getEnrolledClassList = (page: string): Promise<WithError<unknown[]>> => {
     throw new Error('Method not implemented.');
   };
 
@@ -75,13 +75,11 @@ export default class StudentApi extends AuthApi implements StudentApiInterface {
     classId: string,
     sessionId: string,
     macId: string,
-  ): Promise<WithError<boolean, BasicErrors>> => {
+  ): Promise<WithError<boolean>> => {
     throw new Error('Method not implemented.');
   };
 
-  getAttendanceReport = (
-    classId: string,
-  ): Promise<WithError<unknown, BasicErrors>> => {
+  getAttendanceReport = (classId: string): Promise<WithError<unknown>> => {
     throw new Error('Method not implemented.');
   };
 

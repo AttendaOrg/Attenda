@@ -159,19 +159,17 @@ const AuthProvider: React.FC<Props> = ({ navigation }) => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const unsubscribe = firebase
+    return firebase
       .auth()
       .onAuthStateChanged(async (user: firebase.User | null) => {
         setIsSignedIn(user !== null);
         setIsLoading(false);
       });
-
-    return unsubscribe;
   }, []);
 
   useEffect(() => {
     (async () => {
-      // TODO: handel error case
+      // TODO: handle error case
       const [role] = await authApi.getUserType();
 
       // if the auth is not auth loading is not finished
@@ -182,7 +180,7 @@ const AuthProvider: React.FC<Props> = ({ navigation }) => {
       // if user role is UNKNOWN and user is not signed in
       // reset the navigation stack to Sign In page
 
-      if (AuthApi.isRoleSelected(role) === false && !isSignedIn) {
+      if (!AuthApi.isRoleSelected(role) && !isSignedIn) {
         navigation.dispatch(
           CommonActions.reset({
             index: 1,
@@ -195,7 +193,7 @@ const AuthProvider: React.FC<Props> = ({ navigation }) => {
 
       // if user role is selected and user is not signed in
       // reset the navigation stack to Sign In page
-      if (AuthApi.isRoleSelected(role) === true && !isSignedIn) {
+      if (AuthApi.isRoleSelected(role) && !isSignedIn) {
         navigation.dispatch(
           CommonActions.reset({
             index: 1,
@@ -208,7 +206,7 @@ const AuthProvider: React.FC<Props> = ({ navigation }) => {
 
       // if user role is UNKNOWN and user is signed in
       // reset the navigation stack to Sign In page and go to ChooseRole page
-      if (AuthApi.isRoleSelected(role) === false && isSignedIn) {
+      if (!AuthApi.isRoleSelected(role) && isSignedIn) {
         navigation.dispatch(
           CommonActions.reset({
             index: 1,
@@ -221,7 +219,7 @@ const AuthProvider: React.FC<Props> = ({ navigation }) => {
 
       // if the role is selected and user signed in
       // go to roles respected page
-      if (AuthApi.isRoleSelected(role) === true && isSignedIn) {
+      if (AuthApi.isRoleSelected(role) && isSignedIn) {
         // if the role is teacher go to TeacherClassList
         if (role === UserType.TEACHER) {
           navigation.dispatch(

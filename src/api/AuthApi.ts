@@ -19,6 +19,7 @@ interface AuthApiInterface {
    * ```
    */
   getUserType(): Promise<WithError<UserType>>;
+
   /**
    * sets the user role
    * @param type user role ```UserType.STUDENT | UserType.TEACHER```
@@ -34,6 +35,7 @@ interface AuthApiInterface {
     email: string,
     password: string,
   ): Promise<WithError<boolean>>;
+
   /**
    * login with email and password
    * @param email
@@ -43,16 +45,19 @@ interface AuthApiInterface {
     email: string,
     password: string,
   ): Promise<WithError<boolean>>;
+
   /**
    * checks if the user is logged in or not
    * @bug
    * it some time doesn't update immediately after login or sign up
    */
   isLoggedIn(): Promise<boolean>;
+
   /**
    * log out form the current session
    */
   logOut(): Promise<void>;
+
   /**
    * change the logged in user password\
    * for this method to work user have to already logged in
@@ -65,6 +70,7 @@ interface AuthApiInterface {
    * @see AccountInfo for props
    */
   getAccountInfo(): Promise<WithError<AccountInfo>>;
+
   /**
    * updates the account info(name/email/role)
    * @param accountInfo account info can handle partial account data
@@ -72,7 +78,7 @@ interface AuthApiInterface {
   updateAccountInfo(accountInfo: AccountInfo): Promise<WithError<boolean>>;
 
   /**
-   * @returns ```userId``` of the logged in user
+   * @returns **userId** of the logged in user
    */
   getUserId(): string | null;
 }
@@ -82,14 +88,10 @@ class AuthApi extends BaseApi implements AuthApiInterface {
 
   static readonly error = AuthErrors;
 
-  static readonly isRoleSelected = (userRole: UserType | null): boolean => {
-    if (userRole === UserType.TEACHER) return true;
-    if (userRole === UserType.STUDENT) return true;
+  static readonly isRoleSelected = (userRole: UserType | null): boolean =>
+    userRole === UserType.TEACHER || userRole === UserType.STUDENT;
 
-    return false;
-  };
-
-  isLoggedIn = async (): Promise<boolean> => {
+  public isLoggedIn = async (): Promise<boolean> => {
     return firebase.auth().currentUser !== null;
   };
 

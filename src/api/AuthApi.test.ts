@@ -18,8 +18,8 @@ const authApi = new AuthApi(BaseApi.testOptions);
 afterAll(async () => {
   const result = await admin.auth().listUsers();
 
-  result.users.forEach(async user => {
-    await admin.auth().deleteUser(user.uid);
+  result.users.forEach(user => {
+    admin.auth().deleteUser(user.uid);
   });
   const { users } = await admin.auth().listUsers();
 
@@ -43,7 +43,7 @@ test('creation of an account', async () => {
 });
 
 test('check if login, logout works', async () => {
-  let isLoggedIn = false;
+  let isLoggedIn: boolean;
 
   isLoggedIn = await authApi.isLoggedIn();
   expect(isLoggedIn).toBe(false);

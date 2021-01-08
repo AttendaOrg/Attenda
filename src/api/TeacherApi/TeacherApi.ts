@@ -5,13 +5,14 @@ import { BasicErrors, WithError } from '../BaseApi';
 import TeacherClass from './model/TeacherClass';
 
 interface TeacherApiInterface {
-  // #region class
+  //#region class
   /**
-   * given teacher class cerate a class
+   * given teacher class create a class
    * @param teacherClass
-   * @returns ```classId``` of the created class
+   * @returns **classId** of the created class
    */
   createClass(teacherClass: TeacherClass): Promise<WithError<string>>;
+
   /**
    * update class information by class id
    * @param classId
@@ -21,21 +22,25 @@ interface TeacherApiInterface {
     classId: string,
     teacherClass: TeacherClass,
   ): Promise<WithError<boolean>>;
+
   /**
    * checks if the class exist by class id
    * @param classId
    */
   isClassExist(classId: string): Promise<WithError<boolean>>;
+
   /**
    * gets class info given by class info
    * @param classId
    */
   getClassInfo(classId: string): Promise<WithError<TeacherClass>>;
+
   /**
    * get all class of the teacher
    * @param page
    */
   getAllClass(page: string): Promise<WithError<TeacherClass[]>>;
+
   /**
    * change the status of the invite link\
    * if false the invite code will not work
@@ -46,59 +51,67 @@ interface TeacherApiInterface {
     classId: string,
     enabled: boolean,
   ): Promise<WithError<boolean>>;
-  // #endregion class
 
-  // #region invite
+  //#endregion class
+
+  //#region invite
   /**
    * given the classId and email list invite students
    * @param classId
    * @param emails
    */
   inviteStudent(classId: string, emails: string[]): Promise<WithError<boolean>>;
+
   /**
    * given the classId get the status of the invite student.
    * @param classId
    * @returns unknown TODO: figure out the data structure
    */
   getInviteStatus(classId: string): Promise<WithError<unknown[]>>;
+
   /**
    * given the classId get All student enrolled in a class
    * @param classId
    * @returns unknown TODO: figure out the data structure
    */
   getAllStudentList(classId: string): Promise<WithError<unknown[]>>;
-  // #endregion invite
 
-  // #region class_session
+  //#endregion invite
+
+  //#region class_session
   /**
    * start a class session
    * @param classId
    * TODO: don't send the mac id to the server send a hash of it for privacy reason
    * @param macId
    * @param date
-   * @returns ```sessionId```
+   * @returns **sessionId**
    */
   startClassSession(
     classId: string,
     macId: string,
     date: Date,
   ): Promise<WithError<string>>;
+
   /**
    * end the class session and save the session
    * @param classId
+   * @param sessionId
    */
   saveClassSession(
     classId: string,
     sessionId: string,
   ): Promise<WithError<boolean>>;
+
   /**
    * end the session and discard all result
    * @param classId
    */
   discardClassSession(classId: string): Promise<WithError<boolean>>;
-  // #endregion class_session
 
-  // #region attendance_report
+  //#endregion class_session
+
+  //#region attendance_report
   /**
    * gets the attendance report of the class by month
    * @param classId
@@ -109,12 +122,14 @@ interface TeacherApiInterface {
     classId: string,
     month: number,
   ): Promise<WithError<unknown>>;
+
   /**
    * get summery of all student's attendance report
    * @param classId
    * @returns unknown TODO: figure out the data structure
    */
   getAllStudentAttendanceSummery(classId: string): Promise<WithError<unknown>>;
+
   /**
    * gets the attendance report if a student by month
    * @param classId
@@ -127,6 +142,7 @@ interface TeacherApiInterface {
     studentId: string,
     month: number,
   ): Promise<WithError<unknown>>;
+
   /**
    * change student attendance report of a particular session
    * @param classId
@@ -140,15 +156,17 @@ interface TeacherApiInterface {
     studentId: string,
     status: boolean,
   ): Promise<WithError<boolean>>;
-  // #endregion attendance_report
+
+  //#endregion attendance_report
 }
 
+// noinspection JSUnusedLocalSymbols
 export default class TeacherApi extends AuthApi implements TeacherApiInterface {
   static readonly ROOT_COLLECTION_NAME = 'teachers';
 
   static readonly CLASSES_COLLECTION_NAME = 'classes';
 
-  // #region class
+  //#region class
   createClass = async (
     teacherClass: TeacherClass,
   ): Promise<WithError<string>> => {
@@ -222,9 +240,7 @@ export default class TeacherApi extends AuthApi implements TeacherApiInterface {
     }
   };
 
-  getClassInfo = (
-    classId: string,
-  ): Promise<WithError<TeacherClass, BasicErrors>> => {
+  getClassInfo = (classId: string): Promise<WithError<TeacherClass>> => {
     throw new Error('Method not implemented.');
   };
 
@@ -256,67 +272,61 @@ export default class TeacherApi extends AuthApi implements TeacherApiInterface {
   changeInviteCodeEnableStatus = (
     classId: string,
     enabled: boolean,
-  ): Promise<WithError<boolean, BasicErrors>> => {
+  ): Promise<WithError<boolean>> => {
     throw new Error('Method not implemented.');
   };
 
-  // #endregion class
+  //#endregion class
 
-  // #region invite
+  //#region invite
   inviteStudent = (
     classId: string,
     emails: string[],
-  ): Promise<WithError<boolean, BasicErrors>> => {
+  ): Promise<WithError<boolean>> => {
     throw new Error('Method not implemented.');
   };
 
-  getInviteStatus = (
-    classId: string,
-  ): Promise<WithError<unknown[], BasicErrors>> => {
+  getInviteStatus = (classId: string): Promise<WithError<unknown[]>> => {
     throw new Error('Method not implemented.');
   };
 
-  getAllStudentList = (
-    classId: string,
-  ): Promise<WithError<unknown[], BasicErrors>> => {
+  getAllStudentList = (classId: string): Promise<WithError<unknown[]>> => {
     throw new Error('Method not implemented.');
   };
-  // #endregion invite
+  //#endregion invite
 
-  // #region class_session
+  //#region class_session
   startClassSession = (
     classId: string,
     macId: string,
     date: Date,
-  ): Promise<WithError<string, BasicErrors>> => {
+  ): Promise<WithError<string>> => {
     throw new Error('Method not implemented.');
   };
 
   saveClassSession = (
     classId: string,
     sessionId: string,
-  ): Promise<WithError<boolean, BasicErrors>> => {
+  ): Promise<WithError<boolean>> => {
     throw new Error('Method not implemented.');
   };
 
-  discardClassSession = (
-    classId: string,
-  ): Promise<WithError<boolean, BasicErrors>> => {
+  discardClassSession = (classId: string): Promise<WithError<boolean>> => {
     throw new Error('Method not implemented.');
   };
-  // #endregion class_session
+  //#endregion class_session
 
-  // #region attendance_report
+  //#region attendance_report
   getClassAttendanceReport = (
     classId: string,
     month: number,
-  ): Promise<WithError<unknown, BasicErrors>> => {
+  ): Promise<WithError<unknown>> => {
     throw new Error('Method not implemented.');
   };
 
   getAllStudentAttendanceSummery = (
     classId: string,
-  ): Promise<WithError<unknown, BasicErrors>> => {
+  ): Promise<WithError<unknown>> => {
     throw new Error('Method not implemented.');
   };
 
@@ -324,7 +334,7 @@ export default class TeacherApi extends AuthApi implements TeacherApiInterface {
     classId: string,
     studentId: string,
     month: number,
-  ): Promise<WithError<unknown, BasicErrors>> => {
+  ): Promise<WithError<unknown>> => {
     throw new Error('Method not implemented.');
   };
 
@@ -333,8 +343,8 @@ export default class TeacherApi extends AuthApi implements TeacherApiInterface {
     sessionId: string,
     studentId: string,
     status: boolean,
-  ): Promise<WithError<boolean, BasicErrors>> => {
+  ): Promise<WithError<boolean>> => {
     throw new Error('Method not implemented.');
   };
-  // #endregion attendance_report
+  //#endregion attendance_report
 }

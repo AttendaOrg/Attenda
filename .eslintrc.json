@@ -19,6 +19,11 @@
     "project": "./tsconfig.json"
   },
   "rules": {
+    "spaced-comment": [ "error", "always", {
+      "line": {
+        "markers": ["#region", "#endregion", "region", "endregion"]
+      }
+    }],
     "react-native/no-unused-styles": ["warn"],
     "no-restricted-imports": [
       "error",
