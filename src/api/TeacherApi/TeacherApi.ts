@@ -162,7 +162,7 @@ interface TeacherApiInterface {
 
 // noinspection JSUnusedLocalSymbols
 export default class TeacherApi extends AuthApi implements TeacherApiInterface {
-  static readonly ROOT_COLLECTION_NAME = 'teachers';
+  static readonly TEACHER_ROOT_COLLECTION_NAME = 'teachers';
 
   static readonly CLASSES_COLLECTION_NAME = 'classes';
 
@@ -178,7 +178,7 @@ export default class TeacherApi extends AuthApi implements TeacherApiInterface {
 
       const doc = await firebase
         .firestore()
-        .collection(TeacherApi.ROOT_COLLECTION_NAME)
+        .collection(TeacherApi.TEACHER_ROOT_COLLECTION_NAME)
         .doc(userId)
         .collection(TeacherApi.CLASSES_COLLECTION_NAME)
         .add(teacherClass.toJson());
@@ -203,7 +203,7 @@ export default class TeacherApi extends AuthApi implements TeacherApiInterface {
 
       await firebase
         .firestore()
-        .collection(TeacherApi.ROOT_COLLECTION_NAME)
+        .collection(TeacherApi.TEACHER_ROOT_COLLECTION_NAME)
         .doc(userId)
         .collection(TeacherApi.CLASSES_COLLECTION_NAME)
         .doc(classId)
@@ -226,7 +226,7 @@ export default class TeacherApi extends AuthApi implements TeacherApiInterface {
 
       const doc = await firebase
         .firestore()
-        .collection(TeacherApi.ROOT_COLLECTION_NAME)
+        .collection(TeacherApi.TEACHER_ROOT_COLLECTION_NAME)
         .doc(userId)
         .collection(TeacherApi.CLASSES_COLLECTION_NAME)
         .doc(classId)
@@ -253,7 +253,7 @@ export default class TeacherApi extends AuthApi implements TeacherApiInterface {
 
       const classes = await firebase
         .firestore()
-        .collection(TeacherApi.ROOT_COLLECTION_NAME)
+        .collection(TeacherApi.TEACHER_ROOT_COLLECTION_NAME)
         .doc(userId)
         .collection(TeacherApi.CLASSES_COLLECTION_NAME)
         .get();

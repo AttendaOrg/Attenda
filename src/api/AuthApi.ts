@@ -85,7 +85,7 @@ interface AuthApiInterface {
 }
 
 class AuthApi extends BaseApi implements AuthApiInterface {
-  static readonly ROOT_COLLECTION_NAME = 'acc_metadata';
+  static readonly AUTH_ROOT_COLLECTION_NAME = 'acc_metadata';
 
   static readonly error = AuthErrors;
 
@@ -162,7 +162,7 @@ class AuthApi extends BaseApi implements AuthApiInterface {
 
       await firebase
         .firestore()
-        .collection(AuthApi.ROOT_COLLECTION_NAME)
+        .collection(AuthApi.AUTH_ROOT_COLLECTION_NAME)
         .doc(userId)
         .update(updateInfo.toJson());
 
@@ -182,7 +182,7 @@ class AuthApi extends BaseApi implements AuthApiInterface {
 
       const doc = await firebase
         .firestore()
-        .collection(AuthApi.ROOT_COLLECTION_NAME)
+        .collection(AuthApi.AUTH_ROOT_COLLECTION_NAME)
         .doc(userId)
         .get();
       const data = doc.data();
@@ -235,7 +235,7 @@ class AuthApi extends BaseApi implements AuthApiInterface {
 
       await firebase
         .firestore()
-        .collection(AuthApi.ROOT_COLLECTION_NAME)
+        .collection(AuthApi.AUTH_ROOT_COLLECTION_NAME)
         .doc(userId)
         .set(accountInfo.toJson());
 
