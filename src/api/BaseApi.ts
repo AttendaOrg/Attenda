@@ -28,6 +28,7 @@ export enum BasicErrors {
   AUTH_EMAIL_ALREADY_IN_USE,
   AUTH_WRONG_PASSWORD,
   AUTH_USER_NOT_FOUND,
+  NO_CLASS_FOUND,
 }
 
 export const convertErrorToMsg = (errCode: BasicErrors | null): string => {

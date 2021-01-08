@@ -1,4 +1,5 @@
 import * as admin from 'firebase-admin';
+import firebase from 'firebase';
 
 export const deleteCollections = async (
   collections: FirebaseFirestore.CollectionReference<FirebaseFirestore.DocumentData>[],
@@ -39,6 +40,12 @@ export const deleteAllFirestoreCollection = async (): Promise<number> => {
  * @return current user size after delete
  */
 export const deleteAllUser = async (): Promise<number> => {
+  // user needs to logout or jest will not able to finish test.
+  // i think it's happening because firebase keeps an active connection to the
+  // sever and doesn't close the connection.
+  // so we have to manually close the connection by logging out.
+  await firebase.auth().signOut();
+
   const { users } = await admin.auth().listUsers();
 
   users.forEach(user => {

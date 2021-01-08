@@ -193,6 +193,37 @@ export default class TeacherApi extends AuthApi implements TeacherApiInterface {
     }
   };
 
+  getClassInfo = async (
+    classId: string,
+  ): Promise<WithError<TeacherClassModel>> => {
+    try {
+      const userId = this.getUserUid();
+
+      if (userId === null)
+        return this.error(BasicErrors.USER_NOT_AUTHENTICATED);
+
+      const doc = await firebase
+        .firestore()
+        .collection(TeacherApi.TEACHER_ROOT_COLLECTION_NAME)
+        .doc(userId)
+        .collection(TeacherApi.CLASSES_COLLECTION_NAME)
+        .doc(classId)
+        .get();
+
+      const data = doc.data();
+
+      if (!data) return this.error(BasicErrors.NO_CLASS_FOUND);
+
+      const classModel = new TeacherClassModel(
+        (data as unknown) as TeacherClassModelProps,
+      );
+
+      return this.success(classModel);
+    } catch (e) {
+      return this.error(BasicErrors.EXCEPTION);
+    }
+  };
+
   updateClass = async (
     classId: string,
     teacherClass: Partial<TeacherClassModelProps>,
@@ -240,10 +271,6 @@ export default class TeacherApi extends AuthApi implements TeacherApiInterface {
 
       return this.error(BasicErrors.EXCEPTION);
     }
-  };
-
-  getClassInfo = (classId: string): Promise<WithError<TeacherClassModel>> => {
-    throw new Error('Method not implemented.');
   };
 
   getAllClass = async (): Promise<WithError<TeacherClassModel[]>> => {

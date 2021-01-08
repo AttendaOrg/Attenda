@@ -26,11 +26,6 @@ afterAll(async () => {
 
   expect(newCollections).toBe(0);
 
-  // user needs to logout or jest will not able to finish test.
-  // i think it's happening because firebase keeps an active connection to the
-  // sever and doesn't close the connection.
-  // so we have to manually close the connection by logging out.
-  await authApi.logOut();
   //#endregion
 });
 
@@ -64,4 +59,14 @@ test('able to create a class', async () => {
 
   // TODO: find a better way to check create class success
   expect(classId?.length).toBeGreaterThanOrEqual(4);
+});
+
+test('able to get class info', async () => {
+  const class1 = new TeacherClassModel({ section: 'Section', title: 'Title' });
+
+  const [classId] = await teacherApi.createClass(class1);
+
+  const [classModel] = await teacherApi.getClassInfo(classId as string);
+
+  expect(classModel).toBeInstanceOf(TeacherClassModel);
 });

@@ -20,7 +20,7 @@
     "start-react": "webpack serve --config ./webpack.config.js --mode development",
     "prestorybook": "rnstl",
     "postinstall": "patch-package",
-    "test:firebase-api": "jest --env=node"
+    "test:firebase-api": "jest --env=node --runInBand"
   },
   "config": {
     "react-native-storybook-loader": {
