@@ -70,6 +70,11 @@ interface AuthApiInterface {
    * @param accountInfo account info can handle partial account data
    */
   updateAccountInfo(accountInfo: AccountInfo): Promise<WithError<boolean>>;
+
+  /**
+   * @returns ```userId``` of the logged in user
+   */
+  getUserId(): string | null;
 }
 
 class AuthApi extends BaseApi implements AuthApiInterface {
@@ -86,6 +91,10 @@ class AuthApi extends BaseApi implements AuthApiInterface {
 
   isLoggedIn = async (): Promise<boolean> => {
     return firebase.auth().currentUser !== null;
+  };
+
+  getUserId = (): string | null => {
+    return firebase.auth().currentUser?.uid ?? null;
   };
 
   loginWithEmailAndPassword = async (
@@ -211,7 +220,5 @@ class AuthApi extends BaseApi implements AuthApiInterface {
     throw new Error('Method not implemented.');
   };
 }
-
-export const authApi = new AuthApi();
 
 export default AuthApi;

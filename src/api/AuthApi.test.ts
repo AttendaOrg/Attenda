@@ -4,6 +4,7 @@ process.env.FIRESTORE_EMULATOR_HOST = 'localhost:8080';
 import * as admin from 'firebase-admin';
 import AuthApi from './AuthApi';
 import { UserType } from '.';
+import BaseApi from './BaseApi';
 
 admin.initializeApp({
   projectId: 'attenda-6c9ad',
@@ -12,9 +13,7 @@ admin.initializeApp({
 const TEST_EMAIL = 'test@google.com';
 const TEST_PASSWORD = '123456';
 
-const authApi = new AuthApi({
-  persistence: false,
-});
+const authApi = new AuthApi(BaseApi.testOptions);
 
 afterAll(async () => {
   const result = await admin.auth().listUsers();

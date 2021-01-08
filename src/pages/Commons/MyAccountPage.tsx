@@ -6,7 +6,9 @@ import {
 import { RootStackParamList } from '../../App';
 import MyAccount from '../../components/organisms/Common/MyAccount';
 import { SimpleHeaderBackNavigationOptions } from '../../components/templates/SimpleHeaderNavigationOptions';
-import { authApi } from '../../api/AuthApi';
+import AuthApi from '../../api/AuthApi';
+
+const authApi = new AuthApi();
 
 type Props = StackScreenProps<RootStackParamList, 'MyAccount'>;
 

@@ -65,6 +65,12 @@ class BaseApi {
     persistence: true,
   };
 
+  static testOptions: BaseApiOptions = {
+    host: DEFAULT_HOST,
+    useEmulator: true,
+    persistence: false,
+  };
+
   constructor(options: Partial<BaseApiOptions> = {}) {
     // firebase has not been initialized
 
@@ -102,8 +108,5 @@ class BaseApi {
     return [success, null];
   };
 }
-
-// eslint-disable-next-line no-new
-new BaseApi();
 
 export default BaseApi;

@@ -81,7 +81,9 @@ import MyAccountPage, {
 } from './pages/Commons/MyAccountPage';
 import { UserType } from './api';
 import LoadingPage, { LoadingPageNavigationOptions } from './pages/LoadingPage';
-import AuthApi, { authApi } from './api/AuthApi';
+import AuthApi from './api/AuthApi';
+
+const authApi = new AuthApi();
 
 export type TeacherClassListNavigationProps = {
   withDismiss?: boolean;
