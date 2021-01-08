@@ -18,6 +18,7 @@ const TEST_PASSWORD = '123456';
 const authApi = new AuthApi(BaseApi.testOptions);
 
 afterAll(async () => {
+  //#region delete all existing user
   const { users } = await admin.auth().listUsers();
 
   users.forEach(user => {
@@ -26,7 +27,9 @@ afterAll(async () => {
   const { users: newUsers } = await admin.auth().listUsers();
 
   expect(newUsers.length).toBe(0);
+  //#endregion
 
+  //#region delete all firestore collection
   const db = admin.firestore();
   const collections = await db.listCollections();
 
@@ -46,6 +49,7 @@ afterAll(async () => {
   const newCollections = await db.listCollections();
 
   expect(newCollections.length).toBe(0);
+  //#endregion
 });
 
 afterEach(async () => {
@@ -53,12 +57,14 @@ afterEach(async () => {
 });
 
 test('creation of an account', async () => {
+  //#region in starting there shouldn't be any user
   const { users } = await admin.auth().listUsers();
 
   expect(users.length).toBe(0);
+  //#endregion
 
+  //#region successful account creation
   try {
-    // successful account creation
     const [success, error] = await authApi.signUpWithEmailAndPassword(
       TEST_EMAIL,
       TEST_PASSWORD,
@@ -69,7 +75,9 @@ test('creation of an account', async () => {
   } catch (e) {
     expect(e).toBeInstanceOf(Error);
   }
+  //#endregion
 
+  //#region email already exist error check
   try {
     // account with same email address is already created
     // it should return correct error code
@@ -83,39 +91,52 @@ test('creation of an account', async () => {
   } catch (e) {
     expect(e).toBeInstanceOf(Error);
   }
+  //#endregion
 
+  //#region in the end there should be 1 user
   const { users: newUsers } = await admin.auth().listUsers();
 
   expect(newUsers.length).toBe(1);
+  //#endregion
 });
 
 test('check if login, logout works', async () => {
+  //#region initially isLoggedIn should return false
   let isLoggedIn: boolean;
 
   isLoggedIn = await authApi.isLoggedIn();
   expect(isLoggedIn).toBe(false);
+  //#endregion
 
+  //#region test with wrong email
   const [, wrongEmail] = await authApi.loginWithEmailAndPassword(
     'wrong@email.com',
     TEST_PASSWORD,
   );
 
   expect(wrongEmail).toBe(BasicErrors.AUTH_USER_NOT_FOUND);
+  //#endregion
 
+  //#region test with wrong password
   const [, wrongPassword] = await authApi.loginWithEmailAndPassword(
     TEST_EMAIL,
     'wrong password',
   );
 
   expect(wrongPassword).toBe(BasicErrors.AUTH_WRONG_PASSWORD);
+  //#endregion
 
+  //#region check if the login works correct email and password
   await authApi.loginWithEmailAndPassword(TEST_EMAIL, TEST_PASSWORD);
   isLoggedIn = await authApi.isLoggedIn();
   expect(isLoggedIn).toBe(true);
+  //#endregion
 
+  //#region check if logout works
   await authApi.logOut();
   isLoggedIn = await authApi.isLoggedIn();
   expect(isLoggedIn).toBe(false);
+  //#endregion
 });
 
 test('get user id works', async () => {
@@ -131,21 +152,27 @@ test('get user id works', async () => {
 });
 
 test('check if setUserType, getUserType works', async () => {
+  //#region test for UserType.UNKNOWN
   await authApi.loginWithEmailAndPassword(TEST_EMAIL, TEST_PASSWORD);
 
   const [userType1] = await authApi.getUserType();
 
   expect(userType1).toBe(UserType.UNKNOWN);
+  //#endregion
 
+  //#region test for UserType.TEACHER
   await authApi.setUserType(UserType.TEACHER);
 
   const [userType2] = await authApi.getUserType();
 
   expect(userType2).toBe(UserType.TEACHER);
+  //#endregion
 
+  //#region test for UserType.STUDENT
   await authApi.setUserType(UserType.STUDENT);
 
   const [userType3] = await authApi.getUserType();
 
   expect(userType3).toBe(UserType.STUDENT);
+  //#endregion
 });
