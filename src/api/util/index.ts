@@ -1,5 +1,25 @@
 import * as admin from 'firebase-admin';
 
+export const deleteCollections = async (
+  collections: FirebaseFirestore.CollectionReference<FirebaseFirestore.DocumentData>[],
+): Promise<void> => {
+  await Promise.all(
+    collections.map(async coll => {
+      // Get a new write batch
+      const batch = admin.firestore().batch();
+      const documents = await coll.listDocuments();
+
+      await Promise.all(
+        documents.map(async doc => {
+          await deleteCollections(await doc.listCollections());
+          batch.delete(doc);
+        }),
+      );
+      await batch.commit();
+    }),
+  );
+};
+
 /**
  * deletes all firestore collection using the admin api
  * @return current no of collection after delete
@@ -8,18 +28,7 @@ export const deleteAllFirestoreCollection = async (): Promise<number> => {
   const db = admin.firestore();
   const collections = await db.listCollections();
 
-  await Promise.all(
-    collections.map(async coll => {
-      // Get a new write batch
-      const batch = admin.firestore().batch();
-      const documents = await coll.listDocuments();
-
-      documents.forEach(doc => {
-        batch.delete(doc);
-      });
-      await batch.commit();
-    }),
-  );
+  await deleteCollections(collections);
   const newCollections = await admin.firestore().listCollections();
 
   return newCollections.length;
@@ -38,6 +47,15 @@ export const deleteAllUser = async (): Promise<number> => {
   const { users: newUsers } = await admin.auth().listUsers();
 
   return newUsers.length;
+};
+
+export const initAdminSdkForTest = (): void => {
+  process.env.FIREBASE_AUTH_EMULATOR_HOST = 'localhost:9099';
+  process.env.FIRESTORE_EMULATOR_HOST = 'localhost:8080';
+
+  admin.initializeApp({
+    projectId: 'attenda-6c9ad',
+  });
 };
 
 export default {};

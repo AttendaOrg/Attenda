@@ -5,18 +5,14 @@ import AuthApi from './AuthApi';
 import { UserRole } from '.';
 import BaseApi, { BasicErrors } from './BaseApi';
 import AccountInfo from './model/AccountInfo';
-import { deleteAllUser } from './util';
+import {
+  deleteAllFirestoreCollection,
+  deleteAllUser,
+  initAdminSdkForTest,
+} from './util';
+import { TEST_EMAIL, TEST_PASSWORD } from './util/constant';
 
-process.env.FIREBASE_AUTH_EMULATOR_HOST = 'localhost:9099';
-process.env.FIRESTORE_EMULATOR_HOST = 'localhost:8080';
-
-admin.initializeApp({
-  projectId: 'attenda-6c9ad',
-});
-
-const TEST_EMAIL = 'test@google.com';
-const TEST_PASSWORD = '123456';
-
+initAdminSdkForTest();
 const authApi = new AuthApi(BaseApi.testOptions);
 
 afterAll(async () => {
@@ -27,9 +23,9 @@ afterAll(async () => {
   //#endregion
 
   //#region delete all firestore collection
-  // const newCollections = await deleteAllFirestoreCollection();
-  //
-  // expect(newCollections).toBe(0);
+  const newCollections = await deleteAllFirestoreCollection();
+
+  expect(newCollections).toBe(0);
   //#endregion
 });
 

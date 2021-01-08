@@ -2,7 +2,9 @@
 import firebase from 'firebase';
 import AuthApi from '../AuthApi';
 import { BasicErrors, WithError } from '../BaseApi';
-import TeacherClass from './model/TeacherClass';
+import TeacherClassModel, {
+  TeacherClassModelProps,
+} from './model/TeacherClassModel';
 
 interface TeacherApiInterface {
   //#region class
@@ -11,7 +13,7 @@ interface TeacherApiInterface {
    * @param teacherClass
    * @returns **classId** of the created class
    */
-  createClass(teacherClass: TeacherClass): Promise<WithError<string>>;
+  createClass(teacherClass: TeacherClassModel): Promise<WithError<string>>;
 
   /**
    * update class information by class id
@@ -20,7 +22,7 @@ interface TeacherApiInterface {
    */
   updateClass(
     classId: string,
-    teacherClass: TeacherClass,
+    teacherClass: TeacherClassModel,
   ): Promise<WithError<boolean>>;
 
   /**
@@ -33,13 +35,13 @@ interface TeacherApiInterface {
    * gets class info given by class info
    * @param classId
    */
-  getClassInfo(classId: string): Promise<WithError<TeacherClass>>;
+  getClassInfo(classId: string): Promise<WithError<TeacherClassModel>>;
 
   /**
    * get all class of the teacher
    * @param page
    */
-  getAllClass(page: string): Promise<WithError<TeacherClass[]>>;
+  getAllClass(page: string): Promise<WithError<TeacherClassModel[]>>;
 
   /**
    * change the status of the invite link\
@@ -168,7 +170,7 @@ export default class TeacherApi extends AuthApi implements TeacherApiInterface {
 
   //#region class
   createClass = async (
-    teacherClass: TeacherClass,
+    teacherClass: TeacherClassModel,
   ): Promise<WithError<string>> => {
     try {
       const userId = this.getUserUid();
@@ -193,7 +195,7 @@ export default class TeacherApi extends AuthApi implements TeacherApiInterface {
 
   updateClass = async (
     classId: string,
-    teacherClass: TeacherClass,
+    teacherClass: Partial<TeacherClassModelProps>,
   ): Promise<WithError<boolean>> => {
     try {
       const userId = this.getUserUid();
@@ -207,7 +209,7 @@ export default class TeacherApi extends AuthApi implements TeacherApiInterface {
         .doc(userId)
         .collection(TeacherApi.CLASSES_COLLECTION_NAME)
         .doc(classId)
-        .update(teacherClass.toJson());
+        .update(teacherClass);
 
       return this.success(true);
     } catch (ex) {
@@ -240,11 +242,11 @@ export default class TeacherApi extends AuthApi implements TeacherApiInterface {
     }
   };
 
-  getClassInfo = (classId: string): Promise<WithError<TeacherClass>> => {
+  getClassInfo = (classId: string): Promise<WithError<TeacherClassModel>> => {
     throw new Error('Method not implemented.');
   };
 
-  getAllClass = async (): Promise<WithError<TeacherClass[]>> => {
+  getAllClass = async (): Promise<WithError<TeacherClassModel[]>> => {
     try {
       const userId = this.getUserUid();
 
@@ -259,7 +261,7 @@ export default class TeacherApi extends AuthApi implements TeacherApiInterface {
         .get();
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const cc = classes.docs.map(e => new TeacherClass(e.data() as any));
+      const cc = classes.docs.map(e => new TeacherClassModel(e.data() as any));
 
       return this.success(cc);
     } catch (ex) {

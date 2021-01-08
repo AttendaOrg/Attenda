@@ -1,4 +1,4 @@
-export interface TeacherClassProps {
+export interface TeacherClassModelProps {
   /**
    * @required
    */
@@ -14,7 +14,7 @@ export interface TeacherClassProps {
   isLive?: boolean;
 }
 
-export default class TeacherClass implements TeacherClassProps {
+export default class TeacherClassModel implements TeacherClassModelProps {
   classCode: string;
 
   description: string;
@@ -29,7 +29,7 @@ export default class TeacherClass implements TeacherClassProps {
 
   isLive: boolean;
 
-  constructor(data?: TeacherClassProps) {
+  constructor(data?: TeacherClassModelProps) {
     this.classCode = data?.classCode ?? '';
     this.description = data?.description ?? '';
     this.inviteLink = data?.inviteLink ?? '';
@@ -39,7 +39,29 @@ export default class TeacherClass implements TeacherClassProps {
     this.isLive = data?.isLive ?? false;
   }
 
-  toJson = (): TeacherClassProps => {
+  static readonly PartialData = ({
+    classCode,
+    description,
+    inviteLink,
+    isActiveInvite,
+    isLive,
+    section,
+    title,
+  }: Partial<TeacherClassModelProps>): Partial<TeacherClassModelProps> => {
+    const obj: Partial<TeacherClassModelProps> = {};
+
+    if (classCode !== undefined) obj.classCode = classCode;
+    if (description !== undefined) obj.description = description;
+    if (inviteLink !== undefined) obj.inviteLink = inviteLink;
+    if (isActiveInvite !== undefined) obj.isActiveInvite = isActiveInvite;
+    if (isLive !== undefined) obj.isLive = isLive;
+    if (title !== undefined) obj.title = title;
+    if (section !== undefined) obj.section = section;
+
+    return obj;
+  };
+
+  toJson = (): TeacherClassModelProps => {
     return {
       classCode: this.classCode,
       description: this.description,
