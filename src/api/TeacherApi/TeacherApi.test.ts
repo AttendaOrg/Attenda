@@ -116,3 +116,27 @@ test('get all class works', async () => {
 
   expect(result?.length).toBeGreaterThan(0);
 });
+
+test('changing invite code status works', async () => {
+  //#region by default it should be true
+  const [oldResult] = await teacherApi.getClassInfo(globalClassId);
+
+  expect(oldResult?.isActiveInvite).toBe(true);
+  //#endregion
+
+  //#region change status to be true
+  await teacherApi.changeInviteCodeEnableStatus(globalClassId, false);
+
+  const [newResult] = await teacherApi.getClassInfo(globalClassId);
+
+  expect(newResult?.isActiveInvite).toBe(false);
+  //#endregion
+
+  //#region change status to be false
+  await teacherApi.changeInviteCodeEnableStatus(globalClassId, true);
+
+  const [newResult2] = await teacherApi.getClassInfo(globalClassId);
+
+  expect(newResult2?.isActiveInvite).toBe(true);
+  //#endregion
+});

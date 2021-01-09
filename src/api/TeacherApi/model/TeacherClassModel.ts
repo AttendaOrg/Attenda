@@ -33,7 +33,7 @@ export default class TeacherClassModel implements TeacherClassModelProps {
     this.classCode = data?.classCode ?? '';
     this.description = data?.description ?? '';
     this.inviteLink = data?.inviteLink ?? '';
-    this.isActiveInvite = data?.isActiveInvite ?? false;
+    this.isActiveInvite = data?.isActiveInvite ?? true;
     this.section = data?.section ?? '';
     this.title = data?.title ?? '';
     this.isLive = data?.isLive ?? false;

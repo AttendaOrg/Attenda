@@ -300,11 +300,34 @@ export default class TeacherApi extends AuthApi implements TeacherApiInterface {
     }
   };
 
-  changeInviteCodeEnableStatus = (
+  changeInviteCodeEnableStatus = async (
     classId: string,
     enabled: boolean,
   ): Promise<WithError<boolean>> => {
-    throw new Error('Method not implemented.');
+    try {
+      const userId = this.getUserUid();
+
+      if (userId === null)
+        return this.error(BasicErrors.USER_NOT_AUTHENTICATED);
+
+      const updateData = TeacherClassModel.PartialData({
+        isActiveInvite: enabled,
+      });
+
+      const doc = await firebase
+        .firestore()
+        .collection(TeacherApi.TEACHER_ROOT_COLLECTION_NAME)
+        .doc(userId)
+        .collection(TeacherApi.CLASSES_COLLECTION_NAME)
+        .doc(classId)
+        .update(updateData);
+
+      return this.success(true);
+    } catch (error) {
+      // console.log(error);
+
+      return this.error(BasicErrors.EXCEPTION);
+    }
   };
 
   //#endregion class
