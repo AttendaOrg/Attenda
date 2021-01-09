@@ -1,7 +1,7 @@
 import firebase from 'firebase';
 import { firebaseConfig } from '../util/configs/firebase';
 
-const DEFAULT_HOST = '192.168.0.106';
+const DEFAULT_HOST = 'localhost';
 
 export interface BaseApiOptions {
   /**

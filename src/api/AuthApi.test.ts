@@ -138,6 +138,18 @@ test('check if account info creation works', async () => {
   expect(success).toBe(true);
 });
 
+test('check if update account and get account info works', async () => {
+  await authApi.loginWithEmailAndPassword(TEST_EMAIL, TEST_PASSWORD);
+  const acc = new AccountInfo({
+    name: 'updated name',
+  });
+
+  await authApi.updateAccountInfo(acc);
+  const [user] = await authApi.getAccountInfo();
+
+  expect(user?.name).toBe('updated name');
+});
+
 test('check if setUserType, getUserType works', async () => {
   //#region test for UserType.UNKNOWN
   await authApi.loginWithEmailAndPassword(TEST_EMAIL, TEST_PASSWORD);

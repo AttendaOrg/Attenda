@@ -217,11 +217,52 @@ class AuthApi extends BaseApi implements AuthApiInterface {
   };
 
   getAccountInfo = async (): Promise<WithError<AccountInfo>> => {
-    throw new Error('Method not implemented.');
+    try {
+      const userId = this.getUserUid();
+
+      if (userId === null)
+        return this.error(BasicErrors.USER_NOT_AUTHENTICATED);
+
+      const doc = await firebase
+        .firestore()
+        .collection(AuthApi.AUTH_ROOT_COLLECTION_NAME)
+        .doc(userId)
+        .get();
+      const data = doc.data();
+
+      // path not found the data was not initialized
+      // return UNKNOWN ?
+      if (!data) return this.error(BasicErrors.EXCEPTION);
+
+      const info = new AccountInfo((doc.data() as unknown) as AccountInfoProps);
+
+      return this.success(info);
+      // console.log('no login user');
+    } catch (ex) {
+      // console.error(ex);
+      return this.error(BasicErrors.EXCEPTION);
+    }
   };
 
-  updateAccountInfo = async (): Promise<WithError<boolean>> => {
-    throw new Error('Method not implemented.');
+  updateAccountInfo = async (
+    accountInfo: AccountInfo,
+  ): Promise<WithError<boolean>> => {
+    try {
+      const userId = this.getUserUid();
+
+      if (userId === null)
+        return this.error(BasicErrors.USER_NOT_AUTHENTICATED);
+
+      await firebase
+        .firestore()
+        .collection(AuthApi.AUTH_ROOT_COLLECTION_NAME)
+        .doc(userId)
+        .update(accountInfo.toJson());
+
+      return this.success(true);
+    } catch (e) {
+      return this.error(BasicErrors.EXCEPTION);
+    }
   };
 
   createAccountInfo = async (
