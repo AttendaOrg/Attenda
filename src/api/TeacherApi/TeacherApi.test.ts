@@ -14,6 +14,7 @@ import AccountInfo from '../model/AccountInfo';
 initAdminSdkForTest();
 const authApi = new AuthApi(BaseApi.testOptions);
 const teacherApi = new TeacherApi();
+let globalClassId = '';
 
 afterAll(async () => {
   //#region delete all existing user
@@ -59,6 +60,7 @@ test('able to create a class', async () => {
 
   // TODO: find a better way to check create class success
   expect(classId?.length).toBeGreaterThanOrEqual(4);
+  if (classId !== null) globalClassId = classId;
 });
 
 test('able to get class info', async () => {
@@ -95,4 +97,14 @@ test('able to update class info', async () => {
   expect(classModel?.title).toBe(updatedClass.title);
   expect(classModel?.section).toBe(updatedClass.section);
   expect(classModel?.description).toBe(updatedClass.description);
+});
+
+test('is class exist works', async () => {
+  const [resultFailed] = await teacherApi.isClassExist('not exist class id');
+
+  expect(resultFailed).toBe(false);
+
+  const [resultSuccess] = await teacherApi.isClassExist(globalClassId);
+
+  expect(resultSuccess).toBe(true);
 });
