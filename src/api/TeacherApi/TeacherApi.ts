@@ -287,10 +287,12 @@ export default class TeacherApi extends AuthApi implements TeacherApiInterface {
         .collection(TeacherApi.CLASSES_COLLECTION_NAME)
         .get();
 
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const cc = classes.docs.map(e => new TeacherClassModel(e.data() as any));
+      const allClass = classes.docs.map(
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        classModel => new TeacherClassModel(classModel.data() as any),
+      );
 
-      return this.success(cc);
+      return this.success(allClass);
     } catch (ex) {
       // console.log(ex);
 

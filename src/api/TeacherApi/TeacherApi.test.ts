@@ -108,3 +108,11 @@ test('is class exist works', async () => {
 
   expect(resultSuccess).toBe(true);
 });
+
+test('get all class works', async () => {
+  const [result] = await teacherApi.getAllClass();
+
+  expect(result).toBeInstanceOf(Array);
+
+  expect(result?.length).toBeGreaterThan(0);
+});
