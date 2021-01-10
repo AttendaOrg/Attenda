@@ -60,9 +60,13 @@ interface AuthApiInterface {
   /**
    * change the logged in user password\
    * for this method to work user have to already logged in
+   * @param currentPassword current password
    * @param newPassword new password
    */
-  changePassword(newPassword: string): Promise<WithError<boolean>>;
+  changePassword(
+    currentPassword: string,
+    newPassword: string,
+  ): Promise<WithError<boolean>>;
 
   createAccountInfo(accountInfo: AccountInfo): Promise<WithError<boolean>>;
 
@@ -212,8 +216,32 @@ class AuthApi extends BaseApi implements AuthApiInterface {
     await firebase.auth().signOut();
   };
 
-  changePassword = async (): Promise<WithError<boolean>> => {
-    throw new Error('Method not implemented.');
+  changePassword = async (
+    currentPassword: string,
+    newPassword: string,
+  ): Promise<WithError<boolean>> => {
+    try {
+      const user = firebase.auth().currentUser;
+
+      if (user !== null && user.email !== null) {
+        const emailCred = firebase.auth.EmailAuthProvider.credential(
+          user.email,
+          currentPassword,
+        );
+
+        await user.reauthenticateWithCredential(emailCred);
+        // User successfully reauthenticated.
+
+        await user.updatePassword(newPassword);
+
+        return this.success(true);
+      }
+
+      return this.error(BasicErrors.USER_NOT_AUTHENTICATED);
+    } catch (ex) {
+      // console.error(ex);
+      return this.error(BasicErrors.EXCEPTION);
+    }
   };
 
   getAccountInfo = async (): Promise<WithError<AccountInfo>> => {
