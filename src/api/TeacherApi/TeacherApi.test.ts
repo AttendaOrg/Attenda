@@ -26,7 +26,6 @@ afterAll(async () => {
   const newCollections = await deleteAllFirestoreCollection();
 
   expect(newCollections).toBe(0);
-
   //#endregion
 });
 
@@ -139,4 +138,14 @@ test('changing invite code status works', async () => {
 
   expect(newResult2?.isActiveInvite).toBe(true);
   //#endregion
+});
+
+test('if the email add & getting student list works', async () => {
+  const emails = [TEST_EMAIL, 'test1@google.com'];
+
+  await teacherApi.inviteStudent(globalClassId, emails);
+
+  const [students] = await teacherApi.getAllStudentList(globalClassId);
+
+  expect(students?.length).toBe(emails.length);
 });

@@ -5,6 +5,7 @@ import { BasicErrors, WithError } from '../BaseApi';
 import TeacherClassModel, {
   TeacherClassModelProps,
 } from './model/TeacherClassModel';
+import ClassStudentModel from './model/ClassStudentModel';
 
 interface TeacherApiInterface {
   //#region class
@@ -167,6 +168,8 @@ export default class TeacherApi extends AuthApi implements TeacherApiInterface {
   static readonly TEACHER_ROOT_COLLECTION_NAME = 'teachers';
 
   static readonly CLASSES_COLLECTION_NAME = 'classes';
+
+  static readonly CLASSES_STUDENT_COLLECTION_NAME = 'students';
 
   //#region class
   createClass = async (
@@ -333,19 +336,78 @@ export default class TeacherApi extends AuthApi implements TeacherApiInterface {
   //#endregion class
 
   //#region invite
-  inviteStudent = (
+
+  inviteStudent = async (
     classId: string,
     emails: string[],
   ): Promise<WithError<boolean>> => {
-    throw new Error('Method not implemented.');
+    try {
+      const userId = this.getUserUid();
+
+      if (userId === null)
+        return this.error(BasicErrors.USER_NOT_AUTHENTICATED);
+
+      const batch = firebase.firestore().batch();
+
+      emails.forEach(email => {
+        const ref = firebase
+          .firestore()
+          .collection(TeacherApi.TEACHER_ROOT_COLLECTION_NAME)
+          .doc(userId)
+          .collection(TeacherApi.CLASSES_COLLECTION_NAME)
+          .doc(classId)
+          .collection(TeacherApi.CLASSES_STUDENT_COLLECTION_NAME)
+          .doc();
+
+        const data = new ClassStudentModel({ email });
+
+        batch.set(ref, data.toJson());
+      });
+
+      await batch.commit();
+
+      return this.success(true);
+    } catch (error) {
+      // console.log(error);
+
+      return this.error(BasicErrors.EXCEPTION);
+    }
   };
 
   getInviteStatus = (classId: string): Promise<WithError<unknown[]>> => {
     throw new Error('Method not implemented.');
   };
 
-  getAllStudentList = (classId: string): Promise<WithError<unknown[]>> => {
-    throw new Error('Method not implemented.');
+  getAllStudentList = async (
+    classId: string,
+  ): Promise<WithError<ClassStudentModel[]>> => {
+    try {
+      const userId = this.getUserUid();
+
+      if (userId === null)
+        return this.error(BasicErrors.USER_NOT_AUTHENTICATED);
+
+      const batch = firebase.firestore().batch();
+
+      const { docs } = await firebase
+        .firestore()
+        .collection(TeacherApi.TEACHER_ROOT_COLLECTION_NAME)
+        .doc(userId)
+        .collection(TeacherApi.CLASSES_COLLECTION_NAME)
+        .doc(classId)
+        .collection(TeacherApi.CLASSES_STUDENT_COLLECTION_NAME)
+        .get();
+
+      const students = docs.map<ClassStudentModel>(
+        doc => new ClassStudentModel((doc as unknown) as ClassStudentModel),
+      );
+
+      return this.success(students);
+    } catch (error) {
+      // console.log(error);
+
+      return this.error(BasicErrors.EXCEPTION);
+    }
   };
   //#endregion invite
 
