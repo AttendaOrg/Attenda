@@ -4,6 +4,7 @@ export interface ClassStudentModelInterface {
   totalAttendancePercentage?: number;
   joined?: boolean;
   joinedDate?: Date | null;
+  studentId?: string | null;
 }
 
 export default class ClassStudentModel implements ClassStudentModelInterface {
@@ -16,6 +17,8 @@ export default class ClassStudentModel implements ClassStudentModelInterface {
   joined = false;
 
   joinedDate: Date | null = null;
+
+  studentId: string | null = null;
 
   constructor(data: Partial<ClassStudentModelInterface>) {
     if (typeof data.email === 'string') this.email = data.email;
@@ -48,6 +51,10 @@ export default class ClassStudentModel implements ClassStudentModelInterface {
     return obj;
   }
 
+  setStudentId(id: string): void {
+    this.studentId = id;
+  }
+
   toJson(): ClassStudentModelInterface {
     const {
       joined,
@@ -55,6 +62,7 @@ export default class ClassStudentModel implements ClassStudentModelInterface {
       rollNo,
       email,
       joinedDate,
+      studentId,
     } = this;
 
     return {
@@ -63,6 +71,7 @@ export default class ClassStudentModel implements ClassStudentModelInterface {
       rollNo,
       email,
       joinedDate,
+      studentId,
     };
   }
 }

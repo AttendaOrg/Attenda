@@ -6,6 +6,8 @@ import TeacherClassModel, {
   TeacherClassModelProps,
 } from './model/TeacherClassModel';
 import ClassStudentModel from './model/ClassStudentModel';
+import SessionInfoModel from './model/SessionInfoModel';
+import SessionStudentModel from './model/SessionStudentModel';
 
 interface TeacherApiInterface {
   //#region class
@@ -171,6 +173,11 @@ export default class TeacherApi extends AuthApi implements TeacherApiInterface {
 
   static readonly CLASSES_STUDENT_COLLECTION_NAME = 'students';
 
+  static readonly CLASSES_SESSIONS_COLLECTION_NAME = 'sessions';
+
+  static readonly CLASSES_SESSIONS_STUDENT_COLLECTION_NAME =
+    'sessions_students';
+
   //#region class
   createClass = async (
     teacherClass: TeacherClassModel,
@@ -313,7 +320,7 @@ export default class TeacherApi extends AuthApi implements TeacherApiInterface {
       if (userId === null)
         return this.error(BasicErrors.USER_NOT_AUTHENTICATED);
 
-      const updateData = TeacherClassModel.PartialData({
+      const updateData = TeacherClassModel.Update({
         isActiveInvite: enabled,
       });
 
@@ -398,9 +405,15 @@ export default class TeacherApi extends AuthApi implements TeacherApiInterface {
         .collection(TeacherApi.CLASSES_STUDENT_COLLECTION_NAME)
         .get();
 
-      const students = docs.map<ClassStudentModel>(
-        doc => new ClassStudentModel((doc as unknown) as ClassStudentModel),
-      );
+      const students = docs.map<ClassStudentModel>(doc => {
+        const studentModel = new ClassStudentModel(
+          (doc as unknown) as ClassStudentModel,
+        );
+
+        studentModel.setStudentId(doc.id);
+
+        return studentModel;
+      });
 
       return this.success(students);
     } catch (error) {
@@ -412,12 +425,69 @@ export default class TeacherApi extends AuthApi implements TeacherApiInterface {
   //#endregion invite
 
   //#region class_session
-  startClassSession = (
+  startClassSession = async (
     classId: string,
     macId: string,
     date: Date,
   ): Promise<WithError<string>> => {
-    throw new Error('Method not implemented.');
+    try {
+      const userId = this.getUserUid();
+
+      if (userId === null)
+        return this.error(BasicErrors.USER_NOT_AUTHENTICATED);
+
+      const info = new SessionInfoModel({
+        classId,
+        macId,
+        teacherId: userId,
+        sessionDate: date,
+      });
+
+      // path to the class
+      const ref = firebase
+        .firestore()
+        .collection(TeacherApi.TEACHER_ROOT_COLLECTION_NAME)
+        .doc(userId)
+        .collection(TeacherApi.CLASSES_COLLECTION_NAME)
+        .doc(classId);
+
+      // add an new session to DB
+      const doc = await ref
+        .collection(TeacherApi.CLASSES_SESSIONS_COLLECTION_NAME)
+        .add(info.toJson());
+
+      // update class info to include the live status and sessionId
+      await ref.update(
+        TeacherClassModel.Update({
+          isLive: true,
+          currentSessionId: doc.id,
+        }),
+      );
+
+      const [students] = await this.getAllStudentList(classId);
+
+      if (students !== null) {
+        await Promise.all(
+          students.map(async student => {
+            await ref
+              .collection(TeacherApi.CLASSES_SESSIONS_COLLECTION_NAME)
+              .doc(doc.id)
+              .collection(TeacherApi.CLASSES_SESSIONS_STUDENT_COLLECTION_NAME)
+              .doc(student.studentId ?? student.rollNo)
+              .set(
+                // TODO: only add those student who has joined the class
+                new SessionStudentModel({
+                  studentId: student.studentId ?? '',
+                }).toJson(),
+              );
+          }),
+        );
+      }
+
+      return this.success(doc.id);
+    } catch (e) {
+      return this.error(BasicErrors.EXCEPTION);
+    }
   };
 
   saveClassSession = (

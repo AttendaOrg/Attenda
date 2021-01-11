@@ -1,3 +1,4 @@
+import * as admin from 'firebase-admin';
 import {
   deleteAllFirestoreCollection,
   deleteAllUser,
@@ -77,7 +78,7 @@ test('able to update class info', async () => {
 
   const [classId] = await teacherApi.createClass(class1);
 
-  const updatedClass = TeacherClassModel.PartialData({
+  const updatedClass = TeacherClassModel.Update({
     section: 'Section Updated',
     title: 'Title Updated',
     description: 'Description Updated',
@@ -148,4 +149,49 @@ test('if the email add & getting student list works', async () => {
   const [students] = await teacherApi.getAllStudentList(globalClassId);
 
   expect(students?.length).toBe(emails.length);
+});
+
+test('able to start a session', async () => {
+  //#region check if the class metadata updated when starting a class
+  const [id] = await teacherApi.startClassSession(
+    globalClassId,
+    '00:00:00:00:02',
+    new Date(),
+  );
+  const [classInfo] = await teacherApi.getClassInfo(globalClassId);
+
+  expect(classInfo?.currentSessionId).toBe(id);
+  expect(classInfo?.isLive).toBe(true);
+  //#endregion
+
+  //#region check if the session is created
+  const userId = teacherApi.getUserUid() ?? '';
+  const session = await admin
+    .firestore()
+    .collection(TeacherApi.TEACHER_ROOT_COLLECTION_NAME)
+    .doc(userId)
+    .collection(TeacherApi.CLASSES_COLLECTION_NAME)
+    .doc(globalClassId)
+    .collection(TeacherApi.CLASSES_SESSIONS_COLLECTION_NAME)
+    .doc(id ?? '')
+    .get();
+
+  expect(session.exists).toBe(true);
+  //#endregion
+
+  //#region check if for all student there is a session student
+  const classStudents = await teacherApi.getAllStudentList(globalClassId);
+  const students = await admin
+    .firestore()
+    .collection(TeacherApi.TEACHER_ROOT_COLLECTION_NAME)
+    .doc(userId)
+    .collection(TeacherApi.CLASSES_COLLECTION_NAME)
+    .doc(globalClassId)
+    .collection(TeacherApi.CLASSES_SESSIONS_COLLECTION_NAME)
+    .doc(id ?? '')
+    .collection(TeacherApi.CLASSES_SESSIONS_STUDENT_COLLECTION_NAME)
+    .get();
+
+  expect(classStudents.length).toBe(students.docs.length);
+  //#endregion
 });
