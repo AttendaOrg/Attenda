@@ -60,9 +60,13 @@ interface AuthApiInterface {
   /**
    * change the logged in user password\
    * for this method to work user have to already logged in
+   * @param currentPassword current password
    * @param newPassword new password
    */
-  changePassword(newPassword: string): Promise<WithError<boolean>>;
+  changePassword(
+    currentPassword: string,
+    newPassword: string,
+  ): Promise<WithError<boolean>>;
 
   createAccountInfo(accountInfo: AccountInfo): Promise<WithError<boolean>>;
 
@@ -212,16 +216,81 @@ class AuthApi extends BaseApi implements AuthApiInterface {
     await firebase.auth().signOut();
   };
 
-  changePassword = async (): Promise<WithError<boolean>> => {
-    throw new Error('Method not implemented.');
+  changePassword = async (
+    currentPassword: string,
+    newPassword: string,
+  ): Promise<WithError<boolean>> => {
+    try {
+      const user = firebase.auth().currentUser;
+
+      if (user !== null && user.email !== null) {
+        const emailCred = firebase.auth.EmailAuthProvider.credential(
+          user.email,
+          currentPassword,
+        );
+
+        await user.reauthenticateWithCredential(emailCred);
+        // User successfully reauthenticated.
+
+        await user.updatePassword(newPassword);
+
+        return this.success(true);
+      }
+
+      return this.error(BasicErrors.USER_NOT_AUTHENTICATED);
+    } catch (ex) {
+      // console.error(ex);
+      return this.error(BasicErrors.EXCEPTION);
+    }
   };
 
   getAccountInfo = async (): Promise<WithError<AccountInfo>> => {
-    throw new Error('Method not implemented.');
+    try {
+      const userId = this.getUserUid();
+
+      if (userId === null)
+        return this.error(BasicErrors.USER_NOT_AUTHENTICATED);
+
+      const doc = await firebase
+        .firestore()
+        .collection(AuthApi.AUTH_ROOT_COLLECTION_NAME)
+        .doc(userId)
+        .get();
+      const data = doc.data();
+
+      // path not found the data was not initialized
+      // return UNKNOWN ?
+      if (!data) return this.error(BasicErrors.EXCEPTION);
+
+      const info = new AccountInfo((doc.data() as unknown) as AccountInfoProps);
+
+      return this.success(info);
+      // console.log('no login user');
+    } catch (ex) {
+      // console.error(ex);
+      return this.error(BasicErrors.EXCEPTION);
+    }
   };
 
-  updateAccountInfo = async (): Promise<WithError<boolean>> => {
-    throw new Error('Method not implemented.');
+  updateAccountInfo = async (
+    accountInfo: AccountInfo,
+  ): Promise<WithError<boolean>> => {
+    try {
+      const userId = this.getUserUid();
+
+      if (userId === null)
+        return this.error(BasicErrors.USER_NOT_AUTHENTICATED);
+
+      await firebase
+        .firestore()
+        .collection(AuthApi.AUTH_ROOT_COLLECTION_NAME)
+        .doc(userId)
+        .update(accountInfo.toJson());
+
+      return this.success(true);
+    } catch (e) {
+      return this.error(BasicErrors.EXCEPTION);
+    }
   };
 
   createAccountInfo = async (
