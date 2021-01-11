@@ -24,9 +24,9 @@ afterAll(async () => {
   expect(newUsers).toBe(0);
   //#endregion
   //#region delete all firestore collection
-  const newCollections = await deleteAllFirestoreCollection();
+  // const newCollections = await deleteAllFirestoreCollection();
 
-  expect(newCollections).toBe(0);
+  // expect(newCollections).toBe(0);
   //#endregion
 });
 
@@ -193,5 +193,58 @@ test('able to start a session', async () => {
     .get();
 
   expect(classStudents.length).toBe(students.docs.length);
+  //#endregion
+});
+
+test('able to discard a session', async () => {
+  //#region check if the class metadata updated when starting a class
+  const [id] = await teacherApi.startClassSession(
+    globalClassId,
+    '00:00:00:00:02',
+    new Date(),
+  );
+  const [classInfo] = await teacherApi.getClassInfo(globalClassId);
+
+  expect(classInfo?.currentSessionId).toBe(id);
+  expect(classInfo?.isLive).toBe(true);
+  //#endregion
+
+  await teacherApi.discardClassSession(globalClassId, id ?? '');
+
+  //#region check if the session is discarded
+  const userId = teacherApi.getUserUid() ?? '';
+  const session = await admin
+    .firestore()
+    .collection(TeacherApi.TEACHER_ROOT_COLLECTION_NAME)
+    .doc(userId)
+    .collection(TeacherApi.CLASSES_COLLECTION_NAME)
+    .doc(globalClassId)
+    .collection(TeacherApi.CLASSES_SESSIONS_COLLECTION_NAME)
+    .doc(id ?? '')
+    .get();
+
+  expect(session.exists).toBe(false);
+  //#endregion
+});
+
+test('able to save a session', async () => {
+  //#region check if the class metadata updated when starting a class
+  const [id] = await teacherApi.startClassSession(
+    globalClassId,
+    '00:00:00:00:02',
+    new Date(),
+  );
+  const [classInfo] = await teacherApi.getClassInfo(globalClassId);
+
+  expect(classInfo?.currentSessionId).toBe(id);
+  expect(classInfo?.isLive).toBe(true);
+  //#endregion
+
+  //#region check if the session is saved
+  await teacherApi.saveClassSession(globalClassId, id ?? '');
+
+  const [updatedClassInfo] = await teacherApi.getClassInfo(globalClassId);
+
+  expect(updatedClassInfo?.isLive).toBe(false);
   //#endregion
 });

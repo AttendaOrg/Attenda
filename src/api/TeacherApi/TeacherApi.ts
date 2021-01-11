@@ -111,8 +111,12 @@ interface TeacherApiInterface {
   /**
    * end the session and discard all result
    * @param classId
+   * @param SessionId:
    */
-  discardClassSession(classId: string): Promise<WithError<boolean>>;
+  discardClassSession(
+    classId: string,
+    sessionId: string,
+  ): Promise<WithError<boolean>>;
 
   //#endregion class_session
 
@@ -490,15 +494,63 @@ export default class TeacherApi extends AuthApi implements TeacherApiInterface {
     }
   };
 
-  saveClassSession = (
+  saveClassSession = async (
+    classId: string,
+    sessionId: string, // there is no need of session id
+  ): Promise<WithError<boolean>> => {
+    try {
+      const userId = this.getUserUid();
+
+      if (userId === null)
+        return this.error(BasicErrors.USER_NOT_AUTHENTICATED);
+
+      // path to the class
+      const ref = firebase
+        .firestore()
+        .collection(TeacherApi.TEACHER_ROOT_COLLECTION_NAME)
+        .doc(userId)
+        .collection(TeacherApi.CLASSES_COLLECTION_NAME)
+        .doc(classId);
+
+      // update class info to include the live status and sessionId
+      await ref.update(
+        TeacherClassModel.Update({
+          isLive: false,
+          // currentSessionId: doc.id,
+        }),
+      );
+
+      return this.success(true);
+    } catch (e) {
+      return this.error(BasicErrors.EXCEPTION);
+    }
+  };
+
+  discardClassSession = async (
     classId: string,
     sessionId: string,
   ): Promise<WithError<boolean>> => {
-    throw new Error('Method not implemented.');
-  };
+    try {
+      const userId = this.getUserUid();
 
-  discardClassSession = (classId: string): Promise<WithError<boolean>> => {
-    throw new Error('Method not implemented.');
+      if (userId === null)
+        return this.error(BasicErrors.USER_NOT_AUTHENTICATED);
+
+      // delete the session from firestore
+      await firebase
+        .firestore()
+        .collection(TeacherApi.TEACHER_ROOT_COLLECTION_NAME)
+        .doc(userId)
+        .collection(TeacherApi.CLASSES_COLLECTION_NAME)
+        .doc(classId)
+        .collection(TeacherApi.CLASSES_SESSIONS_COLLECTION_NAME)
+        .doc(sessionId)
+        .delete();
+
+      return this.success(true);
+    } catch (e) {
+      return this.error(BasicErrors.EXCEPTION);
+    }
   };
   //#endregion class_session
 
@@ -524,13 +576,39 @@ export default class TeacherApi extends AuthApi implements TeacherApiInterface {
     throw new Error('Method not implemented.');
   };
 
-  editStudentAttendanceReport = (
+  editStudentAttendanceReport = async (
     classId: string,
     sessionId: string,
     studentId: string,
     status: boolean,
   ): Promise<WithError<boolean>> => {
-    throw new Error('Method not implemented.');
+    try {
+      const userId = this.getUserUid();
+
+      if (userId === null)
+        return this.error(BasicErrors.USER_NOT_AUTHENTICATED);
+
+      // delete the session from firestore
+      await firebase
+        .firestore()
+        .collection(TeacherApi.TEACHER_ROOT_COLLECTION_NAME)
+        .doc(userId)
+        .collection(TeacherApi.CLASSES_COLLECTION_NAME)
+        .doc(classId)
+        .collection(TeacherApi.CLASSES_SESSIONS_COLLECTION_NAME)
+        .doc(sessionId)
+        .collection(TeacherApi.CLASSES_SESSIONS_STUDENT_COLLECTION_NAME)
+        .doc(studentId)
+        .update(
+          SessionStudentModel.Update({
+            present: status,
+          }),
+        );
+
+      return this.success(true);
+    } catch (e) {
+      return this.error(BasicErrors.EXCEPTION);
+    }
   };
   //#endregion attendance_report
 }
