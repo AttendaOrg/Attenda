@@ -45,6 +45,10 @@ export default class SessionStudentModel implements SessionStudentInterface {
     return obj;
   }
 
+  setStudentId(id: string): void {
+    this.studentId = id;
+  }
+
   toJson(): SessionStudentInterface {
     const { studentId, present, whom, sessionTime, lastUpdateTime } = this;
 
