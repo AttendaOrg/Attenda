@@ -7,7 +7,10 @@ import TeacherClassModel, {
 } from './model/TeacherClassModel';
 import ClassStudentModel from './model/ClassStudentModel';
 import SessionInfoModel from './model/SessionInfoModel';
-import SessionStudentModel from './model/SessionStudentModel';
+import SessionStudentModel, {
+  SessionStudentInterface,
+} from './model/SessionStudentModel';
+import { UserRole } from '../index';
 
 interface TeacherApiInterface {
   //#region class
@@ -151,6 +154,16 @@ interface TeacherApiInterface {
     studentId: string,
     month: number,
   ): Promise<WithError<unknown>>;
+
+  /**
+   * get session report of a specific session
+   * @param classId
+   * @param sessionId
+   */
+  getSessionAttendanceReport(
+    classId: string,
+    sessionId: string,
+  ): Promise<WithError<SessionStudentModel[]>>;
 
   /**
    * change student attendance report of a particular session
@@ -602,10 +615,51 @@ export default class TeacherApi extends AuthApi implements TeacherApiInterface {
         .update(
           SessionStudentModel.Update({
             present: status,
+            whom: UserRole.TEACHER,
           }),
         );
 
       return this.success(true);
+    } catch (e) {
+      return this.error(BasicErrors.EXCEPTION);
+    }
+  };
+
+  getSessionAttendanceReport = async (
+    classId: string,
+    sessionId: string,
+  ): Promise<WithError<SessionStudentModel[]>> => {
+    try {
+      const userId = this.getUserUid();
+
+      if (userId === null)
+        return this.error(BasicErrors.USER_NOT_AUTHENTICATED);
+
+      // path to the session
+      const session = await firebase
+        .firestore()
+        .collection(TeacherApi.TEACHER_ROOT_COLLECTION_NAME)
+        .doc(userId)
+        .collection(TeacherApi.CLASSES_COLLECTION_NAME)
+        .doc(classId)
+        .collection(TeacherApi.CLASSES_SESSIONS_COLLECTION_NAME)
+        .doc(sessionId)
+        .collection(TeacherApi.CLASSES_SESSIONS_STUDENT_COLLECTION_NAME)
+        .get();
+
+      const { docs } = session;
+
+      const students = docs.map(doc => {
+        const studentModel = new SessionStudentModel(
+          (doc as unknown) as SessionStudentInterface,
+        );
+
+        studentModel.setStudentId(doc.id);
+
+        return studentModel;
+      });
+
+      return this.success(students);
     } catch (e) {
       return this.error(BasicErrors.EXCEPTION);
     }

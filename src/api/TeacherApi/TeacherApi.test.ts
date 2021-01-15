@@ -11,6 +11,9 @@ import TeacherClassModel from './model/TeacherClassModel';
 import TeacherApi from './TeacherApi';
 import BaseApi from '../BaseApi';
 import AccountInfo from '../model/AccountInfo';
+import SessionStudentModel, {
+  SessionStudentInterface,
+} from './model/SessionStudentModel';
 
 initAdminSdkForTest();
 const authApi = new AuthApi(BaseApi.testOptions);
@@ -24,9 +27,9 @@ afterAll(async () => {
   expect(newUsers).toBe(0);
   //#endregion
   //#region delete all firestore collection
-  // const newCollections = await deleteAllFirestoreCollection();
+  const newCollections = await deleteAllFirestoreCollection();
 
-  // expect(newCollections).toBe(0);
+  expect(newCollections).toBe(0);
   //#endregion
 });
 
@@ -247,4 +250,54 @@ test('able to save a session', async () => {
 
   expect(updatedClassInfo?.isLive).toBe(false);
   //#endregion
+});
+
+test('edit student attendance report', async () => {
+  const [sessionId] = await teacherApi.startClassSession(
+    globalClassId,
+    '00:00:00:00:02',
+    new Date(),
+  );
+
+  if (sessionId !== null) {
+    await teacherApi.saveClassSession(globalClassId, sessionId);
+
+    // fetch all student in a session
+    const [attendedStudents] = await teacherApi.getSessionAttendanceReport(
+      globalClassId,
+      sessionId,
+    );
+    // get the first one for testing
+    const student = attendedStudents?.[0];
+
+    // by default the student present will be false and whole will be student
+    expect(student?.present).toBe(false);
+    expect(student?.whom).toBe(UserRole.STUDENT);
+
+    // edit the attendance
+    await teacherApi.editStudentAttendanceReport(
+      globalClassId,
+      sessionId,
+      student?.studentId ?? '',
+      true,
+    );
+
+    const doc = await admin
+      .firestore()
+      .collection(TeacherApi.TEACHER_ROOT_COLLECTION_NAME)
+      .doc(teacherApi.getUserUid() ?? '')
+      .collection(TeacherApi.CLASSES_COLLECTION_NAME)
+      .doc(globalClassId)
+      .collection(TeacherApi.CLASSES_SESSIONS_COLLECTION_NAME)
+      .doc(sessionId)
+      .collection(TeacherApi.CLASSES_SESSIONS_STUDENT_COLLECTION_NAME)
+      .doc(student?.studentId ?? '')
+      .get();
+    const student2 = new SessionStudentModel(
+      (doc.data() as unknown) as SessionStudentInterface,
+    );
+
+    expect(student2?.present).toBe(true);
+    expect(student2?.whom).toBe(UserRole.TEACHER);
+  }
 });
