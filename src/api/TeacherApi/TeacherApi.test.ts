@@ -5,7 +5,11 @@ import {
   initAdminSdkForTest,
 } from '../util';
 import AuthApi from '../AuthApi';
-import { TEST_EMAIL, TEST_PASSWORD } from '../util/constant';
+import {
+  TEST_CLASS_CODE,
+  TEST_TEACHER_EMAIL,
+  TEST_PASSWORD,
+} from '../util/constant';
 import { UserRole } from '../index';
 import TeacherClassModel from './model/TeacherClassModel';
 import TeacherApi from './TeacherApi';
@@ -36,8 +40,8 @@ afterAll(async () => {
 beforeAll(async () => {
   // before all the tests create a teacher account
   //#region create an account
-  await authApi.signUpWithEmailAndPassword(TEST_EMAIL, TEST_PASSWORD);
-  await authApi.loginWithEmailAndPassword(TEST_EMAIL, TEST_PASSWORD);
+  await authApi.signUpWithEmailAndPassword(TEST_TEACHER_EMAIL, TEST_PASSWORD);
+  await authApi.loginWithEmailAndPassword(TEST_TEACHER_EMAIL, TEST_PASSWORD);
   const isLoggedIn = await authApi.isLoggedIn();
 
   expect(isLoggedIn).toBe(true);
@@ -57,7 +61,11 @@ beforeAll(async () => {
 });
 
 test('able to create a class', async () => {
-  const class1 = new TeacherClassModel({ section: 'Section', title: 'Title' });
+  const class1 = new TeacherClassModel({
+    section: 'Section',
+    title: 'Title',
+    classCode: TEST_CLASS_CODE,
+  });
 
   const [classId] = await teacherApi.createClass(class1);
 
@@ -85,6 +93,7 @@ test('able to update class info', async () => {
     section: 'Section Updated',
     title: 'Title Updated',
     description: 'Description Updated',
+    classCode: 'TEST_CLASS_CODE',
   });
 
   const [success] = await teacherApi.updateClass(
@@ -100,6 +109,7 @@ test('able to update class info', async () => {
   expect(classModel?.title).toBe(updatedClass.title);
   expect(classModel?.section).toBe(updatedClass.section);
   expect(classModel?.description).toBe(updatedClass.description);
+  expect(classModel?.classCode).toBe('TEST_CLASS_CODE');
 });
 
 test('is class exist works', async () => {
@@ -145,7 +155,7 @@ test('changing invite code status works', async () => {
 });
 
 test('if the email add & getting student list works', async () => {
-  const emails = [TEST_EMAIL, 'test1@google.com'];
+  const emails = [TEST_TEACHER_EMAIL, 'test1@google.com'];
 
   await teacherApi.inviteStudent(globalClassId, emails);
 

@@ -10,7 +10,7 @@ import {
   deleteAllUser,
   initAdminSdkForTest,
 } from './util';
-import { TEST_EMAIL, TEST_PASSWORD } from './util/constant';
+import { TEST_TEACHER_EMAIL, TEST_PASSWORD } from './util/constant';
 
 initAdminSdkForTest();
 const authApi = new AuthApi(BaseApi.testOptions);
@@ -43,7 +43,7 @@ test('creation of an account', async () => {
   //#region successful account creation
   try {
     const [success, error] = await authApi.signUpWithEmailAndPassword(
-      TEST_EMAIL,
+      TEST_TEACHER_EMAIL,
       TEST_PASSWORD,
     );
 
@@ -59,7 +59,7 @@ test('creation of an account', async () => {
     // account with same email address is already created
     // it should return correct error code
     const [success, error] = await authApi.signUpWithEmailAndPassword(
-      TEST_EMAIL,
+      TEST_TEACHER_EMAIL,
       TEST_PASSWORD,
     );
 
@@ -96,7 +96,7 @@ test('check if login, logout works', async () => {
 
   //#region test with wrong password
   const [, wrongPassword] = await authApi.loginWithEmailAndPassword(
-    TEST_EMAIL,
+    TEST_TEACHER_EMAIL,
     'wrong password',
   );
 
@@ -104,7 +104,7 @@ test('check if login, logout works', async () => {
   //#endregion
 
   //#region check if the login works correct email and password
-  await authApi.loginWithEmailAndPassword(TEST_EMAIL, TEST_PASSWORD);
+  await authApi.loginWithEmailAndPassword(TEST_TEACHER_EMAIL, TEST_PASSWORD);
   isLoggedIn = await authApi.isLoggedIn();
   expect(isLoggedIn).toBe(true);
   //#endregion
@@ -121,15 +121,15 @@ test('get user id works', async () => {
 
   expect(userId).toBe(null);
 
-  await authApi.loginWithEmailAndPassword(TEST_EMAIL, TEST_PASSWORD);
-  const user = await admin.auth().getUserByEmail(TEST_EMAIL);
+  await authApi.loginWithEmailAndPassword(TEST_TEACHER_EMAIL, TEST_PASSWORD);
+  const user = await admin.auth().getUserByEmail(TEST_TEACHER_EMAIL);
   const newUserId = authApi.getUserUid();
 
   expect(newUserId).toBe(user.uid);
 });
 
 test('check if account info creation works', async () => {
-  await authApi.loginWithEmailAndPassword(TEST_EMAIL, TEST_PASSWORD);
+  await authApi.loginWithEmailAndPassword(TEST_TEACHER_EMAIL, TEST_PASSWORD);
   const acc = new AccountInfo({
     name: 'Prasanta Barman',
   });
@@ -139,7 +139,7 @@ test('check if account info creation works', async () => {
 });
 
 test('check if update account and get account info works', async () => {
-  await authApi.loginWithEmailAndPassword(TEST_EMAIL, TEST_PASSWORD);
+  await authApi.loginWithEmailAndPassword(TEST_TEACHER_EMAIL, TEST_PASSWORD);
   const acc = new AccountInfo({
     name: 'updated name',
   });
@@ -158,17 +158,17 @@ test('check if update account and get account info works', async () => {
  */
 
 test('check if change password works', async () => {
-  await authApi.loginWithEmailAndPassword(TEST_EMAIL, TEST_PASSWORD);
+  await authApi.loginWithEmailAndPassword(TEST_TEACHER_EMAIL, TEST_PASSWORD);
   expect(await authApi.isLoggedIn()).toBe(true);
 
   await authApi.changePassword(TEST_PASSWORD, 'new_password');
 
   await authApi.logOut();
 
-  await authApi.loginWithEmailAndPassword(TEST_EMAIL, TEST_PASSWORD);
+  await authApi.loginWithEmailAndPassword(TEST_TEACHER_EMAIL, TEST_PASSWORD);
   expect(await authApi.isLoggedIn()).toBe(false);
 
-  await authApi.loginWithEmailAndPassword(TEST_EMAIL, 'new_password');
+  await authApi.loginWithEmailAndPassword(TEST_TEACHER_EMAIL, 'new_password');
   expect(await authApi.isLoggedIn()).toBe(true);
 
   await authApi.changePassword('new_password', TEST_PASSWORD);
@@ -176,7 +176,7 @@ test('check if change password works', async () => {
 
 test('check if setUserType, getUserType works', async () => {
   //#region test for UserType.UNKNOWN
-  await authApi.loginWithEmailAndPassword(TEST_EMAIL, TEST_PASSWORD);
+  await authApi.loginWithEmailAndPassword(TEST_TEACHER_EMAIL, TEST_PASSWORD);
 
   const [userType1] = await authApi.getUserRole();
 

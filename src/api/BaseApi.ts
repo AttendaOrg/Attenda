@@ -29,6 +29,7 @@ export enum BasicErrors {
   AUTH_WRONG_PASSWORD,
   AUTH_USER_NOT_FOUND,
   NO_CLASS_FOUND,
+  INVALID_INPUT,
 }
 
 export const convertErrorToMsg = (errCode: BasicErrors | null): string => {
@@ -43,6 +44,8 @@ export const convertErrorToMsg = (errCode: BasicErrors | null): string => {
       return 'AUTH_WRONG_PASSWORD';
     case BasicErrors.AUTH_USER_NOT_FOUND:
       return 'AUTH_USER_NOT_FOUND';
+    case BasicErrors.INVALID_INPUT:
+      return 'INVALID_INPUT';
     default:
       return 'unknown';
   }
