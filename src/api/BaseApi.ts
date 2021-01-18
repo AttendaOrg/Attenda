@@ -30,6 +30,7 @@ export enum BasicErrors {
   AUTH_USER_NOT_FOUND,
   NO_CLASS_FOUND,
   INVALID_INPUT,
+  MAC_ID_DOES_NOT_MATCH,
 }
 
 export const convertErrorToMsg = (errCode: BasicErrors | null): string => {

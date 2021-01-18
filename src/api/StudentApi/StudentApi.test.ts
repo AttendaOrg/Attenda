@@ -53,8 +53,14 @@ beforeAll(async () => {
     title: 'Title',
     classCode: TEST_CLASS_CODE,
   });
+  const [classId] = await teacherApi.createClass(class1);
 
-  await teacherApi.createClass(class1);
+  await teacherApi.startClassSession(
+    classId ?? '',
+    '00:00:00:00:02',
+    new Date(),
+  );
+
   await authApi.logOut();
   //#endregion
   //#region create a student account
@@ -110,4 +116,10 @@ test('getAllEnrolledClassList', async () => {
   // because of the prev test enrolled class list should be 1
   expect(list?.length).toBe(1);
   expect(list?.[0]).toBeInstanceOf(TeacherClassModel);
+});
+
+test('give presence', async () => {
+  await studentApi.giveResponse('', '', '00:00:00:00:02');
+
+  // console.log(res, err);
 });

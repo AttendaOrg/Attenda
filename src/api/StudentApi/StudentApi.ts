@@ -7,6 +7,11 @@ import AccountInfo, { AccountInfoProps } from '../model/AccountInfo';
 import TeacherClassModel, {
   TeacherClassModelProps,
 } from '../TeacherApi/model/TeacherClassModel';
+import SessionInfoModel, {
+  SessionInfoInterface,
+} from '../TeacherApi/model/SessionInfoModel';
+import SessionStudentModel from '../TeacherApi/model/SessionStudentModel';
+import { UserRole } from '../index';
 
 interface StudentApiInterface {
   /**
@@ -163,12 +168,54 @@ export default class StudentApi extends AuthApi implements StudentApiInterface {
     // throw new Error('Method not implemented.');
   };
 
-  giveResponse = (
+  giveResponse = async (
     classId: string,
     sessionId: string,
     macId: string,
   ): Promise<WithError<boolean>> => {
-    throw new Error('Method not implemented.');
+    const userId = this.getUserUid();
+
+    if (userId === null) return this.error(BasicErrors.USER_NOT_AUTHENTICATED);
+
+    const data = await firebase
+      .firestore()
+      .collectionGroup('classes')
+      .where('classCode', '==', 'classCode')
+      .get();
+
+    const { docs } = data;
+    const [doc] = docs;
+    const { currentSessionId } = doc.data();
+
+    const session = await doc.ref
+      .collection('sessions')
+      .doc(currentSessionId)
+      .get();
+
+    const sessionInfo = new SessionInfoModel(
+      (session.data() as unknown) as SessionInfoInterface,
+    );
+
+    if (sessionInfo.macId !== macId)
+      this.error(BasicErrors.MAC_ID_DOES_NOT_MATCH);
+
+    await doc.ref
+      .collection('sessions')
+      .doc(currentSessionId)
+      .collection(TeacherApi.CLASSES_SESSIONS_STUDENT_COLLECTION_NAME)
+      .doc(userId)
+      .set(
+        new SessionStudentModel({
+          whom: UserRole.STUDENT,
+          studentId: userId,
+          sessionTime: new Date(),
+          present: true,
+          lastUpdateTime: new Date(),
+        }).toJson(),
+      );
+
+    return this.success(true);
+    // throw new Error('Method not implemented.');
   };
 
   getAttendanceReport = (classId: string): Promise<WithError<unknown>> => {
