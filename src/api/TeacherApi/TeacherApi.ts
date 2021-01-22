@@ -6,7 +6,9 @@ import TeacherClassModel, {
   TeacherClassModelProps,
 } from './model/TeacherClassModel';
 import ClassStudentModel from './model/ClassStudentModel';
-import SessionInfoModel from './model/SessionInfoModel';
+import SessionInfoModel, {
+  SessionInfoInterface,
+} from './model/SessionInfoModel';
 import SessionStudentModel, {
   SessionStudentInterface,
 } from './model/SessionStudentModel';
@@ -132,8 +134,8 @@ interface TeacherApiInterface {
    */
   getClassAttendanceReport(
     classId: string,
-    month: number,
-  ): Promise<WithError<unknown>>;
+    month: Date,
+  ): Promise<WithError<SessionInfoModel[]>>;
 
   /**
    * get summery of all student's attendance report
@@ -153,7 +155,7 @@ interface TeacherApiInterface {
     classId: string,
     studentId: string,
     month: number,
-  ): Promise<WithError<unknown>>;
+  ): Promise<WithError<SessionStudentModel[]>>;
 
   /**
    * get session report of a specific session
@@ -192,6 +194,28 @@ export default class TeacherApi extends AuthApi implements TeacherApiInterface {
 
   static readonly CLASSES_SESSIONS_STUDENT_COLLECTION_NAME =
     'sessions_students';
+
+  //#region helper methods
+  /**
+   * gets the starting date of the month and starting day of the next month
+   * @param month
+   * @returns [startDayOfTheMonth,nextMonthStartDay]
+   * @example
+   * const date = new Date(); // Fri Jan 22 2021 22:33:08 GMT+0530 (India Standard Time)
+   * const [ startDayOfTheMonth,nextMonthStartDay ] = getMonthRange(date);
+   * // [Wed Dec 01 2021 00:00:00 GMT+0530 (India Standard Time), Sat Jan 01 2022 00:00:00 GMT+0530 (India Standard Time)]
+   */
+  getMonthRange = (month: Date): [Date, Date] => {
+    const startingMonthDate = new Date(month);
+    const endingMonthDate = new Date(month);
+
+    startingMonthDate.setDate(1);
+    endingMonthDate.setDate(1);
+    endingMonthDate.setMonth(month.getMonth() + 1);
+
+    return [startingMonthDate, endingMonthDate];
+  };
+  //#endregion
 
   //#region class
   createClass = async (
@@ -545,11 +569,35 @@ export default class TeacherApi extends AuthApi implements TeacherApiInterface {
   //#endregion class_session
 
   //#region attendance_report
-  getClassAttendanceReport = (
+  getClassAttendanceReport = async (
     classId: string,
-    month: number,
-  ): Promise<WithError<unknown>> => {
-    throw new Error('Method not implemented.');
+    month: Date,
+  ): Promise<WithError<SessionInfoModel[]>> => {
+    try {
+      const userId = this.getUserUid();
+
+      if (userId === null)
+        return this.error(BasicErrors.USER_NOT_AUTHENTICATED);
+
+      const [startDayOfTheMonth, nextMonthStartDay] = this.getMonthRange(month);
+
+      const result = await firebase
+        .firestore()
+        .collection(TeacherApi.CLASSES_SESSIONS_COLLECTION_NAME)
+        .where('classId', '==', classId)
+        .where('teacherId', '==', userId)
+        .where('sessionDate', '>=', startDayOfTheMonth)
+        .where('sessionDate', '<', nextMonthStartDay)
+        .get();
+
+      const sessionInfos: SessionInfoModel[] = result.docs.map(
+        doc => new SessionInfoModel((doc as unknown) as SessionInfoInterface),
+      );
+
+      return this.success(sessionInfos);
+    } catch (e) {
+      return this.error(BasicErrors.EXCEPTION);
+    }
   };
 
   getAllStudentAttendanceSummery = (
@@ -558,12 +606,35 @@ export default class TeacherApi extends AuthApi implements TeacherApiInterface {
     throw new Error('Method not implemented.');
   };
 
-  getStudentAttendanceReport = (
+  getStudentAttendanceReport = async (
     classId: string,
     studentId: string,
     month: number,
-  ): Promise<WithError<unknown>> => {
-    throw new Error('Method not implemented.');
+  ): Promise<WithError<SessionStudentModel[]>> => {
+    try {
+      const userId = this.getUserUid();
+
+      if (userId === null)
+        return this.error(BasicErrors.USER_NOT_AUTHENTICATED);
+
+      // get session list
+      const currentSessionDocs = await firebase
+        .firestore()
+        .collection(TeacherApi.CLASSES_SESSIONS_STUDENT_COLLECTION_NAME)
+        .where('classId', '==', classId)
+        .where('studentId', '==', studentId)
+        .where('teacherId', '==', userId)
+        .get();
+
+      const sessions: SessionStudentModel[] = currentSessionDocs.docs.map(
+        doc =>
+          new SessionStudentModel((doc as unknown) as SessionStudentInterface),
+      );
+
+      return this.success(sessions);
+    } catch (ex) {
+      return this.error(BasicErrors.EXCEPTION);
+    }
   };
 
   editStudentAttendanceReport = async (
@@ -587,6 +658,8 @@ export default class TeacherApi extends AuthApi implements TeacherApiInterface {
         .where('studentId', '==', studentId)
         .get();
 
+      // if the student not found in the session throw an error
+      // if(result.docs.length ===0) return this.error(BasicErrors.EXCEPTION)
       // TODO: only update single entity
       await Promise.all(
         result.docs.map(user =>

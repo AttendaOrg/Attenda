@@ -312,3 +312,29 @@ test('edit student attendance report', async () => {
     expect(student2?.whom).toBe(UserRole.TEACHER);
   }
 });
+
+test('getClassAttendanceReport', async () => {
+  // because of the previous test the session infos for this month should be
+  // getter than 0
+  const thisMonth = new Date();
+  const [sessionInfos] = await teacherApi.getClassAttendanceReport(
+    globalClassId,
+    thisMonth,
+  );
+
+  expect(sessionInfos?.length).toBeGreaterThan(0);
+
+  // because of the previous test the session infos for next month should be 0
+  thisMonth.setMonth(thisMonth.getMonth() + 1);
+  const [nextSessionInfos] = await teacherApi.getClassAttendanceReport(
+    globalClassId,
+    thisMonth,
+  );
+
+  expect(nextSessionInfos?.length).toBe(0);
+});
+
+test('getStudentAttendanceReport', async () => {
+  // TODO:: implement this test
+  // for this method to work you have to login as the student and give a present
+});
