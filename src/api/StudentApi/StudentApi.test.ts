@@ -159,3 +159,10 @@ test('give presence', async () => {
   expect(sessionStudent.whom).toBe(UserRole.STUDENT);
   expect(sessionStudent.present).toBe(true);
 });
+
+test('get attendance report', async () => {
+  // because of the previous test the session should be 1
+  const [sessions] = await studentApi.getAttendanceReport(globalClassId);
+
+  expect(sessions?.length).toBe(1);
+});

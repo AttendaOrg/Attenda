@@ -10,7 +10,9 @@ import TeacherClassModel, {
 import SessionInfoModel, {
   SessionInfoInterface,
 } from '../TeacherApi/model/SessionInfoModel';
-import SessionStudentModel from '../TeacherApi/model/SessionStudentModel';
+import SessionStudentModel, {
+  SessionStudentInterface,
+} from '../TeacherApi/model/SessionStudentModel';
 import { UserRole } from '../index';
 
 interface StudentApiInterface {
@@ -59,7 +61,9 @@ interface StudentApiInterface {
    * @param classId
    * @returns unknown TODO: figure out the data structure
    */
-  getAttendanceReport(classId: string): Promise<WithError<unknown>>;
+  getAttendanceReport(
+    classId: string,
+  ): Promise<WithError<SessionStudentModel[]>>;
 }
 
 // noinspection JSUnusedLocalSymbols
@@ -223,7 +227,31 @@ export default class StudentApi extends AuthApi implements StudentApiInterface {
     // throw new Error('Method not implemented.');
   };
 
-  getAttendanceReport = (classId: string): Promise<WithError<unknown>> => {
-    throw new Error('Method not implemented.');
+  getAttendanceReport = async (
+    classId: string,
+  ): Promise<WithError<SessionStudentModel[]>> => {
+    try {
+      const userId = this.getUserUid();
+
+      if (userId === null)
+        return this.error(BasicErrors.USER_NOT_AUTHENTICATED);
+
+      // get session list
+      const currentSessionDocs = await firebase
+        .firestore()
+        .collection(TeacherApi.CLASSES_SESSIONS_STUDENT_COLLECTION_NAME)
+        .where('classId', '==', classId)
+        .where('studentId', '==', userId)
+        .get();
+
+      const sessions: SessionStudentModel[] = currentSessionDocs.docs.map(
+        doc =>
+          new SessionStudentModel((doc as unknown) as SessionStudentInterface),
+      );
+
+      return this.success(sessions);
+    } catch (ex) {
+      return this.error(BasicErrors.EXCEPTION);
+    }
   };
 }
