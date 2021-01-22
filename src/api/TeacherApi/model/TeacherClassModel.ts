@@ -14,6 +14,7 @@ export interface TeacherClassModelProps {
   isLive?: boolean;
   currentSessionId?: string | null;
   classId?: string | null;
+  teacherId: string | null;
 }
 
 export default class TeacherClassModel implements TeacherClassModelProps {
@@ -35,7 +36,9 @@ export default class TeacherClassModel implements TeacherClassModelProps {
 
   classId: string | null = null;
 
-  constructor(data?: TeacherClassModelProps) {
+  teacherId: string | null;
+
+  constructor(data: TeacherClassModelProps) {
     this.classCode = data?.classCode ?? '';
     this.description = data?.description ?? '';
     this.inviteLink = data?.inviteLink ?? '';
@@ -45,6 +48,7 @@ export default class TeacherClassModel implements TeacherClassModelProps {
     this.isLive = data?.isLive ?? false;
     this.currentSessionId = data?.currentSessionId ?? null;
     this.classId = data?.classId ?? null;
+    this.teacherId = data?.teacherId ?? null;
   }
 
   // noinspection DuplicatedCode
@@ -58,6 +62,7 @@ export default class TeacherClassModel implements TeacherClassModelProps {
     title,
     currentSessionId,
     classId,
+    teacherId,
   }: Partial<TeacherClassModelProps>): Partial<TeacherClassModelProps> => {
     const obj: Partial<TeacherClassModelProps> = {};
 
@@ -70,6 +75,7 @@ export default class TeacherClassModel implements TeacherClassModelProps {
     if (section !== undefined) obj.section = section;
     if (currentSessionId !== undefined) obj.currentSessionId = currentSessionId;
     if (classId !== undefined) obj.classId = classId;
+    if (teacherId !== undefined) obj.teacherId = teacherId;
 
     return obj;
   };
@@ -85,6 +91,7 @@ export default class TeacherClassModel implements TeacherClassModelProps {
       title: this.title,
       currentSessionId: this.currentSessionId,
       classId: this.classId,
+      teacherId: this.teacherId,
     };
   };
 }

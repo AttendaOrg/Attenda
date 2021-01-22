@@ -152,7 +152,6 @@ export default class StudentApi extends AuthApi implements StudentApiInterface {
       .firestore()
       .collectionGroup(TeacherApi.CLASSES_COLLECTION_NAME)
       .where('classCode', 'in', ids)
-      .orderBy('classCode')
       .get();
     // TODO: add pagination
 
@@ -177,40 +176,46 @@ export default class StudentApi extends AuthApi implements StudentApiInterface {
 
     if (userId === null) return this.error(BasicErrors.USER_NOT_AUTHENTICATED);
 
-    const data = await firebase
+    // get the class
+    const teacherClassData = await firebase
       .firestore()
-      .collectionGroup('classes')
-      .where('classCode', '==', 'classCode')
+      .collection(TeacherApi.CLASSES_COLLECTION_NAME)
+      .doc(classId)
       .get();
 
-    const { docs } = data;
-    const [doc] = docs;
-    const { currentSessionId } = doc.data();
+    const teacherClass = new TeacherClassModel(
+      (teacherClassData?.data() as unknown) as TeacherClassModelProps,
+    );
 
-    const session = await doc.ref
-      .collection('sessions')
-      .doc(currentSessionId)
+    const { currentSessionId } = teacherClass;
+
+    // get current session
+    const currentSessionDoc = await firebase
+      .firestore()
+      .collection(TeacherApi.CLASSES_SESSIONS_COLLECTION_NAME)
+      .doc(currentSessionId ?? '')
       .get();
 
     const sessionInfo = new SessionInfoModel(
-      (session.data() as unknown) as SessionInfoInterface,
+      (currentSessionDoc.data() as unknown) as SessionInfoInterface,
     );
 
     if (sessionInfo.macId !== macId)
       return this.error(BasicErrors.MAC_ID_DOES_NOT_MATCH);
 
-    await doc.ref
-      .collection('sessions')
-      .doc(currentSessionId)
+    // give present
+    await firebase
+      .firestore()
       .collection(TeacherApi.CLASSES_SESSIONS_STUDENT_COLLECTION_NAME)
-      .doc(userId)
-      .set(
+      .add(
         new SessionStudentModel({
           whom: UserRole.STUDENT,
           studentId: userId,
           sessionTime: new Date(),
           present: true,
           lastUpdateTime: new Date(),
+          sessionId,
+          classId,
         }).toJson(),
       );
 

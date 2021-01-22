@@ -114,7 +114,7 @@ interface TeacherApiInterface {
   /**
    * end the session and discard all result
    * @param classId
-   * @param SessionId:
+   * @param sessionId
    */
   discardClassSession(
     classId: string,
@@ -184,8 +184,6 @@ interface TeacherApiInterface {
 
 // noinspection JSUnusedLocalSymbols
 export default class TeacherApi extends AuthApi implements TeacherApiInterface {
-  static readonly TEACHER_ROOT_COLLECTION_NAME = 'teachers';
-
   static readonly CLASSES_COLLECTION_NAME = 'classes';
 
   static readonly CLASSES_STUDENT_COLLECTION_NAME = 'students';
@@ -207,8 +205,6 @@ export default class TeacherApi extends AuthApi implements TeacherApiInterface {
 
       const doc = await firebase
         .firestore()
-        .collection(TeacherApi.TEACHER_ROOT_COLLECTION_NAME)
-        .doc(userId)
         .collection(TeacherApi.CLASSES_COLLECTION_NAME)
         .add(teacherClass.toJson());
 
@@ -231,8 +227,6 @@ export default class TeacherApi extends AuthApi implements TeacherApiInterface {
 
       const doc = await firebase
         .firestore()
-        .collection(TeacherApi.TEACHER_ROOT_COLLECTION_NAME)
-        .doc(userId)
         .collection(TeacherApi.CLASSES_COLLECTION_NAME)
         .doc(classId)
         .get();
@@ -263,8 +257,6 @@ export default class TeacherApi extends AuthApi implements TeacherApiInterface {
 
       await firebase
         .firestore()
-        .collection(TeacherApi.TEACHER_ROOT_COLLECTION_NAME)
-        .doc(userId)
         .collection(TeacherApi.CLASSES_COLLECTION_NAME)
         .doc(classId)
         .update(teacherClass);
@@ -286,8 +278,6 @@ export default class TeacherApi extends AuthApi implements TeacherApiInterface {
 
       const doc = await firebase
         .firestore()
-        .collection(TeacherApi.TEACHER_ROOT_COLLECTION_NAME)
-        .doc(userId)
         .collection(TeacherApi.CLASSES_COLLECTION_NAME)
         .doc(classId)
         .get();
@@ -309,8 +299,6 @@ export default class TeacherApi extends AuthApi implements TeacherApiInterface {
 
       const classes = await firebase
         .firestore()
-        .collection(TeacherApi.TEACHER_ROOT_COLLECTION_NAME)
-        .doc(userId)
         .collection(TeacherApi.CLASSES_COLLECTION_NAME)
         .get();
 
@@ -343,8 +331,6 @@ export default class TeacherApi extends AuthApi implements TeacherApiInterface {
 
       const doc = await firebase
         .firestore()
-        .collection(TeacherApi.TEACHER_ROOT_COLLECTION_NAME)
-        .doc(userId)
         .collection(TeacherApi.CLASSES_COLLECTION_NAME)
         .doc(classId)
         .update(updateData);
@@ -376,8 +362,6 @@ export default class TeacherApi extends AuthApi implements TeacherApiInterface {
       emails.forEach(email => {
         const ref = firebase
           .firestore()
-          .collection(TeacherApi.TEACHER_ROOT_COLLECTION_NAME)
-          .doc(userId)
           .collection(TeacherApi.CLASSES_COLLECTION_NAME)
           .doc(classId)
           .collection(TeacherApi.CLASSES_STUDENT_COLLECTION_NAME)
@@ -415,8 +399,6 @@ export default class TeacherApi extends AuthApi implements TeacherApiInterface {
 
       const { docs } = await firebase
         .firestore()
-        .collection(TeacherApi.TEACHER_ROOT_COLLECTION_NAME)
-        .doc(userId)
         .collection(TeacherApi.CLASSES_COLLECTION_NAME)
         .doc(classId)
         .collection(TeacherApi.CLASSES_STUDENT_COLLECTION_NAME)
@@ -461,23 +443,24 @@ export default class TeacherApi extends AuthApi implements TeacherApiInterface {
       });
 
       // path to the class
-      const ref = firebase
+      const classRef = firebase
         .firestore()
-        .collection(TeacherApi.TEACHER_ROOT_COLLECTION_NAME)
-        .doc(userId)
         .collection(TeacherApi.CLASSES_COLLECTION_NAME)
         .doc(classId);
 
       // add an new session to DB
-      const doc = await ref
+      const sessionDoc = await firebase
+        .firestore()
         .collection(TeacherApi.CLASSES_SESSIONS_COLLECTION_NAME)
         .add(info.toJson());
 
       // update class info to include the live status and sessionId
-      await ref.update(
+      const sessionId = sessionDoc.id;
+
+      await classRef.update(
         TeacherClassModel.Update({
           isLive: true,
-          currentSessionId: doc.id,
+          currentSessionId: sessionId,
         }),
       );
 
@@ -485,23 +468,23 @@ export default class TeacherApi extends AuthApi implements TeacherApiInterface {
 
       if (students !== null) {
         await Promise.all(
-          students.map(async student => {
-            await ref
-              .collection(TeacherApi.CLASSES_SESSIONS_COLLECTION_NAME)
-              .doc(doc.id)
+          students.map(student => {
+            return firebase
+              .firestore()
               .collection(TeacherApi.CLASSES_SESSIONS_STUDENT_COLLECTION_NAME)
-              .doc(student.studentId ?? student.rollNo)
-              .set(
+              .add(
                 // TODO: only add those student who has joined the class
                 new SessionStudentModel({
                   studentId: student.studentId ?? '',
+                  classId,
+                  sessionId: sessionDoc.id,
                 }).toJson(),
               );
           }),
         );
       }
 
-      return this.success(doc.id);
+      return this.success(sessionDoc.id);
     } catch (e) {
       return this.error(BasicErrors.EXCEPTION);
     }
@@ -520,8 +503,6 @@ export default class TeacherApi extends AuthApi implements TeacherApiInterface {
       // path to the class
       const ref = firebase
         .firestore()
-        .collection(TeacherApi.TEACHER_ROOT_COLLECTION_NAME)
-        .doc(userId)
         .collection(TeacherApi.CLASSES_COLLECTION_NAME)
         .doc(classId);
 
@@ -552,10 +533,6 @@ export default class TeacherApi extends AuthApi implements TeacherApiInterface {
       // delete the session from firestore
       await firebase
         .firestore()
-        .collection(TeacherApi.TEACHER_ROOT_COLLECTION_NAME)
-        .doc(userId)
-        .collection(TeacherApi.CLASSES_COLLECTION_NAME)
-        .doc(classId)
         .collection(TeacherApi.CLASSES_SESSIONS_COLLECTION_NAME)
         .doc(sessionId)
         .delete();
@@ -602,22 +579,25 @@ export default class TeacherApi extends AuthApi implements TeacherApiInterface {
         return this.error(BasicErrors.USER_NOT_AUTHENTICATED);
 
       // delete the session from firestore
-      await firebase
+      const result = await firebase
         .firestore()
-        .collection(TeacherApi.TEACHER_ROOT_COLLECTION_NAME)
-        .doc(userId)
-        .collection(TeacherApi.CLASSES_COLLECTION_NAME)
-        .doc(classId)
-        .collection(TeacherApi.CLASSES_SESSIONS_COLLECTION_NAME)
-        .doc(sessionId)
         .collection(TeacherApi.CLASSES_SESSIONS_STUDENT_COLLECTION_NAME)
-        .doc(studentId)
-        .update(
-          SessionStudentModel.Update({
-            present: status,
-            whom: UserRole.TEACHER,
-          }),
-        );
+        .where('classId', '==', classId)
+        .where('sessionId', '==', sessionId)
+        .where('studentId', '==', studentId)
+        .get();
+
+      // TODO: only update single entity
+      await Promise.all(
+        result.docs.map(user =>
+          user.ref.update(
+            SessionStudentModel.Update({
+              present: status,
+              whom: UserRole.TEACHER,
+            }),
+          ),
+        ),
+      );
 
       return this.success(true);
     } catch (e) {
@@ -638,13 +618,9 @@ export default class TeacherApi extends AuthApi implements TeacherApiInterface {
       // path to the session
       const session = await firebase
         .firestore()
-        .collection(TeacherApi.TEACHER_ROOT_COLLECTION_NAME)
-        .doc(userId)
-        .collection(TeacherApi.CLASSES_COLLECTION_NAME)
-        .doc(classId)
-        .collection(TeacherApi.CLASSES_SESSIONS_COLLECTION_NAME)
-        .doc(sessionId)
         .collection(TeacherApi.CLASSES_SESSIONS_STUDENT_COLLECTION_NAME)
+        .where('classId', '==', classId)
+        .where('sessionId', '==', sessionId)
         .get();
 
       const { docs } = session;
@@ -654,7 +630,8 @@ export default class TeacherApi extends AuthApi implements TeacherApiInterface {
           (doc as unknown) as SessionStudentInterface,
         );
 
-        studentModel.setStudentId(doc.id);
+        // FIXME:: fix the student id issue
+        studentModel.setStudentId(doc.data().studentId);
 
         return studentModel;
       });

@@ -65,6 +65,7 @@ test('able to create a class', async () => {
     section: 'Section',
     title: 'Title',
     classCode: TEST_CLASS_CODE,
+    teacherId: teacherApi.getUserUid(),
   });
 
   const [classId] = await teacherApi.createClass(class1);
@@ -75,7 +76,11 @@ test('able to create a class', async () => {
 });
 
 test('able to get class info', async () => {
-  const class1 = new TeacherClassModel({ section: 'Section', title: 'Title' });
+  const class1 = new TeacherClassModel({
+    section: 'Section',
+    title: 'Title',
+    teacherId: teacherApi.getUserUid(),
+  });
 
   const [classId] = await teacherApi.createClass(class1);
 
@@ -85,7 +90,11 @@ test('able to get class info', async () => {
 });
 
 test('able to update class info', async () => {
-  const class1 = new TeacherClassModel({ section: 'Section', title: 'Title' });
+  const class1 = new TeacherClassModel({
+    section: 'Section',
+    title: 'Title',
+    teacherId: teacherApi.getUserUid(),
+  });
 
   const [classId] = await teacherApi.createClass(class1);
 
@@ -166,27 +175,22 @@ test('if the email add & getting student list works', async () => {
 
 test('able to start a session', async () => {
   //#region check if the class metadata updated when starting a class
-  const [id] = await teacherApi.startClassSession(
+  const [sessionId] = await teacherApi.startClassSession(
     globalClassId,
     '00:00:00:00:02',
     new Date(),
   );
   const [classInfo] = await teacherApi.getClassInfo(globalClassId);
 
-  expect(classInfo?.currentSessionId).toBe(id);
+  expect(classInfo?.currentSessionId).toBe(sessionId);
   expect(classInfo?.isLive).toBe(true);
   //#endregion
 
   //#region check if the session is created
-  const userId = teacherApi.getUserUid() ?? '';
   const session = await admin
     .firestore()
-    .collection(TeacherApi.TEACHER_ROOT_COLLECTION_NAME)
-    .doc(userId)
-    .collection(TeacherApi.CLASSES_COLLECTION_NAME)
-    .doc(globalClassId)
     .collection(TeacherApi.CLASSES_SESSIONS_COLLECTION_NAME)
-    .doc(id ?? '')
+    .doc(sessionId ?? '')
     .get();
 
   expect(session.exists).toBe(true);
@@ -196,13 +200,9 @@ test('able to start a session', async () => {
   const classStudents = await teacherApi.getAllStudentList(globalClassId);
   const students = await admin
     .firestore()
-    .collection(TeacherApi.TEACHER_ROOT_COLLECTION_NAME)
-    .doc(userId)
-    .collection(TeacherApi.CLASSES_COLLECTION_NAME)
-    .doc(globalClassId)
-    .collection(TeacherApi.CLASSES_SESSIONS_COLLECTION_NAME)
-    .doc(id ?? '')
     .collection(TeacherApi.CLASSES_SESSIONS_STUDENT_COLLECTION_NAME)
+    .where('classId', '==', globalClassId)
+    .where('sessionId', '==', sessionId)
     .get();
 
   expect(classStudents.length).toBe(students.docs.length);
@@ -211,29 +211,34 @@ test('able to start a session', async () => {
 
 test('able to discard a session', async () => {
   //#region check if the class metadata updated when starting a class
-  const [id] = await teacherApi.startClassSession(
+  const [sessionId] = await teacherApi.startClassSession(
     globalClassId,
     '00:00:00:00:02',
     new Date(),
   );
   const [classInfo] = await teacherApi.getClassInfo(globalClassId);
 
-  expect(classInfo?.currentSessionId).toBe(id);
+  expect(classInfo?.currentSessionId).toBe(sessionId);
   expect(classInfo?.isLive).toBe(true);
   //#endregion
 
-  await teacherApi.discardClassSession(globalClassId, id ?? '');
+  //#region check if the session is exist in db
+  const session1 = await admin
+    .firestore()
+    .collection(TeacherApi.CLASSES_SESSIONS_COLLECTION_NAME)
+    .doc(sessionId ?? '')
+    .get();
+
+  expect(session1.exists).toBe(true);
+  //#endregion
+
+  await teacherApi.discardClassSession(globalClassId, sessionId ?? '');
 
   //#region check if the session is discarded
-  const userId = teacherApi.getUserUid() ?? '';
   const session = await admin
     .firestore()
-    .collection(TeacherApi.TEACHER_ROOT_COLLECTION_NAME)
-    .doc(userId)
-    .collection(TeacherApi.CLASSES_COLLECTION_NAME)
-    .doc(globalClassId)
     .collection(TeacherApi.CLASSES_SESSIONS_COLLECTION_NAME)
-    .doc(id ?? '')
+    .doc(sessionId ?? '')
     .get();
 
   expect(session.exists).toBe(false);
@@ -294,17 +299,13 @@ test('edit student attendance report', async () => {
 
     const doc = await admin
       .firestore()
-      .collection(TeacherApi.TEACHER_ROOT_COLLECTION_NAME)
-      .doc(teacherApi.getUserUid() ?? '')
-      .collection(TeacherApi.CLASSES_COLLECTION_NAME)
-      .doc(globalClassId)
-      .collection(TeacherApi.CLASSES_SESSIONS_COLLECTION_NAME)
-      .doc(sessionId)
       .collection(TeacherApi.CLASSES_SESSIONS_STUDENT_COLLECTION_NAME)
-      .doc(student?.studentId ?? '')
+      .where('classId', '==', globalClassId)
+      .where('sessionId', '==', sessionId)
+      .where('studentId', '==', student?.studentId ?? '')
       .get();
     const student2 = new SessionStudentModel(
-      (doc.data() as unknown) as SessionStudentInterface,
+      (doc.docs[0].data() as unknown) as SessionStudentInterface,
     );
 
     expect(student2?.present).toBe(true);
