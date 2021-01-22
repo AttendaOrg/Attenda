@@ -197,7 +197,7 @@ export default class StudentApi extends AuthApi implements StudentApiInterface {
     );
 
     if (sessionInfo.macId !== macId)
-      this.error(BasicErrors.MAC_ID_DOES_NOT_MATCH);
+      return this.error(BasicErrors.MAC_ID_DOES_NOT_MATCH);
 
     await doc.ref
       .collection('sessions')
