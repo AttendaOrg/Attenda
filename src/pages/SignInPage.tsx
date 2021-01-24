@@ -6,6 +6,8 @@ import {
 import { RootStackParamList } from '../App';
 import SignIn from '../components/organisms/AppIntro/SignIn';
 import { NoHeaderNavigationOptions } from '../components/templates/SimpleCloseNavigationOption';
+import { authApi } from '../api/AuthApi';
+import { convertErrorToMsg } from '../api/BaseApi';
 
 type Props = StackScreenProps<RootStackParamList, 'SignIn'>;
 
@@ -21,6 +23,13 @@ const SignInPage: React.FC<Props> = ({ navigation }): JSX.Element => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
+  const loginUser = async () => {
+    // TODO: show a progress bar for the sign in
+    const [s, e] = await authApi.loginWithEmailAndPassword(email, password);
+
+    console.log(s, convertErrorToMsg(e));
+  };
+
   return (
     <SignIn
       email={email}
@@ -33,9 +42,7 @@ const SignInPage: React.FC<Props> = ({ navigation }): JSX.Element => {
       onCreateNewAccountClick={() => {
         navigation.push('SignUp');
       }}
-      onSignInClick={() => {
-        navigation.push('ChooseRole');
-      }}
+      onSignInClick={loginUser}
       onGoogleClick={() => null}
       onFaceBookClick={() => null}
       onTwitterClick={() => null}

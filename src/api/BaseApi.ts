@@ -1,7 +1,7 @@
 import firebase from 'firebase';
 import { firebaseConfig } from '../util/configs/firebase';
 
-const DEFAULT_HOST = 'localhost';
+const DEFAULT_HOST = '192.168.0.106';
 
 export interface BaseApiOptions {
   /**
@@ -103,6 +103,12 @@ class BaseApi {
       // @ts-ignore
       firebase.auth().useEmulator(`http://${host}:9099`, disableWarnings);
     }
+
+    firebase.firestore().settings({
+      experimentalForceLongPolling: true,
+      host: '192.168.0.106:8080',
+      ssl: false,
+    });
   }
 
   error = <T>(error: T): WithError<null, T> => {

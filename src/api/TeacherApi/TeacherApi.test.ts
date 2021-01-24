@@ -31,9 +31,9 @@ afterAll(async () => {
   expect(newUsers).toBe(0);
   //#endregion
   //#region delete all firestore collection
-  const newCollections = await deleteAllFirestoreCollection();
+  // const newCollections = await deleteAllFirestoreCollection();
 
-  expect(newCollections).toBe(0);
+  // expect(newCollections).toBe(0);
   //#endregion
 });
 

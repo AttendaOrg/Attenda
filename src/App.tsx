@@ -81,9 +81,8 @@ import MyAccountPage, {
 } from './pages/Commons/MyAccountPage';
 import { UserRole } from './api';
 import LoadingPage, { LoadingPageNavigationOptions } from './pages/LoadingPage';
-import AuthApi from './api/AuthApi';
-
-const authApi = new AuthApi();
+import AuthApi, { authApi } from './api/AuthApi';
+import { convertErrorToMsg } from './api/BaseApi';
 
 export type TeacherClassListNavigationProps = {
   withDismiss?: boolean;
@@ -170,8 +169,9 @@ const AuthProvider: React.FC<Props> = ({ navigation }) => {
   useEffect(() => {
     (async () => {
       // TODO: handle error case
-      const [role] = await authApi.getUserRole();
+      const [role, error] = await authApi.getUserRole();
 
+      console.log(convertErrorToMsg(error));
       // if the auth is not auth loading is not finished
       // we don't need to navigate to any screen
       // show some loading page
