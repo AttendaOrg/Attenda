@@ -1,7 +1,9 @@
 import firebase from 'firebase';
 import { firebaseConfig } from '../util/configs/firebase';
 
-const DEFAULT_HOST = '192.168.0.106';
+const DEFAULT_HOST: string =
+  process.env.REACT_NATIVE_FIREBASE_EMULATOR_HOST ?? 'localhost';
+const defaultUseEmulator = process.env.NODE_ENV === 'development';
 
 export interface BaseApiOptions {
   /**
@@ -57,6 +59,10 @@ export type WithError<Success, Error = BasicErrors> = [
   Error | null,
 ];
 
+/**
+ * by default firebase services connect to emulator in development mode
+ * if you want to change the behavior pass **{useEmulator: true}** in constructor
+ */
 class BaseApi {
   options?: BaseApiOptions;
 
@@ -66,7 +72,7 @@ class BaseApi {
 
   static defaultOptions: BaseApiOptions = {
     host: DEFAULT_HOST,
-    useEmulator: process.env.NODE_ENV === 'development',
+    useEmulator: defaultUseEmulator,
     persistence: true,
   };
 
@@ -80,13 +86,29 @@ class BaseApi {
     // firebase has not been initialized
 
     if (firebase.apps.length === 0) {
-      this.options = { ...BaseApi.defaultOptions, ...options };
+      const defaultOptions =
+        process.env.NODE_ENV === 'testing'
+          ? BaseApi.testOptions
+          : BaseApi.defaultOptions;
+
+      this.options = { ...defaultOptions, ...options };
       firebase.initializeApp(firebaseConfig);
 
       const host: string = options.host ?? DEFAULT_HOST;
 
-      if (options.persistence ?? BaseApi.defaultOptions.persistence) {
-        firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL);
+      // if the env is testing we do not need the persistence
+      if (process.env.NODE_ENV !== 'testing') {
+        if (options.persistence ?? BaseApi.defaultOptions.persistence) {
+          firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL);
+        }
+        // for some reason firestore is not respecting useEmulator in public ip
+        // `firebase.firestore().useEmulator` works fine in node environment
+        // bellow code is for web and android only
+        // if the bellow code used in a node env the request doesn't complete
+        firebase.firestore().settings({
+          experimentalForceLongPolling: true,
+          merge: true,
+        });
       }
 
       firebase.firestore().useEmulator(host, 8080);
@@ -103,12 +125,6 @@ class BaseApi {
       // @ts-ignore
       firebase.auth().useEmulator(`http://${host}:9099`, disableWarnings);
     }
-
-    firebase.firestore().settings({
-      experimentalForceLongPolling: true,
-      host: '192.168.0.106:8080',
-      ssl: false,
-    });
   }
 
   error = <T>(error: T): WithError<null, T> => {
