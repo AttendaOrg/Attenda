@@ -26,6 +26,7 @@ export interface BaseApiOptions {
 
 export enum BasicErrors {
   USER_NOT_AUTHENTICATED,
+  NO_EMAIL_ATTACHED_WITH_ACCOUNT,
   EXCEPTION,
   AUTH_EMAIL_ALREADY_IN_USE,
   AUTH_WRONG_PASSWORD,

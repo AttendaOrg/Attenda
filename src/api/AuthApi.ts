@@ -86,6 +86,16 @@ interface AuthApiInterface {
    * @returns **userId** of the logged in user
    */
   getUserUid(): string | null;
+
+  /**
+   * send the user email to rest password
+   * @param email
+   * @param url {@link firebase.auth.ActionCodeSettings}
+   */
+  sendPasswordResetEmail(
+    email: string,
+    url: string,
+  ): Promise<WithError<boolean>>;
 }
 
 class AuthApi extends BaseApi implements AuthApiInterface {
@@ -320,6 +330,23 @@ class AuthApi extends BaseApi implements AuthApiInterface {
         .collection(AuthApi.AUTH_ROOT_COLLECTION_NAME)
         .doc(userId)
         .set(accountInfo.toJson());
+
+      return this.success(true);
+    } catch (e) {
+      return this.error(BasicErrors.EXCEPTION);
+    }
+  };
+
+  sendPasswordResetEmail = async (
+    email: string,
+    url: string,
+  ): Promise<WithError<boolean>> => {
+    try {
+      const actionCodeSettings: firebase.auth.ActionCodeSettings = {
+        url,
+      };
+
+      await firebase.auth().sendPasswordResetEmail(email, actionCodeSettings);
 
       return this.success(true);
     } catch (e) {

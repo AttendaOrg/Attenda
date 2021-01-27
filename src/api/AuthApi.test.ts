@@ -199,3 +199,13 @@ test('check if setUserType, getUserType works', async () => {
   expect(userType3).toBe(UserRole.STUDENT);
   //#endregion
 });
+
+// TODO: find a better way to check forgot password method.
+test('forgot password', async () => {
+  const [success] = await authApi.sendPasswordResetEmail(
+    TEST_TEACHER_EMAIL,
+    'http://localhost:19006/forgot_password',
+  );
+
+  expect(success).toBe(true);
+});
