@@ -102,7 +102,7 @@ const ClassSettingsPage: React.FC<Props> = ({ navigation }): JSX.Element => {
       headerRight: ({ tintColor }) => (
         <View style={{ display: hasUnsavedChanges() ? 'flex' : 'none' }}>
           <IconButton
-            color={tintColor || lightColor}
+            color={tintColor ?? lightColor}
             icon="check"
             onPress={updateClassInfo}
           />

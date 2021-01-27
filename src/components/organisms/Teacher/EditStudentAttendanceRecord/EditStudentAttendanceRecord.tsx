@@ -116,7 +116,7 @@ const EditStudentAttendanceRecord: React.FC<EditStudentAttendanceRecordPops> = (
       <Dialog visible={popupVisible} onDismiss={() => setPopupVisible(false)}>
         <UserPresentEditPopup
           date={currentDate}
-          selectedDates={markedDates[currentDate] || {}}
+          selectedDates={markedDates[currentDate] ?? {}}
           onChangeAttendance={async (date, time, status) => {
             await onChangeAttendance(date, time, status);
             setCurrentDate('');

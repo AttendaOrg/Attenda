@@ -46,11 +46,12 @@ const StudentPresentListItem: React.FC<StudentPresentListItemPops> = ({
   present,
   onPresentChange = () => null,
 }): JSX.Element => {
-  const userProfileImage = avatar ? (
-    <Image source={avatar} />
-  ) : (
-    <MaterialIcons name="account-circle" size={34} />
-  );
+  const userProfileImage =
+    avatar !== undefined ? (
+      <Image source={avatar} />
+    ) : (
+      <MaterialIcons name="account-circle" size={34} />
+    );
 
   const rightSide = (
     <View style={styles.actionContainer}>

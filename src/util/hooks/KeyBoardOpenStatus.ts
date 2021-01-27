@@ -23,7 +23,7 @@ const useKeyBoardOpenStatus = (): boolean => {
     LayoutAnimation.configureNext(CustomLayoutLinearConfig);
 
     if (Platform.OS === 'android') {
-      if (UIManager.setLayoutAnimationEnabledExperimental) {
+      if (UIManager.setLayoutAnimationEnabledExperimental !== undefined) {
         UIManager.setLayoutAnimationEnabledExperimental(true);
       }
     }

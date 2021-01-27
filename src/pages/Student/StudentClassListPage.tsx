@@ -44,8 +44,7 @@ const StudentClassListPage: React.FC<Props> = ({ navigation }): JSX.Element => {
       // checks if the session is live
       .filter(e => e.isSessionLive === true);
 
-    if (matched && matched.length > 0)
-      navigation.push('GiveResponse', { classId });
+    if (matched.length > 0) navigation.push('GiveResponse', { classId });
     else setShowNoSessionStartedPopup(true);
   };
 

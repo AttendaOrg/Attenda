@@ -22,7 +22,7 @@ const SimpleCloseNavigationOptions: StackNavigationOptions = {
             color={tintColor}
             style={{
               margin: 16,
-              marginTop: (StatusBar.currentHeight || 0) / 2,
+              marginTop: (StatusBar.currentHeight ?? 0) / 2,
             }}
           />
         </TouchableOpacity>
@@ -44,7 +44,7 @@ export const withSimpleCloseNavigationOptions = (
   header: props => (
     <View
       style={{
-        marginTop: StatusBar.currentHeight || 0,
+        marginTop: StatusBar.currentHeight ?? 0,
         backgroundColor: '#fff',
         flexDirection: 'row',
         alignItems: 'center',
