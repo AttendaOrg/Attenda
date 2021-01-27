@@ -603,6 +603,7 @@ export default class TeacherApi extends AuthApi implements TeacherApiInterface {
   getAllStudentAttendanceSummery = (
     classId: string,
   ): Promise<WithError<unknown>> => {
+    // TODO: implement this method
     throw new Error('Method not implemented.');
   };
 

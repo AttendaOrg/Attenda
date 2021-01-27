@@ -20,7 +20,7 @@
     "start-react": "webpack serve --config ./webpack.config.js --mode development",
     "prestorybook": "rnstl",
     "postinstall": "patch-package",
-    "test:firebase-api": "jest --env=node --runInBand"
+    "test:firebase-api": "cross-env NODE_ENV=testing jest --env=node --runInBand"
   },
   "config": {
     "react-native-storybook-loader": {
@@ -40,7 +40,10 @@
     "@react-navigation/native": "^5.8.10",
     "@react-navigation/stack": "^5.12.8",
     "@types/react-native-calendars": "^1.505.0",
+    "cross-env": "^7.0.3",
+    "dotenv": "^8.2.0",
     "expo": "~39.0.2",
+    "expo-constants": "^10.0.0",
     "expo-status-bar": "~1.0.2",
     "firebase": "^8.2.1",
     "patch-package": "^6.2.2",

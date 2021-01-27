@@ -124,6 +124,8 @@ class AuthApi extends BaseApi implements AuthApiInterface {
           return this.error(BasicErrors.AUTH_WRONG_PASSWORD);
         case 'auth/user-not-found':
           return this.error(BasicErrors.AUTH_USER_NOT_FOUND);
+        case 'auth/invalid-email':
+          return this.error(BasicErrors.INVALID_EMAIL);
         default:
           // console.log(error);
           break;
@@ -164,11 +166,21 @@ class AuthApi extends BaseApi implements AuthApiInterface {
       if (userId === null)
         return this.error(BasicErrors.USER_NOT_AUTHENTICATED);
 
-      await firebase
+      const path = firebase
         .firestore()
         .collection(AuthApi.AUTH_ROOT_COLLECTION_NAME)
-        .doc(userId)
-        .update(updateInfo.toJson());
+        .doc(userId);
+
+      // TODO: add an test for setting user role of an user who does not have any account metadata
+      const user = await path.get();
+
+      // checks if the path exist
+      if (user.exists) {
+        await path.update(updateInfo.toJson());
+      } else {
+        // if the path does not exist create a new path
+        await path.set(updateInfo.toJson());
+      }
 
       return this.success(true);
     } catch (ex) {
@@ -207,7 +219,8 @@ class AuthApi extends BaseApi implements AuthApiInterface {
       }
       // console.log('no login user');
     } catch (ex) {
-      // console.error(ex);
+      console.error(ex);
+
       return this.error(BasicErrors.EXCEPTION);
     }
   };
@@ -314,5 +327,7 @@ class AuthApi extends BaseApi implements AuthApiInterface {
     }
   };
 }
+
+export const authApi = new AuthApi();
 
 export default AuthApi;
