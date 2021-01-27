@@ -124,6 +124,8 @@ class AuthApi extends BaseApi implements AuthApiInterface {
           return this.error(BasicErrors.AUTH_WRONG_PASSWORD);
         case 'auth/user-not-found':
           return this.error(BasicErrors.AUTH_USER_NOT_FOUND);
+        case 'auth/invalid-email':
+          return this.error(BasicErrors.INVALID_EMAIL);
         default:
           // console.log(error);
           break;

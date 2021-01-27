@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 import { CommonActions, NavigationContainer } from '@react-navigation/native';
 import { MenuProvider } from 'react-native-popup-menu';
@@ -82,6 +82,8 @@ import MyAccountPage, {
 import { UserRole } from './api';
 import LoadingPage, { LoadingPageNavigationOptions } from './pages/LoadingPage';
 import AuthApi, { authApi } from './api/AuthApi';
+import GlobalContext, { GlobalContextProvider } from './context/GlobalContext';
+import SpinnerLoader from './components/molecules/SpinnerLoader';
 import { convertErrorToMsg } from './api/BaseApi';
 
 export type TeacherClassListNavigationProps = {
@@ -156,6 +158,8 @@ type Props = DrawerScreenProps<RootStackParamList, 'JoinClassFinal'>;
 const AuthProvider: React.FC<Props> = ({ navigation }) => {
   const [isSignedIn, setIsSignedIn] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [_role, setRole] = useState<UserRole | null>(null);
+  const globalContext = useContext(GlobalContext);
 
   useEffect(() => {
     return firebase
@@ -168,15 +172,21 @@ const AuthProvider: React.FC<Props> = ({ navigation }) => {
 
   useEffect(() => {
     (async () => {
+      // TODO: handle back from chose role page
+      // if the use is loaded before we don't need to reload the user
+      if (_role !== null) return;
+
       // TODO: handle error case
       const [role, error] = await authApi.getUserRole();
 
+      setRole(role);
       console.log(convertErrorToMsg(error));
       // if the auth is not auth loading is not finished
       // we don't need to navigate to any screen
       // show some loading page
       if (isLoading) return;
 
+      //#region navigation
       // if user role is UNKNOWN and user is not signed in
       // reset the navigation stack to Sign In page
 
@@ -206,6 +216,9 @@ const AuthProvider: React.FC<Props> = ({ navigation }) => {
 
       // if user role is UNKNOWN and user is signed in
       // reset the navigation stack to Sign In page and go to ChooseRole page
+      // BUG: if the user backs from the chose role page there is no way to go
+      // to choose role page.
+      // because upon login re-login does not trigger onAuthStateChanged callback.
       if (!AuthApi.isRoleSelected(role) && isSignedIn) {
         navigation.dispatch(
           CommonActions.reset({
@@ -243,11 +256,17 @@ const AuthProvider: React.FC<Props> = ({ navigation }) => {
           return;
         }
       }
-
+      //#endregion
       // eslint-disable-next-line no-console
       console.log('something bad has happened no navigation was triggered');
     })();
-  }, [isLoading, isSignedIn, navigation]);
+  }, [_role, isLoading, isSignedIn, navigation]);
+
+  const isRoleLoading: boolean = _role === null && isSignedIn;
+
+  let showLoading: boolean = globalContext.settings.isSpinnerLoading;
+
+  if (!showLoading) showLoading = isRoleLoading;
 
   return (
     <MenuProvider>
@@ -394,6 +413,7 @@ const AuthProvider: React.FC<Props> = ({ navigation }) => {
           />
         </>
       </Stack.Navigator>
+      <SpinnerLoader show={showLoading} />
     </MenuProvider>
   );
 };
@@ -401,11 +421,13 @@ const AuthProvider: React.FC<Props> = ({ navigation }) => {
 const Drawer = createDrawerNavigator();
 
 const App = (): JSX.Element => (
-  <NavigationContainer>
-    <Drawer.Navigator drawerStyle={{}} drawerContent={DrawerContentPage}>
-      <Drawer.Screen name="App" component={AuthProvider} />
-    </Drawer.Navigator>
-  </NavigationContainer>
+  <GlobalContextProvider>
+    <NavigationContainer>
+      <Drawer.Navigator drawerStyle={{}} drawerContent={DrawerContentPage}>
+        <Drawer.Screen name="App" component={AuthProvider} />
+      </Drawer.Navigator>
+    </NavigationContainer>
+  </GlobalContextProvider>
 );
 
 export default App;

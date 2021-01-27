@@ -77,11 +77,12 @@ export default class StudentApi extends AuthApi implements StudentApiInterface {
     try {
       if (!classCode) return this.error(BasicErrors.INVALID_INPUT);
 
-      const doc = await firebase
+      const doc = firebase
         .firestore()
         .collectionGroup(TeacherApi.CLASSES_COLLECTION_NAME)
         .where('classCode', '==', classCode)
         .where('isActiveInvite', '==', true);
+
       const data = await doc.get();
 
       // console.log(data.docs.map(e => e.data()));

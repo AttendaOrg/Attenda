@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import {
   StackNavigationOptions,
   StackScreenProps,
@@ -10,6 +10,7 @@ import SimpleCloseNavigationOptions from '../components/templates/SimpleCloseNav
 import { authApi } from '../api/AuthApi';
 import { UserRole } from '../api';
 import { convertErrorToMsg } from '../api/BaseApi';
+import GlobalContext from '../context/GlobalContext';
 
 type Props = StackScreenProps<RootStackParamList, 'ChooseRole'>;
 
@@ -19,7 +20,10 @@ export const ChooseRoleNavigationOptions: StackNavigationOptions = SimpleCloseNa
 //   : SimpleCloseNavigationOptions;
 
 const ChooseRolePage: React.FC<Props> = ({ navigation }): JSX.Element => {
+  const globalContext = useContext(GlobalContext);
+
   const handleOnDone = async (role: Role) => {
+    globalContext.changeSpinnerLoading(true);
     switch (role) {
       case Role.Student: {
         // resetting the navigation stack for performance reason
@@ -59,6 +63,7 @@ const ChooseRolePage: React.FC<Props> = ({ navigation }): JSX.Element => {
         break;
       }
     }
+    globalContext.changeSpinnerLoading(false);
   };
 
   return <ChooseRole onDone={handleOnDone} />;

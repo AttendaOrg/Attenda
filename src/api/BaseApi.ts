@@ -30,28 +30,25 @@ export enum BasicErrors {
   AUTH_EMAIL_ALREADY_IN_USE,
   AUTH_WRONG_PASSWORD,
   AUTH_USER_NOT_FOUND,
+  INVALID_EMAIL,
   NO_CLASS_FOUND,
   INVALID_INPUT,
   MAC_ID_DOES_NOT_MATCH,
 }
 
 export const convertErrorToMsg = (errCode: BasicErrors | null): string => {
-  switch (errCode) {
-    case BasicErrors.USER_NOT_AUTHENTICATED:
-      return 'USER_NOT_AUTHENTICATED';
-    case BasicErrors.EXCEPTION:
-      return 'EXCEPTION';
-    case BasicErrors.AUTH_EMAIL_ALREADY_IN_USE:
-      return 'AUTH_EMAIL_ALREADY_IN_USE';
-    case BasicErrors.AUTH_WRONG_PASSWORD:
-      return 'AUTH_WRONG_PASSWORD';
-    case BasicErrors.AUTH_USER_NOT_FOUND:
-      return 'AUTH_USER_NOT_FOUND';
-    case BasicErrors.INVALID_INPUT:
-      return 'INVALID_INPUT';
-    default:
-      return 'unknown';
+  // on compile typescript enum converts to a json object.
+  // which have the following structure
+  // { [key1]: value1, [value1]:key1 }
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
+  if (BasicErrors[errCode] !== undefined) {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    return BasicErrors[errCode];
   }
+
+  return 'unknown';
 };
 
 export type WithError<Success, Error = BasicErrors> = [
