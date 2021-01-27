@@ -6,7 +6,9 @@ import TeacherClassModel, {
   TeacherClassModelProps,
 } from './model/TeacherClassModel';
 import ClassStudentModel from './model/ClassStudentModel';
-import SessionInfoModel from './model/SessionInfoModel';
+import SessionInfoModel, {
+  SessionInfoInterface,
+} from './model/SessionInfoModel';
 import SessionStudentModel, {
   SessionStudentInterface,
 } from './model/SessionStudentModel';
@@ -114,7 +116,7 @@ interface TeacherApiInterface {
   /**
    * end the session and discard all result
    * @param classId
-   * @param SessionId:
+   * @param sessionId
    */
   discardClassSession(
     classId: string,
@@ -132,8 +134,8 @@ interface TeacherApiInterface {
    */
   getClassAttendanceReport(
     classId: string,
-    month: number,
-  ): Promise<WithError<unknown>>;
+    month: Date,
+  ): Promise<WithError<SessionInfoModel[]>>;
 
   /**
    * get summery of all student's attendance report
@@ -153,7 +155,7 @@ interface TeacherApiInterface {
     classId: string,
     studentId: string,
     month: number,
-  ): Promise<WithError<unknown>>;
+  ): Promise<WithError<SessionStudentModel[]>>;
 
   /**
    * get session report of a specific session
@@ -184,8 +186,6 @@ interface TeacherApiInterface {
 
 // noinspection JSUnusedLocalSymbols
 export default class TeacherApi extends AuthApi implements TeacherApiInterface {
-  static readonly TEACHER_ROOT_COLLECTION_NAME = 'teachers';
-
   static readonly CLASSES_COLLECTION_NAME = 'classes';
 
   static readonly CLASSES_STUDENT_COLLECTION_NAME = 'students';
@@ -194,6 +194,28 @@ export default class TeacherApi extends AuthApi implements TeacherApiInterface {
 
   static readonly CLASSES_SESSIONS_STUDENT_COLLECTION_NAME =
     'sessions_students';
+
+  //#region helper methods
+  /**
+   * gets the starting date of the month and starting day of the next month
+   * @param month
+   * @returns [startDayOfTheMonth,nextMonthStartDay]
+   * @example
+   * const date = new Date(); // Fri Jan 22 2021 22:33:08 GMT+0530 (India Standard Time)
+   * const [ startDayOfTheMonth,nextMonthStartDay ] = getMonthRange(date);
+   * // [Wed Dec 01 2021 00:00:00 GMT+0530 (India Standard Time), Sat Jan 01 2022 00:00:00 GMT+0530 (India Standard Time)]
+   */
+  getMonthRange = (month: Date): [Date, Date] => {
+    const startingMonthDate = new Date(month);
+    const endingMonthDate = new Date(month);
+
+    startingMonthDate.setDate(1);
+    endingMonthDate.setDate(1);
+    endingMonthDate.setMonth(month.getMonth() + 1);
+
+    return [startingMonthDate, endingMonthDate];
+  };
+  //#endregion
 
   //#region class
   createClass = async (
@@ -207,8 +229,6 @@ export default class TeacherApi extends AuthApi implements TeacherApiInterface {
 
       const doc = await firebase
         .firestore()
-        .collection(TeacherApi.TEACHER_ROOT_COLLECTION_NAME)
-        .doc(userId)
         .collection(TeacherApi.CLASSES_COLLECTION_NAME)
         .add(teacherClass.toJson());
 
@@ -231,8 +251,6 @@ export default class TeacherApi extends AuthApi implements TeacherApiInterface {
 
       const doc = await firebase
         .firestore()
-        .collection(TeacherApi.TEACHER_ROOT_COLLECTION_NAME)
-        .doc(userId)
         .collection(TeacherApi.CLASSES_COLLECTION_NAME)
         .doc(classId)
         .get();
@@ -263,8 +281,6 @@ export default class TeacherApi extends AuthApi implements TeacherApiInterface {
 
       await firebase
         .firestore()
-        .collection(TeacherApi.TEACHER_ROOT_COLLECTION_NAME)
-        .doc(userId)
         .collection(TeacherApi.CLASSES_COLLECTION_NAME)
         .doc(classId)
         .update(teacherClass);
@@ -286,8 +302,6 @@ export default class TeacherApi extends AuthApi implements TeacherApiInterface {
 
       const doc = await firebase
         .firestore()
-        .collection(TeacherApi.TEACHER_ROOT_COLLECTION_NAME)
-        .doc(userId)
         .collection(TeacherApi.CLASSES_COLLECTION_NAME)
         .doc(classId)
         .get();
@@ -309,8 +323,6 @@ export default class TeacherApi extends AuthApi implements TeacherApiInterface {
 
       const classes = await firebase
         .firestore()
-        .collection(TeacherApi.TEACHER_ROOT_COLLECTION_NAME)
-        .doc(userId)
         .collection(TeacherApi.CLASSES_COLLECTION_NAME)
         .get();
 
@@ -343,8 +355,6 @@ export default class TeacherApi extends AuthApi implements TeacherApiInterface {
 
       const doc = await firebase
         .firestore()
-        .collection(TeacherApi.TEACHER_ROOT_COLLECTION_NAME)
-        .doc(userId)
         .collection(TeacherApi.CLASSES_COLLECTION_NAME)
         .doc(classId)
         .update(updateData);
@@ -376,8 +386,6 @@ export default class TeacherApi extends AuthApi implements TeacherApiInterface {
       emails.forEach(email => {
         const ref = firebase
           .firestore()
-          .collection(TeacherApi.TEACHER_ROOT_COLLECTION_NAME)
-          .doc(userId)
           .collection(TeacherApi.CLASSES_COLLECTION_NAME)
           .doc(classId)
           .collection(TeacherApi.CLASSES_STUDENT_COLLECTION_NAME)
@@ -415,8 +423,6 @@ export default class TeacherApi extends AuthApi implements TeacherApiInterface {
 
       const { docs } = await firebase
         .firestore()
-        .collection(TeacherApi.TEACHER_ROOT_COLLECTION_NAME)
-        .doc(userId)
         .collection(TeacherApi.CLASSES_COLLECTION_NAME)
         .doc(classId)
         .collection(TeacherApi.CLASSES_STUDENT_COLLECTION_NAME)
@@ -461,23 +467,24 @@ export default class TeacherApi extends AuthApi implements TeacherApiInterface {
       });
 
       // path to the class
-      const ref = firebase
+      const classRef = firebase
         .firestore()
-        .collection(TeacherApi.TEACHER_ROOT_COLLECTION_NAME)
-        .doc(userId)
         .collection(TeacherApi.CLASSES_COLLECTION_NAME)
         .doc(classId);
 
       // add an new session to DB
-      const doc = await ref
+      const sessionDoc = await firebase
+        .firestore()
         .collection(TeacherApi.CLASSES_SESSIONS_COLLECTION_NAME)
         .add(info.toJson());
 
       // update class info to include the live status and sessionId
-      await ref.update(
+      const sessionId = sessionDoc.id;
+
+      await classRef.update(
         TeacherClassModel.Update({
           isLive: true,
-          currentSessionId: doc.id,
+          currentSessionId: sessionId,
         }),
       );
 
@@ -485,23 +492,23 @@ export default class TeacherApi extends AuthApi implements TeacherApiInterface {
 
       if (students !== null) {
         await Promise.all(
-          students.map(async student => {
-            await ref
-              .collection(TeacherApi.CLASSES_SESSIONS_COLLECTION_NAME)
-              .doc(doc.id)
+          students.map(student => {
+            return firebase
+              .firestore()
               .collection(TeacherApi.CLASSES_SESSIONS_STUDENT_COLLECTION_NAME)
-              .doc(student.studentId ?? student.rollNo)
-              .set(
+              .add(
                 // TODO: only add those student who has joined the class
                 new SessionStudentModel({
                   studentId: student.studentId ?? '',
+                  classId,
+                  sessionId: sessionDoc.id,
                 }).toJson(),
               );
           }),
         );
       }
 
-      return this.success(doc.id);
+      return this.success(sessionDoc.id);
     } catch (e) {
       return this.error(BasicErrors.EXCEPTION);
     }
@@ -520,8 +527,6 @@ export default class TeacherApi extends AuthApi implements TeacherApiInterface {
       // path to the class
       const ref = firebase
         .firestore()
-        .collection(TeacherApi.TEACHER_ROOT_COLLECTION_NAME)
-        .doc(userId)
         .collection(TeacherApi.CLASSES_COLLECTION_NAME)
         .doc(classId);
 
@@ -552,10 +557,6 @@ export default class TeacherApi extends AuthApi implements TeacherApiInterface {
       // delete the session from firestore
       await firebase
         .firestore()
-        .collection(TeacherApi.TEACHER_ROOT_COLLECTION_NAME)
-        .doc(userId)
-        .collection(TeacherApi.CLASSES_COLLECTION_NAME)
-        .doc(classId)
         .collection(TeacherApi.CLASSES_SESSIONS_COLLECTION_NAME)
         .doc(sessionId)
         .delete();
@@ -568,25 +569,73 @@ export default class TeacherApi extends AuthApi implements TeacherApiInterface {
   //#endregion class_session
 
   //#region attendance_report
-  getClassAttendanceReport = (
+  getClassAttendanceReport = async (
     classId: string,
-    month: number,
-  ): Promise<WithError<unknown>> => {
-    throw new Error('Method not implemented.');
+    month: Date,
+  ): Promise<WithError<SessionInfoModel[]>> => {
+    try {
+      const userId = this.getUserUid();
+
+      if (userId === null)
+        return this.error(BasicErrors.USER_NOT_AUTHENTICATED);
+
+      const [startDayOfTheMonth, nextMonthStartDay] = this.getMonthRange(month);
+
+      const result = await firebase
+        .firestore()
+        .collection(TeacherApi.CLASSES_SESSIONS_COLLECTION_NAME)
+        .where('classId', '==', classId)
+        .where('teacherId', '==', userId)
+        .where('sessionDate', '>=', startDayOfTheMonth)
+        .where('sessionDate', '<', nextMonthStartDay)
+        .get();
+
+      const sessionInfos: SessionInfoModel[] = result.docs.map(
+        doc => new SessionInfoModel((doc as unknown) as SessionInfoInterface),
+      );
+
+      return this.success(sessionInfos);
+    } catch (e) {
+      return this.error(BasicErrors.EXCEPTION);
+    }
   };
 
   getAllStudentAttendanceSummery = (
     classId: string,
   ): Promise<WithError<unknown>> => {
+    // TODO: implement this method
     throw new Error('Method not implemented.');
   };
 
-  getStudentAttendanceReport = (
+  getStudentAttendanceReport = async (
     classId: string,
     studentId: string,
     month: number,
-  ): Promise<WithError<unknown>> => {
-    throw new Error('Method not implemented.');
+  ): Promise<WithError<SessionStudentModel[]>> => {
+    try {
+      const userId = this.getUserUid();
+
+      if (userId === null)
+        return this.error(BasicErrors.USER_NOT_AUTHENTICATED);
+
+      // get session list
+      const currentSessionDocs = await firebase
+        .firestore()
+        .collection(TeacherApi.CLASSES_SESSIONS_STUDENT_COLLECTION_NAME)
+        .where('classId', '==', classId)
+        .where('studentId', '==', studentId)
+        .where('teacherId', '==', userId)
+        .get();
+
+      const sessions: SessionStudentModel[] = currentSessionDocs.docs.map(
+        doc =>
+          new SessionStudentModel((doc as unknown) as SessionStudentInterface),
+      );
+
+      return this.success(sessions);
+    } catch (ex) {
+      return this.error(BasicErrors.EXCEPTION);
+    }
   };
 
   editStudentAttendanceReport = async (
@@ -602,22 +651,27 @@ export default class TeacherApi extends AuthApi implements TeacherApiInterface {
         return this.error(BasicErrors.USER_NOT_AUTHENTICATED);
 
       // delete the session from firestore
-      await firebase
+      const result = await firebase
         .firestore()
-        .collection(TeacherApi.TEACHER_ROOT_COLLECTION_NAME)
-        .doc(userId)
-        .collection(TeacherApi.CLASSES_COLLECTION_NAME)
-        .doc(classId)
-        .collection(TeacherApi.CLASSES_SESSIONS_COLLECTION_NAME)
-        .doc(sessionId)
         .collection(TeacherApi.CLASSES_SESSIONS_STUDENT_COLLECTION_NAME)
-        .doc(studentId)
-        .update(
-          SessionStudentModel.Update({
-            present: status,
-            whom: UserRole.TEACHER,
-          }),
-        );
+        .where('classId', '==', classId)
+        .where('sessionId', '==', sessionId)
+        .where('studentId', '==', studentId)
+        .get();
+
+      // if the student not found in the session throw an error
+      // if(result.docs.length ===0) return this.error(BasicErrors.EXCEPTION)
+      // TODO: only update single entity
+      await Promise.all(
+        result.docs.map(user =>
+          user.ref.update(
+            SessionStudentModel.Update({
+              present: status,
+              whom: UserRole.TEACHER,
+            }),
+          ),
+        ),
+      );
 
       return this.success(true);
     } catch (e) {
@@ -638,13 +692,9 @@ export default class TeacherApi extends AuthApi implements TeacherApiInterface {
       // path to the session
       const session = await firebase
         .firestore()
-        .collection(TeacherApi.TEACHER_ROOT_COLLECTION_NAME)
-        .doc(userId)
-        .collection(TeacherApi.CLASSES_COLLECTION_NAME)
-        .doc(classId)
-        .collection(TeacherApi.CLASSES_SESSIONS_COLLECTION_NAME)
-        .doc(sessionId)
         .collection(TeacherApi.CLASSES_SESSIONS_STUDENT_COLLECTION_NAME)
+        .where('classId', '==', classId)
+        .where('sessionId', '==', sessionId)
         .get();
 
       const { docs } = session;
@@ -654,7 +704,8 @@ export default class TeacherApi extends AuthApi implements TeacherApiInterface {
           (doc as unknown) as SessionStudentInterface,
         );
 
-        studentModel.setStudentId(doc.id);
+        // FIXME:: fix the student id issue
+        studentModel.setStudentId(doc.data().studentId);
 
         return studentModel;
       });

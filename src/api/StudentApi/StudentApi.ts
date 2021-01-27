@@ -10,7 +10,9 @@ import TeacherClassModel, {
 import SessionInfoModel, {
   SessionInfoInterface,
 } from '../TeacherApi/model/SessionInfoModel';
-import SessionStudentModel from '../TeacherApi/model/SessionStudentModel';
+import SessionStudentModel, {
+  SessionStudentInterface,
+} from '../TeacherApi/model/SessionStudentModel';
 import { UserRole } from '../index';
 
 interface StudentApiInterface {
@@ -59,7 +61,9 @@ interface StudentApiInterface {
    * @param classId
    * @returns unknown TODO: figure out the data structure
    */
-  getAttendanceReport(classId: string): Promise<WithError<unknown>>;
+  getAttendanceReport(
+    classId: string,
+  ): Promise<WithError<SessionStudentModel[]>>;
 }
 
 // noinspection JSUnusedLocalSymbols
@@ -73,11 +77,12 @@ export default class StudentApi extends AuthApi implements StudentApiInterface {
     try {
       if (!classCode) return this.error(BasicErrors.INVALID_INPUT);
 
-      const doc = await firebase
+      const doc = firebase
         .firestore()
         .collectionGroup(TeacherApi.CLASSES_COLLECTION_NAME)
         .where('classCode', '==', classCode)
         .where('isActiveInvite', '==', true);
+
       const data = await doc.get();
 
       // console.log(data.docs.map(e => e.data()));
@@ -152,7 +157,6 @@ export default class StudentApi extends AuthApi implements StudentApiInterface {
       .firestore()
       .collectionGroup(TeacherApi.CLASSES_COLLECTION_NAME)
       .where('classCode', 'in', ids)
-      .orderBy('classCode')
       .get();
     // TODO: add pagination
 
@@ -177,40 +181,46 @@ export default class StudentApi extends AuthApi implements StudentApiInterface {
 
     if (userId === null) return this.error(BasicErrors.USER_NOT_AUTHENTICATED);
 
-    const data = await firebase
+    // get the class
+    const teacherClassData = await firebase
       .firestore()
-      .collectionGroup('classes')
-      .where('classCode', '==', 'classCode')
+      .collection(TeacherApi.CLASSES_COLLECTION_NAME)
+      .doc(classId)
       .get();
 
-    const { docs } = data;
-    const [doc] = docs;
-    const { currentSessionId } = doc.data();
+    const teacherClass = new TeacherClassModel(
+      (teacherClassData?.data() as unknown) as TeacherClassModelProps,
+    );
 
-    const session = await doc.ref
-      .collection('sessions')
-      .doc(currentSessionId)
+    const { currentSessionId } = teacherClass;
+
+    // get current session
+    const currentSessionDoc = await firebase
+      .firestore()
+      .collection(TeacherApi.CLASSES_SESSIONS_COLLECTION_NAME)
+      .doc(currentSessionId ?? '')
       .get();
 
     const sessionInfo = new SessionInfoModel(
-      (session.data() as unknown) as SessionInfoInterface,
+      (currentSessionDoc.data() as unknown) as SessionInfoInterface,
     );
 
     if (sessionInfo.macId !== macId)
       return this.error(BasicErrors.MAC_ID_DOES_NOT_MATCH);
 
-    await doc.ref
-      .collection('sessions')
-      .doc(currentSessionId)
+    // give present
+    await firebase
+      .firestore()
       .collection(TeacherApi.CLASSES_SESSIONS_STUDENT_COLLECTION_NAME)
-      .doc(userId)
-      .set(
+      .add(
         new SessionStudentModel({
           whom: UserRole.STUDENT,
           studentId: userId,
           sessionTime: new Date(),
           present: true,
           lastUpdateTime: new Date(),
+          sessionId,
+          classId,
         }).toJson(),
       );
 
@@ -218,7 +228,31 @@ export default class StudentApi extends AuthApi implements StudentApiInterface {
     // throw new Error('Method not implemented.');
   };
 
-  getAttendanceReport = (classId: string): Promise<WithError<unknown>> => {
-    throw new Error('Method not implemented.');
+  getAttendanceReport = async (
+    classId: string,
+  ): Promise<WithError<SessionStudentModel[]>> => {
+    try {
+      const userId = this.getUserUid();
+
+      if (userId === null)
+        return this.error(BasicErrors.USER_NOT_AUTHENTICATED);
+
+      // get session list
+      const currentSessionDocs = await firebase
+        .firestore()
+        .collection(TeacherApi.CLASSES_SESSIONS_STUDENT_COLLECTION_NAME)
+        .where('classId', '==', classId)
+        .where('studentId', '==', userId)
+        .get();
+
+      const sessions: SessionStudentModel[] = currentSessionDocs.docs.map(
+        doc =>
+          new SessionStudentModel((doc as unknown) as SessionStudentInterface),
+      );
+
+      return this.success(sessions);
+    } catch (ex) {
+      return this.error(BasicErrors.EXCEPTION);
+    }
   };
 }

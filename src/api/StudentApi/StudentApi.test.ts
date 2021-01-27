@@ -1,3 +1,4 @@
+import * as admin from 'firebase-admin';
 import {
   deleteAllFirestoreCollection,
   deleteAllUser,
@@ -16,11 +17,20 @@ import AccountInfo from '../model/AccountInfo';
 import StudentApi from './StudentApi';
 import TeacherClassModel from '../TeacherApi/model/TeacherClassModel';
 import TeacherApi from '../TeacherApi';
+import SessionStudentModel, {
+  SessionStudentInterface,
+} from '../TeacherApi/model/SessionStudentModel';
 
 initAdminSdkForTest();
 const authApi = new AuthApi(BaseApi.testOptions);
 const studentApi = new StudentApi();
 const teacherApi = new TeacherApi();
+
+let globalClassId = '';
+let globalSessionId = '';
+const globalClassCode = `${TEST_CLASS_CODE}-${Math.floor(
+  Math.random() * 1000,
+)}`;
 
 afterAll(async () => {
   //#region delete all existing user
@@ -51,15 +61,18 @@ beforeAll(async () => {
   const class1 = new TeacherClassModel({
     section: 'Section',
     title: 'Title',
-    classCode: TEST_CLASS_CODE,
+    classCode: globalClassCode,
+    teacherId: authApi.getUserUid(),
   });
   const [classId] = await teacherApi.createClass(class1);
-
-  await teacherApi.startClassSession(
+  const [sessionId] = await teacherApi.startClassSession(
     classId ?? '',
     '00:00:00:00:02',
     new Date(),
   );
+
+  globalClassId = classId ?? '';
+  globalSessionId = sessionId ?? '';
 
   await authApi.logOut();
   //#endregion
@@ -93,7 +106,7 @@ test('validateClassJoin', async () => {
 
   expect(failed).toBe(false);
 
-  const [success] = await studentApi.validateClassJoin(TEST_CLASS_CODE, 'Asd');
+  const [success] = await studentApi.validateClassJoin(globalClassCode, 'Asd');
 
   expect(success).toBe(true);
 });
@@ -103,7 +116,7 @@ test('join class', async () => {
 
   expect(prevIds?.length).toBe(0);
 
-  await studentApi.joinClass(TEST_CLASS_CODE, 'asd');
+  await studentApi.joinClass(globalClassCode, 'asd');
 
   const [nextIds] = await studentApi.getAllJoinedClassId();
 
@@ -119,7 +132,37 @@ test('getAllEnrolledClassList', async () => {
 });
 
 test('give presence', async () => {
-  await studentApi.giveResponse('', '', '00:00:00:00:02');
+  const query = admin
+    .firestore()
+    .collection(TeacherApi.CLASSES_SESSIONS_STUDENT_COLLECTION_NAME)
+    .where('studentId', '==', studentApi.getUserUid())
+    .where('classId', '==', globalClassId)
+    .where('sessionId', '==', globalSessionId);
+  // before giving the present there should be no student in session_student
+  const beforeSessionStudentData = await query.get();
 
-  // console.log(res, err);
+  expect(beforeSessionStudentData.empty).toBe(true);
+
+  await studentApi.giveResponse(
+    globalClassId,
+    globalSessionId,
+    '00:00:00:00:02',
+  );
+
+  // after giving the present there should be student entry in `session_student`
+  const afterSessionStudentData = await query.get();
+  const sessionStudent = new SessionStudentModel(
+    (afterSessionStudentData.docs[0].data() as unknown) as SessionStudentInterface,
+  );
+
+  expect(afterSessionStudentData.empty).toBe(false);
+  expect(sessionStudent.whom).toBe(UserRole.STUDENT);
+  expect(sessionStudent.present).toBe(true);
+});
+
+test('get attendance report', async () => {
+  // because of the previous test the session should be 1
+  const [sessions] = await studentApi.getAttendanceReport(globalClassId);
+
+  expect(sessions?.length).toBe(1);
 });
