@@ -121,6 +121,37 @@ test('able to update class info', async () => {
   expect(classModel?.classCode).toBe('TEST_CLASS_CODE');
 });
 
+test('able to update class code', async () => {
+  const class1 = new TeacherClassModel({
+    section: 'Section',
+    title: 'Title',
+    teacherId: teacherApi.getUserUid(),
+  });
+
+  const [classId] = await teacherApi.createClass(class1);
+
+  const [success1] = await teacherApi.updateClassCode(
+    classId as string,
+    'new_code' as string,
+  );
+
+  expect(success1).toBe(true);
+  const [classModel1] = await teacherApi.getClassInfo(classId as string);
+
+  expect(classModel1).toBeInstanceOf(TeacherClassModel);
+  expect(classModel1?.classCode).toBe('new_code');
+
+  const [success2] = await teacherApi.updateClassCode(
+    classId as string,
+    '' as string,
+  );
+
+  expect(success2).toBe(true);
+  const [classModel2] = await teacherApi.getClassInfo(classId as string);
+
+  expect(classModel2?.classCode).toBe('');
+});
+
 test('is class exist works', async () => {
   const [resultFailed] = await teacherApi.isClassExist('not exist class id');
 

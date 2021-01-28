@@ -34,6 +34,16 @@ interface TeacherApiInterface {
   ): Promise<WithError<boolean>>;
 
   /**
+   * update class code by class id
+   * @param classId
+   * @param newClassCode
+   */
+  updateClassCode(
+    classId: string,
+    newClassCode: string,
+  ): Promise<WithError<boolean>>;
+
+  /**
    * checks if the class exist by class id
    * @param classId
    */
@@ -289,6 +299,35 @@ export default class TeacherApi extends AuthApi implements TeacherApiInterface {
     } catch (ex) {
       // console.log(ex);
 
+      return this.error(BasicErrors.EXCEPTION);
+    }
+  };
+
+  updateClassCode = async (
+    classId: string,
+    newClassCode: string,
+  ): Promise<WithError<boolean>> => {
+    try {
+      const userId = this.getUserUid();
+
+      if (userId === null)
+        return this.error(BasicErrors.USER_NOT_AUTHENTICATED);
+
+      // path to the class
+      const ref = firebase
+        .firestore()
+        .collection(TeacherApi.CLASSES_COLLECTION_NAME)
+        .doc(classId);
+
+      // update class info with new class code
+      await ref.update(
+        TeacherClassModel.Update({
+          classCode: newClassCode,
+        }),
+      );
+
+      return this.success(true);
+    } catch (ex) {
       return this.error(BasicErrors.EXCEPTION);
     }
   };
