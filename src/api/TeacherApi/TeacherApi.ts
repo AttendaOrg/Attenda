@@ -105,6 +105,15 @@ interface TeacherApiInterface {
    */
   getAllStudentList(classId: string): Promise<WithError<ClassStudentModel[]>>;
 
+  /**
+   * archive the student profile given a classId
+   * @param classId
+   * @param studentId
+   */
+  archiveStudent(
+    classId: string,
+    studentId: string,
+  ): Promise<WithError<boolean>>;
   //#endregion invite
 
   //#region class_session
@@ -529,11 +538,49 @@ export default class TeacherApi extends AuthApi implements TeacherApiInterface {
 
       const students = docs.map<ClassStudentModel>(doc => {
         return new ClassStudentModel(
-          (doc as unknown) as ClassStudentModelInterface,
+          (doc.data() as unknown) as ClassStudentModelInterface,
         );
       });
 
       return this.success(students);
+    } catch (error) {
+      // console.log(error);
+
+      return this.error(BasicErrors.EXCEPTION);
+    }
+  };
+
+  archiveStudent = async (
+    classId: string,
+    studentId: string,
+  ): Promise<WithError<boolean>> => {
+    try {
+      const userId = this.getUserUid();
+
+      if (userId === null)
+        return this.error(BasicErrors.USER_NOT_AUTHENTICATED);
+
+      const classStudentRef = firebase
+        .firestore()
+        .collection(TeacherApi.CLASSES_COLLECTION_NAME)
+        .doc(classId)
+        .collection(TeacherApi.CLASSES_JOINED_STUDENT_COLLECTION_NAME)
+        .doc(studentId);
+
+      const student = await classStudentRef.get();
+
+      if (!student.exists)
+        return this.error(BasicErrors.USER_DOES_NOT_EXIST_IN_CLASS);
+
+      await classStudentRef.update(
+        ClassStudentModel.Update({
+          archived: true,
+        }),
+      );
+
+      // QUESTION: do we update the class session student to indicate if it is archived?
+
+      return this.success(true);
     } catch (error) {
       // console.log(error);
 

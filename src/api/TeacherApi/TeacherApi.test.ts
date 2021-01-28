@@ -19,6 +19,7 @@ import SessionStudentModel, {
   SessionStudentInterface,
 } from './model/SessionStudentModel';
 import StudentApi from '../StudentApi';
+import ClassStudentModel from './model/ClassStudentModel';
 
 initAdminSdkForTest();
 const authApi = new AuthApi(BaseApi.testOptions);
@@ -390,4 +391,26 @@ test('getClassAttendanceReport', async () => {
 test('getStudentAttendanceReport', async () => {
   // TODO:: implement this test
   // for this method to work you have to login as the student and give a present
+});
+
+test('archive student from a class', async () => {
+  const [students] = await teacherApi.getAllStudentList(globalClassId);
+  const student = students?.[0];
+
+  expect(student).toBeInstanceOf(ClassStudentModel);
+  expect(student?.studentId?.length).toBeGreaterThan(0);
+  expect(student?.archived).toBe(false);
+  if (student !== undefined) {
+    await teacherApi.archiveStudent(globalClassId, student.studentId ?? '');
+  }
+
+  const [updatedStudents] = await teacherApi.getAllStudentList(globalClassId);
+  const match = updatedStudents?.filter(
+    s => s.studentId === student?.studentId,
+  );
+  const matchedStudent = match?.[0];
+
+  expect(matchedStudent).toBeInstanceOf(ClassStudentModel);
+  expect(matchedStudent?.studentId?.length).toBeGreaterThan(0);
+  expect(matchedStudent?.archived).toBe(true);
 });
