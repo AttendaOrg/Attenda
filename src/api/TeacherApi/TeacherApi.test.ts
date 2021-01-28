@@ -7,8 +7,8 @@ import {
 import AuthApi from '../AuthApi';
 import {
   TEST_CLASS_CODE,
-  TEST_TEACHER_EMAIL,
   TEST_PASSWORD,
+  TEST_TEACHER_EMAIL,
 } from '../util/constant';
 import { UserRole } from '../index';
 import TeacherClassModel from './model/TeacherClassModel';
@@ -18,6 +18,7 @@ import AccountInfo from '../model/AccountInfo';
 import SessionStudentModel, {
   SessionStudentInterface,
 } from './model/SessionStudentModel';
+import StudentApi from '../StudentApi';
 
 initAdminSdkForTest();
 const authApi = new AuthApi(BaseApi.testOptions);
@@ -195,13 +196,34 @@ test('changing invite code status works', async () => {
 });
 
 test('if the email add & getting student list works', async () => {
-  const emails = [TEST_TEACHER_EMAIL, 'test1@google.com'];
+  const emails = ['test1@google.com', 'test2@google.com'];
 
   await teacherApi.inviteStudent(globalClassId, emails);
 
-  const [students] = await teacherApi.getAllStudentList(globalClassId);
+  const [students] = await teacherApi.getInviteStatus(globalClassId);
 
   expect(students?.length).toBe(emails.length);
+});
+
+test('join class', async done => {
+  const [invites] = await teacherApi.getInviteStatus(globalClassId);
+  const studentApi = new StudentApi();
+
+  await authApi.logOut();
+  if (invites !== null)
+    // eslint-disable-next-line no-restricted-syntax
+    for await (const invite of invites) {
+      await authApi.signUpWithEmailAndPassword(invite.email, TEST_PASSWORD);
+      await authApi.loginWithEmailAndPassword(invite.email, TEST_PASSWORD);
+      await authApi.setUserRole(UserRole.STUDENT);
+      await studentApi.joinClass(
+        globalClassId,
+        `roll-${Math.floor(Math.random() * 100)}`,
+      );
+      await studentApi.logOut();
+    }
+  await authApi.loginWithEmailAndPassword(TEST_TEACHER_EMAIL, TEST_PASSWORD);
+  done();
 });
 
 test('able to start a session', async () => {

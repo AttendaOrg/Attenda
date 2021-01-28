@@ -27,6 +27,7 @@ export default class ClassStudentModel implements ClassStudentModelInterface {
       this.totalAttendancePercentage = data.totalAttendancePercentage;
     if (typeof data.joined === 'boolean') this.joined = data.joined;
     if (data.joinedDate instanceof Date) this.joinedDate = data.joinedDate;
+    if (typeof data.studentId === 'string') this.studentId = data.studentId;
   }
 
   static PartialData(

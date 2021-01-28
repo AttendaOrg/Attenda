@@ -48,9 +48,11 @@ export const deleteAllUser = async (): Promise<number> => {
 
   const { users } = await admin.auth().listUsers();
 
-  users.forEach(user => {
-    admin.auth().deleteUser(user.uid);
-  });
+  await Promise.all(
+    users.map(async user => {
+      await admin.auth().deleteUser(user.uid);
+    }),
+  );
   const { users: newUsers } = await admin.auth().listUsers();
 
   return newUsers.length;

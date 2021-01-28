@@ -14,6 +14,7 @@ import SessionStudentModel, {
   SessionStudentInterface,
 } from '../TeacherApi/model/SessionStudentModel';
 import { UserRole } from '../index';
+import ClassStudentModel from '../TeacherApi/model/ClassStudentModel';
 
 interface StudentApiInterface {
   /**
@@ -28,10 +29,10 @@ interface StudentApiInterface {
 
   /**
    * join the class
-   * @param classCode
+   * @param classId
    * @param rollNo
    */
-  joinClass(classCode: string, rollNo: string): Promise<WithError<boolean>>;
+  joinClass(classId: string, rollNo: string): Promise<WithError<boolean>>;
 
   /**
    * get the list of all enrolled class list
@@ -79,7 +80,7 @@ export default class StudentApi extends AuthApi implements StudentApiInterface {
 
       const doc = firebase
         .firestore()
-        .collectionGroup(TeacherApi.CLASSES_COLLECTION_NAME)
+        .collection(TeacherApi.CLASSES_COLLECTION_NAME)
         .where('classCode', '==', classCode)
         .where('isActiveInvite', '==', true);
 
@@ -116,7 +117,7 @@ export default class StudentApi extends AuthApi implements StudentApiInterface {
   };
 
   joinClass = async (
-    classCode: string,
+    classId: string,
     rollNo: string,
   ): Promise<WithError<boolean>> => {
     try {
@@ -127,7 +128,7 @@ export default class StudentApi extends AuthApi implements StudentApiInterface {
 
       // add class id to acc metadata
       const chunkUpdate = (firebase.firestore.FieldValue.arrayUnion(
-        classCode,
+        classId,
       ) as unknown) as string[];
 
       await firebase
@@ -140,7 +141,23 @@ export default class StudentApi extends AuthApi implements StudentApiInterface {
           }),
         );
 
-      // TODO: add the student to teacher class
+      // add the student to teacher class
+
+      const studentInfo = new ClassStudentModel({
+        joined: true,
+        rollNo,
+        joinedDate: new Date(),
+        studentId: userId,
+        totalAttendancePercentage: 0,
+      });
+
+      await firebase
+        .firestore()
+        .collection(TeacherApi.CLASSES_COLLECTION_NAME)
+        .doc(classId)
+        .collection(TeacherApi.CLASSES_JOINED_STUDENT_COLLECTION_NAME)
+        .doc(studentInfo.studentId ?? '')
+        .set(studentInfo.toJson());
 
       return this.success(true);
     } catch (e) {
@@ -155,8 +172,8 @@ export default class StudentApi extends AuthApi implements StudentApiInterface {
 
     const docs = await firebase
       .firestore()
-      .collectionGroup(TeacherApi.CLASSES_COLLECTION_NAME)
-      .where('classCode', 'in', ids)
+      .collection(TeacherApi.CLASSES_COLLECTION_NAME)
+      .where(firebase.firestore.FieldPath.documentId(), 'in', ids)
       .get();
     // TODO: add pagination
 

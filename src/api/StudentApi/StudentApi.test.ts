@@ -116,7 +116,7 @@ test('join class', async () => {
 
   expect(prevIds?.length).toBe(0);
 
-  await studentApi.joinClass(globalClassCode, 'asd');
+  await studentApi.joinClass(globalClassId, 'asd');
 
   const [nextIds] = await studentApi.getAllJoinedClassId();
 

@@ -5,14 +5,19 @@ import { BasicErrors, WithError } from '../BaseApi';
 import TeacherClassModel, {
   TeacherClassModelProps,
 } from './model/TeacherClassModel';
-import ClassStudentModel from './model/ClassStudentModel';
 import SessionInfoModel, {
   SessionInfoInterface,
 } from './model/SessionInfoModel';
 import SessionStudentModel, {
   SessionStudentInterface,
 } from './model/SessionStudentModel';
+import InviteStudentModel, {
+  IInviteStudentModel,
+} from './model/InviteStudentModel';
 import { UserRole } from '../index';
+import ClassStudentModel, {
+  ClassStudentModelInterface,
+} from './model/ClassStudentModel';
 
 interface TeacherApiInterface {
   //#region class
@@ -91,16 +96,14 @@ interface TeacherApiInterface {
   /**
    * given the classId get the status of the invite student.
    * @param classId
-   * @returns unknown TODO: figure out the data structure
    */
-  getInviteStatus(classId: string): Promise<WithError<unknown[]>>;
+  getInviteStatus(classId: string): Promise<WithError<InviteStudentModel[]>>;
 
   /**
    * given the classId get All student enrolled in a class
    * @param classId
-   * @returns unknown TODO: figure out the data structure
    */
-  getAllStudentList(classId: string): Promise<WithError<unknown[]>>;
+  getAllStudentList(classId: string): Promise<WithError<ClassStudentModel[]>>;
 
   //#endregion invite
 
@@ -204,7 +207,9 @@ interface TeacherApiInterface {
 export default class TeacherApi extends AuthApi implements TeacherApiInterface {
   static readonly CLASSES_COLLECTION_NAME = 'classes';
 
-  static readonly CLASSES_STUDENT_COLLECTION_NAME = 'students';
+  static readonly CLASSES_INVITE_STUDENT_COLLECTION_NAME = 'invite_students';
+
+  static readonly CLASSES_JOINED_STUDENT_COLLECTION_NAME = 'joined_students';
 
   static readonly CLASSES_SESSIONS_COLLECTION_NAME = 'sessions';
 
@@ -412,9 +417,7 @@ export default class TeacherApi extends AuthApi implements TeacherApiInterface {
     }
   };
 
-  archiveClass = async (
-    classId: string,
-  ): Promise<WithError<boolean, BasicErrors>> => {
+  archiveClass = async (classId: string): Promise<WithError<boolean>> => {
     try {
       const userId = this.getUserUid();
 
@@ -460,10 +463,10 @@ export default class TeacherApi extends AuthApi implements TeacherApiInterface {
           .firestore()
           .collection(TeacherApi.CLASSES_COLLECTION_NAME)
           .doc(classId)
-          .collection(TeacherApi.CLASSES_STUDENT_COLLECTION_NAME)
+          .collection(TeacherApi.CLASSES_INVITE_STUDENT_COLLECTION_NAME)
           .doc();
 
-        const data = new ClassStudentModel({ email });
+        const data = new InviteStudentModel({ email });
 
         batch.set(ref, data.toJson());
       });
@@ -478,8 +481,34 @@ export default class TeacherApi extends AuthApi implements TeacherApiInterface {
     }
   };
 
-  getInviteStatus = (classId: string): Promise<WithError<unknown[]>> => {
-    throw new Error('Method not implemented.');
+  getInviteStatus = async (
+    classId: string,
+  ): Promise<WithError<InviteStudentModel[]>> => {
+    try {
+      const userId = this.getUserUid();
+
+      if (userId === null)
+        return this.error(BasicErrors.USER_NOT_AUTHENTICATED);
+
+      const { docs } = await firebase
+        .firestore()
+        .collection(TeacherApi.CLASSES_COLLECTION_NAME)
+        .doc(classId)
+        .collection(TeacherApi.CLASSES_INVITE_STUDENT_COLLECTION_NAME)
+        .get();
+
+      const students = docs.map<InviteStudentModel>(doc => {
+        return new InviteStudentModel(
+          (doc.data() as unknown) as IInviteStudentModel,
+        );
+      });
+
+      return this.success(students);
+    } catch (error) {
+      // console.log(error);
+
+      return this.error(BasicErrors.EXCEPTION);
+    }
   };
 
   getAllStudentList = async (
@@ -491,23 +520,17 @@ export default class TeacherApi extends AuthApi implements TeacherApiInterface {
       if (userId === null)
         return this.error(BasicErrors.USER_NOT_AUTHENTICATED);
 
-      const batch = firebase.firestore().batch();
-
       const { docs } = await firebase
         .firestore()
         .collection(TeacherApi.CLASSES_COLLECTION_NAME)
         .doc(classId)
-        .collection(TeacherApi.CLASSES_STUDENT_COLLECTION_NAME)
+        .collection(TeacherApi.CLASSES_JOINED_STUDENT_COLLECTION_NAME)
         .get();
 
       const students = docs.map<ClassStudentModel>(doc => {
-        const studentModel = new ClassStudentModel(
-          (doc as unknown) as ClassStudentModel,
+        return new ClassStudentModel(
+          (doc as unknown) as ClassStudentModelInterface,
         );
-
-        studentModel.setStudentId(doc.id);
-
-        return studentModel;
       });
 
       return this.success(students);
@@ -563,6 +586,7 @@ export default class TeacherApi extends AuthApi implements TeacherApiInterface {
       const [students] = await this.getAllStudentList(classId);
 
       if (students !== null) {
+        // QUESTION: do we need to pre-populate session student table ?
         await Promise.all(
           students.map(student => {
             return firebase
