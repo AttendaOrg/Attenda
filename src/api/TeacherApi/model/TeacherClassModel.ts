@@ -15,6 +15,7 @@ export interface TeacherClassModelProps {
   currentSessionId?: string | null;
   classId?: string | null;
   teacherId: string | null;
+  isArchived?: boolean;
 }
 
 export default class TeacherClassModel implements TeacherClassModelProps {
@@ -38,6 +39,8 @@ export default class TeacherClassModel implements TeacherClassModelProps {
 
   teacherId: string | null;
 
+  isArchived = false;
+
   constructor(data: TeacherClassModelProps) {
     this.classCode = data?.classCode ?? '';
     this.description = data?.description ?? '';
@@ -49,6 +52,7 @@ export default class TeacherClassModel implements TeacherClassModelProps {
     this.currentSessionId = data?.currentSessionId ?? null;
     this.classId = data?.classId ?? null;
     this.teacherId = data?.teacherId ?? null;
+    this.isArchived = data?.isArchived ?? false;
   }
 
   // noinspection DuplicatedCode
@@ -63,6 +67,7 @@ export default class TeacherClassModel implements TeacherClassModelProps {
     currentSessionId,
     classId,
     teacherId,
+    isArchived,
   }: Partial<TeacherClassModelProps>): Partial<TeacherClassModelProps> => {
     const obj: Partial<TeacherClassModelProps> = {};
 
@@ -76,6 +81,7 @@ export default class TeacherClassModel implements TeacherClassModelProps {
     if (currentSessionId !== undefined) obj.currentSessionId = currentSessionId;
     if (classId !== undefined) obj.classId = classId;
     if (teacherId !== undefined) obj.teacherId = teacherId;
+    if (isArchived !== undefined) obj.isArchived = isArchived;
 
     return obj;
   };
@@ -92,6 +98,7 @@ export default class TeacherClassModel implements TeacherClassModelProps {
       currentSessionId: this.currentSessionId,
       classId: this.classId,
       teacherId: this.teacherId,
+      isArchived: this.isArchived,
     };
   };
 }

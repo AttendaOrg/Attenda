@@ -72,6 +72,12 @@ interface TeacherApiInterface {
     enabled: boolean,
   ): Promise<WithError<boolean>>;
 
+  /**
+   * archive the class this makes the data read only
+   * @param classId
+   */
+  archiveClass(classId: string): Promise<WithError<boolean>>;
+
   //#endregion class
 
   //#region invite
@@ -402,6 +408,33 @@ export default class TeacherApi extends AuthApi implements TeacherApiInterface {
     } catch (error) {
       // console.log(error);
 
+      return this.error(BasicErrors.EXCEPTION);
+    }
+  };
+
+  archiveClass = async (
+    classId: string,
+  ): Promise<WithError<boolean, BasicErrors>> => {
+    try {
+      const userId = this.getUserUid();
+
+      if (userId === null)
+        return this.error(BasicErrors.USER_NOT_AUTHENTICATED);
+
+      // path to the class
+      const ref = firebase
+        .firestore()
+        .collection(TeacherApi.CLASSES_COLLECTION_NAME)
+        .doc(classId);
+
+      await ref.update(
+        TeacherClassModel.Update({
+          isArchived: true,
+        }),
+      );
+
+      return this.success(true);
+    } catch (error) {
       return this.error(BasicErrors.EXCEPTION);
     }
   };
