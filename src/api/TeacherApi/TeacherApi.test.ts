@@ -196,6 +196,34 @@ test('changing invite code status works', async () => {
   //#endregion
 });
 
+test('able to archive class', async () => {
+  const class1 = new TeacherClassModel({
+    section: 'Section',
+    title: 'Title',
+    teacherId: teacherApi.getUserUid(),
+  });
+
+  const [classId] = await teacherApi.createClass(class1);
+
+  //#region check archive class to be false
+  const [classModel1] = await teacherApi.getClassInfo(classId as string);
+
+  expect(classModel1).toBeInstanceOf(TeacherClassModel);
+  expect(classModel1?.isArchived).toBe(false);
+  //#endregion
+
+  //#region check archive class to be false
+  const [success] = await teacherApi.archiveClass(classId as string);
+
+  expect(success).toBe(true);
+
+  const [classModel2] = await teacherApi.getClassInfo(classId as string);
+
+  expect(classModel2).toBeInstanceOf(TeacherClassModel);
+  expect(classModel2?.isArchived).toBe(true);
+  //#endregion
+});
+
 test('if the email add & getting student list works', async () => {
   const emails = ['test1@google.com', 'test2@google.com'];
 
