@@ -355,6 +355,7 @@ test('able to save a session', async () => {
   const [updatedClassInfo] = await teacherApi.getClassInfo(globalClassId);
 
   expect(updatedClassInfo?.isLive).toBe(false);
+  expect(updatedClassInfo?.currentSessionId).toBe(null);
   //#endregion
 });
 

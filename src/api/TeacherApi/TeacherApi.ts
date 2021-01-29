@@ -679,7 +679,7 @@ export default class TeacherApi extends AuthApi implements TeacherApiInterface {
       await ref.update(
         TeacherClassModel.Update({
           isLive: false,
-          // currentSessionId: doc.id,
+          currentSessionId: null,
         }),
       );
 
