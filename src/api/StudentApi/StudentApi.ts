@@ -15,6 +15,7 @@ import SessionStudentModel, {
 } from '../TeacherApi/model/SessionStudentModel';
 import { UserRole } from '../index';
 import ClassStudentModel from '../TeacherApi/model/ClassStudentModel';
+import { hashMacId } from '../util/hash';
 
 interface StudentApiInterface {
   /**
@@ -37,7 +38,6 @@ interface StudentApiInterface {
   /**
    * get the list of all enrolled class list
    * @param page
-   * @returns unknown TODO: figure out the data structure
    */
   getEnrolledClassList(page: number): Promise<WithError<TeacherClassModel[]>>;
 
@@ -48,7 +48,6 @@ interface StudentApiInterface {
    * give present to the class session
    * @param classId
    * @param sessionId
-   * TODO: don't send the mac id to the server send a hash of it for privacy reason
    * @param macId
    */
   giveResponse(
@@ -60,7 +59,6 @@ interface StudentApiInterface {
   /**
    * get attendance report of a class
    * @param classId
-   * @returns unknown TODO: figure out the data structure
    */
   getAttendanceReport(
     classId: string,
@@ -222,7 +220,9 @@ export default class StudentApi extends AuthApi implements StudentApiInterface {
       (currentSessionDoc.data() as unknown) as SessionInfoInterface,
     );
 
-    if (sessionInfo.macId !== macId)
+    const hashMac = hashMacId(classId, macId);
+
+    if (sessionInfo.macId !== hashMac)
       return this.error(BasicErrors.MAC_ID_DOES_NOT_MATCH);
 
     // give present
@@ -264,7 +264,9 @@ export default class StudentApi extends AuthApi implements StudentApiInterface {
 
       const sessions: SessionStudentModel[] = currentSessionDocs.docs.map(
         doc =>
-          new SessionStudentModel((doc as unknown) as SessionStudentInterface),
+          new SessionStudentModel(
+            (doc.data() as unknown) as SessionStudentInterface,
+          ),
       );
 
       return this.success(sessions);

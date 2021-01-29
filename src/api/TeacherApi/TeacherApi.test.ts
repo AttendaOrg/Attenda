@@ -72,7 +72,13 @@ test('able to create a class', async () => {
 
   const [classId] = await teacherApi.createClass(class1);
 
-  // TODO: find a better way to check create class success
+  const doc = await admin
+    .firestore()
+    .collection(TeacherApi.CLASSES_COLLECTION_NAME)
+    .doc(classId ?? '')
+    .get();
+
+  expect(doc.exists).toBe(true);
   expect(classId?.length).toBeGreaterThanOrEqual(4);
   if (classId !== null) globalClassId = classId;
 });

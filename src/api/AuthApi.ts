@@ -181,7 +181,6 @@ class AuthApi extends BaseApi implements AuthApiInterface {
         .collection(AuthApi.AUTH_ROOT_COLLECTION_NAME)
         .doc(userId);
 
-      // TODO: add an test for setting user role of an user who does not have any account metadata
       const user = await path.get();
 
       // checks if the path exist

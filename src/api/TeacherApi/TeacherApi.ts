@@ -18,6 +18,7 @@ import { UserRole } from '../index';
 import ClassStudentModel, {
   ClassStudentModelInterface,
 } from './model/ClassStudentModel';
+import { hashMacId } from '../util/hash';
 
 interface TeacherApiInterface {
   //#region class
@@ -120,7 +121,6 @@ interface TeacherApiInterface {
   /**
    * start a class session
    * @param classId
-   * TODO: don't send the mac id to the server send a hash of it for privacy reason
    * @param macId
    * @param date
    * @returns **sessionId**
@@ -158,7 +158,6 @@ interface TeacherApiInterface {
    * gets the attendance report of the class by month
    * @param classId
    * @param month number 0 - 11
-   * @returns unknown TODO: figure out the data structure
    */
   getClassAttendanceReport(
     classId: string,
@@ -177,7 +176,6 @@ interface TeacherApiInterface {
    * @param classId
    * @param studentId
    * @param month number 0 - 11
-   * @returns unknown TODO: figure out the data structure
    */
   getStudentAttendanceReport(
     classId: string,
@@ -601,9 +599,13 @@ export default class TeacherApi extends AuthApi implements TeacherApiInterface {
       if (userId === null)
         return this.error(BasicErrors.USER_NOT_AUTHENTICATED);
 
+      // we are not sending the mac id to firebase database directly
+      // we are sending hashed version of the mac id which is also salted with the classId
+      const hashMac = hashMacId(classId, macId);
+
       const info = new SessionInfoModel({
         classId,
-        macId,
+        macId: hashMac,
         teacherId: userId,
         sessionDate: date,
       });
@@ -734,7 +736,8 @@ export default class TeacherApi extends AuthApi implements TeacherApiInterface {
         .get();
 
       const sessionInfos: SessionInfoModel[] = result.docs.map(
-        doc => new SessionInfoModel((doc as unknown) as SessionInfoInterface),
+        doc =>
+          new SessionInfoModel((doc.data() as unknown) as SessionInfoInterface),
       );
 
       return this.success(sessionInfos);
@@ -747,6 +750,7 @@ export default class TeacherApi extends AuthApi implements TeacherApiInterface {
     classId: string,
   ): Promise<WithError<unknown>> => {
     // TODO: implement this method
+    // this could be a helper method to return only necessary data?
     throw new Error('Method not implemented.');
   };
 
@@ -843,14 +847,9 @@ export default class TeacherApi extends AuthApi implements TeacherApiInterface {
       const { docs } = session;
 
       const students = docs.map(doc => {
-        const studentModel = new SessionStudentModel(
-          (doc as unknown) as SessionStudentInterface,
+        return new SessionStudentModel(
+          (doc.data() as unknown) as SessionStudentInterface,
         );
-
-        // FIXME:: fix the student id issue
-        studentModel.setStudentId(doc.data().studentId);
-
-        return studentModel;
       });
 
       return this.success(students);
