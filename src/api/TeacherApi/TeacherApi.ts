@@ -699,6 +699,19 @@ export default class TeacherApi extends AuthApi implements TeacherApiInterface {
       if (userId === null)
         return this.error(BasicErrors.USER_NOT_AUTHENTICATED);
 
+      // path to the class
+      const ref = firebase
+        .firestore()
+        .collection(TeacherApi.CLASSES_COLLECTION_NAME)
+        .doc(classId);
+
+      // update class info to include the live status and sessionId
+      await ref.update(
+        TeacherClassModel.Update({
+          isLive: false,
+          // currentSessionId: doc.id,
+        }),
+      );
       // delete the session from firestore
       await firebase
         .firestore()

@@ -329,6 +329,9 @@ test('able to discard a session', async () => {
     .doc(sessionId ?? '')
     .get();
 
+  const [currentClass] = await teacherApi.getClassInfo(globalClassId);
+
+  expect(currentClass?.isLive).toBe(false);
   expect(session.exists).toBe(false);
   //#endregion
 });
