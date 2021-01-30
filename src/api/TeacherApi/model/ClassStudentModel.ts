@@ -5,6 +5,7 @@ export interface ClassStudentModelInterface {
   joined?: boolean;
   joinedDate?: Date | null;
   studentId?: string | null;
+  archived?: boolean;
 }
 
 export default class ClassStudentModel implements ClassStudentModelInterface {
@@ -20,6 +21,8 @@ export default class ClassStudentModel implements ClassStudentModelInterface {
 
   studentId: string | null = null;
 
+  archived = false;
+
   constructor(data: Partial<ClassStudentModelInterface>) {
     if (typeof data.email === 'string') this.email = data.email;
     if (typeof data.rollNo === 'string') this.rollNo = data.rollNo;
@@ -27,9 +30,11 @@ export default class ClassStudentModel implements ClassStudentModelInterface {
       this.totalAttendancePercentage = data.totalAttendancePercentage;
     if (typeof data.joined === 'boolean') this.joined = data.joined;
     if (data.joinedDate instanceof Date) this.joinedDate = data.joinedDate;
+    if (typeof data.studentId === 'string') this.studentId = data.studentId;
+    if (typeof data.archived === 'boolean') this.archived = data.archived;
   }
 
-  static PartialData(
+  static Update(
     data: Partial<ClassStudentModelInterface>,
   ): Partial<ClassStudentModelInterface> {
     const obj: Partial<ClassStudentModelInterface> = {};
@@ -39,6 +44,8 @@ export default class ClassStudentModel implements ClassStudentModelInterface {
       joined,
       totalAttendancePercentage,
       joinedDate,
+      studentId,
+      archived,
     } = data;
 
     if (typeof email === 'string') obj.email = email;
@@ -47,6 +54,8 @@ export default class ClassStudentModel implements ClassStudentModelInterface {
       obj.totalAttendancePercentage = totalAttendancePercentage;
     if (typeof joined === 'boolean') obj.joined = joined;
     if (joinedDate instanceof Date) obj.joinedDate = joinedDate;
+    if (typeof data.studentId === 'string') obj.studentId = studentId;
+    if (typeof data.archived === 'boolean') obj.archived = archived;
 
     return obj;
   }
@@ -63,6 +72,7 @@ export default class ClassStudentModel implements ClassStudentModelInterface {
       email,
       joinedDate,
       studentId,
+      archived,
     } = this;
 
     return {
@@ -72,6 +82,7 @@ export default class ClassStudentModel implements ClassStudentModelInterface {
       email,
       joinedDate,
       studentId,
+      archived,
     };
   }
 }

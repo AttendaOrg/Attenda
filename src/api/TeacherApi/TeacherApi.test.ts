@@ -7,8 +7,8 @@ import {
 import AuthApi from '../AuthApi';
 import {
   TEST_CLASS_CODE,
-  TEST_TEACHER_EMAIL,
   TEST_PASSWORD,
+  TEST_TEACHER_EMAIL,
 } from '../util/constant';
 import { UserRole } from '../index';
 import TeacherClassModel from './model/TeacherClassModel';
@@ -18,6 +18,8 @@ import AccountInfo from '../model/AccountInfo';
 import SessionStudentModel, {
   SessionStudentInterface,
 } from './model/SessionStudentModel';
+import StudentApi from '../StudentApi';
+import ClassStudentModel from './model/ClassStudentModel';
 
 initAdminSdkForTest();
 const authApi = new AuthApi(BaseApi.testOptions);
@@ -70,7 +72,13 @@ test('able to create a class', async () => {
 
   const [classId] = await teacherApi.createClass(class1);
 
-  // TODO: find a better way to check create class success
+  const doc = await admin
+    .firestore()
+    .collection(TeacherApi.CLASSES_COLLECTION_NAME)
+    .doc(classId ?? '')
+    .get();
+
+  expect(doc.exists).toBe(true);
   expect(classId?.length).toBeGreaterThanOrEqual(4);
   if (classId !== null) globalClassId = classId;
 });
@@ -121,6 +129,37 @@ test('able to update class info', async () => {
   expect(classModel?.classCode).toBe('TEST_CLASS_CODE');
 });
 
+test('able to update class code', async () => {
+  const class1 = new TeacherClassModel({
+    section: 'Section',
+    title: 'Title',
+    teacherId: teacherApi.getUserUid(),
+  });
+
+  const [classId] = await teacherApi.createClass(class1);
+
+  const [success1] = await teacherApi.updateClassCode(
+    classId as string,
+    'new_code' as string,
+  );
+
+  expect(success1).toBe(true);
+  const [classModel1] = await teacherApi.getClassInfo(classId as string);
+
+  expect(classModel1).toBeInstanceOf(TeacherClassModel);
+  expect(classModel1?.classCode).toBe('new_code');
+
+  const [success2] = await teacherApi.updateClassCode(
+    classId as string,
+    '' as string,
+  );
+
+  expect(success2).toBe(true);
+  const [classModel2] = await teacherApi.getClassInfo(classId as string);
+
+  expect(classModel2?.classCode).toBe('');
+});
+
 test('is class exist works', async () => {
   const [resultFailed] = await teacherApi.isClassExist('not exist class id');
 
@@ -163,14 +202,63 @@ test('changing invite code status works', async () => {
   //#endregion
 });
 
+test('able to archive class', async () => {
+  const class1 = new TeacherClassModel({
+    section: 'Section',
+    title: 'Title',
+    teacherId: teacherApi.getUserUid(),
+  });
+
+  const [classId] = await teacherApi.createClass(class1);
+
+  //#region check archive class to be false
+  const [classModel1] = await teacherApi.getClassInfo(classId as string);
+
+  expect(classModel1).toBeInstanceOf(TeacherClassModel);
+  expect(classModel1?.isArchived).toBe(false);
+  //#endregion
+
+  //#region check archive class to be false
+  const [success] = await teacherApi.archiveClass(classId as string);
+
+  expect(success).toBe(true);
+
+  const [classModel2] = await teacherApi.getClassInfo(classId as string);
+
+  expect(classModel2).toBeInstanceOf(TeacherClassModel);
+  expect(classModel2?.isArchived).toBe(true);
+  //#endregion
+});
+
 test('if the email add & getting student list works', async () => {
-  const emails = [TEST_TEACHER_EMAIL, 'test1@google.com'];
+  const emails = ['test1@google.com', 'test2@google.com'];
 
   await teacherApi.inviteStudent(globalClassId, emails);
 
-  const [students] = await teacherApi.getAllStudentList(globalClassId);
+  const [students] = await teacherApi.getInviteStatus(globalClassId);
 
   expect(students?.length).toBe(emails.length);
+});
+
+test('join class', async done => {
+  const [invites] = await teacherApi.getInviteStatus(globalClassId);
+  const studentApi = new StudentApi();
+
+  await authApi.logOut();
+  if (invites !== null)
+    // eslint-disable-next-line no-restricted-syntax
+    for await (const invite of invites) {
+      await authApi.signUpWithEmailAndPassword(invite.email, TEST_PASSWORD);
+      await authApi.loginWithEmailAndPassword(invite.email, TEST_PASSWORD);
+      await authApi.setUserRole(UserRole.STUDENT);
+      await studentApi.joinClass(
+        globalClassId,
+        `roll-${Math.floor(Math.random() * 100)}`,
+      );
+      await studentApi.logOut();
+    }
+  await authApi.loginWithEmailAndPassword(TEST_TEACHER_EMAIL, TEST_PASSWORD);
+  done();
 });
 
 test('able to start a session', async () => {
@@ -241,6 +329,9 @@ test('able to discard a session', async () => {
     .doc(sessionId ?? '')
     .get();
 
+  const [currentClass] = await teacherApi.getClassInfo(globalClassId);
+
+  expect(currentClass?.isLive).toBe(false);
   expect(session.exists).toBe(false);
   //#endregion
 });
@@ -264,6 +355,7 @@ test('able to save a session', async () => {
   const [updatedClassInfo] = await teacherApi.getClassInfo(globalClassId);
 
   expect(updatedClassInfo?.isLive).toBe(false);
+  expect(updatedClassInfo?.currentSessionId).toBe(null);
   //#endregion
 });
 
@@ -337,4 +429,26 @@ test('getClassAttendanceReport', async () => {
 test('getStudentAttendanceReport', async () => {
   // TODO:: implement this test
   // for this method to work you have to login as the student and give a present
+});
+
+test('archive student from a class', async () => {
+  const [students] = await teacherApi.getAllStudentList(globalClassId);
+  const student = students?.[0];
+
+  expect(student).toBeInstanceOf(ClassStudentModel);
+  expect(student?.studentId?.length).toBeGreaterThan(0);
+  expect(student?.archived).toBe(false);
+  if (student !== undefined) {
+    await teacherApi.archiveStudent(globalClassId, student.studentId ?? '');
+  }
+
+  const [updatedStudents] = await teacherApi.getAllStudentList(globalClassId);
+  const match = updatedStudents?.filter(
+    s => s.studentId === student?.studentId,
+  );
+  const matchedStudent = match?.[0];
+
+  expect(matchedStudent).toBeInstanceOf(ClassStudentModel);
+  expect(matchedStudent?.studentId?.length).toBeGreaterThan(0);
+  expect(matchedStudent?.archived).toBe(true);
 });

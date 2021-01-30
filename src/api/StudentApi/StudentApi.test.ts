@@ -7,9 +7,9 @@ import {
 import AuthApi from '../AuthApi';
 import {
   TEST_CLASS_CODE,
-  TEST_TEACHER_EMAIL,
   TEST_PASSWORD,
   TEST_STUDENT_EMAIL,
+  TEST_TEACHER_EMAIL,
 } from '../util/constant';
 import { UserRole } from '../index';
 import BaseApi from '../BaseApi';
@@ -116,7 +116,7 @@ test('join class', async () => {
 
   expect(prevIds?.length).toBe(0);
 
-  await studentApi.joinClass(globalClassCode, 'asd');
+  await studentApi.joinClass(globalClassId, 'asd');
 
   const [nextIds] = await studentApi.getAllJoinedClassId();
 
@@ -143,12 +143,13 @@ test('give presence', async () => {
 
   expect(beforeSessionStudentData.empty).toBe(true);
 
-  await studentApi.giveResponse(
+  const [success] = await studentApi.giveResponse(
     globalClassId,
     globalSessionId,
     '00:00:00:00:02',
   );
 
+  expect(success).toBe(true);
   // after giving the present there should be student entry in `session_student`
   const afterSessionStudentData = await query.get();
   const sessionStudent = new SessionStudentModel(
