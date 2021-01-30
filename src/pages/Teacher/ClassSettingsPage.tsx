@@ -24,10 +24,14 @@ const ClassSettingsPage: React.FC<Props> = ({ navigation }): JSX.Element => {
     'Computer science data structures and algorithms',
   );
   const [prevSection, setPrevSection] = useState('CED/COE');
+  const [prevDescription, setPrevDescription] = useState(
+    'description can be anything',
+  );
   const [currentTitle, setCurrentTitle] = useState(prevTitle);
   const [currentSection, setCurrentSection] = useState(prevSection);
-  const [sectionErrorMsg, setSectionErrorMsg] = useState('');
+  const [currentDescription, setCurrentDescription] = useState(prevDescription);
   const [titleErrorMsg, setTitleErrorMsg] = useState('');
+  const [sectionErrorMsg, setSectionErrorMsg] = useState('');
   const [showSaveDialog, setShowSaveDialog] = useState(false);
 
   const onCodeShare = () => {
@@ -51,20 +55,32 @@ const ClassSettingsPage: React.FC<Props> = ({ navigation }): JSX.Element => {
   };
 
   const hasUnsavedChanges = useCallback(
-    (): boolean => prevTitle !== currentTitle || prevSection !== currentSection,
-    [prevSection, prevTitle, currentSection, currentTitle],
+    (): boolean =>
+      prevTitle !== currentTitle ||
+      prevSection !== currentSection ||
+      prevDescription !== currentDescription,
+    [
+      prevTitle,
+      prevSection,
+      prevDescription,
+      currentTitle,
+      currentSection,
+      currentDescription,
+    ],
   );
 
   const updateClassInfo = useCallback(() => {
-    setPrevSection(currentSection);
     setPrevTitle(currentTitle);
-  }, [currentSection, currentTitle]);
+    setPrevSection(currentSection);
+    setPrevDescription(currentDescription);
+  }, [currentTitle, currentSection, currentDescription]);
 
   const dismissSaveDialog = () => setShowSaveDialog(false);
 
   const discardChanges = () => {
-    setCurrentSection(prevSection);
     setCurrentTitle(prevTitle);
+    setCurrentSection(prevSection);
+    setCurrentDescription(prevDescription);
     setShowSaveDialog(false);
   };
 
@@ -86,7 +102,7 @@ const ClassSettingsPage: React.FC<Props> = ({ navigation }): JSX.Element => {
       headerRight: ({ tintColor }) => (
         <View style={{ display: hasUnsavedChanges() ? 'flex' : 'none' }}>
           <IconButton
-            color={tintColor || lightColor}
+            color={tintColor ?? lightColor}
             icon="check"
             onPress={updateClassInfo}
           />
@@ -123,13 +139,13 @@ const ClassSettingsPage: React.FC<Props> = ({ navigation }): JSX.Element => {
     title?: string;
     section?: string;
   }) => {
-    if (_section !== undefined) {
-      if (_section === '') setSectionErrorMsg("Section can't be Empty");
-      else setSectionErrorMsg('');
-    }
     if (_title !== undefined) {
       if (_title === '') setTitleErrorMsg("Class Title can't be empty");
       else setTitleErrorMsg('');
+    }
+    if (_section !== undefined) {
+      if (_section === '') setSectionErrorMsg("Section can't be Empty");
+      else setSectionErrorMsg('');
     }
   };
 
@@ -147,21 +163,25 @@ const ClassSettingsPage: React.FC<Props> = ({ navigation }): JSX.Element => {
     });
   };
 
+  const onDescriptionChange = (text: string) => {
+    setCurrentDescription(text);
+  };
+
   return (
     <>
       <ClassSettings
         title={currentTitle}
-        titleErrorMsg={titleErrorMsg}
         section={currentSection}
+        description={currentDescription}
+        titleErrorMsg={titleErrorMsg}
         sectionErrorMsg={sectionErrorMsg}
-        isCodeEnabled
-        isLinkEnabled
+        isShareOptionEnabled
         code="A454SDS"
         link="https://attenda.app.to/A454SDS"
         onTitleChange={onTitleChange}
         onSectionChange={onSectionChange}
-        toggleCodeSwitch={() => null}
-        toggleLinkSwitch={() => null}
+        onDescriptionChange={onDescriptionChange}
+        toggleShareSwitch={() => null}
         onCodeShare={onCodeShare}
         onLinkShare={onLinkShare}
       />

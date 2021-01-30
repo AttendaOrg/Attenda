@@ -50,11 +50,12 @@ const StudentListItem: React.FC<StudentListPops> = ({
   onProfileClick,
   percentage,
 }): JSX.Element => {
-  const userProfileImage = avatar ? (
-    <Image source={avatar} />
-  ) : (
-    <MaterialIcons name="account-circle" size={34} />
-  );
+  const userProfileImage =
+    avatar !== undefined ? (
+      <Image source={avatar} />
+    ) : (
+      <MaterialIcons name="account-circle" size={34} />
+    );
 
   const checkboxContainer = showChecked ? (
     <IconButton
@@ -69,7 +70,8 @@ const StudentListItem: React.FC<StudentListPops> = ({
     />
   ) : null;
 
-  const rightSide = percentage ? <Text>{percentage}</Text> : checkboxContainer;
+  const rightSide =
+    percentage !== undefined ? <Text>{percentage}</Text> : checkboxContainer;
 
   return (
     <TouchableRipple

@@ -102,7 +102,8 @@ const CurrentAttendanceSessionPage: React.FC<Props> = ({
       if (
         (action.payload as {
           params: TeacherClassListNavigationProps;
-        })?.params?.withDismiss
+        })?.params?.withDismiss ??
+        false
       ) {
         navigation.dispatch(action);
       } else {

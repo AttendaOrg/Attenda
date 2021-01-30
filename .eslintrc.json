@@ -19,6 +19,11 @@
     "project": "./tsconfig.json"
   },
   "rules": {
+    "spaced-comment": [ "error", "always", {
+      "line": {
+        "markers": ["#region", "#endregion", "region", "endregion"]
+      }
+    }],
     "react-native/no-unused-styles": ["warn"],
     "no-restricted-imports": [
       "error",
@@ -41,6 +46,7 @@
       "error",
       { "blankLine": "always", "prev": "*", "next": "return" }
     ],
+    "@typescript-eslint/strict-boolean-expressions": "error",
     "newline-after-var": ["error", "always"],
     "import/no-unresolved": 0,
     "react/jsx-filename-extension": [

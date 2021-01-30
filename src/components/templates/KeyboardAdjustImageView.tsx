@@ -41,7 +41,7 @@ const KeyboardAdjustImageView: React.FC<KeyboardAdjustImageViewPops> = ({
     LayoutAnimation.configureNext(CustomLayoutLinearConfig);
 
     if (Platform.OS === 'android') {
-      if (UIManager.setLayoutAnimationEnabledExperimental) {
+      if (UIManager.setLayoutAnimationEnabledExperimental !== undefined) {
         UIManager.setLayoutAnimationEnabledExperimental(true);
       }
     }
