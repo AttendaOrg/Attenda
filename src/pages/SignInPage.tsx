@@ -45,6 +45,10 @@ const SignInPage: React.FC<Props> = ({ navigation }): JSX.Element => {
             'This email address not registered with us please create an account',
           );
           break;
+        case BasicErrors.AUTH_WRONG_PASSWORD:
+          setShowPopup(true);
+          setErrorMessage("Email and password combination doesn't match");
+          break;
         default:
           setShowPopup(true);
           setErrorMessage('Some Error Occurred');
