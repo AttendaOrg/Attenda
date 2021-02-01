@@ -90,7 +90,7 @@ const imageSrc = require('../../../../../assets/images/user.jpg');
 export interface MyAccountPops {
   username: string;
   email: string;
-  studentRole: string;
+  userRole: string;
   onEditProfilePictureClick: () => void;
   onEditUsernameClick: () => void;
   onChangePasswordClick: () => void;
@@ -103,7 +103,7 @@ export interface MyAccountPops {
 const MyAccount: React.FC<MyAccountPops> = ({
   username,
   email,
-  studentRole,
+  userRole,
   onEditProfilePictureClick,
   onEditUsernameClick,
   onChangePasswordClick,
@@ -150,7 +150,7 @@ const MyAccount: React.FC<MyAccountPops> = ({
         <View style={styles.divider} />
         <Text style={styles.infoTitle}>Role</Text>
         <View style={styles.infoValueRow}>
-          <Text style={styles.infoValue}>{studentRole}</Text>
+          <Text style={styles.infoValue}>{userRole}</Text>
         </View>
         <View style={styles.divider} />
       </View>
