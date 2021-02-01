@@ -1,4 +1,10 @@
-import React, { useCallback, useContext, useEffect, useState } from 'react';
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import {
   StackNavigationOptions,
   StackScreenProps,
@@ -9,6 +15,7 @@ import { SimpleHeaderBackNavigationOptions } from '../../components/templates/Si
 import { authApi } from '../../api/AuthApi';
 import SingleButtonPopup from '../../components/molecules/SingleButtonPopup';
 import GlobalContext from '../../context/GlobalContext';
+import AccountInfo from '../../api/model/AccountInfo';
 
 type Props = StackScreenProps<RootStackParamList, 'MyAccount'>;
 
@@ -18,29 +25,27 @@ export const MyAccountNavigationOptions: StackNavigationOptions = {
 };
 
 const MyAccountPage: React.FC<Props> = ({ navigation }): JSX.Element => {
-  const globalContext = useContext(GlobalContext);
+  // our component doesn't need no know about the global spinner so we are using the ref to update the info
+  const globalContext = useRef(useContext(GlobalContext));
   const [showLogOutPopup, setShowLogOutPopup] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
-  const [username, setUsername] = useState('');
-  const [email, setEmail] = useState('');
-  const [role, setRole] = useState('');
+  const [info, setInfo] = useState<AccountInfo | null>(null);
 
   const loadInfo = useCallback(async () => {
-    console.log(`${username} ${role} ${email}`);
-    if (role !== '') return;
-    globalContext.changeSpinnerLoading(true);
-    const [info] = await authApi.getAccountInfo();
+    if (info !== null) return;
+    globalContext.current.changeSpinnerLoading(true);
 
-    globalContext.changeSpinnerLoading(false);
+    const [_info] = await authApi.getAccountInfo();
 
-    if (info != null) {
-      setUsername(info.name);
-      setEmail(info.email);
-      setRole(info.role);
+    globalContext.current.changeSpinnerLoading(false);
+
+    if (_info != null) {
+      setInfo(_info);
+      setShowPopup(false);
     } else {
       setShowPopup(true);
     }
-  }, [email, globalContext, role, username]);
+  }, [info]);
 
   useEffect(() => {
     loadInfo();
@@ -49,9 +54,9 @@ const MyAccountPage: React.FC<Props> = ({ navigation }): JSX.Element => {
   return (
     <>
       <MyAccount
-        username={username}
-        email={email}
-        userRole={role}
+        username={info?.name ?? ''}
+        email={info?.email ?? ''}
+        userRole={info?.role ?? ''}
         onEditUsernameClick={() => null}
         onChangePasswordClick={() => navigation.push('ChangePassword')}
         // QUESTION: should reset the stack ?
