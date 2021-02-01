@@ -159,6 +159,8 @@ class AuthApi extends BaseApi implements AuthApiInterface {
       switch (error.code) {
         case 'auth/email-already-in-use':
           return this.error(BasicErrors.AUTH_EMAIL_ALREADY_IN_USE);
+        case 'auth/weak-password':
+          return this.error(BasicErrors.WEAK_PASSWORD);
         default:
           break;
       }

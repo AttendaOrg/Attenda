@@ -5,6 +5,14 @@ export const isValidEmail = (email: string): boolean => {
 };
 
 /**
+ * checks if the password is strong
+ * @param password
+ */
+export const isStrongPassword = (password: string): boolean => {
+  return password.length >= 6;
+};
+
+/**
  * prefix the number with '0' if it is single digit
  * @param num number
  */
