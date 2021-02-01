@@ -38,6 +38,11 @@ const styles = StyleSheet.create({
 
 const imageSource = require('../../../../../assets/images/signin.png');
 
+interface Errors {
+  emailError: string;
+  passwordError: string;
+}
+
 export interface SignInPops extends OauthProviderProps {
   email: string;
   password: string;
@@ -46,6 +51,7 @@ export interface SignInPops extends OauthProviderProps {
   onForgotPasswordClick: () => void;
   onCreateNewAccountClick: () => void;
   onSignInClick: () => void;
+  errors?: Errors;
 }
 
 const SignIn: React.FC<SignInPops> = ({
@@ -59,7 +65,10 @@ const SignIn: React.FC<SignInPops> = ({
   onTwitterClick,
   password,
   onSignInClick,
+  errors = { emailError: '', passwordError: '' },
 }): JSX.Element => {
+  const { emailError, passwordError } = errors;
+
   return (
     <View style={styles.container}>
       {/* <View style={{ marginTop: 20 }}> */}
@@ -81,6 +90,7 @@ const SignIn: React.FC<SignInPops> = ({
           onChangeText={onEmailChange}
           labelStyle={{ margin: 0 }}
           errorStyle={{ margin: 0 }}
+          errorMessage={emailError}
         />
         <Input
           containerStyle={inputContainerStyle}
@@ -90,6 +100,7 @@ const SignIn: React.FC<SignInPops> = ({
           secureTextEntry
           value={password}
           onChangeText={onPasswordChange}
+          errorMessage={passwordError}
         />
       </View>
 
