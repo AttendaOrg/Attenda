@@ -263,7 +263,20 @@ class AuthApi extends BaseApi implements AuthApiInterface {
 
       return this.error(BasicErrors.USER_NOT_AUTHENTICATED);
     } catch (ex) {
-      // console.error(ex);
+      const error: firebase.FirebaseError = ex;
+
+      switch (error.code) {
+        case 'auth/wrong-password':
+          return this.error(BasicErrors.AUTH_WRONG_PASSWORD);
+        case 'auth/user-not-found':
+          return this.error(BasicErrors.AUTH_USER_NOT_FOUND);
+        case 'auth/invalid-email':
+          return this.error(BasicErrors.INVALID_EMAIL);
+        default:
+          // console.log(error);
+          break;
+      }
+
       return this.error(BasicErrors.EXCEPTION);
     }
   };

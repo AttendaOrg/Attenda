@@ -75,7 +75,7 @@ import CreateClassPage, {
 import DrawerContentPage from './pages/Commons/DrawerContentPage';
 import ChangePasswordPage, {
   ChangePasswordNavigationOptions,
-} from './pages/Commons/ChangePassword';
+} from './pages/Commons/ChangePasswordPage';
 import MyAccountPage, {
   MyAccountNavigationOptions,
 } from './pages/Commons/MyAccountPage';

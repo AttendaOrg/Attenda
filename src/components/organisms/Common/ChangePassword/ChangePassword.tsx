@@ -23,19 +23,72 @@ const styles = StyleSheet.create({
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const imageSrc = require('../../../../../assets/images/changePassword.png');
 
+interface Errors {
+  currentPasswordError: string;
+  newPasswordError: string;
+  confirmPasswordError: string;
+}
+
 export interface ChangePasswordPops {
   currentPassword?: string;
   newPassword?: string;
   confirmPassword?: string;
   onDone: (currentPass: string, newPass: string, confirmPass: string) => void;
+  errors?: Errors;
+  revalidateError?: (
+    currentPass: string,
+    newPass: string,
+    confirmPass: string,
+  ) => void;
 }
 
 const ChangePassword: React.FC<ChangePasswordPops> = ({
   onDone,
+  errors = {
+    confirmPasswordError: '',
+    currentPasswordError: '',
+    newPasswordError: '',
+  },
+  revalidateError = () => null,
 }): JSX.Element => {
   const [currentPass, setCurrentPass] = useState('');
   const [newPass, setNewPass] = useState('');
   const [confirmPass, setConfirmPass] = useState('');
+  const [hasFromTrySubmitted, setHasFromTrySubmitted] = useState(false);
+
+  const {
+    confirmPasswordError = '',
+    currentPasswordError = '',
+    newPasswordError = '',
+  } = errors;
+
+  const tryRevalidatingError = ({
+    _currentPassword = currentPass,
+    _newPassword = newPass,
+    _confirmPassword = confirmPass,
+  } = {}) => {
+    if (hasFromTrySubmitted === true)
+      revalidateError(_currentPassword, _newPassword, _confirmPassword);
+  };
+
+  const updateCurrentPassword = (_currentPassword: string) => {
+    setCurrentPass(_currentPassword);
+    tryRevalidatingError({
+      _currentPassword,
+    });
+  };
+
+  const updateNewPassword = (_newPassword: string) => {
+    setNewPass(_newPassword);
+    tryRevalidatingError({ _newPassword });
+  };
+
+  const updateConfirmPassword = (_confirmPassword: string) => {
+    setConfirmPass(_confirmPassword);
+    tryRevalidatingError({
+      _confirmPassword,
+    });
+  };
 
   return (
     <View style={styles.container}>
@@ -47,19 +100,25 @@ const ChangePassword: React.FC<ChangePasswordPops> = ({
         style={styles.inputStyle}
         labelStyle={{ margin: 0 }}
         errorStyle={{ margin: 0 }}
-        onChangeText={setCurrentPass}
+        onChangeText={updateCurrentPassword}
+        errorMessage={currentPasswordError}
+        secureTextEntry
       />
       <Input
         placeholder="New Password"
         containerStyle={inputContainerStyle}
         style={styles.inputStyle}
-        onChangeText={setNewPass}
+        onChangeText={updateNewPassword}
+        errorMessage={newPasswordError}
+        secureTextEntry
       />
       <Input
         placeholder="Confirm Password"
         containerStyle={inputContainerStyle}
         style={styles.inputStyle}
-        onChangeText={setConfirmPass}
+        onChangeText={updateConfirmPassword}
+        errorMessage={confirmPasswordError}
+        secureTextEntry
       />
       <View style={styles.buttonContainer}>
         <Button
@@ -67,6 +126,7 @@ const ChangePassword: React.FC<ChangePasswordPops> = ({
           mode="contained"
           color="#2196f3"
           onPress={() => {
+            if (hasFromTrySubmitted === false) setHasFromTrySubmitted(true);
             onDone(currentPass, newPass, confirmPass);
           }}
         >
