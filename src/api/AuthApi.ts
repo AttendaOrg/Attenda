@@ -288,6 +288,8 @@ class AuthApi extends BaseApi implements AuthApiInterface {
       if (userId === null)
         return this.error(BasicErrors.USER_NOT_AUTHENTICATED);
 
+      const email = firebase.auth().currentUser?.email ?? '';
+
       const doc = await firebase
         .firestore()
         .collection(AuthApi.AUTH_ROOT_COLLECTION_NAME)
@@ -299,7 +301,9 @@ class AuthApi extends BaseApi implements AuthApiInterface {
       // return UNKNOWN ?
       if (!data) return this.error(BasicErrors.EXCEPTION);
 
-      const info = new AccountInfo((doc.data() as unknown) as AccountInfoProps);
+      const accountInfoData = (doc.data() as unknown) as AccountInfoProps;
+
+      const info = new AccountInfo({ ...accountInfoData, email });
 
       return this.success(info);
       // console.log('no login user');
@@ -364,6 +368,18 @@ class AuthApi extends BaseApi implements AuthApiInterface {
 
       return this.success(true);
     } catch (e) {
+      const error: firebase.FirebaseError = e;
+
+      switch (error.code) {
+        case 'auth/user-not-found':
+          return this.error(BasicErrors.AUTH_USER_NOT_FOUND);
+        case 'auth/invalid-email':
+          return this.error(BasicErrors.INVALID_EMAIL);
+        default:
+          // console.log(error);
+          break;
+      }
+
       return this.error(BasicErrors.EXCEPTION);
     }
   };
