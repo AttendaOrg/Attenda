@@ -273,6 +273,8 @@ class AuthApi extends BaseApi implements AuthApiInterface {
       if (userId === null)
         return this.error(BasicErrors.USER_NOT_AUTHENTICATED);
 
+      const email = firebase.auth().currentUser?.email ?? '';
+
       const doc = await firebase
         .firestore()
         .collection(AuthApi.AUTH_ROOT_COLLECTION_NAME)
@@ -284,7 +286,9 @@ class AuthApi extends BaseApi implements AuthApiInterface {
       // return UNKNOWN ?
       if (!data) return this.error(BasicErrors.EXCEPTION);
 
-      const info = new AccountInfo((doc.data() as unknown) as AccountInfoProps);
+      const accountInfoData = (doc.data() as unknown) as AccountInfoProps;
+
+      const info = new AccountInfo({ ...accountInfoData, email });
 
       return this.success(info);
       // console.log('no login user');
