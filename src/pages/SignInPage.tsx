@@ -72,7 +72,8 @@ const SignInPage: React.FC<Props> = ({ navigation }): JSX.Element => {
         password,
       );
 
-      globalContext.changeSpinnerLoading(false);
+      // INFO: the loader will be disable by the onAuthChange callback function
+      // globalContext.changeSpinnerLoading(false);
       if (errorCode != null) {
         switch (errorCode) {
           case BasicErrors.AUTH_USER_NOT_FOUND:

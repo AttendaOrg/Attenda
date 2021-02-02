@@ -51,6 +51,12 @@ const MyAccountPage: React.FC<Props> = ({ navigation }): JSX.Element => {
     loadInfo();
   }, [loadInfo]);
 
+  const onLogOut = async () => {
+    // start the loading spinner this will unloading of the spinner will be happen by the onAuthStateChangeListener
+    globalContext.current.changeSpinnerLoading(true);
+    await authApi.logOut();
+  };
+
   return (
     <>
       <MyAccount
@@ -66,9 +72,7 @@ const MyAccountPage: React.FC<Props> = ({ navigation }): JSX.Element => {
           navigation.navigate('SignIn');
         }}
         // onLogOutClick={() => navigation.navigate('SignIn')}
-        onLogOutClick={async () => {
-          await authApi.logOut();
-        }}
+        onLogOutClick={onLogOut}
         onEditProfilePictureClick={() => null}
       />
       <SingleButtonPopup
