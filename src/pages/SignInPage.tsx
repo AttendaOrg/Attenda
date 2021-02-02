@@ -75,6 +75,8 @@ const SignInPage: React.FC<Props> = ({ navigation }): JSX.Element => {
       // INFO: the loader will be disable by the onAuthChange callback function
       // globalContext.changeSpinnerLoading(false);
       if (errorCode != null) {
+        // if there is any error the spinner will not hide automatically so disable the spinner manually
+        globalContext.changeSpinnerLoading(false);
         switch (errorCode) {
           case BasicErrors.AUTH_USER_NOT_FOUND:
             setShowPopup(true);
