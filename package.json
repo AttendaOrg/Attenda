@@ -20,7 +20,7 @@
     "start-react": "webpack serve --config ./webpack.config.js --mode development",
     "prestorybook": "rnstl",
     "postinstall": "patch-package",
-    "test:firebase-api": "cross-env NODE_ENV=testing jest --env=node --runInBand"
+    "test:firebase-api": "cross-env NODE_ENV=testing FIREBASE_AUTH_EMULATOR_HOST='localhost:9099' FIRESTORE_EMULATOR_HOST='localhost:8080' jest --env=node --runInBand"
   },
   "config": {
     "react-native-storybook-loader": {
