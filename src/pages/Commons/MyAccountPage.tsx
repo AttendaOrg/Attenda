@@ -26,10 +26,11 @@ export const MyAccountNavigationOptions: StackNavigationOptions = {
 
 const MyAccountPage: React.FC<Props> = ({ navigation }): JSX.Element => {
   // our component doesn't need no know about the global spinner so we are using the ref to update the info
-  const globalContext = useRef(useContext(GlobalContext));
-  const [showLogOutPopup, setShowLogOutPopup] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
+  const [nameError, setNameError] = useState('');
   const [info, setInfo] = useState<AccountInfo | null>(null);
+  const [showLogOutPopup, setShowLogOutPopup] = useState(false);
+  const globalContext = useRef(useContext(GlobalContext));
 
   const loadInfo = useCallback(async () => {
     if (info !== null) return;
@@ -57,13 +58,45 @@ const MyAccountPage: React.FC<Props> = ({ navigation }): JSX.Element => {
     await authApi.logOut();
   };
 
+  const revalidateError = (_name: string): boolean => {
+    if (_name.length < 3) {
+      setNameError('Name must be getter than 3 character long');
+
+      return false;
+    }
+    setNameError('');
+
+    return true;
+  };
+
+  const onNameChange = async (newName: string): Promise<boolean> => {
+    if (revalidateError(newName)) {
+      const accInfo = new AccountInfo({
+        name: newName,
+      });
+
+      globalContext.current.changeSpinnerLoading(true);
+      // TODO: Do something with the error
+      // BUG: if there is no internet connection the promise doesn't resolve
+      const [success, _error] = await authApi.updateAccountInfo(accInfo);
+
+      globalContext.current.changeSpinnerLoading(false);
+
+      return success === true;
+    }
+
+    return false;
+  };
+
   return (
     <>
       <MyAccount
-        username={info?.name ?? ''}
+        errors={{ nameError }}
+        name={info?.name ?? ''}
         email={info?.email ?? ''}
         userRole={info?.role ?? ''}
-        onEditUsernameClick={() => null}
+        onNameChange={onNameChange}
+        revalidateError={revalidateError}
         onChangePasswordClick={() => navigation.push('ChangePassword')}
         // QUESTION: should reset the stack ?
         showPopup={showLogOutPopup}
