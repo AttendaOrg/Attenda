@@ -76,7 +76,7 @@ const ForgotPasswordPage: React.FC<Props> = ({ navigation }): JSX.Element => {
       <SingleButtonPopup
         visible={showSuccessEmailSendPopup}
         title="Success"
-        text="Your password reset link has been sent to your email. Please check your mail."
+        text="The password reset link has been sent to your email. Please check your mail."
         buttonText="Ok"
         onDismiss={() => setShowSuccessEmailSendPopup(false)}
         onButtonClick={() => navigation.navigate('SignIn')}
