@@ -1,5 +1,5 @@
 import React from 'react';
-import { FlatList, StyleSheet, View } from 'react-native';
+import { FlatList, Platform, StyleSheet, View } from 'react-native';
 import { FAB } from 'react-native-paper';
 import ClassCard from '../../../molecules/ClassCard';
 import { ClassCardPops } from '../../../molecules/ClassCard/ClassCard';
@@ -36,6 +36,7 @@ export interface StudentClassListPops {
    */
   onMoreIconClick?: () => void;
   options?: MenuOptionsPopoverDataProps[];
+  showShimmer?: boolean;
 }
 
 const StudentClassList: React.FC<StudentClassListPops> = ({
@@ -44,6 +45,7 @@ const StudentClassList: React.FC<StudentClassListPops> = ({
   onClassClick,
   onMoreIconClick = () => null,
   options = [],
+  showShimmer = false,
 }): JSX.Element => {
   if (data.length === 0) return <EmptyClass onFabClick={onFabClick} />;
 
@@ -54,6 +56,7 @@ const StudentClassList: React.FC<StudentClassListPops> = ({
         ItemSeparatorComponent={() => <View style={styles.separator} />}
         renderItem={({ item }) => (
           <ClassCard
+            showShimmer={showShimmer}
             className={item.className}
             section={item.section}
             teacherName={item.teacherName}

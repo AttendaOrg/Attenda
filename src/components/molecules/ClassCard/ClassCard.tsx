@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   ImageSourcePropType,
 } from 'react-native';
+import ShimmerPlaceholder from 'react-native-shimmer-placeholder';
 import MenuOptionsPopover, {
   MenuOptionsPopoverDataProps,
 } from '../MenuOptionsPopover';
@@ -54,6 +55,7 @@ export interface ClassCardPops {
   attendance: string;
   isSessionLive?: boolean;
   backgroundImage: ImageSourcePropType;
+  showShimmer?: boolean;
 }
 
 interface Props extends ClassCardPops {
@@ -75,30 +77,33 @@ const ClassCard: React.FC<Props> = ({
   backgroundImage,
   onCardClick,
   options = [],
+  showShimmer = false,
 }): JSX.Element => {
   return (
-    <TouchableOpacity onPress={onCardClick}>
-      <View style={styles.container}>
-        <View style={styles.textContainer}>
-          <Text style={[styles.classNameText, styles.allText]}>
-            {className}
-          </Text>
-          <Text style={styles.allText}>{section}</Text>
-          <Text style={styles.allText}>{teacherName}</Text>
-          <Text style={styles.allText}>{attendance}</Text>
+    <>
+      <TouchableOpacity onPress={onCardClick}>
+        <View style={styles.container}>
+          <View style={styles.textContainer}>
+            <Text style={[styles.classNameText, styles.allText]}>
+              {className}
+            </Text>
+            <Text style={styles.allText}>{section}</Text>
+            <Text style={styles.allText}>{teacherName}</Text>
+            <Text style={styles.allText}>{attendance}</Text>
 
-          <Text style={styles.liveText}>
-            {isSessionLive && 'Attendance session is live'}
-          </Text>
-          <View style={styles.moreIcon}>
-            <MenuOptionsPopover options={options} />
+            <Text style={styles.liveText}>
+              {isSessionLive && 'Attendance session is live'}
+            </Text>
+            <View style={styles.moreIcon}>
+              <MenuOptionsPopover options={options} />
+            </View>
           </View>
+          {backgroundImage !== undefined && (
+            <Image source={backgroundImage} style={styles.image} />
+          )}
         </View>
-        {backgroundImage !== undefined && (
-          <Image source={backgroundImage} style={styles.image} />
-        )}
-      </View>
-    </TouchableOpacity>
+      </TouchableOpacity>
+    </>
   );
 };
 

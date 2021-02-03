@@ -18,18 +18,22 @@ export const TeacherClassListNavigationOptions: OptionsProps = SimpleHeaderNavig
 
 const TeacherClassListPage: React.FC<Props> = ({ navigation }): JSX.Element => {
   const [data, setData] = useState<StudentListDataProps[]>([]);
+  const [showLoadingSimmer, setShowLoadingSimmer] = useState(true);
 
   useEffect(() => {
+    setData([...dummyTeacherClassListData, ...dummyTeacherClassListData]);
+
     const timeId = setTimeout(() => {
-      setData(dummyTeacherClassListData);
-    }, 1000);
+      if (showLoadingSimmer) setShowLoadingSimmer(false);
+    }, 15000);
 
     // clean up timer
     return () => clearTimeout(timeId);
-  });
+  }, [showLoadingSimmer]);
 
   return (
     <StudentClassList
+      showShimmer={showLoadingSimmer}
       onFabClick={() => navigation.push('CreateClass')}
       data={data}
       onClassClick={() => {
