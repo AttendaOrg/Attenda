@@ -7,10 +7,10 @@ import {
   TouchableOpacity,
   ImageSourcePropType,
 } from 'react-native';
-import ShimmerPlaceholder from 'react-native-shimmer-placeholder';
 import MenuOptionsPopover, {
   MenuOptionsPopoverDataProps,
 } from '../MenuOptionsPopover';
+import Shimmer from './Shimmer';
 
 const styles = StyleSheet.create({
   container: {
@@ -79,7 +79,9 @@ const ClassCard: React.FC<Props> = ({
   options = [],
   showShimmer = false,
 }): JSX.Element => {
-  return (
+  return showShimmer ? (
+    <Shimmer width="100%" height={114} />
+  ) : (
     <>
       <TouchableOpacity onPress={onCardClick}>
         <View style={styles.container}>

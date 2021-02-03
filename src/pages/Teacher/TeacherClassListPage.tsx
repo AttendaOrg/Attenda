@@ -21,7 +21,7 @@ const TeacherClassListPage: React.FC<Props> = ({ navigation }): JSX.Element => {
   const [showLoadingSimmer, setShowLoadingSimmer] = useState(true);
 
   useEffect(() => {
-    setData([...dummyTeacherClassListData, ...dummyTeacherClassListData]);
+    setData(dummyTeacherClassListData);
 
     const timeId = setTimeout(() => {
       if (showLoadingSimmer) setShowLoadingSimmer(false);
