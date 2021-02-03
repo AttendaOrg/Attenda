@@ -63,6 +63,11 @@ const SignInPage: React.FC<Props> = ({ navigation }): JSX.Element => {
   //#endregion
 
   const loginUser = async () => {
+    if (await authApi.isLoggedIn()) {
+      navigation.push('ChooseRole');
+
+      return;
+    }
     // if the email or password is empty we don't need to call the api
     if (email !== '' || password !== '') {
       // show a progress bar for the sign in
