@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   StyleSheet,
   Text,
@@ -8,8 +8,9 @@ import {
   Platform,
 } from 'react-native';
 import { AntDesign } from '@expo/vector-icons';
-import { Icon } from 'react-native-elements';
+import { Icon, Input } from 'react-native-elements';
 import DoubleButtonPopup from '../../../molecules/DoubleButtonPopup';
+import { inputContainerStyle } from '../../../../util/Styles';
 
 const styles = StyleSheet.create({
   container: {
@@ -87,31 +88,55 @@ const styles = StyleSheet.create({
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const imageSrc = require('../../../../../assets/images/user.jpg');
 
+interface Errors {
+  nameError: string;
+}
+
 export interface MyAccountPops {
-  username: string;
+  name: string;
   email: string;
-  studentRole: string;
+  userRole: string;
   onEditProfilePictureClick: () => void;
-  onEditUsernameClick: () => void;
+  onNameChange: (newName: string) => Promise<boolean>;
   onChangePasswordClick: () => void;
   onLogOutClick: () => void;
   showPopup: boolean;
   onDismissPopup: () => void;
   onPositivePopupClick: () => void;
+  errors?: Errors;
+  revalidateError?: (_name: string) => boolean;
 }
 
 const MyAccount: React.FC<MyAccountPops> = ({
-  username,
+  name: initialName,
   email,
-  studentRole,
+  userRole,
   onEditProfilePictureClick,
-  onEditUsernameClick,
+  onNameChange,
   onChangePasswordClick,
   onLogOutClick,
   onDismissPopup,
   onPositivePopupClick,
   showPopup,
+  errors,
+  revalidateError = () => null,
 }): JSX.Element => {
+  const [name, setName] = useState(initialName);
+  const [isEditing, setIsEditing] = useState(false);
+  const [hasFormTrySubmitted, setHasFormTrySubmitted] = useState(false);
+  const ref = useRef<Input>(null);
+
+  // react to the prop name change
+  useEffect(() => {
+    // set the input to the value form the prop
+    setName(initialName);
+  }, [initialName]);
+
+  const updateName = (_name: string) => {
+    if (hasFormTrySubmitted) revalidateError(_name);
+    setName(_name);
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.blurImageContainer}>
@@ -122,27 +147,54 @@ const MyAccount: React.FC<MyAccountPops> = ({
         />
         <View style={styles.profileImgContainer}>
           <Image source={imageSrc} style={styles.profileImg} />
-          <Icon
-            name="edit"
-            color="#6A6A6A"
-            containerStyle={styles.iconContainer}
+          <TouchableOpacity
             onPress={onEditProfilePictureClick}
-          />
+            style={styles.iconContainer}
+          >
+            <Icon name="edit" color="#6A6A6A" />
+          </TouchableOpacity>
         </View>
       </View>
 
       <View style={styles.infoContainer}>
-        <Text style={styles.infoTitle}>Username</Text>
         <View style={styles.infoValueRow}>
-          <Text style={styles.infoValue}>{username} </Text>
-          <AntDesign
-            name="edit"
-            color="#6A6A6A"
-            size={24}
-            onPress={onEditUsernameClick}
+          <Input
+            ref={ref}
+            autoFocus
+            placeholder="Name"
+            editable={isEditing}
+            style={styles.infoValue}
+            value={name}
+            onChangeText={updateName}
+            containerStyle={inputContainerStyle}
+            errorMessage={errors?.nameError}
+            rightIcon={
+              <Icon
+                name={isEditing ? 'done' : 'edit'}
+                color="#6A6A6A"
+                size={24}
+                onPress={async () => {
+                  // because the setState call will be last so we will work with this variable
+                  let computedIsEditing = !isEditing;
+
+                  if (computedIsEditing) {
+                    // if the editing is true focus the input
+                    ref?.current?.focus();
+                  } else {
+                    // if it is first time trying to change name set remember it
+                    // because before first time will will not revalidate the name error on every key press
+                    if (!hasFormTrySubmitted) setHasFormTrySubmitted(true);
+                    const success = await onNameChange(name);
+
+                    if (!success) computedIsEditing = isEditing;
+                  }
+
+                  setIsEditing(computedIsEditing);
+                }}
+              />
+            }
           />
         </View>
-        <View style={styles.divider} />
         <Text style={styles.infoTitle}>Email Address</Text>
         <View style={styles.infoValueRow}>
           <Text style={styles.infoValue}>{email}</Text>
@@ -150,7 +202,7 @@ const MyAccount: React.FC<MyAccountPops> = ({
         <View style={styles.divider} />
         <Text style={styles.infoTitle}>Role</Text>
         <View style={styles.infoValueRow}>
-          <Text style={styles.infoValue}>{studentRole}</Text>
+          <Text style={styles.infoValue}>{userRole}</Text>
         </View>
         <View style={styles.divider} />
       </View>

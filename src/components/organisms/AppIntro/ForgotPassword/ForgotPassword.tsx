@@ -27,16 +27,22 @@ const styles = StyleSheet.create({
   },
 });
 
+interface Errors {
+  emailError: string;
+}
+
 export interface ForgotPasswordPops {
   email: string;
   onEmailChange: (email: string) => void;
   onSend: () => void;
+  errors?: Errors;
 }
 
 const ForgotPassword: React.FC<ForgotPasswordPops> = ({
   email,
   onEmailChange,
   onSend,
+  errors = { emailError: '' },
 }): JSX.Element => {
   return (
     <View style={styles.container}>
@@ -55,6 +61,7 @@ const ForgotPassword: React.FC<ForgotPasswordPops> = ({
           onChangeText={onEmailChange}
           containerStyle={inputContainerStyle}
           placeholder="Enter Your Email Address"
+          errorMessage={errors.emailError}
         />
       </View>
       <View style={styles.buttonContainer}>
