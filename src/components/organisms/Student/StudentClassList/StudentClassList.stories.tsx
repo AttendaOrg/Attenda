@@ -1,9 +1,10 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 import React from 'react';
 import { Platform } from 'react-native';
-import { select, withKnobs } from '@storybook/addon-knobs';
+import { object, select, withKnobs } from '@storybook/addon-knobs';
 import { storiesOf } from '@storybook/react-native';
 import { action } from '@storybook/addon-actions';
+import { MenuProvider } from 'react-native-popup-menu';
 import CenterView from '../../../atoms/CenterView';
 import StudentClassList, { StudentListDataProps } from './StudentClassList';
 
@@ -73,17 +74,25 @@ export const dummyStudentClassListData: StudentListDataProps[] = [
 
 // Default For Web And android Component
 export const Default = (): JSX.Element => (
-  <StudentClassList
-    onClassClick={classId => action('onClassClick')(classId)}
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    data={select<StudentListDataProps[]>(
-      'data',
-      { 'No Data': [], 'With Data': dummyStudentClassListData },
-      [],
-    )}
-    onFabClick={() => action('onFabClick')()}
-  />
+  <MenuProvider>
+    <StudentClassList
+      onClassClick={classId => action('onClassClick')(classId)}
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      data={select<StudentListDataProps[]>(
+        'data',
+        { 'No Data': [], 'With Data': dummyStudentClassListData },
+        [],
+      )}
+      onFabClick={() => action('onFabClick')()}
+      options={[
+        {
+          title: 'Title 1',
+          onPress: () => action('Options click'),
+        },
+      ]}
+    />
+  </MenuProvider>
 );
 
 // if the platform is not web only then render it
