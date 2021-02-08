@@ -120,7 +120,9 @@ export type RootStackParamList = {
     classId: string;
     studentId: string;
   };
-  InviteStudent: undefined;
+  InviteStudent: {
+    classId: string;
+  };
   StudentList: {
     classId: string;
   };

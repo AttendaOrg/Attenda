@@ -275,3 +275,5 @@ export default class StudentApi extends AuthApi implements StudentApiInterface {
     }
   };
 }
+
+export const studentApi = new StudentApi();
