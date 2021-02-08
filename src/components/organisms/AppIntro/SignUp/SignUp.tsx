@@ -42,15 +42,30 @@ const styles = StyleSheet.create({
   linkText: {
     color: primaryColor,
   },
+  errorText: {
+    color: 'red',
+    fontSize: 12,
+  },
 });
 
 const imageSource = require('../../../../../assets/images/SignUp.png');
 
+interface Errors {
+  email: string;
+  password: string;
+  acceptTerms: string;
+}
 export interface SignUpPops {
   onSubmit: (email: string, password: string, acceptTerms: boolean) => void;
   onSignUpClick: () => void;
   onPrivacyPolicyClick: () => void;
   onTermsClick: () => void;
+  revalidateError?: (
+    email: string,
+    password: string,
+    acceptTerms: boolean,
+  ) => void;
+  errors?: Errors;
 }
 
 const SignUp: React.FC<SignUpPops> = ({
@@ -58,10 +73,49 @@ const SignUp: React.FC<SignUpPops> = ({
   onSubmit,
   onPrivacyPolicyClick,
   onTermsClick,
+  revalidateError = () => null,
+  errors = { email: '', password: '', acceptTerms: '' },
 }): JSX.Element => {
+  const [hasFromTrySubmitted, setHasFromTrySubmitted] = useState(false);
   const [acceptTerms, setChecked] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+
+  const {
+    email: emailError = '',
+    password: passwordError = '',
+    acceptTerms: acceptTermsError = '',
+  } = errors;
+
+  const tryRevalidatingError = ({
+    _email = email,
+    _password = password,
+    _acceptTerms = acceptTerms,
+  } = {}) => {
+    if (hasFromTrySubmitted === true)
+      revalidateError(_email, _password, _acceptTerms);
+  };
+
+  const updateEmail = (_email: string) => {
+    tryRevalidatingError({
+      _email,
+    });
+    setEmail(_email);
+  };
+
+  const updatePassword = (_password: string) => {
+    tryRevalidatingError({
+      _password,
+    });
+    setPassword(_password);
+  };
+
+  const updateTerms = (_acceptTerms: boolean) => {
+    tryRevalidatingError({
+      _acceptTerms,
+    });
+    setChecked(_acceptTerms);
+  };
 
   return (
     <View style={styles.container}>
@@ -81,9 +135,10 @@ const SignUp: React.FC<SignUpPops> = ({
           textContentType="emailAddress"
           keyboardType="email-address"
           labelStyle={{ margin: 0 }}
-          errorStyle={{ margin: 0 }}
+          errorStyle={{ marginHorizontal: 0 }}
           value={email}
-          onChangeText={setEmail}
+          onChangeText={updateEmail}
+          errorMessage={emailError}
         />
 
         <Input
@@ -91,15 +146,18 @@ const SignUp: React.FC<SignUpPops> = ({
           style={styles.inputStyle}
           placeholder="Password"
           textContentType="password"
+          labelStyle={{ margin: 0 }}
+          errorStyle={{ marginHorizontal: 0 }}
           secureTextEntry
           value={password}
-          onChangeText={setPassword}
+          onChangeText={updatePassword}
+          errorMessage={passwordError}
         />
 
         <CheckBox
           checked={acceptTerms}
           containerStyle={styles.checkBoxStyle}
-          onPress={() => setChecked(!acceptTerms)}
+          onPress={() => updateTerms(!acceptTerms)}
           title={
             <View style={{ flexDirection: 'row' }}>
               <Text>I accept the</Text>
@@ -113,10 +171,16 @@ const SignUp: React.FC<SignUpPops> = ({
             </View>
           }
         />
+        {acceptTermsError !== '' && (
+          <Text style={styles.errorText}>{acceptTermsError}</Text>
+        )}
         <View style={styles.btnContainer}>
           <Button
             title="Create account"
-            onPress={() => onSubmit(email, password, acceptTerms)}
+            onPress={() => {
+              setHasFromTrySubmitted(true);
+              onSubmit(email, password, acceptTerms);
+            }}
           />
         </View>
       </View>

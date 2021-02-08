@@ -4,6 +4,7 @@ import { Platform } from 'react-native';
 import { boolean, text, withKnobs, select } from '@storybook/addon-knobs';
 import { storiesOf } from '@storybook/react-native';
 import { action } from '@storybook/addon-actions';
+import { MenuProvider } from 'react-native-popup-menu';
 import CenterView from '../../atoms/CenterView';
 import ClassCard from './ClassCard';
 
@@ -34,16 +35,24 @@ export default {
 // Default For Web And android Component
 text('className', 'Class Name');
 export const Default = (): JSX.Element => (
-  <ClassCard
-    className={text('ClassName', 'Class Name')}
-    section={text('section', 'Section')}
-    teacherName={text('teacherName', 'Teacher Name')}
-    attendance={text('attendance', 'Your Attendance: 92%')}
-    isSessionLive={boolean('isSessionLive', true)}
-    onCardClick={() => action('onCardClick')()}
-    onMoreIconClick={() => action('onMoreIconClick')()}
-    backgroundImage={select('image', listOfImages, listOfImages.classBack1)}
-  />
+  <MenuProvider>
+    <ClassCard
+      className={text('ClassName', 'Class Name')}
+      section={text('section', 'Section')}
+      teacherName={text('teacherName', 'Teacher Name')}
+      attendance={text('attendance', 'Your Attendance: 92%')}
+      isSessionLive={boolean('isSessionLive', true)}
+      onCardClick={() => action('onCardClick')()}
+      onMoreIconClick={() => action('onMoreIconClick')()}
+      backgroundImage={select('image', listOfImages, listOfImages.classBack1)}
+      options={[
+        {
+          title: 'Test 1',
+          onPress: () => action('On options click')(),
+        },
+      ]}
+    />
+  </MenuProvider>
 );
 
 // if the platform is not web only then render it

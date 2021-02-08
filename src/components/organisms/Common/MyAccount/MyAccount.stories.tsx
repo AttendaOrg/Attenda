@@ -19,11 +19,15 @@ export default {
 // Default For Web And android Component
 export const Default = (): JSX.Element => (
   <MyAccount
-    username={text('username', 'Aditiya jhv')}
+    name={text('name', 'Aditiya jhv')}
     email={text('email', 'adi@gmail.com')}
-    studentRole={text('studentRole', 'student')}
+    userRole={text('studentRole', 'student')}
     onEditProfilePictureClick={() => action('onEditProfilePictureClick')()}
-    onEditUsernameClick={() => action('onEditUsernameClick')()}
+    onNameChange={async (newName: string) => {
+      action('onEditUsernameClick')(newName);
+
+      return true;
+    }}
     onChangePasswordClick={() => action('onChangePasswordClick')()}
     onLogOutClick={() => action('onLogOutClick')()}
     showPopup={boolean('showPopup', false)}

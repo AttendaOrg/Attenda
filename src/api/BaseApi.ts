@@ -29,6 +29,7 @@ export enum BasicErrors {
   NO_EMAIL_ATTACHED_WITH_ACCOUNT,
   EXCEPTION,
   AUTH_EMAIL_ALREADY_IN_USE,
+  WEAK_PASSWORD,
   AUTH_WRONG_PASSWORD,
   AUTH_USER_NOT_FOUND,
   USER_DOES_NOT_EXIST_IN_CLASS,
@@ -133,6 +134,8 @@ class BaseApi {
   success = <T>(success: T): WithError<T, null> => {
     return [success, null];
   };
+
+  convertErrorToMsg = convertErrorToMsg;
 }
 
 export default BaseApi;

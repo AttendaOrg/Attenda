@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { Linking } from 'react-native';
 import {
   StackNavigationOptions,
@@ -9,6 +9,9 @@ import SignUpPage from '../components/organisms/AppIntro/SignUp';
 import SimpleCloseNavigationOptions from '../components/templates/SimpleCloseNavigationOption';
 import { PRIVACY_POLICY_URL, TERMS_URL } from '../util/constant';
 import SingleButtonPopup from '../components/molecules/SingleButtonPopup';
+import { authApi } from '../api/AuthApi';
+import GlobalContext from '../context/GlobalContext';
+import { isStrongPassword, isValidEmail } from '../util';
 
 type Props = StackScreenProps<RootStackParamList, 'SignUp'>;
 
@@ -22,14 +25,66 @@ export const SignUpPageNavigationOptions: StackNavigationOptions = SimpleCloseNa
 
 const SignUpPagePage: React.FC<Props> = ({ navigation }): JSX.Element => {
   const [showConfirmEmailPopup, setShowConfirmEmailPopup] = useState(false);
+  const [emailError, setEmailError] = useState('');
+  const [passwordError, setPasswordError] = useState('');
+  const [acceptTermsError, setAcceptTermsError] = useState('');
+  const globalContext = useContext(GlobalContext);
+
+  const revalidateError = (
+    email: string,
+    password: string,
+    acceptTerms: boolean,
+  ) => {
+    if (isValidEmail(email) !== true)
+      setEmailError('Please enter a valid email.');
+    else if (isValidEmail(email) === true) setEmailError('');
+
+    if (isStrongPassword(password) !== true)
+      setPasswordError('Please enter a stronger password.');
+    else if (isStrongPassword(password) === true) setPasswordError('');
+
+    if (acceptTerms === false)
+      setAcceptTermsError('Please accept the terms and condition.');
+    if (acceptTerms === true) setAcceptTermsError('');
+  };
+
+  const handleOnSubmit = async (
+    email: string,
+    password: string,
+    acceptTerms: boolean,
+  ) => {
+    globalContext.changeSpinnerLoading(true);
+    revalidateError(email, password, acceptTerms);
+    if (email !== '' && password !== '' && acceptTerms === true) {
+      // TODO: add validation for network related error and firebase error
+
+      const [success, error] = await authApi.signUpWithEmailAndPassword(
+        email,
+        password,
+      );
+
+      // if success is true dismiss the popup
+      // the rest will be done by the onAuthListener
+      if (success === true) {
+        setShowConfirmEmailPopup(false);
+      }
+    }
+    globalContext.changeSpinnerLoading(false);
+  };
 
   return (
     <>
       <SignUpPage
         onSignUpClick={navigation.goBack}
-        onSubmit={() => setShowConfirmEmailPopup(true)}
+        onSubmit={handleOnSubmit}
         onTermsClick={() => Linking.openURL(TERMS_URL)}
         onPrivacyPolicyClick={() => Linking.openURL(PRIVACY_POLICY_URL)}
+        errors={{
+          email: emailError,
+          password: passwordError,
+          acceptTerms: acceptTermsError,
+        }}
+        revalidateError={revalidateError}
       />
 
       <SingleButtonPopup

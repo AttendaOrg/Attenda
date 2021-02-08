@@ -20,7 +20,7 @@
     "start-react": "webpack serve --config ./webpack.config.js --mode development",
     "prestorybook": "rnstl",
     "postinstall": "patch-package",
-    "test:firebase-api": "cross-env NODE_ENV=testing jest --env=node --runInBand"
+    "test:firebase-api": "cross-env NODE_ENV=testing FIREBASE_AUTH_EMULATOR_HOST='localhost:9099' FIRESTORE_EMULATOR_HOST='localhost:8080' jest --env=node --runInBand"
   },
   "config": {
     "react-native-storybook-loader": {
@@ -32,6 +32,7 @@
     }
   },
   "dependencies": {
+    "@expo/webpack-config": "^0.12.58",
     "@react-native-community/datetimepicker": "3.0.0",
     "@react-native-community/hooks": "^2.6.0",
     "@react-native-community/masked-view": "0.1.10",
@@ -40,6 +41,7 @@
     "@react-navigation/native": "^5.8.10",
     "@react-navigation/stack": "^5.12.8",
     "@types/react-native-calendars": "^1.505.0",
+    "babel-plugin-inline-dotenv": "^1.6.0",
     "cross-env": "^7.0.3",
     "dotenv": "^8.2.0",
     "expo": "~39.0.2",
@@ -63,6 +65,7 @@
     "react-native-safe-area-context": "3.1.4",
     "react-native-screens": "~2.10.1",
     "react-native-svg": "12.1.0",
+    "react-native-svg-web": "^1.0.9",
     "react-native-tab-view": "^2.15.2",
     "react-native-vector-icons": "^7.1.0",
     "react-native-web": "~0.13.12",
@@ -88,6 +91,7 @@
     "@typescript-eslint/eslint-plugin": "^4.9.0",
     "@typescript-eslint/parser": "^4.9.0",
     "babel-loader": "^8.2.2",
+    "babel-plugin-transform-inline-environment-variables": "^0.4.3",
     "eslint": "^7.15.0",
     "eslint-config-airbnb": "^18.2.1",
     "eslint-config-prettier": "^7.0.0",
