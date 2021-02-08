@@ -1,11 +1,11 @@
 import React from 'react';
 import { Platform } from 'react-native';
-import { withKnobs } from '@storybook/addon-knobs';
+import { boolean, withKnobs } from '@storybook/addon-knobs';
 import { storiesOf } from '@storybook/react-native';
 import SpinnerLoader from './SpinnerLoader';
 import CenterView from '../../atoms/CenterView';
 
-const STORY_NAME = 'SpinnerLoader';
+const STORY_NAME = 'Molecules/SpinnerLoader';
 
 // it will only work with web
 // because react native does not supports the modern api
@@ -16,7 +16,9 @@ export default {
 };
 
 // Default For Web And android Component
-export const Default = (): JSX.Element => <SpinnerLoader />;
+export const Default = (): JSX.Element => (
+  <SpinnerLoader show={boolean('show', true)} />
+);
 
 // if the platform is not web only then render it
 // otherwise it will render 2 story in web storybook

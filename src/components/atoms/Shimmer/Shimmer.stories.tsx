@@ -1,29 +1,23 @@
 import React from 'react';
 import { Platform } from 'react-native';
-import { withKnobs } from '@storybook/addon-knobs';
+import { number, text, withKnobs } from '@storybook/addon-knobs';
 import { storiesOf } from '@storybook/react-native';
 import CenterView from '../CenterView';
-import Google from './Google';
-import Twitter from './Twitter';
-import Facebook from './Facebook';
-import Arrow from './Arrow';
+import Shimmer from './Shimmer';
 
-const STORY_NAME = 'Atoms/Icons';
+const STORY_NAME = 'Atoms/Shimmer';
 
 // it will only work with web
 // because react native does not supports the modern api
 export default {
   title: STORY_NAME,
   decorators: [withKnobs],
+  component: Shimmer,
 };
 
 // Default For Web And android Component
 export const Default = (): JSX.Element => (
-  <>
-    <Google />
-    <Twitter />
-    <Facebook />
-  </>
+  <Shimmer height={number('height', 100)} width={text('width', '100%')} />
 );
 
 // if the platform is not web only then render it
@@ -34,9 +28,5 @@ if (Platform.OS !== 'web') {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     .addDecorator((getStory: any) => <CenterView>{getStory()}</CenterView>)
     .addDecorator(withKnobs)
-    .add('Default', Default)
-    .add('Google', () => <Google />)
-    .add('FaceBook', () => <Facebook />)
-    .add('Twitter', () => <Twitter />)
-    .add('Arrow', () => <Arrow />);
+    .add('Default', Default);
 }

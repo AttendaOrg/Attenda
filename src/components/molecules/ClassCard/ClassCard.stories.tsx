@@ -45,6 +45,7 @@ export const Default = (): JSX.Element => (
       onCardClick={() => action('onCardClick')()}
       onMoreIconClick={() => action('onMoreIconClick')()}
       backgroundImage={select('image', listOfImages, listOfImages.classBack1)}
+      showShimmer={boolean('showShimmer', false)}
       options={[
         {
           title: 'Test 1',

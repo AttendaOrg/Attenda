@@ -7,10 +7,10 @@ import {
   TouchableOpacity,
   ImageSourcePropType,
 } from 'react-native';
+import Shimmer from '../../atoms/Shimmer/Shimmer';
 import MenuOptionsPopover, {
   MenuOptionsPopoverDataProps,
 } from '../MenuOptionsPopover';
-import Shimmer from './Shimmer';
 
 const styles = StyleSheet.create({
   container: {
