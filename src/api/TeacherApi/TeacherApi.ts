@@ -65,7 +65,11 @@ interface TeacherApiInterface {
    * get all class of the teacher
    * @param page
    */
-  getAllClass(page: string): Promise<WithError<TeacherClassModel[]>>;
+  getAllClass(page?: string): Promise<WithError<TeacherClassModel[]>>;
+
+  getClassListener: (
+    onDataChange: (newData: TeacherClassModel[]) => void,
+  ) => () => void;
 
   /**
    * change the status of the invite link\
@@ -371,6 +375,47 @@ export default class TeacherApi extends AuthApi implements TeacherApiInterface {
     }
   };
 
+  getClassListener = (
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+    onDataChange = (_newData: TeacherClassModel[]) => {},
+  ): (() => void) => {
+    const error = () => {
+      console.error('error');
+    };
+
+    try {
+      const userId = this.getUserUid();
+
+      if (userId === null) return error;
+
+      const query = firebase
+        .firestore()
+        .collection(TeacherApi.CLASSES_COLLECTION_NAME)
+        .where('teacherId', '==', userId);
+
+      const unSubscribe = query.onSnapshot(snapshot => {
+        // TODO: find way to optimize the query to only include update or inserted or deleted data
+        const { docs } = snapshot;
+        const newClasses = docs.map(
+          classModel =>
+            new TeacherClassModel({
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              ...(classModel.data() as any),
+              classId: classModel.id,
+            }),
+        );
+
+        onDataChange(newClasses);
+      });
+
+      return unSubscribe;
+    } catch (ex) {
+      // console.log(ex);
+
+      return error;
+    }
+  };
+
   getAllClass = async (): Promise<WithError<TeacherClassModel[]>> => {
     try {
       const userId = this.getUserUid();
@@ -378,14 +423,20 @@ export default class TeacherApi extends AuthApi implements TeacherApiInterface {
       if (userId === null)
         return this.error(BasicErrors.USER_NOT_AUTHENTICATED);
 
-      const classes = await firebase
+      const query = firebase
         .firestore()
         .collection(TeacherApi.CLASSES_COLLECTION_NAME)
-        .get();
+        .where('teacherId', '==', userId);
+
+      const classes = await query.get();
 
       const allClass = classes.docs.map(
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        classModel => new TeacherClassModel(classModel.data() as any),
+        classModel =>
+          new TeacherClassModel({
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            ...(classModel.data() as any),
+            classId: classModel.id,
+          }),
       );
 
       return this.success(allClass);
@@ -872,3 +923,5 @@ export default class TeacherApi extends AuthApi implements TeacherApiInterface {
   };
   //#endregion attendance_report
 }
+
+export const teacherApi = new TeacherApi();
