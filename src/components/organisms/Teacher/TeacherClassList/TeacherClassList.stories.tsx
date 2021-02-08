@@ -4,6 +4,7 @@ import { Platform } from 'react-native';
 import { select, withKnobs } from '@storybook/addon-knobs';
 import { storiesOf } from '@storybook/react-native';
 import { action } from '@storybook/addon-actions';
+import { MenuProvider } from 'react-native-popup-menu';
 import CenterView from '../../../atoms/CenterView';
 import TeacherClassList from './TeacherClassList';
 import { StudentListDataProps } from '../../Student/StudentClassList';
@@ -21,17 +22,19 @@ export default {
 
 // Default For Web And android Component
 export const Default = (): JSX.Element => (
-  <TeacherClassList
-    onClassClick={classId => action('onClassClick')(classId)}
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    data={select<StudentListDataProps[]>(
-      'data',
-      { 'No Data': [], 'With Data': dummyTeacherClassListData },
-      [],
-    )}
-    onFabClick={() => action('onFabClick')()}
-  />
+  <MenuProvider>
+    <TeacherClassList
+      onClassClick={classId => action('onClassClick')(classId)}
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      data={select<StudentListDataProps[]>(
+        'data',
+        { 'No Data': [], 'With Data': dummyTeacherClassListData },
+        [],
+      )}
+      onFabClick={() => action('onFabClick')()}
+    />
+  </MenuProvider>
 );
 
 // if the platform is not web only then render it

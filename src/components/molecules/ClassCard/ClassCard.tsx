@@ -66,6 +66,7 @@ interface Props extends ClassCardPops {
   onMoreIconClick: () => void;
   onCardClick: () => void;
   options?: MenuOptionsPopoverDataProps[];
+  classId: string;
 }
 
 const ClassCard: React.FC<Props> = ({
@@ -78,6 +79,7 @@ const ClassCard: React.FC<Props> = ({
   onCardClick,
   options = [],
   showShimmer = false,
+  classId = '',
 }): JSX.Element => {
   return showShimmer ? (
     <Shimmer width="100%" height={114} />
@@ -97,7 +99,7 @@ const ClassCard: React.FC<Props> = ({
               {isSessionLive && 'Attendance session is live'}
             </Text>
             <View style={styles.moreIcon}>
-              <MenuOptionsPopover options={options} />
+              <MenuOptionsPopover value={classId} options={options} />
             </View>
           </View>
           {backgroundImage !== undefined && (

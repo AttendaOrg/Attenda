@@ -3,6 +3,7 @@ import { FlatList, StyleSheet, View } from 'react-native';
 import { FAB } from 'react-native-paper';
 import ClassCard from '../../../molecules/ClassCard';
 import { ClassCardPops } from '../../../molecules/ClassCard/ClassCard';
+import { MenuOptionsPopoverDataProps } from '../../../molecules/MenuOptionsPopover';
 import EmptyClass from '../../Common/EmptyClass';
 
 const styles = StyleSheet.create({
@@ -29,7 +30,13 @@ export interface TeacherClassListPops {
   data: StudentListDataProps[];
   onFabClick: () => void;
   onClassClick: (classId: string) => void;
+  /**
+   * @deprecated this function is deprecated
+   * @use options props
+   */
   onMoreIconClick?: () => void;
+  options?: MenuOptionsPopoverDataProps[];
+  showShimmer?: boolean;
 }
 
 const TeacherClassList: React.FC<TeacherClassListPops> = ({
@@ -37,6 +44,8 @@ const TeacherClassList: React.FC<TeacherClassListPops> = ({
   onFabClick,
   onClassClick,
   onMoreIconClick = () => null,
+  options = [],
+  showShimmer = false,
 }): JSX.Element => {
   if (data.length === 0) return <EmptyClass onFabClick={onFabClick} />;
 
@@ -47,12 +56,15 @@ const TeacherClassList: React.FC<TeacherClassListPops> = ({
         ItemSeparatorComponent={() => <View style={styles.separator} />}
         renderItem={({ item }) => (
           <ClassCard
+            showShimmer={showShimmer}
             className={item.className}
             section={item.section}
             teacherName={item.teacherName}
             attendance={item.attendance}
             isSessionLive={item.isSessionLive}
+            classId={item.key}
             onCardClick={() => onClassClick(item.key)}
+            options={options}
             onMoreIconClick={onMoreIconClick}
             backgroundImage={item.backgroundImage}
           />

@@ -4,13 +4,13 @@ import {
   StackScreenProps,
 } from '@react-navigation/stack';
 import { RootStackParamList } from '../../App';
-import StudentClassList, {
-  StudentListDataProps,
-} from '../../components/organisms/Student/StudentClassList';
+import { StudentListDataProps } from '../../components/organisms/Student/StudentClassList';
 import SimpleHeaderNavigationOptions from '../../components/templates/SimpleHeaderNavigationOptions';
 import { teacherApi } from '../../api/TeacherApi';
 import TeacherClassModel from '../../api/TeacherApi/model/TeacherClassModel';
-import { dummyTeacherClassListData } from '../../components/organisms/Teacher/TeacherClassList';
+import TeacherClassList, {
+  dummyTeacherClassListData,
+} from '../../components/organisms/Teacher/TeacherClassList';
 
 /* eslint-disable-next-line @typescript-eslint/no-var-requires */
 const classBack = require('../../../assets/images/class-back-5.jpg');
@@ -76,35 +76,35 @@ class TeacherClassListPage extends React.PureComponent<Props, State> {
       : data.map(transformToStudentListDataProps);
 
     return (
-      <StudentClassList
+      <TeacherClassList
         showShimmer={loading}
         onFabClick={() => navigation.push('CreateClass')}
         data={newData}
-        onClassClick={() => {
+        onClassClick={classId => {
           navigation.push('StartAttendanceSession', {
-            classId: '',
+            classId,
           });
         }}
-        onMoreIconClick={() => null}
         options={[
           {
             title: 'Attendance Record',
-            onPress: () =>
+            onPress: (classId: string) =>
               navigation.push('TeacherAttendanceRecord', {
-                classId: '',
+                classId,
                 selectedTab: 'Sessions',
               }),
           },
           {
             title: 'Students',
-            onPress: () =>
+            onPress: (classId: string) =>
               navigation.push('StudentList', {
-                classId: '',
+                classId,
               }),
           },
           {
             title: 'Settings',
-            onPress: () => navigation.push('ClassSettings', { classId: '' }),
+            onPress: (classId: string) =>
+              navigation.push('ClassSettings', { classId }),
           },
           { title: 'Share invitation link', onPress: () => null },
         ]}

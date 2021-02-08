@@ -62,6 +62,7 @@ const StudentClassList: React.FC<StudentClassListPops> = ({
             teacherName={item.teacherName}
             attendance={item.attendance}
             isSessionLive={item.isSessionLive}
+            classId={item.key}
             onCardClick={() => onClassClick(item.key)}
             options={options}
             onMoreIconClick={onMoreIconClick}
