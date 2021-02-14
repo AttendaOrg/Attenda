@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useState } from 'react';
 import {
   HeaderTitle,
   StackNavigationOptions,
@@ -14,51 +14,62 @@ import { SimpleHeaderBackNavigationOptions } from '../../components/templates/Si
 import { lightColor } from '../../util/Colors';
 import { convertDateTime } from '../../util';
 import { NavigationEventListenerCallback } from '../../util/hooks/useConfirmBack';
+import { teacherApi } from '../../api/TeacherApi';
+import ClassStudentModel from '../../api/TeacherApi/model/ClassStudentModel';
+import SessionStudentModel from '../../api/TeacherApi/model/SessionStudentModel';
+import DoubleButtonPopup from '../../components/molecules/DoubleButtonPopup';
 
 type Props = StackScreenProps<RootStackParamList, 'CurrentAttendanceSession'>;
 type OptionsProps = (props: Props) => StackNavigationOptions;
 
-export const CurrentAttendanceSessionNavigationOptions: OptionsProps = ({
-  navigation,
-  route,
-}) => ({
+export const CurrentAttendanceSessionNavigationOptions: OptionsProps = () => ({
   ...SimpleHeaderBackNavigationOptions,
   title: 'Current Session',
-  headerStyle: {
-    backgroundColor: lightColor,
-    // borderBottomColor: '#ddd',
-    // borderBottomWidth: 1,
-  },
-  headerTitleStyle: { color: '#000' },
-  headerLeft: () => (
-    <IconButton
-      icon="close"
-      onPress={() => navigation.canGoBack() && navigation.goBack()}
-      color="#000"
-    />
-  ),
-  headerTitle: ({ children, style }) => (
-    <>
-      <HeaderTitle style={style}>{children}</HeaderTitle>
-      <Text>{convertDateTime(new Date(route.params.sessionTime))}</Text>
-    </>
-  ),
-  headerRight: () => (
-    <View style={{ paddingRight: 16 }}>
-      <Button
-        mode="contained"
-        color="#2196f3"
-        onPress={() =>
-          navigation.setParams({
-            showStopDialog: true,
-          })
-        }
-      >
-        STOP
-      </Button>
-    </View>
-  ),
 });
+
+const transformToDataProps = (
+  studentModel: ClassStudentModel,
+  present = false,
+): CurrentAttendanceSessionDataProps => {
+  const { rollNo, studentId } = studentModel;
+
+  return {
+    key: studentId ?? '',
+    // TODO: get name from student model
+    name: 'name',
+    present,
+    rollNo,
+  };
+};
+
+const findSessionByStudentId = (
+  sessions: SessionStudentModel[],
+  studentId: string,
+): SessionStudentModel | null => {
+  const found = sessions.filter(session => session.studentId === studentId);
+
+  if (found.length === 0) return null;
+
+  return found[0];
+};
+
+const mergeStudentListWithAttendanceInfo = (
+  students: ClassStudentModel[],
+  sessions: SessionStudentModel[] = [],
+): CurrentAttendanceSessionDataProps[] => {
+  // loop through all student registered in a class
+
+  return students.map<CurrentAttendanceSessionDataProps>(student => {
+    const found: SessionStudentModel | null = findSessionByStudentId(
+      sessions,
+      student.studentId ?? '',
+    );
+
+    if (found === null) return transformToDataProps(student);
+
+    return transformToDataProps(student, found.present);
+  });
+};
 
 const CurrentAttendanceSessionPage: React.FC<Props> = ({
   navigation,
@@ -66,36 +77,67 @@ const CurrentAttendanceSessionPage: React.FC<Props> = ({
 }): JSX.Element => {
   const [listItems, setListItems] = useState<
     CurrentAttendanceSessionDataProps[]
-  >([
-    {
-      name: 'Prasanta Barman',
-      rollNo: 'IIT2154',
-      key: 'IIT2154',
-      present: false,
-    },
-    {
-      name: 'Apurba Roy',
-      rollNo: 'IIT2441454',
-      key: 'IIT2441454',
-      present: true,
-    },
-  ]);
+  >([]);
+  const [showSaveDialog, setShowSaveDialog] = useState(false);
 
   const onPresentChange = async (rollNo: string, present: boolean) => {
-    const newList = listItems.map(item =>
-      item.rollNo === rollNo ? { ...item, present } : item,
-    );
+    const {
+      params: { classId, sessionId },
+    } = route;
 
-    setListItems(newList);
+    // TODO: handle error
+    await teacherApi.editStudentAttendanceReport(
+      classId,
+      sessionId,
+      rollNo,
+      present,
+    );
   };
 
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      title: 'Current Session',
+      headerStyle: {
+        backgroundColor: lightColor,
+        // borderBottomColor: '#ddd',
+        // borderBottomWidth: 1,
+      },
+      headerTitleStyle: { color: '#000' },
+      headerLeft: () => (
+        <IconButton
+          icon="close"
+          onPress={() => navigation.canGoBack() && navigation.goBack()}
+          color="#000"
+        />
+      ),
+      headerTitle: ({ children, style }) => (
+        <>
+          <HeaderTitle style={style}>{children}</HeaderTitle>
+          <Text>{convertDateTime(new Date(route.params.sessionTime))}</Text>
+        </>
+      ),
+      headerRight: () => (
+        <View style={{ paddingRight: 16 }}>
+          <Button
+            mode="contained"
+            color="#2196f3"
+            onPress={() => setShowSaveDialog(true)}
+          >
+            STOP
+          </Button>
+        </View>
+      ),
+    });
+  });
+
   useEffect(() => {
-    const callback = (e: NavigationEventListenerCallback) => {
+    const callback = async (e: NavigationEventListenerCallback) => {
       e.preventDefault();
       const {
         data: { action },
       } = e;
 
+      // TODO: stop using the navigation props for opening the popup
       // if the payload contains withDismiss === true that means
       // it was fired by popup positive btn click
       // so go back from the screen
@@ -119,20 +161,78 @@ const CurrentAttendanceSessionPage: React.FC<Props> = ({
     // it is necessary to remove the event free up the listener
     // or every data change useEffect will reattach the event listener with the old event
     return () => navigation.removeListener('beforeRemove', callback);
-  }, [navigation]);
+  }, [navigation, route]);
+
+  useEffect(() => {
+    (async () => {
+      const {
+        params: { sessionId, classId },
+      } = route;
+      const [students] = await teacherApi.getAllStudentList(classId);
+      const newStudents = mergeStudentListWithAttendanceInfo(students ?? []);
+
+      setListItems(newStudents);
+
+      const unSubscribe = teacherApi.getLiveStudentAttendance(
+        sessionId,
+        sessions => {
+          const Students = mergeStudentListWithAttendanceInfo(
+            students ?? [],
+            sessions,
+          );
+
+          setListItems(Students);
+        },
+      );
+
+      return unSubscribe;
+    })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const saveDialogDismiss = () => {
+    setShowSaveDialog(false);
+  };
+
+  const onSaveSession = async () => {
+    const {
+      params: { classId, sessionId },
+    } = route;
+
+    await teacherApi.saveClassSession(classId, sessionId);
+    navigation.navigate('TeacherClassList', { withDismiss: true });
+  };
+
+  const onDismissClass = async () => {
+    const {
+      params: { classId, sessionId },
+    } = route;
+
+    await teacherApi.discardClassSession(classId, sessionId);
+
+    navigation.navigate('TeacherClassList', { withDismiss: true });
+  };
 
   return (
-    <CurrentAttendanceSession
-      studentList={listItems}
-      onPresentChange={onPresentChange}
-      showPopup={route.params.showStopDialog}
-      onDismissPopup={() => {
-        navigation.setParams({ showStopDialog: false });
-      }}
-      onPositivePopupClick={() => {
-        navigation.navigate('TeacherClassList', { withDismiss: true });
-      }}
-    />
+    <>
+      <CurrentAttendanceSession
+        studentList={listItems}
+        onPresentChange={onPresentChange}
+        showPopup={route.params.showStopDialog}
+        onDismissPopup={() => navigation.setParams({ showStopDialog: false })}
+        onPositivePopupClick={onDismissClass}
+      />
+      <DoubleButtonPopup
+        negativeButtonText="Cancel"
+        onNegativeButtonClick={saveDialogDismiss}
+        positiveButtonText="Save"
+        onPositiveButtonClick={onSaveSession}
+        onDismiss={saveDialogDismiss}
+        text="Save the Session ?"
+        title="Save"
+        visible={showSaveDialog}
+      />
+    </>
   );
 };
 

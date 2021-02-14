@@ -1,4 +1,9 @@
-import React, { useLayoutEffect, useState } from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useState,
+} from 'react';
 import {
   StackNavigationOptions,
   StackScreenProps,
@@ -6,12 +11,15 @@ import {
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { Button, Dialog, Paragraph } from 'react-native-paper';
+import { useIsFocused } from '@react-navigation/native';
 import { RootStackParamList } from '../../App';
 import StudentList, {
   StudentListData,
 } from '../../components/organisms/Teacher/StudentList';
 import { SimpleHeaderBackNavigationOptions } from '../../components/templates/SimpleHeaderNavigationOptions';
 import StudentsEmptyList from '../../components/organisms/Teacher/StudentsEmptyList/StudentsEmptyList';
+import { teacherApi } from '../../api/TeacherApi';
+import ClassStudentModel from '../../api/TeacherApi/model/ClassStudentModel';
 
 type Props = StackScreenProps<RootStackParamList, 'StudentList'>;
 type OptionsProps = (props: Props) => StackNavigationOptions;
@@ -41,6 +49,19 @@ const initialListData = [
     checked: false,
   },
 ];
+
+const transform = (data: ClassStudentModel): StudentListData => {
+  const { studentId = '', email, rollNo } = data;
+
+  return {
+    checked: false,
+    key: studentId ?? '',
+    name: email, // TODO: add name
+    rollNo,
+    // percentage: `${totalAttendancePercentage} %`, // if we pass percentage it will not show the select
+  };
+};
+
 const StudentListPage: React.FC<Props> = ({
   navigation,
   route,
@@ -49,11 +70,26 @@ const StudentListPage: React.FC<Props> = ({
     params: { classId },
   } = route;
   const [showChecked, setShowChecked] = useState(false);
-  const [listItems, setListItems] = useState<StudentListData[]>(
-    initialListData,
-  );
+  const [listItems, setListItems] = useState<StudentListData[]>([]);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
+  const fetchStudentList = useCallback(async () => {
+    const [students] = await teacherApi.getAllStudentList(classId);
+    const newItems = (students || []).map(transform);
+
+    setListItems(newItems);
+  }, [classId]);
+
+  useEffect(() => {
+    (async () => {
+      await fetchStudentList();
+      const unsubscribe = navigation.addListener('focus', async () => {
+        await fetchStudentList();
+      });
+
+      return unsubscribe;
+    })();
+  }, [fetchStudentList, navigation]);
   /**
    * hides the radio button for all items if no item is selected
    * @param newListItems list of items
@@ -73,7 +109,7 @@ const StudentListPage: React.FC<Props> = ({
         <View style={{ flexDirection: 'row' }}>
           <TouchableOpacity
             style={styles.actionIcons}
-            onPress={() => navigation.push('InviteStudent')}
+            onPress={() => navigation.push('InviteStudent', { classId })}
           >
             <MaterialIcons name="person-add" size={24} color={tintColor} />
           </TouchableOpacity>
@@ -88,7 +124,7 @@ const StudentListPage: React.FC<Props> = ({
         </View>
       ),
     });
-  }, [listItems, navigation]);
+  }, [classId, listItems, navigation]);
 
   const dismissDialog = () => {
     setShowDeleteDialog(false);
@@ -109,6 +145,8 @@ const StudentListPage: React.FC<Props> = ({
       ),
     ];
 
+    console.log(newListItems);
+
     setListItems(newListItems);
     updateHeaderActions(newListItems);
   };
@@ -116,9 +154,11 @@ const StudentListPage: React.FC<Props> = ({
   if (listItems.length === 0)
     return (
       <StudentsEmptyList
-        onInviteClick={() => navigation.push('InviteStudent')}
+        onInviteClick={() => navigation.push('InviteStudent', { classId })}
       />
     );
+
+  console.log('re render');
 
   return (
     <>

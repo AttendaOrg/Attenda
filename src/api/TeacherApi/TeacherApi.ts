@@ -65,7 +65,11 @@ interface TeacherApiInterface {
    * get all class of the teacher
    * @param page
    */
-  getAllClass(page: string): Promise<WithError<TeacherClassModel[]>>;
+  getAllClass(page?: string): Promise<WithError<TeacherClassModel[]>>;
+
+  getClassListener: (
+    onDataChange: (newData: TeacherClassModel[]) => void,
+  ) => () => void;
 
   /**
    * change the status of the invite link\
@@ -175,12 +179,12 @@ interface TeacherApiInterface {
    * gets the attendance report if a student by month
    * @param classId
    * @param studentId
-   * @param month number 0 - 11
+   * @param month
    */
   getStudentAttendanceReport(
     classId: string,
     studentId: string,
-    month: number,
+    month: Date,
   ): Promise<WithError<SessionStudentModel[]>>;
 
   /**
@@ -371,6 +375,47 @@ export default class TeacherApi extends AuthApi implements TeacherApiInterface {
     }
   };
 
+  getClassListener = (
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+    onDataChange = (_newData: TeacherClassModel[]) => {},
+  ): (() => void) => {
+    const error = () => {
+      console.error('error');
+    };
+
+    try {
+      const userId = this.getUserUid();
+
+      if (userId === null) return error;
+
+      const query = firebase
+        .firestore()
+        .collection(TeacherApi.CLASSES_COLLECTION_NAME)
+        .where('teacherId', '==', userId);
+
+      const unSubscribe = query.onSnapshot(snapshot => {
+        // TODO: find way to optimize the query to only include update or inserted or deleted data
+        const { docs } = snapshot;
+        const newClasses = docs.map(
+          classModel =>
+            new TeacherClassModel({
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              ...(classModel.data() as any),
+              classId: classModel.id,
+            }),
+        );
+
+        onDataChange(newClasses);
+      });
+
+      return unSubscribe;
+    } catch (ex) {
+      // console.log(ex);
+
+      return error;
+    }
+  };
+
   getAllClass = async (): Promise<WithError<TeacherClassModel[]>> => {
     try {
       const userId = this.getUserUid();
@@ -378,14 +423,20 @@ export default class TeacherApi extends AuthApi implements TeacherApiInterface {
       if (userId === null)
         return this.error(BasicErrors.USER_NOT_AUTHENTICATED);
 
-      const classes = await firebase
+      const query = firebase
         .firestore()
         .collection(TeacherApi.CLASSES_COLLECTION_NAME)
-        .get();
+        .where('teacherId', '==', userId);
+
+      const classes = await query.get();
 
       const allClass = classes.docs.map(
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        classModel => new TeacherClassModel(classModel.data() as any),
+        classModel =>
+          new TeacherClassModel({
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            ...(classModel.data() as any),
+            classId: classModel.id,
+          }),
       );
 
       return this.success(allClass);
@@ -608,6 +659,7 @@ export default class TeacherApi extends AuthApi implements TeacherApiInterface {
         macId: hashMac,
         teacherId: userId,
         sessionDate: date,
+        sessionId: null, // for first it should be null after creation update it
       });
 
       // path to the class
@@ -632,25 +684,36 @@ export default class TeacherApi extends AuthApi implements TeacherApiInterface {
         }),
       );
 
+      await firebase
+        .firestore()
+        .collection(TeacherApi.CLASSES_SESSIONS_COLLECTION_NAME)
+        .doc(sessionId)
+        .update(
+          SessionInfoModel.UpdateData({
+            sessionId,
+          }),
+        );
+
       const [students] = await this.getAllStudentList(classId);
 
       if (students !== null) {
         // QUESTION: do we need to pre-populate session student table ?
-        await Promise.all(
-          students.map(student => {
-            return firebase
-              .firestore()
-              .collection(TeacherApi.CLASSES_SESSIONS_STUDENT_COLLECTION_NAME)
-              .add(
-                // TODO: only add those student who has joined the class
-                new SessionStudentModel({
-                  studentId: student.studentId ?? '',
-                  classId,
-                  sessionId: sessionDoc.id,
-                }).toJson(),
-              );
-          }),
-        );
+        // apparently the answer is no
+        // await Promise.all(
+        //   students.map(student => {
+        //     return firebase
+        //       .firestore()
+        //       .collection(TeacherApi.CLASSES_SESSIONS_STUDENT_COLLECTION_NAME)
+        //       .add(
+        //         // TODO: only add those student who has joined the class
+        //         new SessionStudentModel({
+        //           studentId: student.studentId ?? '',
+        //           classId,
+        //           sessionId: sessionDoc.id,
+        //         }).toJson(),
+        //       );
+        //   }),
+        // );
       }
 
       return this.success(sessionDoc.id);
@@ -719,6 +782,25 @@ export default class TeacherApi extends AuthApi implements TeacherApiInterface {
         .doc(sessionId)
         .delete();
 
+      // delete the session students
+      const match = await firebase
+        .firestore()
+        .collection(TeacherApi.CLASSES_SESSIONS_STUDENT_COLLECTION_NAME)
+        .where('classId', '==', classId)
+        .where('sessionId', '==', sessionId)
+        .get();
+      const { docs } = match;
+
+      await Promise.all(
+        docs.map(async d => {
+          console.log(d.id);
+
+          await d.ref.delete();
+
+          return d;
+        }),
+      );
+
       return this.success(true);
     } catch (e) {
       return this.error(BasicErrors.EXCEPTION);
@@ -748,10 +830,20 @@ export default class TeacherApi extends AuthApi implements TeacherApiInterface {
         .where('sessionDate', '<', nextMonthStartDay)
         .get();
 
-      const sessionInfos: SessionInfoModel[] = result.docs.map(
-        doc =>
-          new SessionInfoModel((doc.data() as unknown) as SessionInfoInterface),
-      );
+      const sessionInfos: SessionInfoModel[] = result.docs.map(doc => {
+        const data: firebase.firestore.DocumentData = doc.data();
+        const info: SessionInfoInterface = {
+          classId: data.classId,
+          macId: data.macId,
+          teacherId: data.teacherId,
+          isLive: data.isLive,
+          lastUpdateTime: data.lastUpdateTime.toDate(),
+          sessionDate: data.sessionDate.toDate(),
+          sessionId: data.sessionId,
+        };
+
+        return new SessionInfoModel(info);
+      });
 
       return this.success(sessionInfos);
     } catch (e) {
@@ -767,10 +859,50 @@ export default class TeacherApi extends AuthApi implements TeacherApiInterface {
     throw new Error('Method not implemented.');
   };
 
+  getLiveStudentAttendance = (
+    sessionId: string,
+    cb: (sessions: SessionStudentModel[]) => void,
+  ): (() => void) => {
+    const error = () => console.log('error');
+
+    try {
+      const userId = this.getUserUid();
+
+      if (userId === null) return error;
+
+      const query = firebase
+        .firestore()
+        .collection(TeacherApi.CLASSES_SESSIONS_STUDENT_COLLECTION_NAME)
+        .where('sessionId', '==', sessionId);
+
+      // get session list
+      const unSubscribe = query.onSnapshot(snapshot => {
+        const { docs } = snapshot;
+
+        const sessions: SessionStudentModel[] = docs.map(
+          doc =>
+            new SessionStudentModel(
+              (doc.data() as unknown) as SessionStudentInterface,
+            ),
+        );
+
+        cb(sessions);
+      });
+      // const sessions: SessionStudentModel[] = currentSessionDocs.docs.map(
+      //   doc =>
+      //     new SessionStudentModel((doc as unknown) as SessionStudentInterface),
+      // );
+
+      return unSubscribe;
+    } catch (ex) {
+      return error;
+    }
+  };
+
   getStudentAttendanceReport = async (
     classId: string,
     studentId: string,
-    month: number,
+    month: Date,
   ): Promise<WithError<SessionStudentModel[]>> => {
     try {
       const userId = this.getUserUid();
@@ -784,12 +916,23 @@ export default class TeacherApi extends AuthApi implements TeacherApiInterface {
         .collection(TeacherApi.CLASSES_SESSIONS_STUDENT_COLLECTION_NAME)
         .where('classId', '==', classId)
         .where('studentId', '==', studentId)
-        .where('teacherId', '==', userId)
         .get();
 
       const sessions: SessionStudentModel[] = currentSessionDocs.docs.map(
-        doc =>
-          new SessionStudentModel((doc as unknown) as SessionStudentInterface),
+        doc => {
+          const data: firebase.firestore.DocumentData = doc.data();
+          const info: SessionStudentInterface = {
+            classId: data.classId,
+            whom: data.whom,
+            present: data.present,
+            studentId: data.studentId,
+            sessionId: data.sessionId,
+            sessionTime: data.sessionTime.toDate(),
+            lastUpdateTime: data.lastUpdateTime.toDate(),
+          };
+
+          return new SessionStudentModel(info);
+        },
       );
 
       return this.success(sessions);
@@ -822,6 +965,7 @@ export default class TeacherApi extends AuthApi implements TeacherApiInterface {
       // if the student not found in the session throw an error
       // if(result.docs.length ===0) return this.error(BasicErrors.EXCEPTION)
       // TODO: only update single entity
+      // BUG: if there is no entry add an entry
       await Promise.all(
         result.docs.map(user =>
           user.ref.update(
@@ -860,9 +1004,19 @@ export default class TeacherApi extends AuthApi implements TeacherApiInterface {
       const { docs } = session;
 
       const students = docs.map(doc => {
-        return new SessionStudentModel(
-          (doc.data() as unknown) as SessionStudentInterface,
-        );
+        const data: firebase.firestore.DocumentData = doc.data();
+
+        const info: SessionStudentInterface = {
+          classId: data.classId,
+          sessionId: data.sessionId,
+          studentId: data.studentId,
+          present: data.present,
+          lastUpdateTime: data.lastUpdateTime.toDate(),
+          sessionTime: data.sessionTime.toDate(),
+          whom: data.whom,
+        };
+
+        return new SessionStudentModel(info);
       });
 
       return this.success(students);
@@ -872,3 +1026,5 @@ export default class TeacherApi extends AuthApi implements TeacherApiInterface {
   };
   //#endregion attendance_report
 }
+
+export const teacherApi = new TeacherApi();

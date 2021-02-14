@@ -14,7 +14,7 @@ const styles = StyleSheet.create({
 
 export interface AttendanceRecordStudentListPops {
   studentList?: StudentListData[];
-  onProfileClick?: (rollNo: string) => void;
+  onProfileClick?: (studentId: string) => void;
 }
 
 const AttendanceRecordStudentList: React.FC<AttendanceRecordStudentListPops> = ({
@@ -27,7 +27,7 @@ const AttendanceRecordStudentList: React.FC<AttendanceRecordStudentListPops> = (
         data={studentList}
         renderItem={data => (
           <StudentListItem
-            onProfileClick={() => onProfileClick(data.item.rollNo)}
+            onProfileClick={() => onProfileClick(data.item.key)}
             name={data.item.name}
             rollNo={data.item.rollNo}
             checked={data.item.checked}

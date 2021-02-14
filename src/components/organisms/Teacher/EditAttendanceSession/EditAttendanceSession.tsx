@@ -11,6 +11,7 @@ const styles = StyleSheet.create({
 });
 
 export interface SessionStudentListDataProps {
+  // TODO: we really should use studentId for this kind of key
   key: string;
   name: string;
   rollNo: string;
@@ -19,7 +20,7 @@ export interface SessionStudentListDataProps {
 
 export interface EditAttendanceSessionPops {
   studentList: SessionStudentListDataProps[];
-  onPresentChange: (rollNo: string, present: boolean) => Promise<void>;
+  onPresentChange: (studentId: string, present: boolean) => Promise<void>;
 }
 
 const EditAttendanceSession: React.FC<EditAttendanceSessionPops> = ({
@@ -37,7 +38,7 @@ const EditAttendanceSession: React.FC<EditAttendanceSessionPops> = ({
               rollNo={item.rollNo}
               present={item.present}
               onPresentChange={async present => {
-                await onPresentChange(item.rollNo, present);
+                await onPresentChange(item.key, present);
               }}
             />
           );

@@ -5,6 +5,7 @@ import ClassCard from '../../../molecules/ClassCard';
 import { ClassCardPops } from '../../../molecules/ClassCard/ClassCard';
 import EmptyClass from '../../Common/EmptyClass';
 import { MenuOptionsPopoverDataProps } from '../../../molecules/MenuOptionsPopover';
+import { studentApi } from '../../../../api/StudentApi';
 
 const styles = StyleSheet.create({
   container: {
@@ -36,6 +37,7 @@ export interface StudentClassListPops {
    */
   onMoreIconClick?: () => void;
   options?: MenuOptionsPopoverDataProps[];
+  showShimmer?: boolean;
 }
 
 const StudentClassList: React.FC<StudentClassListPops> = ({
@@ -44,6 +46,7 @@ const StudentClassList: React.FC<StudentClassListPops> = ({
   onClassClick,
   onMoreIconClick = () => null,
   options = [],
+  showShimmer = false,
 }): JSX.Element => {
   if (data.length === 0) return <EmptyClass onFabClick={onFabClick} />;
 
@@ -54,11 +57,13 @@ const StudentClassList: React.FC<StudentClassListPops> = ({
         ItemSeparatorComponent={() => <View style={styles.separator} />}
         renderItem={({ item }) => (
           <ClassCard
+            showShimmer={showShimmer}
             className={item.className}
             section={item.section}
             teacherName={item.teacherName}
             attendance={item.attendance}
             isSessionLive={item.isSessionLive}
+            classId={item.key}
             onCardClick={() => onClassClick(item.key)}
             options={options}
             onMoreIconClick={onMoreIconClick}
@@ -72,3 +77,6 @@ const StudentClassList: React.FC<StudentClassListPops> = ({
 };
 
 export default StudentClassList;
+
+// FIXME: adding this for the testing purpose
+window.studentApi = studentApi;
