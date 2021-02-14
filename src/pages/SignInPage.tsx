@@ -86,16 +86,20 @@ const SignInPage: React.FC<Props> = ({ navigation }): JSX.Element => {
           case BasicErrors.AUTH_USER_NOT_FOUND:
             setShowPopup(true);
             setErrorMessage(
-              'This email address not registered with us please create an account',
+              'This email address is not registered with us. Please create an account.',
             );
             break;
           case BasicErrors.AUTH_WRONG_PASSWORD:
             setShowPopup(true);
             setErrorMessage("Email and password combination doesn't match");
             break;
+          case BasicErrors.INVALID_EMAIL:
+            setShowPopup(true);
+            setErrorMessage('The email is not valid.');
+            break;
           default:
             setShowPopup(true);
-            setErrorMessage('Some Error Occurred');
+            setErrorMessage('Something went wrong.');
             break;
         }
       }
@@ -130,7 +134,7 @@ const SignInPage: React.FC<Props> = ({ navigation }): JSX.Element => {
       />
       <SingleButtonPopup
         visible={showPopup}
-        title="Error"
+        title="Oops..."
         text={errorMessage}
         buttonText="Ok"
         onButtonClick={() => setShowPopup(false)}

@@ -32,7 +32,7 @@ const Loading = (): JSX.Element => {
 
       <View style={styles.aboveTextContainer}>
         <Text>From</Text>
-        <Text style={styles.text}>Softland</Text>
+        <Text style={styles.text}>Softlake</Text>
       </View>
     </View>
   );
