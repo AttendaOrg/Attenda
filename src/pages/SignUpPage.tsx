@@ -25,16 +25,22 @@ export const SignUpPageNavigationOptions: StackNavigationOptions = SimpleCloseNa
 
 const SignUpPagePage: React.FC<Props> = ({ navigation }): JSX.Element => {
   const [showConfirmEmailPopup, setShowConfirmEmailPopup] = useState(false);
+  const [usernameError, setUsernameError] = useState('');
   const [emailError, setEmailError] = useState('');
   const [passwordError, setPasswordError] = useState('');
   const [acceptTermsError, setAcceptTermsError] = useState('');
   const globalContext = useContext(GlobalContext);
 
   const revalidateError = (
+    username: string,
     email: string,
     password: string,
     acceptTerms: boolean,
   ) => {
+    if (username.length < 3)
+      setUsernameError('Name must contain at least 3 letters.');
+    else setUsernameError('');
+
     if (isValidEmail(email) !== true)
       setEmailError('Please enter a valid email.');
     else if (isValidEmail(email) === true) setEmailError('');
@@ -49,13 +55,19 @@ const SignUpPagePage: React.FC<Props> = ({ navigation }): JSX.Element => {
   };
 
   const handleOnSubmit = async (
+    username: string,
     email: string,
     password: string,
     acceptTerms: boolean,
   ) => {
     globalContext.changeSpinnerLoading(true);
-    revalidateError(email, password, acceptTerms);
-    if (email !== '' && password !== '' && acceptTerms === true) {
+    revalidateError(username, email, password, acceptTerms);
+    if (
+      username !== '' &&
+      email !== '' &&
+      password !== '' &&
+      acceptTerms === true
+    ) {
       // TODO: add validation for network related error and firebase error
 
       const [success, error] = await authApi.signUpWithEmailAndPassword(
@@ -75,11 +87,12 @@ const SignUpPagePage: React.FC<Props> = ({ navigation }): JSX.Element => {
   return (
     <>
       <SignUpPage
-        onSignUpClick={navigation.goBack}
+        onSignInClick={navigation.goBack}
         onSubmit={handleOnSubmit}
         onTermsClick={() => Linking.openURL(TERMS_URL)}
         onPrivacyPolicyClick={() => Linking.openURL(PRIVACY_POLICY_URL)}
         errors={{
+          username: usernameError,
           email: emailError,
           password: passwordError,
           acceptTerms: acceptTermsError,

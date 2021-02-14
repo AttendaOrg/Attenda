@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   StackNavigationOptions,
   StackScreenProps,
@@ -8,6 +8,8 @@ import EditAttendanceSession, {
   SessionStudentListDataProps,
 } from '../../components/organisms/Teacher/EditAttendanceSession';
 import { SimpleHeaderBackNavigationOptions } from '../../components/templates/SimpleHeaderNavigationOptions';
+import { teacherApi } from '../../api/TeacherApi';
+import SessionStudentModel from '../../api/TeacherApi/model/SessionStudentModel';
 
 type Props = StackScreenProps<RootStackParamList, 'EditAttendanceSession'>;
 
@@ -16,28 +18,48 @@ export const EditAttendanceSessionNavigationOptions: StackNavigationOptions = {
   title: 'Attendance record',
 };
 
-const EditAttendanceSessionPage: React.FC<Props> = (): JSX.Element => {
-  const [listItems, setListItems] = useState<SessionStudentListDataProps[]>([
-    {
-      name: 'Prasanta Barman',
-      rollNo: 'IIT2154',
-      key: 'IIT2154',
-      present: false,
-    },
-    {
-      name: 'Apurba Roy',
-      rollNo: 'IIT2441454',
-      key: 'IIT2441454',
-      present: false,
-    },
-  ]);
+const transform = (data: SessionStudentModel): SessionStudentListDataProps => ({
+  key: data.studentId,
+  name: 'name', // TODO: get the name
+  present: data.present,
+  rollNo: 'rollNo', // TODO: do we really need roll no
+});
 
-  const onPresentChange = async (rollNo: string, present: boolean) => {
-    const newList = listItems.map(item =>
-      item.rollNo === rollNo ? { ...item, present } : item,
+const EditAttendanceSessionPage: React.FC<Props> = ({ route }): JSX.Element => {
+  const [listItems, setListItems] = useState<SessionStudentListDataProps[]>([]);
+  const {
+    params: { classId, sessionId },
+  } = route;
+
+  useEffect(() => {
+    (async () => {
+      const [lists] = await teacherApi.getSessionAttendanceReport(
+        classId,
+        sessionId,
+      );
+
+      if (lists !== null) setListItems(lists.map(transform));
+
+      const unSubscribe = teacherApi.getLiveStudentAttendance(
+        sessionId,
+        sessions => {
+          const Sessions = sessions.map(transform);
+
+          setListItems(Sessions);
+        },
+      );
+
+      return unSubscribe;
+    })();
+  }, [classId, sessionId]);
+
+  const onPresentChange = async (studentId: string, present: boolean) => {
+    await teacherApi.editStudentAttendanceReport(
+      classId,
+      sessionId,
+      studentId,
+      present,
     );
-
-    setListItems(newList);
   };
 
   return (

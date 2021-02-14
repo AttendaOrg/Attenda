@@ -37,6 +37,7 @@ text('className', 'Class Name');
 export const Default = (): JSX.Element => (
   <MenuProvider>
     <ClassCard
+      classId={text('classId', 'classId')}
       className={text('ClassName', 'Class Name')}
       section={text('section', 'Section')}
       teacherName={text('teacherName', 'Teacher Name')}
@@ -45,6 +46,7 @@ export const Default = (): JSX.Element => (
       onCardClick={() => action('onCardClick')()}
       onMoreIconClick={() => action('onMoreIconClick')()}
       backgroundImage={select('image', listOfImages, listOfImages.classBack1)}
+      showShimmer={boolean('showShimmer', false)}
       options={[
         {
           title: 'Test 1',

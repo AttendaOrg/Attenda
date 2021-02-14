@@ -6,6 +6,7 @@ import {
 import { RootStackParamList } from '../../App';
 import StartAttendanceSession from '../../components/organisms/Teacher/StartAttendanceSession';
 import { SimpleHeaderBackNavigationOptions } from '../../components/templates/SimpleHeaderNavigationOptions';
+import { teacherApi } from '../../api/TeacherApi';
 
 type Props = StackScreenProps<RootStackParamList, 'StartAttendanceSession'>;
 
@@ -16,17 +17,29 @@ export const StartAttendanceSessionNavigationOptions: StackNavigationOptions = {
 
 const StartAttendanceSessionPage: React.FC<Props> = ({
   navigation,
+  route: {
+    params: { classId },
+  },
 }): JSX.Element => {
+  const onStartSession = async (date: Date) => {
+    const [sessionId] = await teacherApi.startClassSession(
+      classId,
+      'macId',
+      date,
+    );
+
+    navigation.push('CurrentAttendanceSession', {
+      classId,
+      sessionId: sessionId ?? '',
+      showStopDialog: false,
+      sessionTime: date.toISOString(),
+    });
+  };
+
   return (
     <StartAttendanceSession
       title="Computer science data structures and algorithms"
-      onStartSession={date =>
-        navigation.push('CurrentAttendanceSession', {
-          classId: '',
-          showStopDialog: false,
-          sessionTime: date.toISOString(),
-        })
-      }
+      onStartSession={onStartSession}
     />
   );
 };

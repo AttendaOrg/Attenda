@@ -19,10 +19,10 @@ export default {
 // Default For Web And android Component
 export const Default = (): JSX.Element => (
   <SignUp
-    onSubmit={(email, password, acceptTerms) =>
-      action('onSubmit')(email, password, acceptTerms)
+    onSubmit={(username, email, password, acceptTerms) =>
+      action('onSubmit')(username, email, password, acceptTerms)
     }
-    onSignUpClick={() => action('onSignUpClick')()}
+    onSignInClick={() => action('onSignInClick')()}
     onPrivacyPolicyClick={() => action('onPrivacyPolicyClick')}
     onTermsClick={() => action('onTermsClick')}
   />

@@ -70,7 +70,7 @@ const ForgotPasswordPage: React.FC<Props> = ({ navigation }): JSX.Element => {
       switch (error) {
         case BasicErrors.AUTH_USER_NOT_FOUND:
           setEmailError(
-            'This email address not registered with us. Please create an account',
+            'This email address is not registered with us. Please create an account',
           );
           break;
         case BasicErrors.INVALID_EMAIL:

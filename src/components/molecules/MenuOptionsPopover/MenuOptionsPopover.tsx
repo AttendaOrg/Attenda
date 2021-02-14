@@ -10,15 +10,17 @@ import { lightColor } from '../../../util/Colors';
 
 export interface MenuOptionsPopoverDataProps {
   title: string;
-  onPress: () => void;
+  onPress: (classId: string) => void;
 }
 
 interface MenuOptionsPopoverProps {
   options: MenuOptionsPopoverDataProps[];
+  value: string;
 }
 
 const MenuOptionsPopover: React.FC<MenuOptionsPopoverProps> = ({
   options,
+  value,
 }): JSX.Element => {
   let menuRef: Menu | null = null;
 
@@ -49,7 +51,12 @@ const MenuOptionsPopover: React.FC<MenuOptionsPopoverProps> = ({
           <MenuOption
             key={option.title}
             text={option.title}
-            onSelect={option.onPress}
+            value={value}
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
+            onSelect={(val: string): void => {
+              return option.onPress(val);
+            }}
             customStyles={{
               optionText: {
                 fontSize: 15,

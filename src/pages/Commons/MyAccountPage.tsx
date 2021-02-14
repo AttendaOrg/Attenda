@@ -60,7 +60,7 @@ const MyAccountPage: React.FC<Props> = ({ navigation }): JSX.Element => {
 
   const revalidateError = (_name: string): boolean => {
     if (_name.length < 3) {
-      setNameError('Name must be getter than 3 character long');
+      setNameError('Name must contain at least 3 letters.');
 
       return false;
     }

@@ -120,7 +120,9 @@ export type RootStackParamList = {
     classId: string;
     studentId: string;
   };
-  InviteStudent: undefined;
+  InviteStudent: {
+    classId: string;
+  };
   StudentList: {
     classId: string;
   };
@@ -131,6 +133,7 @@ export type RootStackParamList = {
   EditAttendanceSession: {
     sessionId: string;
     date: string;
+    classId: string;
   };
   ClassSettings: {
     classId: string;
@@ -140,6 +143,7 @@ export type RootStackParamList = {
   };
   CurrentAttendanceSession: {
     classId: string;
+    sessionId: string;
     showStopDialog: boolean;
     sessionTime: string;
   };

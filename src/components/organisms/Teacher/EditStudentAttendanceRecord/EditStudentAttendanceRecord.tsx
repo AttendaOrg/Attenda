@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { Calendar, DateObject } from 'react-native-calendars';
 import { Dialog } from 'react-native-paper';
+import { convertDateFormat } from '../../../../util';
 import UserInfo, { UserInfoPops } from '../../../molecules/UserInfo';
 import UserPresentEditPopup from '../../../molecules/UserPresentEditPopup';
 import {
@@ -52,11 +53,6 @@ export const convertData = (
 
   return newDates;
 };
-
-export const convertDateFormat = (date: Date): string =>
-  `${date.getFullYear()}-${date.getMonth() + 1}-${
-    date.getDate() < 10 ? `0${date.getDate()}` : date.getDate()
-  }`;
 
 export interface EditStudentAttendanceRecordPops {
   markedDates: MarkedDates;

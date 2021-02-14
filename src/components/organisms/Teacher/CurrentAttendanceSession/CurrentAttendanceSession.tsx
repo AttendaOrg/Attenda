@@ -58,7 +58,7 @@ const CurrentAttendanceSession: React.FC<CurrentAttendanceSessionPops> = ({
             rollNo={item.rollNo}
             present={item.present}
             onPresentChange={async _present => {
-              await onPresentChange(item.rollNo, _present);
+              await onPresentChange(item.key, _present);
             }}
           />
         )}
