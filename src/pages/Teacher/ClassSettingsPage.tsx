@@ -282,6 +282,8 @@ class ClassSettingsPage extends React.PureComponent<Props, State> {
           title,
           description = '',
           isActiveInvite = false,
+          classCode = '',
+          inviteLink = '',
         },
         showDiscardPopupError,
         error: { title: titleErrorMsg, section: sectionErrorMsg },
@@ -306,8 +308,8 @@ class ClassSettingsPage extends React.PureComponent<Props, State> {
           titleErrorMsg={titleErrorMsg}
           sectionErrorMsg={sectionErrorMsg}
           isShareOptionEnabled={isActiveInvite}
-          code="A454SDS"
-          link="https://attenda.app.to/A454SDS"
+          code={classCode}
+          link={inviteLink}
           onTitleChange={onTitleChange}
           onSectionChange={onSectionChange}
           onDescriptionChange={onDescriptionChange}

@@ -142,6 +142,7 @@ export type RootStackParamList = {
   };
   CurrentAttendanceSession: {
     classId: string;
+    sessionId: string;
     showStopDialog: boolean;
     sessionTime: string;
   };

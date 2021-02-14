@@ -58,6 +58,17 @@ class TeacherClassListPage extends React.PureComponent<Props, State> {
     this.unSub = teacherApi.getClassListener(newData => {
       this.setState({ data: newData, loading: false });
     });
+    // setTimeout(() => {
+    //   // FIXME: delete it
+    //   const { navigation } = this.props;
+
+    //   navigation.push('CurrentAttendanceSession', {
+    //     classId: '63FrBTL7X0L9Xs2R6wJ3',
+    //     sessionId: 'EEvk7wR3bYyOOZBNkYVo',
+    //     showStopDialog: false,
+    //     sessionTime: new Date().toISOString(),
+    //   });
+    // }, 1500);
   }
 
   componentWillUnmount(): void {

@@ -770,6 +770,25 @@ export default class TeacherApi extends AuthApi implements TeacherApiInterface {
         .doc(sessionId)
         .delete();
 
+      // delete the session students
+      const match = await firebase
+        .firestore()
+        .collection(TeacherApi.CLASSES_SESSIONS_STUDENT_COLLECTION_NAME)
+        .where('classId', '==', classId)
+        .where('sessionId', '==', sessionId)
+        .get();
+      const { docs } = match;
+
+      await Promise.all(
+        docs.map(async d => {
+          console.log(d.id);
+
+          await d.ref.delete();
+
+          return d;
+        }),
+      );
+
       return this.success(true);
     } catch (e) {
       return this.error(BasicErrors.EXCEPTION);
@@ -816,6 +835,46 @@ export default class TeacherApi extends AuthApi implements TeacherApiInterface {
     // TODO: implement this method
     // this could be a helper method to return only necessary data?
     throw new Error('Method not implemented.');
+  };
+
+  getLiveStudentAttendance = (
+    sessionId: string,
+    cb: (sessions: SessionStudentModel[]) => void,
+  ): (() => void) => {
+    const error = () => console.log('error');
+
+    try {
+      const userId = this.getUserUid();
+
+      if (userId === null) return error;
+
+      const query = firebase
+        .firestore()
+        .collection(TeacherApi.CLASSES_SESSIONS_STUDENT_COLLECTION_NAME)
+        .where('sessionId', '==', sessionId);
+
+      // get session list
+      const unSubscribe = query.onSnapshot(snapshot => {
+        const { docs } = snapshot;
+
+        const sessions: SessionStudentModel[] = docs.map(
+          doc =>
+            new SessionStudentModel(
+              (doc.data() as unknown) as SessionStudentInterface,
+            ),
+        );
+
+        cb(sessions);
+      });
+      // const sessions: SessionStudentModel[] = currentSessionDocs.docs.map(
+      //   doc =>
+      //     new SessionStudentModel((doc as unknown) as SessionStudentInterface),
+      // );
+
+      return unSubscribe;
+    } catch (ex) {
+      return error;
+    }
   };
 
   getStudentAttendanceReport = async (

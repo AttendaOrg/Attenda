@@ -1,5 +1,5 @@
 import React from 'react';
-import { FlatList, Platform, StyleSheet, View } from 'react-native';
+import { FlatList, StyleSheet, View } from 'react-native';
 import { FAB } from 'react-native-paper';
 import ClassCard from '../../../molecules/ClassCard';
 import { ClassCardPops } from '../../../molecules/ClassCard/ClassCard';

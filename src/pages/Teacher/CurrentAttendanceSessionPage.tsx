@@ -14,6 +14,9 @@ import { SimpleHeaderBackNavigationOptions } from '../../components/templates/Si
 import { lightColor } from '../../util/Colors';
 import { convertDateTime } from '../../util';
 import { NavigationEventListenerCallback } from '../../util/hooks/useConfirmBack';
+import { teacherApi } from '../../api/TeacherApi';
+import ClassStudentModel from '../../api/TeacherApi/model/ClassStudentModel';
+import SessionStudentModel from '../../api/TeacherApi/model/SessionStudentModel';
 
 type Props = StackScreenProps<RootStackParamList, 'CurrentAttendanceSession'>;
 type OptionsProps = (props: Props) => StackNavigationOptions;
@@ -60,37 +63,77 @@ export const CurrentAttendanceSessionNavigationOptions: OptionsProps = ({
   ),
 });
 
+const transformToDataProps = (
+  studentModel: ClassStudentModel,
+  present = false,
+): CurrentAttendanceSessionDataProps => {
+  const { rollNo, studentId } = studentModel;
+
+  return {
+    key: studentId ?? '',
+    // TODO: get name from student model
+    name: 'name',
+    present,
+    rollNo,
+  };
+};
+
+const findSessionByStudentId = (
+  sessions: SessionStudentModel[],
+  studentId: string,
+): SessionStudentModel | null => {
+  const found = sessions.filter(session => session.studentId === studentId);
+
+  if (found.length === 0) return null;
+
+  return found[0];
+};
+
+const mergeStudentListWithAttendanceInfo = (
+  students: ClassStudentModel[],
+  sessions: SessionStudentModel[] = [],
+): CurrentAttendanceSessionDataProps[] => {
+  // loop through all student registered in a class
+
+  return students.map<CurrentAttendanceSessionDataProps>(student => {
+    const found: SessionStudentModel | null = findSessionByStudentId(
+      sessions,
+      student.studentId ?? '',
+    );
+
+    if (found === null) return transformToDataProps(student);
+
+    return transformToDataProps(student, found.present);
+  });
+};
+
 const CurrentAttendanceSessionPage: React.FC<Props> = ({
   navigation,
   route,
 }): JSX.Element => {
   const [listItems, setListItems] = useState<
     CurrentAttendanceSessionDataProps[]
-  >([
-    {
-      name: 'Prasanta Barman',
-      rollNo: 'IIT2154',
-      key: 'IIT2154',
-      present: false,
-    },
-    {
-      name: 'Apurba Roy',
-      rollNo: 'IIT2441454',
-      key: 'IIT2441454',
-      present: true,
-    },
-  ]);
+  >([]);
 
   const onPresentChange = async (rollNo: string, present: boolean) => {
-    const newList = listItems.map(item =>
-      item.rollNo === rollNo ? { ...item, present } : item,
-    );
+    const {
+      params: { classId, sessionId },
+    } = route;
 
-    setListItems(newList);
+    // TODO: handle error
+    await teacherApi.editStudentAttendanceReport(
+      classId,
+      sessionId,
+      rollNo,
+      present,
+    );
   };
 
   useEffect(() => {
-    const callback = (e: NavigationEventListenerCallback) => {
+    const {
+      params: { classId, sessionId },
+    } = route;
+    const callback = async (e: NavigationEventListenerCallback) => {
       e.preventDefault();
       const {
         data: { action },
@@ -105,6 +148,7 @@ const CurrentAttendanceSessionPage: React.FC<Props> = ({
         })?.params?.withDismiss ??
         false
       ) {
+        await teacherApi.discardClassSession(classId, sessionId);
         navigation.dispatch(action);
       } else {
         navigation.setParams({ showStopDialog: true });
@@ -119,7 +163,34 @@ const CurrentAttendanceSessionPage: React.FC<Props> = ({
     // it is necessary to remove the event free up the listener
     // or every data change useEffect will reattach the event listener with the old event
     return () => navigation.removeListener('beforeRemove', callback);
-  }, [navigation]);
+  }, [navigation, route]);
+
+  useEffect(() => {
+    (async () => {
+      const {
+        params: { sessionId, classId },
+      } = route;
+      const [students] = await teacherApi.getAllStudentList(classId);
+      const newStudents = mergeStudentListWithAttendanceInfo(students ?? []);
+
+      setListItems(newStudents);
+
+      const unSubscribe = teacherApi.getLiveStudentAttendance(
+        sessionId,
+        sessions => {
+          const Students = mergeStudentListWithAttendanceInfo(
+            students ?? [],
+            sessions,
+          );
+
+          setListItems(Students);
+        },
+      );
+
+      return unSubscribe;
+    })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <CurrentAttendanceSession
