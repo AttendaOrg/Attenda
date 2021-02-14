@@ -15,7 +15,7 @@ const styles = StyleSheet.create({
   signUpContainer: {
     marginVertical: 6,
   },
-  signUnText: {
+  signUpText: {
     fontWeight: 'bold',
     fontSize: 24,
   },
@@ -140,7 +140,7 @@ const SignUp: React.FC<SignUpPops> = ({
       {/* </View> */}
 
       <View style={styles.signUpContainer}>
-        <Text style={styles.signUnText}>Sign Up</Text>
+        <Text style={styles.signUpText}>Sign Up</Text>
       </View>
 
       <View>
