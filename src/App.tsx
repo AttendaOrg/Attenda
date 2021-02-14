@@ -133,6 +133,7 @@ export type RootStackParamList = {
   EditAttendanceSession: {
     sessionId: string;
     date: string;
+    classId: string;
   };
   ClassSettings: {
     classId: string;

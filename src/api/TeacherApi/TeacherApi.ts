@@ -993,9 +993,19 @@ export default class TeacherApi extends AuthApi implements TeacherApiInterface {
       const { docs } = session;
 
       const students = docs.map(doc => {
-        return new SessionStudentModel(
-          (doc.data() as unknown) as SessionStudentInterface,
-        );
+        const data: firebase.firestore.DocumentData = doc.data();
+
+        const info: SessionStudentInterface = {
+          classId: data.classId,
+          sessionId: data.sessionId,
+          studentId: data.studentId,
+          present: data.present,
+          lastUpdateTime: data.lastUpdateTime.toDate(),
+          sessionTime: data.sessionTime.toDate(),
+          whom: data.whom,
+        };
+
+        return new SessionStudentModel(info);
       });
 
       return this.success(students);

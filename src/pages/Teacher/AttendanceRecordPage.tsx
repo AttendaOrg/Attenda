@@ -77,13 +77,12 @@ const convert = (sessionInfo: SessionInfoModel[]): MarkedDates => {
 const AttendanceSessionRecordTab: React.FC<Props> = ({ navigation, route }) => {
   const [reports, setReports] = useState<SessionInfoModel[]>([]);
   const [month, setMonth] = useState(new Date());
+  const {
+    params: { classId },
+  } = route;
 
   useEffect(() => {
-    const d = async () => {
-      const {
-        params: { classId },
-      } = route;
-
+    (async () => {
       const [mReports] = await teacherApi.getClassAttendanceReport(
         classId,
         month,
@@ -92,10 +91,8 @@ const AttendanceSessionRecordTab: React.FC<Props> = ({ navigation, route }) => {
       if (mReports !== null) {
         setReports(mReports);
       }
-    };
-
-    d();
-  }, [month, route]);
+    })();
+  }, [classId, month]);
 
   const markedDate: MarkedDates = convert(reports);
   const onTimeSelect = (date: string, time: string): void => {
@@ -111,6 +108,7 @@ const AttendanceSessionRecordTab: React.FC<Props> = ({ navigation, route }) => {
       navigation.push('EditAttendanceSession', {
         sessionId: match.sessionId ?? '',
         date: new Date(date).toString(),
+        classId,
       });
     }
   };
