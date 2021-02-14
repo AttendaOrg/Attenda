@@ -659,6 +659,7 @@ export default class TeacherApi extends AuthApi implements TeacherApiInterface {
         macId: hashMac,
         teacherId: userId,
         sessionDate: date,
+        sessionId: null, // for first it should be null after creation update it
       });
 
       // path to the class
@@ -682,6 +683,16 @@ export default class TeacherApi extends AuthApi implements TeacherApiInterface {
           currentSessionId: sessionId,
         }),
       );
+
+      await firebase
+        .firestore()
+        .collection(TeacherApi.CLASSES_SESSIONS_COLLECTION_NAME)
+        .doc(sessionId)
+        .update(
+          SessionInfoModel.UpdateData({
+            sessionId,
+          }),
+        );
 
       const [students] = await this.getAllStudentList(classId);
 
@@ -819,10 +830,20 @@ export default class TeacherApi extends AuthApi implements TeacherApiInterface {
         .where('sessionDate', '<', nextMonthStartDay)
         .get();
 
-      const sessionInfos: SessionInfoModel[] = result.docs.map(
-        doc =>
-          new SessionInfoModel((doc.data() as unknown) as SessionInfoInterface),
-      );
+      const sessionInfos: SessionInfoModel[] = result.docs.map(doc => {
+        const data: firebase.firestore.DocumentData = doc.data();
+        const info: SessionInfoInterface = {
+          classId: data.classId,
+          macId: data.macId,
+          teacherId: data.teacherId,
+          isLive: data.isLive,
+          lastUpdateTime: data.lastUpdateTime.toDate(),
+          sessionDate: data.sessionDate.toDate(),
+          sessionId: data.sessionId,
+        };
+
+        return new SessionInfoModel(info);
+      });
 
       return this.success(sessionInfos);
     } catch (e) {

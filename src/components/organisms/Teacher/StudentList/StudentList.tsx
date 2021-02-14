@@ -16,6 +16,7 @@ export interface StudentListData {
   rollNo: string;
   checked: boolean;
   percentage?: string;
+  // TODO: make it studentId fot good reference
   key: string;
 }
 

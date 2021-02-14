@@ -5,6 +5,7 @@ export interface SessionInfoInterface {
   lastUpdateTime?: Date;
   isLive?: boolean;
   macId: string;
+  sessionId: string | null;
 }
 
 export default class SessionInfoModel implements SessionInfoInterface {
@@ -20,6 +21,8 @@ export default class SessionInfoModel implements SessionInfoInterface {
 
   macId: string;
 
+  sessionId: string | null = null;
+
   constructor(data: SessionInfoInterface) {
     const {
       isLive,
@@ -28,6 +31,7 @@ export default class SessionInfoModel implements SessionInfoInterface {
       teacherId,
       classId,
       macId,
+      sessionId,
     } = data;
 
     this.classId = classId;
@@ -36,6 +40,11 @@ export default class SessionInfoModel implements SessionInfoInterface {
     if (sessionDate !== undefined) this.sessionDate = sessionDate;
     if (lastUpdateTime !== undefined) this.lastUpdateTime = lastUpdateTime;
     if (isLive !== undefined) this.isLive = isLive;
+    if (sessionId !== undefined) this.sessionId = sessionId;
+  }
+
+  setSessionId(sessionId: string): void {
+    this.sessionId = sessionId;
   }
 
   // noinspection DuplicatedCode
@@ -49,6 +58,7 @@ export default class SessionInfoModel implements SessionInfoInterface {
       teacherId,
       classId,
       macId,
+      sessionId,
     } = data;
     const obj: Partial<SessionInfoInterface> = {};
 
@@ -58,6 +68,7 @@ export default class SessionInfoModel implements SessionInfoInterface {
     if (teacherId !== undefined) obj.teacherId = teacherId;
     if (classId !== undefined) obj.classId = classId;
     if (macId !== undefined) obj.macId = macId;
+    if (sessionId !== undefined) obj.sessionId = sessionId;
 
     return obj;
   }
@@ -70,6 +81,7 @@ export default class SessionInfoModel implements SessionInfoInterface {
       teacherId,
       classId,
       macId,
+      sessionId,
     } = this;
 
     return {
@@ -79,6 +91,7 @@ export default class SessionInfoModel implements SessionInfoInterface {
       teacherId,
       classId,
       macId,
+      sessionId,
     };
   }
 }
