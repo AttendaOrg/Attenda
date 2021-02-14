@@ -179,12 +179,12 @@ interface TeacherApiInterface {
    * gets the attendance report if a student by month
    * @param classId
    * @param studentId
-   * @param month number 0 - 11
+   * @param month
    */
   getStudentAttendanceReport(
     classId: string,
     studentId: string,
-    month: number,
+    month: Date,
   ): Promise<WithError<SessionStudentModel[]>>;
 
   /**
@@ -902,7 +902,7 @@ export default class TeacherApi extends AuthApi implements TeacherApiInterface {
   getStudentAttendanceReport = async (
     classId: string,
     studentId: string,
-    month: number,
+    month: Date,
   ): Promise<WithError<SessionStudentModel[]>> => {
     try {
       const userId = this.getUserUid();
@@ -916,12 +916,23 @@ export default class TeacherApi extends AuthApi implements TeacherApiInterface {
         .collection(TeacherApi.CLASSES_SESSIONS_STUDENT_COLLECTION_NAME)
         .where('classId', '==', classId)
         .where('studentId', '==', studentId)
-        .where('teacherId', '==', userId)
         .get();
 
       const sessions: SessionStudentModel[] = currentSessionDocs.docs.map(
-        doc =>
-          new SessionStudentModel((doc as unknown) as SessionStudentInterface),
+        doc => {
+          const data: firebase.firestore.DocumentData = doc.data();
+          const info: SessionStudentInterface = {
+            classId: data.classId,
+            whom: data.whom,
+            present: data.present,
+            studentId: data.studentId,
+            sessionId: data.sessionId,
+            sessionTime: data.sessionTime.toDate(),
+            lastUpdateTime: data.lastUpdateTime.toDate(),
+          };
+
+          return new SessionStudentModel(info);
+        },
       );
 
       return this.success(sessions);

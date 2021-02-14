@@ -2,11 +2,12 @@ import React, { useState } from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
 import { Calendar, DateObject } from 'react-native-calendars';
 import { Dialog } from 'react-native-paper';
+import { convertDateFormat } from '../../../../util';
 import { lightColor } from '../../../../util/Colors';
 import ClassDetails from '../../../molecules/ClassDetails';
 import SelectTimeEditPopup from '../../../molecules/SelectTimeEditPopup';
 import { MarkedDates } from '../../Student/AttendanceRecord';
-import { convertData, convertDateFormat } from '../EditStudentAttendanceRecord';
+import { convertData } from '../EditStudentAttendanceRecord';
 
 const styles = StyleSheet.create({
   container: {

@@ -61,6 +61,11 @@ export const wait = (time: number, resolves = true): Promise<void> =>
     }, time),
   );
 
+export const convertDateFormat = (date: Date): string =>
+  `${date.getFullYear()}-${padNumber(date.getMonth() + 1)}-${padNumber(
+    date.getDate(),
+  )}`;
+
 export const matchDate = (date1: Date, date2: Date): boolean =>
   date1.getFullYear() === date2.getFullYear() &&
   date1.getMonth() === date2.getMonth() &&

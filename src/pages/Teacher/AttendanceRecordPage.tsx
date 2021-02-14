@@ -11,9 +11,8 @@ import AttendanceRecordStudentList from '../../components/organisms/Teacher/Atte
 import { StudentListData } from '../../components/organisms/Teacher/StudentList';
 import { MarkedDates } from '../../components/organisms/Student/AttendanceRecord';
 import SessionInfoModel from '../../api/TeacherApi/model/SessionInfoModel';
-import { convertTime, matchDate } from '../../util';
+import { convertDateFormat, convertTime, matchDate } from '../../util';
 import { teacherApi } from '../../api/TeacherApi';
-import { convertDateFormat } from '../../components/organisms/Teacher/EditStudentAttendanceRecord';
 import ClassStudentModel from '../../api/TeacherApi/model/ClassStudentModel';
 
 // const dummyListItems: StudentListData[] = [
@@ -64,6 +63,8 @@ const convert = (sessionInfo: SessionInfoModel[]): MarkedDates => {
     const time = convertTime(sessionDate);
 
     if (Object.keys(markedData).includes(date)) {
+      // NOTE: i am explicitly not setting it to a dynamic value because if the value is false
+      // the indicator will turn into red which is not the behavior we want.
       markedData[date] = { ...markedData[date], [time]: true };
     } else markedData[date] = { [time]: true };
   });
@@ -102,7 +103,7 @@ const AttendanceSessionRecordTab: React.FC<Props> = ({ navigation, route }) => {
       matchDate(sessionDate, d),
     );
 
-    if (reports.length === 1) {
+    if (report.length === 1) {
       const [match] = report;
 
       navigation.push('EditAttendanceSession', {
