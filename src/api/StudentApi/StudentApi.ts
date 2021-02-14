@@ -224,7 +224,7 @@ export default class StudentApi extends AuthApi implements StudentApiInterface {
 
     if (sessionInfo.macId !== hashMac)
       return this.error(BasicErrors.MAC_ID_DOES_NOT_MATCH);
-
+    // TODO: check if the student already give response the update it or else insert new.
     // give present
     await firebase
       .firestore()

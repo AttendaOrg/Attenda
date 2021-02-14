@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useState } from 'react';
 import {
   HeaderTitle,
   StackNavigationOptions,
@@ -17,50 +17,14 @@ import { NavigationEventListenerCallback } from '../../util/hooks/useConfirmBack
 import { teacherApi } from '../../api/TeacherApi';
 import ClassStudentModel from '../../api/TeacherApi/model/ClassStudentModel';
 import SessionStudentModel from '../../api/TeacherApi/model/SessionStudentModel';
+import DoubleButtonPopup from '../../components/molecules/DoubleButtonPopup';
 
 type Props = StackScreenProps<RootStackParamList, 'CurrentAttendanceSession'>;
 type OptionsProps = (props: Props) => StackNavigationOptions;
 
-export const CurrentAttendanceSessionNavigationOptions: OptionsProps = ({
-  navigation,
-  route,
-}) => ({
+export const CurrentAttendanceSessionNavigationOptions: OptionsProps = () => ({
   ...SimpleHeaderBackNavigationOptions,
   title: 'Current Session',
-  headerStyle: {
-    backgroundColor: lightColor,
-    // borderBottomColor: '#ddd',
-    // borderBottomWidth: 1,
-  },
-  headerTitleStyle: { color: '#000' },
-  headerLeft: () => (
-    <IconButton
-      icon="close"
-      onPress={() => navigation.canGoBack() && navigation.goBack()}
-      color="#000"
-    />
-  ),
-  headerTitle: ({ children, style }) => (
-    <>
-      <HeaderTitle style={style}>{children}</HeaderTitle>
-      <Text>{convertDateTime(new Date(route.params.sessionTime))}</Text>
-    </>
-  ),
-  headerRight: () => (
-    <View style={{ paddingRight: 16 }}>
-      <Button
-        mode="contained"
-        color="#2196f3"
-        onPress={() =>
-          navigation.setParams({
-            showStopDialog: true,
-          })
-        }
-      >
-        STOP
-      </Button>
-    </View>
-  ),
 });
 
 const transformToDataProps = (
@@ -114,6 +78,7 @@ const CurrentAttendanceSessionPage: React.FC<Props> = ({
   const [listItems, setListItems] = useState<
     CurrentAttendanceSessionDataProps[]
   >([]);
+  const [showSaveDialog, setShowSaveDialog] = useState(false);
 
   const onPresentChange = async (rollNo: string, present: boolean) => {
     const {
@@ -129,16 +94,50 @@ const CurrentAttendanceSessionPage: React.FC<Props> = ({
     );
   };
 
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      title: 'Current Session',
+      headerStyle: {
+        backgroundColor: lightColor,
+        // borderBottomColor: '#ddd',
+        // borderBottomWidth: 1,
+      },
+      headerTitleStyle: { color: '#000' },
+      headerLeft: () => (
+        <IconButton
+          icon="close"
+          onPress={() => navigation.canGoBack() && navigation.goBack()}
+          color="#000"
+        />
+      ),
+      headerTitle: ({ children, style }) => (
+        <>
+          <HeaderTitle style={style}>{children}</HeaderTitle>
+          <Text>{convertDateTime(new Date(route.params.sessionTime))}</Text>
+        </>
+      ),
+      headerRight: () => (
+        <View style={{ paddingRight: 16 }}>
+          <Button
+            mode="contained"
+            color="#2196f3"
+            onPress={() => setShowSaveDialog(true)}
+          >
+            STOP
+          </Button>
+        </View>
+      ),
+    });
+  });
+
   useEffect(() => {
-    const {
-      params: { classId, sessionId },
-    } = route;
     const callback = async (e: NavigationEventListenerCallback) => {
       e.preventDefault();
       const {
         data: { action },
       } = e;
 
+      // TODO: stop using the navigation props for opening the popup
       // if the payload contains withDismiss === true that means
       // it was fired by popup positive btn click
       // so go back from the screen
@@ -148,7 +147,6 @@ const CurrentAttendanceSessionPage: React.FC<Props> = ({
         })?.params?.withDismiss ??
         false
       ) {
-        await teacherApi.discardClassSession(classId, sessionId);
         navigation.dispatch(action);
       } else {
         navigation.setParams({ showStopDialog: true });
@@ -192,18 +190,49 @@ const CurrentAttendanceSessionPage: React.FC<Props> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const saveDialogDismiss = () => {
+    setShowSaveDialog(false);
+  };
+
+  const onSaveSession = async () => {
+    const {
+      params: { classId, sessionId },
+    } = route;
+
+    await teacherApi.saveClassSession(classId, sessionId);
+    navigation.navigate('TeacherClassList', { withDismiss: true });
+  };
+
+  const onDismissClass = async () => {
+    const {
+      params: { classId, sessionId },
+    } = route;
+
+    await teacherApi.discardClassSession(classId, sessionId);
+
+    navigation.navigate('TeacherClassList', { withDismiss: true });
+  };
+
   return (
-    <CurrentAttendanceSession
-      studentList={listItems}
-      onPresentChange={onPresentChange}
-      showPopup={route.params.showStopDialog}
-      onDismissPopup={() => {
-        navigation.setParams({ showStopDialog: false });
-      }}
-      onPositivePopupClick={() => {
-        navigation.navigate('TeacherClassList', { withDismiss: true });
-      }}
-    />
+    <>
+      <CurrentAttendanceSession
+        studentList={listItems}
+        onPresentChange={onPresentChange}
+        showPopup={route.params.showStopDialog}
+        onDismissPopup={() => navigation.setParams({ showStopDialog: false })}
+        onPositivePopupClick={onDismissClass}
+      />
+      <DoubleButtonPopup
+        negativeButtonText="Cancel"
+        onNegativeButtonClick={saveDialogDismiss}
+        positiveButtonText="Save"
+        onPositiveButtonClick={onSaveSession}
+        onDismiss={saveDialogDismiss}
+        text="Save the Session ?"
+        title="Save"
+        visible={showSaveDialog}
+      />
+    </>
   );
 };
 

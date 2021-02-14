@@ -687,21 +687,22 @@ export default class TeacherApi extends AuthApi implements TeacherApiInterface {
 
       if (students !== null) {
         // QUESTION: do we need to pre-populate session student table ?
-        await Promise.all(
-          students.map(student => {
-            return firebase
-              .firestore()
-              .collection(TeacherApi.CLASSES_SESSIONS_STUDENT_COLLECTION_NAME)
-              .add(
-                // TODO: only add those student who has joined the class
-                new SessionStudentModel({
-                  studentId: student.studentId ?? '',
-                  classId,
-                  sessionId: sessionDoc.id,
-                }).toJson(),
-              );
-          }),
-        );
+        // apparently the answer is no
+        // await Promise.all(
+        //   students.map(student => {
+        //     return firebase
+        //       .firestore()
+        //       .collection(TeacherApi.CLASSES_SESSIONS_STUDENT_COLLECTION_NAME)
+        //       .add(
+        //         // TODO: only add those student who has joined the class
+        //         new SessionStudentModel({
+        //           studentId: student.studentId ?? '',
+        //           classId,
+        //           sessionId: sessionDoc.id,
+        //         }).toJson(),
+        //       );
+        //   }),
+        // );
       }
 
       return this.success(sessionDoc.id);
@@ -932,6 +933,7 @@ export default class TeacherApi extends AuthApi implements TeacherApiInterface {
       // if the student not found in the session throw an error
       // if(result.docs.length ===0) return this.error(BasicErrors.EXCEPTION)
       // TODO: only update single entity
+      // BUG: if there is no entry add an entry
       await Promise.all(
         result.docs.map(user =>
           user.ref.update(
