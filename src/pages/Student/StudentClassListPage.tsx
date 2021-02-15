@@ -12,11 +12,33 @@ import StudentClassList, {
 // eslint-disable-next-line import/extensions
 import { dummyStudentClassListData } from '../../components/organisms/Student/StudentClassList/StudentClassList.stories';
 import NoAttendancePopup from '../../components/molecules/NoAttendancePopup';
+import TeacherClassModel from '../../api/TeacherApi/model/TeacherClassModel';
+import { studentApi } from '../../api/StudentApi';
 
 type Props = StackScreenProps<RootStackParamList, 'StudentClassList'>;
 type OptionsProps = (props: Props) => StackNavigationOptions;
 
+/* eslint-disable-next-line @typescript-eslint/no-var-requires */
+const classBack = require('../../../assets/images/class-back-5.jpg');
+
 export const StudentClassListNavigationOptions: OptionsProps = SimpleHeaderNavigationOptions;
+
+const transformToStudentListDataProps = (
+  cls: TeacherClassModel,
+): StudentListDataProps => {
+  const { title, section, classId, isLive, classCode } = cls;
+
+  return {
+    attendance: '70', // TODO: get attendance summery from the class info
+    section,
+    showShimmer: false,
+    backgroundImage: classBack,
+    className: title,
+    key: classId ?? '',
+    teacherName: `Class Code: ${classCode}`,
+    isSessionLive: isLive,
+  };
+};
 
 const StudentClassListPage: React.FC<Props> = ({ navigation }): JSX.Element => {
   const [data, setData] = useState<StudentListDataProps[]>([]);
@@ -25,13 +47,14 @@ const StudentClassListPage: React.FC<Props> = ({ navigation }): JSX.Element => {
   );
 
   useEffect(() => {
-    const timeId = setTimeout(() => {
-      setData(dummyStudentClassListData);
-    }, 1000);
+    (async () => {
+      const [newData] = await studentApi.getEnrolledClassList(0);
 
-    // clean up timer
-    return () => clearTimeout(timeId);
-  });
+      if (newData !== null) {
+        setData(newData.map(transformToStudentListDataProps));
+      }
+    })();
+  }, []);
 
   const dismissPopup = () => {
     setShowNoSessionStartedPopup(false);
