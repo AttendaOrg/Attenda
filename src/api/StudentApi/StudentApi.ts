@@ -168,6 +168,10 @@ export default class StudentApi extends AuthApi implements StudentApiInterface {
   ): Promise<WithError<TeacherClassModel[]>> => {
     const [ids] = await this.getAllJoinedClassId();
 
+    // it the student hasn't enrolled in any class don't execute
+    // the query because firebase in query expect a not empty array
+    if (ids !== null && ids.length === 0) return this.success([]);
+
     const docs = await firebase
       .firestore()
       .collection(TeacherApi.CLASSES_COLLECTION_NAME)
