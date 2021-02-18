@@ -9,8 +9,6 @@ import SimpleHeaderNavigationOptions from '../../components/templates/SimpleHead
 import StudentClassList, {
   StudentListDataProps,
 } from '../../components/organisms/Student/StudentClassList';
-// eslint-disable-next-line import/extensions
-import { dummyStudentClassListData } from '../../components/organisms/Student/StudentClassList/StudentClassList.stories';
 import NoAttendancePopup from '../../components/molecules/NoAttendancePopup';
 import TeacherClassModel from '../../api/TeacherApi/model/TeacherClassModel';
 import { studentApi } from '../../api/StudentApi';
@@ -48,11 +46,11 @@ const StudentClassListPage: React.FC<Props> = ({ navigation }): JSX.Element => {
 
   useEffect(() => {
     (async () => {
-      const [newData] = await studentApi.getEnrolledClassList(0);
-
-      if (newData !== null) {
-        setData(newData.map(transformToStudentListDataProps));
-      }
+      await studentApi.getEnrolledClassListListener(newList => {
+        if (newList !== null) {
+          setData(newList.map(transformToStudentListDataProps));
+        }
+      });
     })();
   }, []);
 
@@ -71,6 +69,10 @@ const StudentClassListPage: React.FC<Props> = ({ navigation }): JSX.Element => {
     else setShowNoSessionStartedPopup(true);
   };
 
+  const unEnroll = async (classId: string) => {
+    await studentApi.leaveClass(classId);
+  };
+
   return (
     <>
       <StudentClassList
@@ -86,7 +88,7 @@ const StudentClassListPage: React.FC<Props> = ({ navigation }): JSX.Element => {
               navigation.push('StudentAttendanceRecord', { classId: '' }),
             title: 'Attendance Record',
           },
-          { onPress: () => null, title: 'Un-Enroll' },
+          { onPress: unEnroll, title: 'Un-Enroll' },
         ]}
       />
       <NoAttendancePopup
