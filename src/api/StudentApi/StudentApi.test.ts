@@ -9,7 +9,9 @@ import {
   TEST_CLASS_CODE,
   TEST_PASSWORD,
   TEST_STUDENT_EMAIL,
+  TEST_STUDENT_NAME,
   TEST_TEACHER_EMAIL,
+  TEST_TEACHER_NAME,
 } from '../util/constant';
 import { UserRole } from '../index';
 import BaseApi from '../BaseApi';
@@ -48,7 +50,11 @@ afterAll(async () => {
 beforeAll(async () => {
   // before all the tests create a teacher account
   //#region create a teacher account
-  await authApi.signUpWithEmailAndPassword(TEST_TEACHER_EMAIL, TEST_PASSWORD);
+  await authApi.signUpWithEmailAndPassword(
+    TEST_TEACHER_EMAIL,
+    TEST_PASSWORD,
+    TEST_TEACHER_NAME,
+  );
   await authApi.loginWithEmailAndPassword(TEST_TEACHER_EMAIL, TEST_PASSWORD);
 
   const teacherAccountInfo = new AccountInfo({
@@ -77,7 +83,11 @@ beforeAll(async () => {
   await authApi.logOut();
   //#endregion
   //#region create a student account
-  await authApi.signUpWithEmailAndPassword(TEST_STUDENT_EMAIL, TEST_PASSWORD);
+  await authApi.signUpWithEmailAndPassword(
+    TEST_STUDENT_EMAIL,
+    TEST_PASSWORD,
+    TEST_STUDENT_NAME,
+  );
   await authApi.loginWithEmailAndPassword(TEST_STUDENT_EMAIL, TEST_PASSWORD);
   const isLoggedIn = await authApi.isLoggedIn();
 

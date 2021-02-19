@@ -109,6 +109,7 @@ export type RootStackParamList = {
   TurnOnWifi: undefined;
   GiveResponse: {
     classId: string;
+    sessionId: string;
   };
   SuccessResponse: undefined;
   UnsuccessfulResponse: undefined;

@@ -54,7 +54,9 @@ export type AttendanceRecordTabProps = 'Sessions' | 'Students';
 
 const Tab = createMaterialTopTabNavigator();
 
-const convert = (sessionInfo: SessionInfoModel[]): MarkedDates => {
+export const convertSessionInfoToMarkedDates = (
+  sessionInfo: SessionInfoModel[],
+): MarkedDates => {
   const markedData: MarkedDates = {};
 
   sessionInfo.forEach(info => {
@@ -95,7 +97,7 @@ const AttendanceSessionRecordTab: React.FC<Props> = ({ navigation, route }) => {
     })();
   }, [classId, month]);
 
-  const markedDate: MarkedDates = convert(reports);
+  const markedDate: MarkedDates = convertSessionInfoToMarkedDates(reports);
   const onTimeSelect = (date: string, time: string): void => {
     const d = new Date(`${date} ${time}`);
 

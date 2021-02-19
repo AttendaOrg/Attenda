@@ -37,6 +37,7 @@ text('className', 'Class Name');
 export const Default = (): JSX.Element => (
   <MenuProvider>
     <ClassCard
+      currentSessionId={text('currentSessionId', 'currentSessionId')}
       classId={text('classId', 'classId')}
       className={text('ClassName', 'Class Name')}
       section={text('section', 'Section')}

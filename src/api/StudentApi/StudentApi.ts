@@ -14,7 +14,9 @@ import SessionStudentModel, {
   SessionStudentInterface,
 } from '../TeacherApi/model/SessionStudentModel';
 import { UserRole } from '../index';
-import ClassStudentModel from '../TeacherApi/model/ClassStudentModel';
+import ClassStudentModel, {
+  ClassStudentModelInterface,
+} from '../TeacherApi/model/ClassStudentModel';
 import { hashMacId } from '../util/hash';
 
 interface StudentApiInterface {
@@ -34,6 +36,12 @@ interface StudentApiInterface {
    * @param rollNo
    */
   joinClass(classId: string, rollNo: string): Promise<WithError<boolean>>;
+
+  /**
+   * get joined class info
+   * @param classId
+   */
+  getJoinedClassInfo(classId: string): Promise<WithError<ClassStudentModel>>;
 
   /**
    * get the list of all enrolled class list
@@ -124,6 +132,31 @@ export default class StudentApi extends AuthApi implements StudentApiInterface {
 
       return this.success(accInfo.joinedClassId ?? []);
     } catch (e) {
+      return this.error(BasicErrors.EXCEPTION);
+    }
+  };
+
+  getJoinedClassInfo = async (
+    classId: string,
+  ): Promise<WithError<ClassStudentModel>> => {
+    try {
+      const userId = this.getUserUid();
+
+      if (userId === null)
+        return this.error(BasicErrors.USER_NOT_AUTHENTICATED);
+
+      const doc = await firebase
+        .firestore()
+        .collection(TeacherApi.CLASSES_COLLECTION_NAME)
+        .doc(classId)
+        .collection(TeacherApi.CLASSES_JOINED_STUDENT_COLLECTION_NAME)
+        .doc(userId)
+        .get();
+      const data = (doc.data() as unknown) as ClassStudentModelInterface;
+      const classStudentModel = new ClassStudentModel(data);
+
+      return this.success(classStudentModel);
+    } catch (error) {
       return this.error(BasicErrors.EXCEPTION);
     }
   };
@@ -378,10 +411,14 @@ export default class StudentApi extends AuthApi implements StudentApiInterface {
         .get();
 
       const sessions: SessionStudentModel[] = currentSessionDocs.docs.map(
-        doc =>
-          new SessionStudentModel(
-            (doc.data() as unknown) as SessionStudentInterface,
-          ),
+        doc => {
+          const data: firebase.firestore.DocumentData = doc.data();
+
+          return new SessionStudentModel({
+            ...((data as unknown) as SessionStudentInterface),
+            sessionTime: data.sessionTime.toDate(),
+          });
+        },
       );
 
       return this.success(sessions);

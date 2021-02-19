@@ -3,7 +3,8 @@ import { firebaseConfig } from '../util/configs/firebase';
 
 const DEFAULT_HOST: string =
   process.env.REACT_NATIVE_FIREBASE_EMULATOR_HOST ?? 'localhost';
-const defaultUseEmulator = process.env.NODE_ENV === 'development';
+const defaultUseEmulator =
+  process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'testing';
 
 export interface BaseApiOptions {
   /**
@@ -82,7 +83,7 @@ class BaseApi {
     persistence: false,
   };
 
-  constructor(options: Partial<BaseApiOptions> = {}) {
+  constructor(options: Partial<BaseApiOptions> = BaseApi.defaultOptions) {
     // firebase has not been initialized
 
     if (firebase.apps.length === 0) {
@@ -105,25 +106,30 @@ class BaseApi {
         // `firebase.firestore().useEmulator` works fine in node environment
         // bellow code is for web and android only
         // if the bellow code used in a node env the request doesn't complete
-        firebase.firestore().settings({
-          experimentalForceLongPolling: true,
-          merge: true,
-        });
+        // on https the error doesn't occurs
+        if (options.useEmulator === true) {
+          firebase.firestore().settings({
+            experimentalForceLongPolling: true,
+            merge: true,
+          });
+        }
       }
 
-      firebase.firestore().useEmulator(host, 8080);
-      firebase.database().useEmulator(host, 9000);
+      if (options.useEmulator === true) {
+        firebase.firestore().useEmulator(host, 8080);
+        firebase.database().useEmulator(host, 9000);
 
-      const disableWarnings = {
-        disableWarnings: true,
-      };
+        const disableWarnings = {
+          disableWarnings: true,
+        };
 
-      // this is the bug of firebase package
-      // firebase package doesn't provide the right typings
-      // @see https://github.com/firebase/firebase-js-sdk/issues/4223
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      firebase.auth().useEmulator(`http://${host}:9099`, disableWarnings);
+        // this is the bug of firebase package
+        // firebase package doesn't provide the right typings
+        // @see https://github.com/firebase/firebase-js-sdk/issues/4223
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        firebase.auth().useEmulator(`http://${host}:9099`, disableWarnings);
+      }
     }
   }
 
