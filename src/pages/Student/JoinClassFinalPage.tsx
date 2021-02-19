@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import {
   StackNavigationOptions,
   StackScreenProps,
@@ -8,6 +8,9 @@ import JoinClassFinal from '../../components/organisms/Student/JoinClassFinal';
 import SimpleCloseNavigationOptions from '../../components/templates/SimpleCloseNavigationOption';
 import { HEADER_AB_TEST_NEW } from '../../util/constant';
 import { SimpleHeaderBackNavigationOptions } from '../../components/templates/SimpleHeaderNavigationOptions';
+import { teacherApi } from '../../api/TeacherApi';
+import GlobalContext from '../../context/GlobalContext';
+import { studentApi } from '../../api/StudentApi';
 
 type Props = StackScreenProps<RootStackParamList, 'JoinClassFinal'>;
 
@@ -15,19 +18,65 @@ export const JoinClassFinalNavigationOptions: StackNavigationOptions = HEADER_AB
   ? { ...SimpleHeaderBackNavigationOptions, title: 'Join Class' }
   : SimpleCloseNavigationOptions;
 
-const defaultClassInfo = {
-  teacher: 'Aditya Bhargava',
-  section: 'CED/COE',
-  className: 'Computer science data structures and algorithms',
-};
+interface State {
+  teacher: string;
+  section: string;
+  className: string;
+  classId: string;
+}
 
-const JoinClassFinalPage: React.FC<Props> = ({ navigation }): JSX.Element => {
+const JoinClassFinalPage: React.FC<Props> = ({
+  navigation,
+  route,
+}): JSX.Element => {
+  const {
+    params: { classCode, rollNo },
+  } = route;
+  const globalContext = useContext(GlobalContext);
+  const [accInfo, setAccInfo] = useState<State>({
+    teacher: '',
+    section: '',
+    className: '',
+    classId: '',
+  });
+
+  useEffect(() => {
+    (async () => {
+      globalContext.changeSpinnerLoading(true);
+
+      const [info] = await teacherApi.getClassInfo(classCode);
+      const [success] = await studentApi.validateClassJoin(classCode, rollNo); // TODO: handle error if there validate join class is failed
+
+      if (info !== null)
+        setAccInfo({
+          className: info.title,
+          section: info.section,
+          teacher: '', // TODO: get the teacher name from the api
+          classId: info.classId ?? '',
+        });
+      globalContext.changeSpinnerLoading(false);
+    })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const joinClass = async () => {
+    const { classId } = accInfo;
+
+    if (classId !== null && classId !== '') {
+      globalContext.changeSpinnerLoading(true);
+      await studentApi.joinClass(classId, rollNo);
+      globalContext.changeSpinnerLoading(false);
+      navigation.pop(2);
+    }
+    // TODO: handle error if the classId is not found
+  };
+
   return (
     <JoinClassFinal
-      className={defaultClassInfo.className}
-      section={defaultClassInfo.section}
-      teacher={defaultClassInfo.teacher}
-      onDone={() => navigation.pop(2)}
+      className={accInfo.className}
+      section={accInfo.section}
+      teacher={accInfo.teacher}
+      onDone={joinClass}
     />
   );
 };
