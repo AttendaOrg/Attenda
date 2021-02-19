@@ -56,8 +56,8 @@ interface TeacherApiInterface {
   isClassExist(classId: string): Promise<WithError<boolean>>;
 
   /**
-   * gets class info given by class info
-   * @param classId
+   * gets class info given by class id/code
+   * @param classId can accept classId or classCode
    */
   getClassInfo(classId: string): Promise<WithError<TeacherClassModel>>;
 
@@ -281,21 +281,48 @@ export default class TeacherApi extends AuthApi implements TeacherApiInterface {
       if (userId === null)
         return this.error(BasicErrors.USER_NOT_AUTHENTICATED);
 
-      const doc = await firebase
+      // NOTE: because firebase doesn't support logical OR query
+      // we have to perform multiple query
+
+      const classIdDocs = await firebase
         .firestore()
         .collection(TeacherApi.CLASSES_COLLECTION_NAME)
         .doc(classId)
         .get();
 
-      const data = doc.data();
+      const classCodeDocs = await firebase
+        .firestore()
+        .collection(TeacherApi.CLASSES_COLLECTION_NAME)
+        .where('classCode', '==', classId)
+        .get();
 
-      if (!data) return this.error(BasicErrors.NO_CLASS_FOUND);
+      const [classIdSnapshot, classCodeSnapshot] = await Promise.all([
+        classIdDocs,
+        classCodeDocs,
+      ]);
 
-      const classModel = new TeacherClassModel(
-        (data as unknown) as TeacherClassModelProps,
-      );
+      const arr: firebase.firestore.DocumentSnapshot<firebase.firestore.DocumentData>[] = [
+        ...classCodeSnapshot.docs,
+      ];
 
-      return this.success(classModel);
+      if (classIdSnapshot !== undefined && classIdSnapshot.exists)
+        arr.push(classIdSnapshot);
+
+      const match: TeacherClassModel[] = arr
+        .map(doc => {
+          const data = doc.data();
+          const fullData: TeacherClassModelProps = {
+            ...((data as unknown) as TeacherClassModelProps),
+            classId: doc.id,
+          };
+
+          return new TeacherClassModel(fullData);
+        })
+        .filter(info => info.classId);
+
+      if (match.length === 0) return this.error(BasicErrors.NO_CLASS_FOUND);
+
+      return this.success(match[0]);
     } catch (e) {
       return this.error(BasicErrors.EXCEPTION);
     }

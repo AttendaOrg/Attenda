@@ -23,7 +23,7 @@ export const TeacherClassListNavigationOptions: OptionsProps = SimpleHeaderNavig
 const transformToStudentListDataProps = (
   cls: TeacherClassModel,
 ): StudentListDataProps => {
-  const { title, section, classId, isLive, classCode } = cls;
+  const { title, section, classId, isLive, classCode, currentSessionId } = cls;
 
   return {
     attendance: '70', // TODO: get attendance summery from the class info
@@ -34,6 +34,7 @@ const transformToStudentListDataProps = (
     key: classId ?? '',
     teacherName: `Class Code: ${classCode}`,
     isSessionLive: isLive,
+    currentSessionId,
   };
 };
 

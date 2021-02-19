@@ -14,7 +14,9 @@ import SessionStudentModel, {
   SessionStudentInterface,
 } from '../TeacherApi/model/SessionStudentModel';
 import { UserRole } from '../index';
-import ClassStudentModel from '../TeacherApi/model/ClassStudentModel';
+import ClassStudentModel, {
+  ClassStudentModelInterface,
+} from '../TeacherApi/model/ClassStudentModel';
 import { hashMacId } from '../util/hash';
 
 interface StudentApiInterface {
@@ -34,6 +36,12 @@ interface StudentApiInterface {
    * @param rollNo
    */
   joinClass(classId: string, rollNo: string): Promise<WithError<boolean>>;
+
+  /**
+   * get joined class info
+   * @param classId
+   */
+  getJoinedClassInfo(classId: string): Promise<WithError<ClassStudentModel>>;
 
   /**
    * get the list of all enrolled class list
@@ -63,6 +71,20 @@ interface StudentApiInterface {
   getAttendanceReport(
     classId: string,
   ): Promise<WithError<SessionStudentModel[]>>;
+
+  /**
+   *
+   */
+  getEnrolledClassListListener(
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+    onDataChange: (newData: TeacherClassModel[]) => void,
+  ): Promise<() => void>;
+
+  /**
+   * leave the joined class
+   * @param classId
+   */
+  leaveClass(classId: string): Promise<WithError<boolean>>;
 }
 
 // noinspection JSUnusedLocalSymbols
@@ -110,6 +132,31 @@ export default class StudentApi extends AuthApi implements StudentApiInterface {
 
       return this.success(accInfo.joinedClassId ?? []);
     } catch (e) {
+      return this.error(BasicErrors.EXCEPTION);
+    }
+  };
+
+  getJoinedClassInfo = async (
+    classId: string,
+  ): Promise<WithError<ClassStudentModel>> => {
+    try {
+      const userId = this.getUserUid();
+
+      if (userId === null)
+        return this.error(BasicErrors.USER_NOT_AUTHENTICATED);
+
+      const doc = await firebase
+        .firestore()
+        .collection(TeacherApi.CLASSES_COLLECTION_NAME)
+        .doc(classId)
+        .collection(TeacherApi.CLASSES_JOINED_STUDENT_COLLECTION_NAME)
+        .doc(userId)
+        .get();
+      const data = (doc.data() as unknown) as ClassStudentModelInterface;
+      const classStudentModel = new ClassStudentModel(data);
+
+      return this.success(classStudentModel);
+    } catch (error) {
       return this.error(BasicErrors.EXCEPTION);
     }
   };
@@ -163,10 +210,111 @@ export default class StudentApi extends AuthApi implements StudentApiInterface {
     }
   };
 
+  leaveClass = async (classId: string): Promise<WithError<boolean>> => {
+    try {
+      const userId = this.getUserUid();
+
+      if (userId === null)
+        return this.error(BasicErrors.USER_NOT_AUTHENTICATED);
+
+      // add class id to acc metadata
+      const chunkUpdate = (firebase.firestore.FieldValue.arrayRemove(
+        classId,
+      ) as unknown) as string[];
+
+      await firebase
+        .firestore()
+        .collection(AuthApi.AUTH_ROOT_COLLECTION_NAME)
+        .doc(userId)
+        .update(
+          AccountInfo.Update({
+            joinedClassId: chunkUpdate,
+          }),
+        );
+
+      // QUESTION: what more should we do if a student leaves a class ?
+      // delete there data, notify the teacher?
+
+      return this.success(true);
+    } catch (error) {
+      return this.error(BasicErrors.EXCEPTION);
+    }
+  };
+
+  getEnrolledClassListListener = async (
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+    onDataChange = (_newData: TeacherClassModel[]) => {},
+  ): Promise<() => void> => {
+    const error = () => console.error('error');
+    let unSubscribeAccInfo = () => console.info('un implemented');
+
+    try {
+      const userId = this.getUserUid();
+
+      if (userId === null) return error;
+
+      const query = await firebase
+        .firestore()
+        .collection(AuthApi.AUTH_ROOT_COLLECTION_NAME)
+        .doc(userId);
+
+      unSubscribeAccInfo = query.onSnapshot(async snapshot => {
+        // TODO: find way to optimize the query to only include update or inserted or deleted data
+        const data = snapshot.data();
+        const accInfo = new AccountInfo((data as unknown) as AccountInfoProps);
+
+        console.log(accInfo.joinedClassId);
+
+        // it the student hasn't enrolled in any class don't execute
+        // the query because firebase in query expect a not empty array
+        if (
+          accInfo.joinedClassId === null ||
+          accInfo.joinedClassId?.length === 0
+        )
+          onDataChange([]);
+        else {
+          const query2 = await firebase
+            .firestore()
+            .collection(TeacherApi.CLASSES_COLLECTION_NAME)
+            .where(
+              firebase.firestore.FieldPath.documentId(),
+              'in',
+              accInfo.joinedClassId,
+            );
+
+          // BUG: potential bug maybe clear out the listener ?
+          query2.onSnapshot(snapshot2 => {
+            const { docs } = snapshot2;
+            const newClasses = docs.map(
+              classModel =>
+                new TeacherClassModel({
+                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                  ...(classModel.data() as any),
+                  classId: classModel.id,
+                }),
+            );
+
+            onDataChange(newClasses);
+          });
+        }
+      });
+
+      return unSubscribeAccInfo;
+    } catch (ex) {
+      // console.log(ex);
+
+      return error;
+    }
+  };
+
   getEnrolledClassList = async (
     page: number,
   ): Promise<WithError<TeacherClassModel[]>> => {
     const [ids] = await this.getAllJoinedClassId();
+
+    // it the student hasn't enrolled in any class don't execute
+    // the query because firebase in query expect a not empty array
+    if (ids !== null && ids.length === 0) return this.success([]);
 
     const docs = await firebase
       .firestore()
@@ -263,10 +411,14 @@ export default class StudentApi extends AuthApi implements StudentApiInterface {
         .get();
 
       const sessions: SessionStudentModel[] = currentSessionDocs.docs.map(
-        doc =>
-          new SessionStudentModel(
-            (doc.data() as unknown) as SessionStudentInterface,
-          ),
+        doc => {
+          const data: firebase.firestore.DocumentData = doc.data();
+
+          return new SessionStudentModel({
+            ...((data as unknown) as SessionStudentInterface),
+            sessionTime: data.sessionTime.toDate(),
+          });
+        },
       );
 
       return this.success(sessions);

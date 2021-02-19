@@ -73,6 +73,7 @@ const SignUpPagePage: React.FC<Props> = ({ navigation }): JSX.Element => {
       const [success, error] = await authApi.signUpWithEmailAndPassword(
         email,
         password,
+        username,
       );
 
       // if success is true dismiss the popup

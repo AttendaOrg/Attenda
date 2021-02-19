@@ -56,6 +56,7 @@ export interface ClassCardPops {
   isSessionLive?: boolean;
   backgroundImage: ImageSourcePropType;
   showShimmer?: boolean;
+  currentSessionId: string | null;
 }
 
 interface Props extends ClassCardPops {
