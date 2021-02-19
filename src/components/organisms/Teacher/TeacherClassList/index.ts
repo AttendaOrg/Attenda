@@ -16,6 +16,7 @@ export const dummyTeacherClassListData: StudentListDataProps[] = [
     teacherName: 'Class Code: SD4584558',
     isSessionLive: true,
     key: 'key1',
+    currentSessionId: null,
   },
   {
     attendance: '99 Students',
@@ -25,6 +26,7 @@ export const dummyTeacherClassListData: StudentListDataProps[] = [
     teacherName: 'Class Code: SD4584558',
     isSessionLive: false,
     key: 'key2',
+    currentSessionId: null,
   },
   {
     attendance: '99 Students',
@@ -34,6 +36,7 @@ export const dummyTeacherClassListData: StudentListDataProps[] = [
     teacherName: 'Class Code: SD4584558',
     isSessionLive: false,
     key: 'key3',
+    currentSessionId: null,
   },
   {
     attendance: '99 Students',
@@ -43,6 +46,7 @@ export const dummyTeacherClassListData: StudentListDataProps[] = [
     teacherName: 'Class Code: SD4584558',
     isSessionLive: false,
     key: 'key4',
+    currentSessionId: null,
   },
   {
     attendance: '99 Students',
@@ -52,6 +56,7 @@ export const dummyTeacherClassListData: StudentListDataProps[] = [
     teacherName: 'Class Code: SD4584558',
     isSessionLive: false,
     key: 'key5',
+    currentSessionId: null,
   },
 ];
 

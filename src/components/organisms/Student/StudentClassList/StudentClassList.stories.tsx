@@ -33,6 +33,7 @@ export const dummyStudentClassListData: StudentListDataProps[] = [
     teacherName: 'Teacher Name',
     isSessionLive: true,
     key: 'key1',
+    currentSessionId: null,
   },
   {
     attendance: 'Your Attendance: 99%',
@@ -42,6 +43,7 @@ export const dummyStudentClassListData: StudentListDataProps[] = [
     teacherName: 'Teacher Name',
     isSessionLive: false,
     key: 'key2',
+    currentSessionId: null,
   },
   {
     attendance: 'Your Attendance: 99%',
@@ -51,6 +53,7 @@ export const dummyStudentClassListData: StudentListDataProps[] = [
     teacherName: 'Teacher Name',
     isSessionLive: false,
     key: 'key3',
+    currentSessionId: null,
   },
   {
     attendance: 'Your Attendance: 99%',
@@ -60,6 +63,7 @@ export const dummyStudentClassListData: StudentListDataProps[] = [
     teacherName: 'Teacher Name',
     isSessionLive: false,
     key: 'key4',
+    currentSessionId: null,
   },
   {
     attendance: 'Your Attendance: 99%',
@@ -69,6 +73,7 @@ export const dummyStudentClassListData: StudentListDataProps[] = [
     teacherName: 'Teacher Name',
     isSessionLive: false,
     key: 'key5',
+    currentSessionId: null,
   },
 ];
 

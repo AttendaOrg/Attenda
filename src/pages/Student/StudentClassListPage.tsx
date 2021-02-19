@@ -24,7 +24,7 @@ export const StudentClassListNavigationOptions: OptionsProps = SimpleHeaderNavig
 const transformToStudentListDataProps = (
   cls: TeacherClassModel,
 ): StudentListDataProps => {
-  const { title, section, classId, isLive, classCode } = cls;
+  const { title, section, classId, isLive, classCode, currentSessionId } = cls;
 
   return {
     attendance: '70', // TODO: get attendance summery from the class info
@@ -35,6 +35,7 @@ const transformToStudentListDataProps = (
     key: classId ?? '',
     teacherName: `Class Code: ${classCode}`,
     isSessionLive: isLive,
+    currentSessionId,
   };
 };
 
@@ -58,14 +59,15 @@ const StudentClassListPage: React.FC<Props> = ({ navigation }): JSX.Element => {
     setShowNoSessionStartedPopup(false);
   };
 
-  const onClassClick = (classId: string) => {
+  const onClassClick = (classId: string, currentSessionId: string | null) => {
     const matched = data
       // get the matching class
       .filter(e => e.key === classId)
       // checks if the session is live
       .filter(e => e.isSessionLive === true);
 
-    if (matched.length > 0) navigation.push('GiveResponse', { classId });
+    if (matched.length > 0 && currentSessionId !== null)
+      navigation.push('GiveResponse', { classId, sessionId: currentSessionId });
     else setShowNoSessionStartedPopup(true);
   };
 
