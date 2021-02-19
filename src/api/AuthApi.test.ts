@@ -10,7 +10,11 @@ import {
   deleteAllUser,
   initAdminSdkForTest,
 } from './util';
-import { TEST_TEACHER_EMAIL, TEST_PASSWORD } from './util/constant';
+import {
+  TEST_TEACHER_EMAIL,
+  TEST_PASSWORD,
+  TEST_TEACHER_NAME,
+} from './util/constant';
 
 initAdminSdkForTest();
 const authApi = new AuthApi(BaseApi.testOptions);
@@ -45,6 +49,7 @@ test('creation of an account', async () => {
     const [success, error] = await authApi.signUpWithEmailAndPassword(
       TEST_TEACHER_EMAIL,
       TEST_PASSWORD,
+      TEST_TEACHER_NAME,
     );
 
     expect(success).toBe(true);
@@ -61,6 +66,7 @@ test('creation of an account', async () => {
     const [success, error] = await authApi.signUpWithEmailAndPassword(
       TEST_TEACHER_EMAIL,
       TEST_PASSWORD,
+      TEST_TEACHER_NAME,
     );
 
     expect(success).toBe(null);

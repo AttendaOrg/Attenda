@@ -33,6 +33,7 @@ interface AuthApiInterface {
   signUpWithEmailAndPassword(
     email: string,
     password: string,
+    name: string,
   ): Promise<WithError<boolean>>;
 
   /**
@@ -148,9 +149,30 @@ class AuthApi extends BaseApi implements AuthApiInterface {
   signUpWithEmailAndPassword = async (
     email: string,
     password: string,
+    name: string,
   ): Promise<WithError<boolean>> => {
     try {
       await firebase.auth().createUserWithEmailAndPassword(email, password);
+
+      const userId = this.getUserUid();
+
+      if (userId !== null) {
+        const path = firebase
+          .firestore()
+          .collection(AuthApi.AUTH_ROOT_COLLECTION_NAME)
+          .doc(userId);
+
+        const user = await path.get();
+        const updateInfo = new AccountInfo({ name });
+
+        // checks if the path exist
+        if (user.exists) {
+          await path.update(updateInfo.toJson());
+        } else {
+          // if the path does not exist create a new path
+          await path.set(updateInfo.toJson());
+        }
+      }
 
       return this.success(true);
     } catch (e) {
