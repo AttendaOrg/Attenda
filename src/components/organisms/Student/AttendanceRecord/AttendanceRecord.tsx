@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { Calendar, DateObject, MultiDotMarking } from 'react-native-calendars';
 import { Dialog } from 'react-native-paper';
+import { convertDateFormat } from '../../../../util';
 import ClassDetails, {
   ClassDetailsPops,
 } from '../../../molecules/ClassDetails';
@@ -68,11 +69,6 @@ const convertData = (markedDates: MarkedDates = {}): markedDatesProps => {
 
   return newDates;
 };
-
-const convertDateFormat = (date: Date): string =>
-  `${date.getFullYear()}-${date.getMonth() + 1}-${
-    date.getDate() < 10 ? `0${date.getDate()}` : date.getDate()
-  }`;
 
 const AttendanceRecord: React.FC<AttendanceRecordPops> = ({
   markedDates,

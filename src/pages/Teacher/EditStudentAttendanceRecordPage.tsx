@@ -49,7 +49,9 @@ const dummyData: EditStudentAttendanceRecordPops = {
   onMonthChange: () => null,
 };
 
-const transform = (data: SessionStudentModel[]): MarkedDates => {
+export const convertSessionStudentModelToMarkedDates = (
+  data: SessionStudentModel[],
+): MarkedDates => {
   const markedData: MarkedDates = {};
 
   data.forEach(info => {
@@ -117,7 +119,7 @@ const EditStudentAttendanceRecordPage: React.FC<Props> = ({
     <EditStudentAttendanceRecord
       // eslint-disable-next-line react/jsx-props-no-spreading
       {...dummyData}
-      markedDates={transform(reports)}
+      markedDates={convertSessionStudentModelToMarkedDates(reports)}
       onMonthChange={setCurrentMonth}
       onChangeAttendance={onChangeAttendance}
     />
