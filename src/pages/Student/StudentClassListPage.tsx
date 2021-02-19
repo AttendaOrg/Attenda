@@ -79,13 +79,10 @@ const StudentClassListPage: React.FC<Props> = ({ navigation }): JSX.Element => {
         onFabClick={() => navigation.push('JoinClassForm', {})}
         data={data}
         onClassClick={onClassClick}
-        onMoreIconClick={() =>
-          navigation.push('StudentAttendanceRecord', { classId: 'undefined' })
-        }
         options={[
           {
-            onPress: () =>
-              navigation.push('StudentAttendanceRecord', { classId: '' }),
+            onPress: classId =>
+              navigation.push('StudentAttendanceRecord', { classId }),
             title: 'Attendance Record',
           },
           { onPress: unEnroll, title: 'Un-Enroll' },

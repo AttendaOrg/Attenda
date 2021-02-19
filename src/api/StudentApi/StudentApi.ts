@@ -234,7 +234,11 @@ export default class StudentApi extends AuthApi implements StudentApiInterface {
 
         // it the student hasn't enrolled in any class don't execute
         // the query because firebase in query expect a not empty array
-        if (accInfo.joinedClassId?.length === 0) onDataChange([]);
+        if (
+          accInfo.joinedClassId === null ||
+          accInfo.joinedClassId?.length === 0
+        )
+          onDataChange([]);
         else {
           const query2 = await firebase
             .firestore()
