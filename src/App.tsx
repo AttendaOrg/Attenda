@@ -427,7 +427,11 @@ const Drawer = createDrawerNavigator();
 const App = (): JSX.Element => (
   <GlobalContextProvider>
     <NavigationContainer>
-      <Drawer.Navigator drawerStyle={{}} drawerContent={DrawerContentPage}>
+      <Drawer.Navigator
+        drawerStyle={{}}
+        // eslint-disable-next-line react/jsx-props-no-spreading
+        drawerContent={props => <DrawerContentPage {...props} />}
+      >
         <Drawer.Screen name="App" component={AuthProvider} />
       </Drawer.Navigator>
     </NavigationContainer>

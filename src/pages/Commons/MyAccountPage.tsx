@@ -71,14 +71,10 @@ const MyAccountPage: React.FC<Props> = ({ navigation }): JSX.Element => {
 
   const onNameChange = async (newName: string): Promise<boolean> => {
     if (revalidateError(newName)) {
-      const accInfo = new AccountInfo({
-        name: newName,
-      });
-
       globalContext.current.changeSpinnerLoading(true);
       // TODO: Do something with the error
       // BUG: if there is no internet connection the promise doesn't resolve
-      const [success, _error] = await authApi.updateAccountInfo(accInfo);
+      const [success, _error] = await authApi.updateName(newName);
 
       globalContext.current.changeSpinnerLoading(false);
 
