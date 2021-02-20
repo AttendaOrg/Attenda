@@ -141,6 +141,7 @@ export type RootStackParamList = {
   };
   StartAttendanceSession: {
     classId: string;
+    title: string;
   };
   CurrentAttendanceSession: {
     classId: string;

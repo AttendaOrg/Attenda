@@ -18,7 +18,7 @@ export const StartAttendanceSessionNavigationOptions: StackNavigationOptions = {
 const StartAttendanceSessionPage: React.FC<Props> = ({
   navigation,
   route: {
-    params: { classId },
+    params: { classId, title },
   },
 }): JSX.Element => {
   const onStartSession = async (date: Date) => {
@@ -37,10 +37,7 @@ const StartAttendanceSessionPage: React.FC<Props> = ({
   };
 
   return (
-    <StartAttendanceSession
-      title="Computer science data structures and algorithms"
-      onStartSession={onStartSession}
-    />
+    <StartAttendanceSession title={title} onStartSession={onStartSession} />
   );
 };
 

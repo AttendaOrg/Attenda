@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import {
   StackNavigationOptions,
   StackScreenProps,
@@ -14,43 +14,15 @@ import SessionInfoModel from '../../api/TeacherApi/model/SessionInfoModel';
 import { convertDateFormat, convertTime, matchDate } from '../../util';
 import { teacherApi } from '../../api/TeacherApi';
 import ClassStudentModel from '../../api/TeacherApi/model/ClassStudentModel';
-
-// const dummyListItems: StudentListData[] = [
-//   {
-//     name: 'Prasanta Barman',
-//     rollNo: 'IIT2154',
-//     key: 'IIT2154',
-//     checked: false,
-//     percentage: '90%',
-//   },
-//   {
-//     name: 'Apurba Roy',
-//     rollNo: 'IIT2441454',
-//     key: 'IIT2441454',
-//     checked: false,
-//     percentage: '95%',
-//   },
-// ];
-
-// const dummyMarkedDates: MarkedDates = {
-//   '2020-12-12': {
-//     '03:50 AM': false,
-//     '10:50 AM': true,
-//   },
-//   '2020-12-11': {
-//     '03:50 AM': true,
-//     '10:50 AM': true,
-//   },
-// };
+import GlobalContext from '../../context/GlobalContext';
 
 type Props = StackScreenProps<RootStackParamList, 'TeacherAttendanceRecord'>;
+export type AttendanceRecordTabProps = 'Sessions' | 'Students';
 
 export const TeacherAttendanceRecordNavigationOptions: StackNavigationOptions = {
   ...SimpleHeaderBackNavigationOptions,
   title: 'Attendance Record',
 };
-
-export type AttendanceRecordTabProps = 'Sessions' | 'Students';
 
 const Tab = createMaterialTopTabNavigator();
 
@@ -79,7 +51,9 @@ export const convertSessionInfoToMarkedDates = (
 // preferably use the MaterialTopTabBarProps
 const AttendanceSessionRecordTab: React.FC<Props> = ({ navigation, route }) => {
   const [reports, setReports] = useState<SessionInfoModel[]>([]);
+  const [info, setInfo] = useState({ className: '', section: '' });
   const [month, setMonth] = useState(new Date());
+  const globalContext = useContext(GlobalContext);
   const {
     params: { classId },
   } = route;
@@ -96,6 +70,23 @@ const AttendanceSessionRecordTab: React.FC<Props> = ({ navigation, route }) => {
       }
     })();
   }, [classId, month]);
+
+  useEffect(() => {
+    (async () => {
+      globalContext.changeSpinnerLoading(true);
+      const [classInfo] = await teacherApi.getClassInfo(classId);
+
+      if (classInfo !== null) {
+        setInfo({
+          className: classInfo.title,
+          section: classInfo.section,
+        });
+      }
+      globalContext.changeSpinnerLoading(false);
+    })();
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [classId]);
 
   const markedDate: MarkedDates = convertSessionInfoToMarkedDates(reports);
   const onTimeSelect = (date: string, time: string): void => {
@@ -118,8 +109,8 @@ const AttendanceSessionRecordTab: React.FC<Props> = ({ navigation, route }) => {
 
   return (
     <AttendanceSessionRecord
-      className="Computer science data structures and algorithms"
-      section="CED/COE"
+      className={info.className}
+      section={info.section}
       markedDates={markedDate}
       onMonthChange={setMonth}
       onTimeSelect={onTimeSelect}

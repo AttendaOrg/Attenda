@@ -57,8 +57,6 @@ const DrawerContentPage: React.FC<Props> = ({ navigation }): JSX.Element => {
 
   const { name, email } = info;
 
-  console.log(firebase.auth().currentUser);
-
   // because we update the user name after creating the account
   // on first onAuthStateChanged the name update
   // so on every time the user open the drawer we check if user name has been updated if so update it to state.
