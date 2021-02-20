@@ -73,8 +73,6 @@ const DrawerContentPage: React.FC<Props> = ({ navigation }): JSX.Element => {
     setInfo({ email, name: displayName });
   }
 
-  console.log(Constants);
-
   return (
     <DrawerContent
       name={name}

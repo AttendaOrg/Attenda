@@ -1,6 +1,7 @@
 import React from 'react';
 import { FlatList, StyleSheet, View } from 'react-native';
 import { FAB } from 'react-native-paper';
+import { UserRole } from '../../../../api';
 import ClassCard from '../../../molecules/ClassCard';
 import { ClassCardPops } from '../../../molecules/ClassCard/ClassCard';
 import { MenuOptionsPopoverDataProps } from '../../../molecules/MenuOptionsPopover';
@@ -47,7 +48,8 @@ const TeacherClassList: React.FC<TeacherClassListPops> = ({
   options = [],
   showShimmer = false,
 }): JSX.Element => {
-  if (data.length === 0) return <EmptyClass onFabClick={onFabClick} />;
+  if (data.length === 0)
+    return <EmptyClass onFabClick={onFabClick} userRole={UserRole.TEACHER} />;
 
   return (
     <View style={styles.container}>

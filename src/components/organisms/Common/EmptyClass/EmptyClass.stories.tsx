@@ -1,10 +1,11 @@
 import React from 'react';
 import { Platform } from 'react-native';
-import { withKnobs } from '@storybook/addon-knobs';
+import { select, withKnobs } from '@storybook/addon-knobs';
 import { storiesOf } from '@storybook/react-native';
 import { action } from '@storybook/addon-actions';
 import CenterView from '../../../atoms/CenterView';
 import EmptyClass from './EmptyClass';
+import { UserRole } from '../../../../api';
 
 const STORY_NAME = 'Organisms/Common/EmptyClass';
 
@@ -18,7 +19,14 @@ export default {
 
 // Default For Web And android Component
 export const Default = (): JSX.Element => (
-  <EmptyClass onFabClick={() => action('onFabClick')()} />
+  <EmptyClass
+    onFabClick={() => action('onFabClick')()}
+    userRole={select(
+      'UserRole',
+      [UserRole.STUDENT, UserRole.TEACHER, UserRole.UNKNOWN],
+      UserRole.STUDENT,
+    )}
+  />
 );
 
 // if the platform is not web only then render it

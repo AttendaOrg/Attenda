@@ -5,6 +5,7 @@ import ClassCard from '../../../molecules/ClassCard';
 import { ClassCardPops } from '../../../molecules/ClassCard/ClassCard';
 import EmptyClass from '../../Common/EmptyClass';
 import { MenuOptionsPopoverDataProps } from '../../../molecules/MenuOptionsPopover';
+import { UserRole } from '../../../../api';
 
 const styles = StyleSheet.create({
   container: {
@@ -47,7 +48,8 @@ const StudentClassList: React.FC<StudentClassListPops> = ({
   options = [],
   showShimmer = false,
 }): JSX.Element => {
-  if (data.length === 0) return <EmptyClass onFabClick={onFabClick} />;
+  if (data.length === 0)
+    return <EmptyClass onFabClick={onFabClick} userRole={UserRole.STUDENT} />;
 
   return (
     <View style={styles.container}>

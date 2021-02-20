@@ -12,5 +12,6 @@
         "prestorybook",
         "rnstl",
         "signin"
-    ]
+    ],
+    "todo-tree.tree.showCountsInTree": true
 }
