@@ -626,6 +626,36 @@ export default class TeacherApi extends AuthApi implements TeacherApiInterface {
     }
   };
 
+  getStudentInfo = async (
+    classId: string,
+    studentId: string,
+  ): Promise<WithError<ClassStudentModel>> => {
+    try {
+      const userId = this.getUserUid();
+
+      if (userId === null)
+        return this.error(BasicErrors.USER_NOT_AUTHENTICATED);
+
+      const doc = await firebase
+        .firestore()
+        .collection(TeacherApi.CLASSES_COLLECTION_NAME)
+        .doc(classId)
+        .collection(TeacherApi.CLASSES_JOINED_STUDENT_COLLECTION_NAME)
+        .doc(studentId)
+        .get();
+
+      const student = new ClassStudentModel(
+        (doc.data() as unknown) as ClassStudentModelInterface,
+      );
+
+      return this.success(student);
+    } catch (error) {
+      // console.log(error);
+
+      return this.error(BasicErrors.EXCEPTION);
+    }
+  };
+
   archiveStudent = async (
     classId: string,
     studentId: string,

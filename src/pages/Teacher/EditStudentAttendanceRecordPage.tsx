@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import {
   StackNavigationOptions,
   StackScreenProps,
@@ -12,6 +12,8 @@ import { teacherApi } from '../../api/TeacherApi';
 import SessionStudentModel from '../../api/TeacherApi/model/SessionStudentModel';
 import { MarkedDates } from '../../components/organisms/Student/AttendanceRecord';
 import { convertDateFormat, convertTime, matchDate } from '../../util';
+import ClassStudentModel from '../../api/TeacherApi/model/ClassStudentModel';
+import GlobalContext from '../../context/GlobalContext';
 
 type Props = StackScreenProps<
   RootStackParamList,
@@ -33,7 +35,9 @@ const dummyData: EditStudentAttendanceRecordPops = {
     rollNo: 'IITE1557454',
     userImage: imageSrc,
   },
+  percentage: '95%',
   markedDates: {
+    //
     '2020-12-12': {
       '03:50 AM': false,
       '10:50 AM': true,
@@ -43,10 +47,9 @@ const dummyData: EditStudentAttendanceRecordPops = {
       '10:50 AM': true,
     },
   },
-  percentage: '95%',
   // eslint-disable-next-line @typescript-eslint/no-empty-function
-  onChangeAttendance: async () => {},
-  onMonthChange: () => null,
+  onChangeAttendance: async () => {}, //
+  onMonthChange: () => null, //
 };
 
 export const convertSessionStudentModelToMarkedDates = (
@@ -71,7 +74,11 @@ const EditStudentAttendanceRecordPage: React.FC<Props> = ({
   route,
 }): JSX.Element => {
   const [reports, setReports] = useState<SessionStudentModel[]>([]);
+  const [studentInfo, setStudentInfo] = useState<ClassStudentModel | null>(
+    null,
+  );
   const [currentMonth, setCurrentMonth] = useState(new Date());
+  const globalContext = useContext(GlobalContext);
   const {
     params: { classId, studentId },
   } = route;
@@ -86,10 +93,6 @@ const EditStudentAttendanceRecordPage: React.FC<Props> = ({
     // TODO: handel error ?
     if (info !== null) setReports(info);
   }, [classId, currentMonth, studentId]);
-
-  useEffect(() => {
-    fetchData();
-  }, [fetchData]);
 
   const onChangeAttendance = async (
     date: string,
@@ -115,10 +118,33 @@ const EditStudentAttendanceRecordPage: React.FC<Props> = ({
     }
   };
 
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+
+  useEffect(() => {
+    (async () => {
+      globalContext.changeSpinnerLoading(true);
+      const [student] = await teacherApi.getStudentInfo(classId, studentId);
+
+      globalContext.changeSpinnerLoading(false);
+      if (student !== null) setStudentInfo(student);
+    })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [classId, studentId]);
+
   return (
     <EditStudentAttendanceRecord
       // eslint-disable-next-line react/jsx-props-no-spreading
       {...dummyData}
+      userInfo={{
+        name: 'name', // get the name form api
+        // eslint-disable-next-line @typescript-eslint/no-empty-function
+        onRollChange: () => {}, // TODO: update roll no
+        rollNo: studentInfo?.rollNo ?? '',
+        userImage: imageSrc, // TODO: get the profile pic from api
+      }}
+      percentage={`${studentInfo?.totalAttendancePercentage ?? 0} %`}
       markedDates={convertSessionStudentModelToMarkedDates(reports)}
       onMonthChange={setCurrentMonth}
       onChangeAttendance={onChangeAttendance}

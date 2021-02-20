@@ -11,7 +11,6 @@ import {
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { Button, Dialog, Paragraph } from 'react-native-paper';
-import { useIsFocused } from '@react-navigation/native';
 import { RootStackParamList } from '../../App';
 import StudentList, {
   StudentListData,
