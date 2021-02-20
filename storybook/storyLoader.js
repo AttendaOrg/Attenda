@@ -27,6 +27,7 @@ function loadStories() {
   require('../src/components/organisms/AppIntro/SignUp/SignUp.stories');
   require('../src/components/organisms/Common/ChangePassword/ChangePassword.stories');
   require('../src/components/organisms/Common/ConnectionLost/ConnectionLost.stories');
+  require('../src/components/organisms/Common/DrawerContent/DrawerContent.stories');
   require('../src/components/organisms/Common/EmptyClass/EmptyClass.stories');
   require('../src/components/organisms/Common/MyAccount/MyAccount.stories');
   require('../src/components/organisms/Student/AttendanceRecord/AttendanceRecord.stories');
@@ -75,6 +76,7 @@ const stories = [
   '../src/components/organisms/AppIntro/SignUp/SignUp.stories',
   '../src/components/organisms/Common/ChangePassword/ChangePassword.stories',
   '../src/components/organisms/Common/ConnectionLost/ConnectionLost.stories',
+  '../src/components/organisms/Common/DrawerContent/DrawerContent.stories',
   '../src/components/organisms/Common/EmptyClass/EmptyClass.stories',
   '../src/components/organisms/Common/MyAccount/MyAccount.stories',
   '../src/components/organisms/Student/AttendanceRecord/AttendanceRecord.stories',

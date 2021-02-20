@@ -3,6 +3,7 @@ import {
   DrawerContentOptions,
 } from '@react-navigation/drawer';
 import { DrawerActions } from '@react-navigation/native';
+import Constants from 'expo-constants';
 import firebase from 'firebase';
 import React, { useEffect, useState } from 'react';
 import { Linking } from 'react-native';
@@ -72,11 +73,14 @@ const DrawerContentPage: React.FC<Props> = ({ navigation }): JSX.Element => {
     setInfo({ email, name: displayName });
   }
 
+  console.log(Constants);
+
   return (
     <DrawerContent
       name={name}
       email={email}
       onListItemCLick={onListItemCLick}
+      appVersion={Constants.manifest.version ?? ''}
     />
   );
 };
