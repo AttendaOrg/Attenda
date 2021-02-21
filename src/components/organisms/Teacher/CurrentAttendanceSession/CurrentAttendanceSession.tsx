@@ -66,8 +66,8 @@ const CurrentAttendanceSession: React.FC<CurrentAttendanceSessionPops> = ({
 
       <DoubleButtonPopup
         visible={showPopup}
-        title="Stop this session"
-        text="Are you sure to stop? "
+        title="Discard this session"
+        text="Are you sure to discard?"
         positiveButtonText="Ok"
         negativeButtonText="Cancel"
         onNegativeButtonClick={onDismissPopup}

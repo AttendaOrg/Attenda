@@ -178,8 +178,8 @@ class MyAccountPage extends React.Component<Props, State> {
 
         <DoubleButtonPopup
           visible={showUnsavedDiscardPopup}
-          title="Error"
-          text="You have unsaved change do you want it to discard ?"
+          title="Discard Changes?"
+          text="You have some unsaved changes."
           negativeButtonText="Cancel"
           positiveButtonText="Discard"
           onDismiss={() => this.setState({ showUnsavedDiscardPopup: false })}
