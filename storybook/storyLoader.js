@@ -40,6 +40,7 @@ function loadStories() {
   require('../src/components/organisms/Student/UnsuccessfulResponse/UnsuccessfulResponse.stories');
   require('../src/components/organisms/Teacher/AttendanceRecordStudentList/AttendanceRecordStudentList.stories');
   require('../src/components/organisms/Teacher/AttendanceSessionRecord/AttendanceSessionRecord.stories');
+  require('../src/components/organisms/Teacher/ChangeClassCode/ChangeClassCode.stories');
   require('../src/components/organisms/Teacher/ClassSettings/ClassSettings.stories');
   require('../src/components/organisms/Teacher/CreateClass/CreateClass.stories');
   require('../src/components/organisms/Teacher/CurrentAttendanceSession/CurrentAttendanceSession.stories');
@@ -89,6 +90,7 @@ const stories = [
   '../src/components/organisms/Student/UnsuccessfulResponse/UnsuccessfulResponse.stories',
   '../src/components/organisms/Teacher/AttendanceRecordStudentList/AttendanceRecordStudentList.stories',
   '../src/components/organisms/Teacher/AttendanceSessionRecord/AttendanceSessionRecord.stories',
+  '../src/components/organisms/Teacher/ChangeClassCode/ChangeClassCode.stories',
   '../src/components/organisms/Teacher/ClassSettings/ClassSettings.stories',
   '../src/components/organisms/Teacher/CreateClass/CreateClass.stories',
   '../src/components/organisms/Teacher/CurrentAttendanceSession/CurrentAttendanceSession.stories',

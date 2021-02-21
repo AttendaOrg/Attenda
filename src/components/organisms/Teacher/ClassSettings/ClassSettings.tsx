@@ -54,6 +54,7 @@ export interface ClassSettingsPops {
   // toggleLinkSwitch: (isLinkEnabled: boolean) => void;
   onCodeShare: () => void;
   onLinkShare: () => void;
+  onEditClassCodeClick: () => void;
 }
 
 const ClassSettings: React.FC<ClassSettingsPops> = ({
@@ -71,6 +72,7 @@ const ClassSettings: React.FC<ClassSettingsPops> = ({
   toggleShareSwitch,
   onCodeShare,
   onLinkShare,
+  onEditClassCodeClick,
 }): JSX.Element => {
   return (
     <ScrollView style={styles.container}>
@@ -145,8 +147,15 @@ const ClassSettings: React.FC<ClassSettingsPops> = ({
 
       <View style={styles.captionContainer}>
         <Text style={styles.captionText} numberOfLines={1}>
-          Class code : {code}
+          Invite code: {code}
         </Text>
+        <Icon
+          name="edit"
+          type="font-awesome"
+          color="#2196F3"
+          style={{ marginRight: 8 }}
+          onPress={onEditClassCodeClick}
+        />
         <Icon
           name="share"
           type="font-awesome"

@@ -40,6 +40,12 @@ interface TeacherApiInterface {
   ): Promise<WithError<boolean>>;
 
   /**
+   * checks if the invite code is available
+   * @param inviteCode
+   */
+  checkIsValidInviteCode(inviteCode: string): Promise<WithError<boolean>>;
+
+  /**
    * update class code by class id
    * @param classId
    * @param newClassCode
@@ -348,6 +354,26 @@ export default class TeacherApi extends AuthApi implements TeacherApiInterface {
     } catch (ex) {
       // console.log(ex);
 
+      return this.error(BasicErrors.EXCEPTION);
+    }
+  };
+
+  checkIsValidInviteCode = async (
+    inviteCode: string,
+  ): Promise<WithError<boolean>> => {
+    try {
+      const userId = this.getUserUid();
+
+      if (userId === null) return this.error(BasicErrors.EXCEPTION);
+
+      const match = await firebase
+        .firestore()
+        .collection(TeacherApi.CLASSES_COLLECTION_NAME)
+        .where('classCode', '==', inviteCode)
+        .get();
+
+      return this.success(match.docs.length === 0);
+    } catch (error) {
       return this.error(BasicErrors.EXCEPTION);
     }
   };

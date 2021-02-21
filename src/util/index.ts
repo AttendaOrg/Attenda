@@ -74,3 +74,31 @@ export const matchDate = (date1: Date, date2: Date): boolean =>
   date1.getMinutes() === date2.getMinutes();
 
 export default {};
+
+/**
+ * throttles a function calls for specific amount of time
+ * @param callback
+ * @param waitFor
+ */
+export const throttle = <T>(
+  callback: (arg: T) => void,
+  waitFor: number,
+): ((arg: T) => void) => {
+  let lastFunc: number | undefined;
+  let lastRan = 0;
+
+  return (...args) => {
+    if (!lastRan) {
+      callback.apply(this, args);
+      lastRan = Date.now();
+    } else {
+      clearTimeout(lastFunc);
+      lastFunc = (setTimeout(() => {
+        if (Date.now() - lastRan >= waitFor) {
+          callback.apply(this, args);
+          lastRan = Date.now();
+        }
+      }, waitFor - (Date.now() - lastRan)) as unknown) as number;
+    }
+  };
+};

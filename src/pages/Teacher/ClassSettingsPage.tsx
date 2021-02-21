@@ -15,6 +15,10 @@ import { teacherApi } from '../../api/TeacherApi';
 import TeacherClassModel, {
   TeacherClassModelProps,
 } from '../../api/TeacherApi/model/TeacherClassModel';
+import ChangeClassCode, {
+  InfoTextType,
+} from '../../components/organisms/Teacher/ChangeClassCode';
+import GlobalContext from '../../context/GlobalContext';
 
 type Props = StackScreenProps<RootStackParamList, 'ClassSettings'>;
 
@@ -31,13 +35,31 @@ interface State {
     title: string;
     section: string;
   };
+  currClassCode: string;
+  classCodeErrorMessage: string;
+  classCodeErrorType: InfoTextType;
+  showClassCodeEditDialog: boolean;
+  showSpinner: boolean;
 }
 
 class ClassSettingsPage extends React.PureComponent<Props, State> {
+  // validate = throttle(async (classCode: string) => {
+  //   this.setState({ showSpinner: true });
+  //   const [success, error] = await teacherApi.checkIsValidClassCode(classCode);
+
+  //   console.log(success, error, classCode);
+
+  //   this.setState({ showSpinner: false });
+  // }, 1000);
+
+  // eslint-disable-next-line react/static-property-placement
+  context!: React.ContextType<typeof GlobalContext>;
+
   constructor(props: Props) {
     super(props);
     this.state = {
       showDiscardPopupError: false,
+      error: { section: '', title: '' },
       currentInfo: {
         section: '',
         teacherId: '',
@@ -56,10 +78,15 @@ class ClassSettingsPage extends React.PureComponent<Props, State> {
         classId: '',
         currentSessionId: '',
       },
-      error: { section: '', title: '' },
+      currClassCode: '',
+      classCodeErrorMessage: '',
+      classCodeErrorType: InfoTextType.ERROR,
+      showClassCodeEditDialog: false,
+      showSpinner: false,
     };
   }
 
+  // #region lifecycle
   async componentDidMount(): Promise<void> {
     const { navigation } = this.props;
 
@@ -94,6 +121,7 @@ class ClassSettingsPage extends React.PureComponent<Props, State> {
 
     return classId;
   };
+  //#endregion lifecycle
 
   // #region network calls
   updateClassInfo = async (): Promise<void> => {
@@ -132,7 +160,53 @@ class ClassSettingsPage extends React.PureComponent<Props, State> {
       this.setState({
         currentInfo: info.toJson(),
         prevInfo: info.toJson(),
+        currClassCode: info.classCode,
       });
+  };
+
+  validateClassCode = async (classCode: string): Promise<void> => {
+    if (classCode.length < 3) {
+      this.setState({
+        classCodeErrorMessage: `Invite Code must be getter than 3 character`,
+        classCodeErrorType: InfoTextType.ERROR,
+      });
+
+      return;
+    }
+    this.setState({ showSpinner: true });
+    const [success, error] = await teacherApi.checkIsValidInviteCode(classCode); // TODO: handle error
+
+    if (success === false)
+      this.setState({
+        classCodeErrorMessage: `Invite Code '${classCode}' is not available`,
+        classCodeErrorType: InfoTextType.ERROR,
+      });
+    if (success === true)
+      this.setState({
+        classCodeErrorMessage: `Invite Code '${classCode}' is available`,
+        classCodeErrorType: InfoTextType.SUCCESS,
+      });
+
+    this.setState({ showSpinner: false });
+  };
+
+  onSaveClassCode = async (): Promise<void> => {
+    const {
+      props: {
+        route: {
+          params: { classId },
+        },
+      },
+      state: { currClassCode },
+      context,
+    } = this;
+
+    context.changeSpinnerLoading(true);
+    await teacherApi.updateClassCode(classId, currClassCode);
+    await this.updateClassInfo();
+    context.changeSpinnerLoading(false);
+
+    this.setState({ showClassCodeEditDialog: false });
   };
   //#endregion network calls
 
@@ -212,15 +286,21 @@ class ClassSettingsPage extends React.PureComponent<Props, State> {
     );
   };
 
+  onClassCodeChange = async (newCode: string): Promise<void> => {
+    this.setState({ currClassCode: newCode });
+    // await wait(500);
+    this.validateClassCode(newCode);
+  };
+
   // #endregion change handler
 
-  // #region class code
+  // #region Invite code
   onCodeShare = (): void => {
     const classId = this.getClassId();
 
     try {
       // TODO: create a message to explain the action
-      Share.share({ message: classId, title: 'Class Code' });
+      Share.share({ message: classId, title: 'Invite Code' });
     } catch (error) {
       //   console.log(error);
     }
@@ -232,25 +312,39 @@ class ClassSettingsPage extends React.PureComponent<Props, State> {
       Share.share({
         message: 'https://attenda.app.to/A454SDS',
         url: 'https://attenda.app.to/A454SDS',
-        title: 'Class Code Link',
+        title: 'Invite Code Link',
       });
     } catch (error) {
       //   console.log(error);
     }
   };
 
-  toggleShareSwitch = (): void => {
-    this.setState(
-      ({ currentInfo }) => ({
-        currentInfo: {
-          ...currentInfo,
-          isActiveInvite: !(currentInfo.isActiveInvite ?? false),
+  toggleShareSwitch = async (): Promise<void> => {
+    const {
+      state: {
+        currentInfo: { isActiveInvite = false },
+      },
+      props: {
+        route: {
+          params: { classId },
         },
-      }),
-      this.updateClassInfo,
-    );
+      },
+      context,
+    } = this;
+
+    context.changeSpinnerLoading(true);
+    // TODO: use an realtime listener for getting class info
+    this.setState(({ currentInfo }) => ({
+      currentInfo: {
+        ...currentInfo,
+        isActiveInvite: !(currentInfo.isActiveInvite ?? false),
+      },
+    }));
+    await teacherApi.changeInviteCodeEnableStatus(classId, !isActiveInvite);
+    // await this.updateClassInfo();
+    context.changeSpinnerLoading(false);
   };
-  //#endregion class code
+  //#endregion Invite code
 
   // #region dialog
   dismissSaveDialog = (): void => {
@@ -272,11 +366,17 @@ class ClassSettingsPage extends React.PureComponent<Props, State> {
       },
     );
   };
+
+  onEditClassCodeClick = (): void => {
+    this.setState({ showClassCodeEditDialog: true });
+  };
   // #endregion dialog
 
   render(): JSX.Element {
     const {
       state: {
+        showDiscardPopupError,
+        error: { title: titleErrorMsg, section: sectionErrorMsg },
         currentInfo: {
           section,
           title,
@@ -285,8 +385,11 @@ class ClassSettingsPage extends React.PureComponent<Props, State> {
           classCode = '',
           inviteLink = '',
         },
-        showDiscardPopupError,
-        error: { title: titleErrorMsg, section: sectionErrorMsg },
+        currClassCode,
+        classCodeErrorMessage,
+        classCodeErrorType,
+        showClassCodeEditDialog,
+        showSpinner,
       },
       onCodeShare,
       onDescriptionChange,
@@ -297,6 +400,9 @@ class ClassSettingsPage extends React.PureComponent<Props, State> {
       onPositiveButtonClick,
       discardChanges,
       toggleShareSwitch,
+      onEditClassCodeClick,
+      onClassCodeChange,
+      onSaveClassCode,
     } = this;
 
     return (
@@ -316,6 +422,7 @@ class ClassSettingsPage extends React.PureComponent<Props, State> {
           toggleShareSwitch={toggleShareSwitch}
           onCodeShare={onCodeShare}
           onLinkShare={onLinkShare}
+          onEditClassCodeClick={onEditClassCodeClick}
         />
         <DoubleButtonPopup
           onDismiss={dismissSaveDialog}
@@ -327,235 +434,24 @@ class ClassSettingsPage extends React.PureComponent<Props, State> {
           title="Discard Changes ?"
           text="You have some unsaved changes."
         />
+
+        <ChangeClassCode
+          infoText={classCodeErrorMessage}
+          infoType={classCodeErrorType}
+          initialClassCode={currClassCode}
+          showSpinner={showSpinner}
+          showDialog={showClassCodeEditDialog}
+          onClassCodeChange={onClassCodeChange}
+          onDismissDialog={() =>
+            this.setState({ showClassCodeEditDialog: false })
+          }
+          onSaveClassCode={onSaveClassCode}
+        />
       </>
     );
   }
 }
 
-// #region functional
-/* 
-const ClassSettingsPage: React.FC<Props> = ({
-  navigation,
-  route,
-}): JSX.Element => {
-  const [prevTitle, setPrevTitle] = useState('');
-  const [prevSection, setPrevSection] = useState('');
-  const [prevDescription, setPrevDescription] = useState('');
-  const [currentTitle, setCurrentTitle] = useState(prevTitle);
-  const [currentSection, setCurrentSection] = useState(prevSection);
-  const [currentDescription, setCurrentDescription] = useState(prevDescription);
-  const [titleErrorMsg, setTitleErrorMsg] = useState('');
-  const [sectionErrorMsg, setSectionErrorMsg] = useState('');
-  const [showSaveDialog, setShowSaveDialog] = useState(false);
-  const [isActiveInvite, setIsActiveInvite] = useState(false);
-
-  const {
-    params: { classId },
-  } = route;
-
-  const fetchUpdateClassInfo = useCallback(async () => {
-    // TODO: add a loader when loading fetching the data
-
-    const [info] = await teacherApi.getClassInfo(classId);
-
-    if (info !== null) {
-      setCurrentTitle(info.title);
-      setCurrentSection(info.section);
-      setCurrentDescription(info.description);
-      setPrevDescription(info.description);
-      setPrevSection(info.section);
-      setPrevTitle(info.title);
-      setIsActiveInvite(info.isActiveInvite);
-    }
-  }, [classId]);
-
-  useEffect(() => {
-    fetchUpdateClassInfo();
-  }, [fetchUpdateClassInfo]);
-
-  const hasUnsavedChanges = useCallback(
-    (): boolean =>
-      prevTitle !== currentTitle ||
-      prevSection !== currentSection ||
-      prevDescription !== currentDescription,
-    [
-      prevTitle,
-      prevSection,
-      prevDescription,
-      currentTitle,
-      currentSection,
-      currentDescription,
-    ],
-  );
-
-  const updateClassInfo = useCallback(async () => {
-    // TODO: add a loader when updating the class info
-    const classInfo = TeacherClassModel.Update({
-      title: currentTitle,
-      section: currentSection,
-      description: currentDescription,
-    });
-
-    // TODO: handle error case
-    await teacherApi.updateClass(classId, classInfo);
-    await fetchUpdateClassInfo();
-  }, [
-    currentTitle,
-    currentSection,
-    currentDescription,
-    classId,
-    fetchUpdateClassInfo,
-  ]);
-
-  // #region events
-  const dismissSaveDialog = () => setShowSaveDialog(false);
-
-  const discardChanges = () => {
-    setCurrentTitle(prevTitle);
-    setCurrentSection(prevSection);
-    setCurrentDescription(prevDescription);
-    setShowSaveDialog(false);
-  };
-
-  const onPositiveButtonClick = () => {
-    updateClassInfo();
-    dismissSaveDialog();
-  };
-
-  const onGoBack = useCallback(() => {
-    if (hasUnsavedChanges()) {
-      setShowSaveDialog(true);
-    } else {
-      navigation.goBack();
-    }
-  }, [hasUnsavedChanges, navigation]);
-
-  const onCodeShare = () => {
-    try {
-      // TODO: create a message to explain the action
-      Share.share({ message: classId, title: 'Class Code' });
-    } catch (error) {
-      //   console.log(error);
-    }
-  };
-
-  const onLinkShare = () => {
-    try {
-      // TODO: generate valid link
-      Share.share({
-        message: 'https://attenda.app.to/A454SDS',
-        url: 'https://attenda.app.to/A454SDS',
-        title: 'Class Code Link',
-      });
-    } catch (error) {
-      //   console.log(error);
-    }
-  };
-
-  React.useLayoutEffect(() => {
-    navigation.setOptions({
-      headerRight: ({ tintColor }) => (
-        <View style={{ display: hasUnsavedChanges() ? 'flex' : 'none' }}>
-          <IconButton
-            color={tintColor ?? lightColor}
-            icon="check"
-            onPress={updateClassInfo}
-          />
-        </View>
-      ),
-    });
-
-    const callback = (e: NavigationEventListenerCallback) => {
-      if (hasUnsavedChanges()) {
-        setShowSaveDialog(true);
-        // prevent from going back
-        e.preventDefault();
-      }
-    };
-
-    // BUG: for some reason react-navigation is not showing the correct return type
-    // expected () => removeListener(type, callback); but got () => void
-    // so we are using remove listener method to clean up the event listener
-    navigation.addListener('beforeRemove', callback);
-
-    // it is necessary to remove the event free up the listener
-    // or every data change useEffect will reattach the event listener with the old event
-    return () => navigation.removeListener('beforeRemove', callback);
-  }, [navigation, hasUnsavedChanges, updateClassInfo, onGoBack]);
-
-  // #endregion events
-
-  /**
-   * show error message if the class title/section is empty
-   * @param param \{ title = undefined, section = undefined}
-   /
-  const showErrorMsg = ({
-    title: _title = undefined,
-    section: _section = undefined,
-  }: {
-    title?: string;
-    section?: string;
-  }) => {
-    if (_title !== undefined) {
-      if (_title === '') setTitleErrorMsg("Class Title can't be empty");
-      else setTitleErrorMsg('');
-    }
-    if (_section !== undefined) {
-      if (_section === '') setSectionErrorMsg("Section can't be Empty");
-      else setSectionErrorMsg('');
-    }
-  };
-
-  const onTitleChange = (text: string) => {
-    setCurrentTitle(text);
-    showErrorMsg({
-      title: text,
-    });
-  };
-
-  const onSectionChange = (text: string) => {
-    setCurrentSection(text);
-    showErrorMsg({
-      section: text,
-    });
-  };
-
-  const onDescriptionChange = (text: string) => {
-    setCurrentDescription(text);
-  };
-
-  return (
-    <>
-      <ClassSettings
-        title={currentTitle}
-        section={currentSection}
-        description={currentDescription}
-        titleErrorMsg={titleErrorMsg}
-        sectionErrorMsg={sectionErrorMsg}
-        isShareOptionEnabled={isActiveInvite}
-        code="A454SDS"
-        link="https://attenda.app.to/A454SDS"
-        onTitleChange={onTitleChange}
-        onSectionChange={onSectionChange}
-        onDescriptionChange={onDescriptionChange}
-        toggleShareSwitch={() => null}
-        onCodeShare={onCodeShare}
-        onLinkShare={onLinkShare}
-      />
-      <DoubleButtonPopup
-        onDismiss={dismissSaveDialog}
-        visible={showSaveDialog}
-        negativeButtonText="Discard"
-        onPositiveButtonClick={onPositiveButtonClick}
-        onNegativeButtonClick={discardChanges}
-        positiveButtonText="Save"
-        title="Discard Changes ?"
-        text="You have some unsaved changes."
-      />
-    </>
-  );
-};
-*/
-// #endregion
+ClassSettingsPage.contextType = GlobalContext;
 
 export default ClassSettingsPage;
