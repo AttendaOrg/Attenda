@@ -26,7 +26,7 @@ const transformToStudentListDataProps = (
   const { title, section, classId, isLive, classCode, currentSessionId } = cls;
 
   return {
-    attendance: '70', // TODO: get attendance summery from the class info
+    attendance: '70 students', // TODO: get attendance summery from the class info
     section,
     showShimmer: false,
     backgroundImage: classBack,
