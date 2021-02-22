@@ -8,6 +8,7 @@ export interface SessionStudentInterface {
   whom?: UserRole;
   sessionTime?: Date;
   lastUpdateTime?: Date;
+  studentName: string | null;
 }
 
 export default class SessionStudentModel implements SessionStudentInterface {
@@ -25,6 +26,8 @@ export default class SessionStudentModel implements SessionStudentInterface {
 
   sessionId: string;
 
+  studentName: string | null;
+
   constructor(data: SessionStudentInterface) {
     const {
       lastUpdateTime,
@@ -34,6 +37,7 @@ export default class SessionStudentModel implements SessionStudentInterface {
       studentId,
       classId,
       sessionId,
+      studentName,
     } = data;
 
     if (lastUpdateTime !== undefined) this.lastUpdateTime = lastUpdateTime;
@@ -43,6 +47,7 @@ export default class SessionStudentModel implements SessionStudentInterface {
     this.studentId = studentId;
     this.classId = classId;
     this.sessionId = sessionId;
+    this.studentName = studentName;
   }
 
   // noinspection DuplicatedCode
@@ -57,6 +62,7 @@ export default class SessionStudentModel implements SessionStudentInterface {
       whom,
       sessionId,
       classId,
+      studentName,
     } = data;
     const obj: Partial<SessionStudentInterface> = {};
 
@@ -67,12 +73,17 @@ export default class SessionStudentModel implements SessionStudentInterface {
     if (lastUpdateTime !== undefined) obj.lastUpdateTime = lastUpdateTime;
     if (sessionId !== undefined) obj.sessionId = sessionId;
     if (classId !== undefined) obj.classId = classId;
+    if (studentName !== undefined) obj.studentName = studentName;
 
     return obj;
   }
 
   setStudentId(id: string): void {
     this.studentId = id;
+  }
+
+  setStudentName(name: string): void {
+    this.studentName = name;
   }
 
   toJson(): SessionStudentInterface {
@@ -84,6 +95,7 @@ export default class SessionStudentModel implements SessionStudentInterface {
       lastUpdateTime,
       sessionId,
       classId,
+      studentName,
     } = this;
 
     return {
@@ -94,6 +106,7 @@ export default class SessionStudentModel implements SessionStudentInterface {
       lastUpdateTime,
       classId,
       sessionId,
+      studentName,
     };
   }
 }

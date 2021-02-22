@@ -167,6 +167,7 @@ export default class StudentApi extends AuthApi implements StudentApiInterface {
   ): Promise<WithError<boolean>> => {
     try {
       const userId = this.getUserUid();
+      const displayName = this.getUserDisplayName();
 
       if (userId === null)
         return this.error(BasicErrors.USER_NOT_AUTHENTICATED);
@@ -194,6 +195,7 @@ export default class StudentApi extends AuthApi implements StudentApiInterface {
         joinedDate: new Date(),
         studentId: userId,
         totalAttendancePercentage: 0,
+        studentName: displayName,
       });
 
       await firebase
@@ -341,6 +343,7 @@ export default class StudentApi extends AuthApi implements StudentApiInterface {
     macId: string,
   ): Promise<WithError<boolean>> => {
     const userId = this.getUserUid();
+    const displayName = this.getUserDisplayName();
 
     if (userId === null) return this.error(BasicErrors.USER_NOT_AUTHENTICATED);
 
@@ -386,6 +389,7 @@ export default class StudentApi extends AuthApi implements StudentApiInterface {
           lastUpdateTime: new Date(),
           sessionId,
           classId,
+          studentName: displayName,
         }).toJson(),
       );
 

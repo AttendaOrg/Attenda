@@ -20,7 +20,7 @@ export const EditAttendanceSessionNavigationOptions: StackNavigationOptions = {
 
 const transform = (data: SessionStudentModel): SessionStudentListDataProps => ({
   key: data.studentId,
-  name: 'name', // TODO: get the name
+  name: data.studentName ?? '',
   present: data.present,
   rollNo: 'rollNo', // TODO: do we really need roll no
 });

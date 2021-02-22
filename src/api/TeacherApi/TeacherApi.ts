@@ -1016,6 +1016,7 @@ export default class TeacherApi extends AuthApi implements TeacherApiInterface {
             sessionId: data.sessionId,
             sessionTime: data.sessionTime.toDate(),
             lastUpdateTime: data.lastUpdateTime.toDate(),
+            studentName: data.studentName,
           };
 
           return new SessionStudentModel(info);
@@ -1101,6 +1102,7 @@ export default class TeacherApi extends AuthApi implements TeacherApiInterface {
           lastUpdateTime: data.lastUpdateTime.toDate(),
           sessionTime: data.sessionTime.toDate(),
           whom: data.whom,
+          studentName: data.studentName,
         };
 
         return new SessionStudentModel(info);

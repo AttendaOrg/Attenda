@@ -4,9 +4,7 @@ import {
   StackScreenProps,
 } from '@react-navigation/stack';
 import { RootStackParamList } from '../../App';
-import EditStudentAttendanceRecord, {
-  EditStudentAttendanceRecordPops,
-} from '../../components/organisms/Teacher/EditStudentAttendanceRecord';
+import EditStudentAttendanceRecord from '../../components/organisms/Teacher/EditStudentAttendanceRecord';
 import { SimpleHeaderBackNavigationOptions } from '../../components/templates/SimpleHeaderNavigationOptions';
 import { teacherApi } from '../../api/TeacherApi';
 import SessionStudentModel from '../../api/TeacherApi/model/SessionStudentModel';
@@ -27,30 +25,6 @@ export const EditStudentAttendanceRecordNavigationOptions: StackNavigationOption
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const imageSrc = require('../../../assets/images/user.jpg');
-
-const dummyData: EditStudentAttendanceRecordPops = {
-  userInfo: {
-    name: 'Prasanta Barman',
-    onRollChange: () => null,
-    rollNo: 'IITE1557454',
-    userImage: imageSrc,
-  },
-  percentage: '95%',
-  markedDates: {
-    //
-    '2020-12-12': {
-      '03:50 AM': false,
-      '10:50 AM': true,
-    },
-    '2020-12-11': {
-      '03:50 AM': true,
-      '10:50 AM': true,
-    },
-  },
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
-  onChangeAttendance: async () => {}, //
-  onMonthChange: () => null, //
-};
 
 export const convertSessionStudentModelToMarkedDates = (
   data: SessionStudentModel[],
@@ -135,12 +109,9 @@ const EditStudentAttendanceRecordPage: React.FC<Props> = ({
 
   return (
     <EditStudentAttendanceRecord
-      // eslint-disable-next-line react/jsx-props-no-spreading
-      {...dummyData}
       userInfo={{
-        name: 'name', // get the name form api
-        // eslint-disable-next-line @typescript-eslint/no-empty-function
-        onRollChange: () => {}, // TODO: update roll no
+        name: studentInfo?.studentName ?? '', // get the name form api
+        onRollChange: () => null, // TODO: update roll no
         rollNo: studentInfo?.rollNo ?? '',
         userImage: imageSrc, // TODO: get the profile pic from api
       }}

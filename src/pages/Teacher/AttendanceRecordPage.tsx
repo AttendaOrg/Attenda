@@ -123,7 +123,7 @@ const convertStudentListToStudentListData = (
 ): StudentListData => ({
   checked: false,
   key: model.studentId ?? '',
-  name: 'name', // TODO: get name
+  name: model.studentName ?? '',
   rollNo: model.rollNo,
   percentage: `${model.totalAttendancePercentage ?? ''} %`,
 });
