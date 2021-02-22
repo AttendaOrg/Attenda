@@ -250,10 +250,6 @@ class ClassSettingsPage extends React.PureComponent<Props, State> {
     });
   };
 
-  onPositiveButtonClick = async (): Promise<void> => {
-    await this.updateClassInfo();
-    this.dismissSaveDialog();
-  };
   // #endregion header related stuff
 
   // #region change handler
@@ -356,7 +352,10 @@ class ClassSettingsPage extends React.PureComponent<Props, State> {
   };
 
   discardChanges = (): void => {
-    const { prevInfo } = this.state;
+    const {
+      props: { navigation },
+      state: { prevInfo },
+    } = this;
 
     this.setState(
       {
@@ -365,6 +364,7 @@ class ClassSettingsPage extends React.PureComponent<Props, State> {
       () => {
         this.dismissSaveDialog();
         this.updateHeader();
+        navigation.goBack();
       },
     );
   };
@@ -399,7 +399,6 @@ class ClassSettingsPage extends React.PureComponent<Props, State> {
       onSectionChange,
       onTitleChange,
       dismissSaveDialog,
-      onPositiveButtonClick,
       discardChanges,
       toggleShareSwitch,
       onEditClassCodeClick,
@@ -429,10 +428,10 @@ class ClassSettingsPage extends React.PureComponent<Props, State> {
         <DoubleButtonPopup
           onDismiss={dismissSaveDialog}
           visible={showDiscardPopupError}
-          negativeButtonText="Discard"
-          onPositiveButtonClick={onPositiveButtonClick}
-          onNegativeButtonClick={discardChanges}
-          positiveButtonText="Save"
+          negativeButtonText="Cancel"
+          positiveButtonText="Discard"
+          onPositiveButtonClick={discardChanges}
+          onNegativeButtonClick={dismissSaveDialog}
           title="Discard Changes ?"
           text="You have some unsaved changes."
         />

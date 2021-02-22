@@ -143,6 +143,7 @@ class MyAccountPage extends React.Component<Props, State> {
         nameError,
         showUnsavedDiscardPopup,
         showLogoutError,
+        currName,
       },
     } = this;
 
@@ -151,7 +152,7 @@ class MyAccountPage extends React.Component<Props, State> {
         <MyAccount
           onNameType={onNameType}
           errors={{ nameError }}
-          name={info?.name ?? ''}
+          name={currName ?? ''}
           email={info?.email ?? ''}
           userRole={info?.role ?? ''}
           onNameChange={onNameChange}
@@ -179,23 +180,20 @@ class MyAccountPage extends React.Component<Props, State> {
           visible={showUnsavedDiscardPopup}
           title="Discard Changes?"
           text="You have some unsaved changes."
-          negativeButtonText="Discard"
-          positiveButtonText="Save"
+          negativeButtonText="Cancel"
+          positiveButtonText="Discard"
           onDismiss={() => this.setState({ showUnsavedDiscardPopup: false })}
           onNegativeButtonClick={() =>
-            this.setState({
-              currName: info?.name ?? '',
-              showUnsavedDiscardPopup: false,
-            })
+            this.setState({ showUnsavedDiscardPopup: false })
           }
           onPositiveButtonClick={async () => {
-            const {
-              state: { currName },
-            } = this;
-
-            await onNameChange(currName);
-
-            this.setState({ showUnsavedDiscardPopup: false });
+            this.setState(
+              {
+                showUnsavedDiscardPopup: false,
+                currName: info?.name ?? '',
+              },
+              () => navigation.goBack(),
+            );
           }}
         />
       </>
