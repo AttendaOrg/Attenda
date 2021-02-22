@@ -7,6 +7,7 @@ export interface TeacherClassModelProps {
    * @required
    */
   section: string;
+  teacherName?: string | null;
   classCode?: string;
   description?: string;
   inviteLink?: string;
@@ -39,6 +40,8 @@ export default class TeacherClassModel implements TeacherClassModelProps {
 
   teacherId: string | null;
 
+  teacherName: string | null;
+
   isArchived = false;
 
   constructor(data: TeacherClassModelProps) {
@@ -53,6 +56,7 @@ export default class TeacherClassModel implements TeacherClassModelProps {
     this.classId = data?.classId ?? null;
     this.teacherId = data?.teacherId ?? null;
     this.isArchived = data?.isArchived ?? false;
+    this.teacherName = data?.teacherName ?? null;
   }
 
   // noinspection DuplicatedCode
@@ -68,6 +72,7 @@ export default class TeacherClassModel implements TeacherClassModelProps {
     classId,
     teacherId,
     isArchived,
+    teacherName,
   }: Partial<TeacherClassModelProps>): Partial<TeacherClassModelProps> => {
     const obj: Partial<TeacherClassModelProps> = {};
 
@@ -82,8 +87,13 @@ export default class TeacherClassModel implements TeacherClassModelProps {
     if (classId !== undefined) obj.classId = classId;
     if (teacherId !== undefined) obj.teacherId = teacherId;
     if (isArchived !== undefined) obj.isArchived = isArchived;
+    if (teacherName !== undefined) obj.teacherName = teacherName;
 
     return obj;
+  };
+
+  setTeacherName = (name: string | null): void => {
+    this.teacherName = name;
   };
 
   toJson = (): TeacherClassModelProps => {
@@ -99,6 +109,7 @@ export default class TeacherClassModel implements TeacherClassModelProps {
       classId: this.classId,
       teacherId: this.teacherId,
       isArchived: this.isArchived,
+      teacherName: this.teacherName,
     };
   };
 }

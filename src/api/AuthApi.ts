@@ -115,6 +115,10 @@ class AuthApi extends BaseApi implements AuthApiInterface {
     return firebase.auth().currentUser?.uid ?? null;
   };
 
+  getUserDisplayName = (): string | null => {
+    return firebase.auth().currentUser?.displayName ?? null;
+  };
+
   loginWithEmailAndPassword = async (
     email: string,
     password: string,
@@ -361,6 +365,8 @@ class AuthApi extends BaseApi implements AuthApiInterface {
       await firebase.auth().currentUser?.updateProfile({
         displayName: name,
       });
+
+      // TODO: in teacher case update the name in all created class
 
       return this.success(true);
     } catch (e) {

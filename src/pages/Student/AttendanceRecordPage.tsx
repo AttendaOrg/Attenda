@@ -61,7 +61,7 @@ const AttendanceRecordPage: React.FC<Props> = ({ route }): JSX.Element => {
         setClassInfo({
           className: info.title,
           section: info.section,
-          teacherName: '', // TODO: get teacher name from api
+          teacherName: info.teacherName ?? '',
         });
 
       const [joinInfo] = await studentApi.getJoinedClassInfo(classId);

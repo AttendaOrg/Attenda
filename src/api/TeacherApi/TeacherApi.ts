@@ -261,6 +261,10 @@ export default class TeacherApi extends AuthApi implements TeacherApiInterface {
   ): Promise<WithError<string>> => {
     try {
       const userId = this.getUserUid();
+      const displayName = this.getUserDisplayName();
+
+      if (teacherClass.teacherName === null)
+        teacherClass.setTeacherName(displayName);
 
       if (userId === null)
         return this.error(BasicErrors.USER_NOT_AUTHENTICATED);

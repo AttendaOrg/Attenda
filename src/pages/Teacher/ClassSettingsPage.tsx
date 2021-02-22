@@ -68,6 +68,7 @@ class ClassSettingsPage extends React.PureComponent<Props, State> {
         classCode: '',
         classId: '',
         currentSessionId: '',
+        teacherName: null,
       },
       prevInfo: {
         section: '',
@@ -77,6 +78,7 @@ class ClassSettingsPage extends React.PureComponent<Props, State> {
         classCode: '',
         classId: '',
         currentSessionId: '',
+        teacherName: null,
       },
       currClassCode: '',
       classCodeErrorMessage: '',

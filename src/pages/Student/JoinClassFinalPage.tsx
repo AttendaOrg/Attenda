@@ -51,8 +51,8 @@ const JoinClassFinalPage: React.FC<Props> = ({
         setAccInfo({
           className: info.title,
           section: info.section,
-          teacher: '', // TODO: get the teacher name from the api
           classId: info.classId ?? '',
+          teacher: info.teacherName ?? '',
         });
       globalContext.changeSpinnerLoading(false);
     })();
