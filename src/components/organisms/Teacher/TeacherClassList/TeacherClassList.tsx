@@ -30,7 +30,7 @@ export interface StudentListDataProps extends ClassCardPops {
 export interface TeacherClassListPops {
   data: StudentListDataProps[];
   onFabClick: () => void;
-  onClassClick: (classId: string, name: string) => void;
+  onClassClick: (classId: string, name: string, section: string) => void;
   /**
    * @deprecated this function is deprecated
    * @use options props
@@ -66,7 +66,9 @@ const TeacherClassList: React.FC<TeacherClassListPops> = ({
             isSessionLive={item.isSessionLive}
             currentSessionId={item.currentSessionId}
             classId={item.key}
-            onCardClick={() => onClassClick(item.key, item.className)}
+            onCardClick={() =>
+              onClassClick(item.key, item.className, item.section)
+            }
             options={options}
             onMoreIconClick={onMoreIconClick}
             backgroundImage={item.backgroundImage}
