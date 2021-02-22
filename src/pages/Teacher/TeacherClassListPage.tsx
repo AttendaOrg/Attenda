@@ -92,12 +92,20 @@ class TeacherClassListPage extends React.PureComponent<Props, State> {
         showShimmer={loading}
         onFabClick={() => navigation.push('CreateClass')}
         data={newData}
-        onClassClick={(classId, title, section) => {
-          navigation.push('StartAttendanceSession', {
-            classId,
-            title,
-            section,
-          });
+        onClassClick={(classId, title, section, isLive, sessionId) => {
+          if (isLive && sessionId !== null)
+            navigation.push('CurrentAttendanceSession', {
+              classId,
+              sessionId,
+              sessionTime: new Date().toISOString(),
+              showStopDialog: false,
+            });
+          else
+            navigation.push('StartAttendanceSession', {
+              classId,
+              title,
+              section,
+            });
         }}
         options={[
           {
