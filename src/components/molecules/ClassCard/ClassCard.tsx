@@ -37,6 +37,10 @@ const styles = StyleSheet.create({
     color: 'red',
     fontWeight: 'bold',
   },
+  attendanceGiven: {
+    color: 'green',
+    fontWeight: 'bold',
+  },
   moreIcon: {
     position: 'absolute',
     top: 0,
@@ -57,6 +61,7 @@ export interface ClassCardPops {
   backgroundImage: ImageSourcePropType;
   showShimmer?: boolean;
   currentSessionId: string | null;
+  alreadyGiven?: boolean;
 }
 
 interface Props extends ClassCardPops {
@@ -81,6 +86,7 @@ const ClassCard: React.FC<Props> = ({
   options = [],
   showShimmer = false,
   classId = '',
+  alreadyGiven = false,
 }): JSX.Element => {
   return showShimmer ? (
     <Shimmer width="100%" height={114} />
@@ -97,7 +103,11 @@ const ClassCard: React.FC<Props> = ({
             <Text style={styles.allText}>{attendance}</Text>
 
             <Text style={styles.liveText}>
-              {isSessionLive && 'Attendance session is live'}
+              {isSessionLive && !alreadyGiven && 'Attendance session is live'}
+            </Text>
+
+            <Text style={styles.attendanceGiven}>
+              {isSessionLive && alreadyGiven && 'Attendance is given'}
             </Text>
             <View style={styles.moreIcon}>
               <MenuOptionsPopover value={classId} options={options} />

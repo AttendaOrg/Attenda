@@ -31,6 +31,7 @@ const transformToStudentListDataProps = (
     isLive,
     currentSessionId,
     teacherName,
+    alreadyGiven,
   } = cls;
 
   return {
@@ -43,50 +44,95 @@ const transformToStudentListDataProps = (
     teacherName: `by: ${teacherName}`,
     isSessionLive: isLive,
     currentSessionId,
+    alreadyGiven,
   };
 };
 
+const mergeGiven = (
+  classIds: string[],
+  classes: TeacherClassModel[],
+): TeacherClassModel[] => {
+  return classes.map(cls => {
+    if (classIds.includes(cls.classId ?? '')) {
+      cls.setAlreadyGiven(true);
+
+      return cls;
+    }
+    cls.setAlreadyGiven(false);
+
+    return cls;
+  });
+};
+
 const StudentClassListPage: React.FC<Props> = ({ navigation }): JSX.Element => {
-  const [data, setData] = useState<StudentListDataProps[]>([]);
+  const [data, setData] = useState<TeacherClassModel[]>([]);
+  const [sessionIds, setSessionIds] = useState<string[]>([]);
+  const [givenPresenceClassIds, setGivenPresenceClassIds] = useState<string[]>(
+    [],
+  );
   const [showNoSessionStartedPopup, setShowNoSessionStartedPopup] = useState(
     false,
   );
 
   useEffect(() => {
-    (async () => {
-      await studentApi.getEnrolledClassListListener(newList => {
-        if (newList !== null) {
-          setData(newList.map(transformToStudentListDataProps));
-        }
-      });
-    })();
+    return studentApi.getEnrolledClassListListener(async newList => {
+      if (newList !== null) {
+        setData(newList);
+
+        const ids: (string | null)[] = newList
+          .map(e => e.currentSessionId)
+          .filter(e => e !== null);
+
+        setSessionIds((ids as unknown) as string[]);
+      }
+    });
   }, []);
 
-  const dismissPopup = () => {
-    setShowNoSessionStartedPopup(false);
-  };
+  // on every session id changes reattach the listener for checking if the student has given present
+  useEffect(() => {
+    return studentApi.getPresentClassId(
+      sessionIds,
+      (givenPresenceClassId = []) =>
+        setGivenPresenceClassIds(givenPresenceClassId),
+    );
+  }, [sessionIds]);
 
-  const onClassClick = (classId: string, currentSessionId: string | null) => {
+  const dismissPopup = () => setShowNoSessionStartedPopup(false);
+
+  const onClassClick = (
+    classId: string,
+    currentSessionId: string | null,
+    alreadyGiven: boolean,
+  ) => {
     const matched = data
       // get the matching class
-      .filter(e => e.key === classId)
+      .filter(e => e.classId === classId)
       // checks if the session is live
-      .filter(e => e.isSessionLive === true);
+      .filter(e => e.isLive === true);
 
-    if (matched.length > 0 && currentSessionId !== null)
-      navigation.push('GiveResponse', { classId, sessionId: currentSessionId });
-    else setShowNoSessionStartedPopup(true);
+    if (matched.length > 0) {
+      // const isLive = currentSessionId !== null;
+      if (currentSessionId !== null && alreadyGiven !== true)
+        navigation.push('GiveResponse', {
+          classId,
+          sessionId: currentSessionId,
+        });
+    }
+    if (currentSessionId === null) setShowNoSessionStartedPopup(true);
   };
 
   const unEnroll = async (classId: string) => {
     await studentApi.leaveClass(classId);
   };
 
+  const merged = mergeGiven(givenPresenceClassIds, data);
+  const transformedData = merged.map(transformToStudentListDataProps);
+
   return (
     <>
       <StudentClassList
         onFabClick={() => navigation.push('JoinClassForm', {})}
-        data={data}
+        data={transformedData}
         onClassClick={onClassClick}
         options={[
           {

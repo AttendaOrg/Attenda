@@ -17,6 +17,7 @@ export interface TeacherClassModelProps {
   classId?: string | null;
   teacherId: string | null;
   isArchived?: boolean;
+  alreadyGiven?: boolean;
 }
 
 export default class TeacherClassModel implements TeacherClassModelProps {
@@ -44,6 +45,8 @@ export default class TeacherClassModel implements TeacherClassModelProps {
 
   isArchived = false;
 
+  alreadyGiven = false;
+
   constructor(data: TeacherClassModelProps) {
     this.classCode = data?.classCode ?? '';
     this.description = data?.description ?? '';
@@ -58,6 +61,10 @@ export default class TeacherClassModel implements TeacherClassModelProps {
     this.isArchived = data?.isArchived ?? false;
     this.teacherName = data?.teacherName ?? null;
   }
+
+  setAlreadyGiven = (given: boolean): void => {
+    this.alreadyGiven = given;
+  };
 
   // noinspection DuplicatedCode
   static readonly Update = ({

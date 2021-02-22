@@ -78,7 +78,18 @@ interface StudentApiInterface {
   getEnrolledClassListListener(
     // eslint-disable-next-line @typescript-eslint/no-empty-function
     onDataChange: (newData: TeacherClassModel[]) => void,
-  ): Promise<() => void>;
+  ): UnSubscribe;
+
+  /**
+   * given the session ids add a listener for getting classIds
+   * in which class student has given present
+   * @param sessionId `string[]`
+   * @param cb `(givenPresenceClassId: string[]) => void`
+   */
+  getPresentClassId(
+    sessionId: string[],
+    cb: (givenPresenceClassId: string[]) => void,
+  ): UnSubscribe;
 
   /**
    * leave the joined class
@@ -86,6 +97,8 @@ interface StudentApiInterface {
    */
   leaveClass(classId: string): Promise<WithError<boolean>>;
 }
+
+type UnSubscribe = () => void;
 
 // noinspection JSUnusedLocalSymbols
 export default class StudentApi extends AuthApi implements StudentApiInterface {
@@ -243,10 +256,10 @@ export default class StudentApi extends AuthApi implements StudentApiInterface {
     }
   };
 
-  getEnrolledClassListListener = async (
+  getEnrolledClassListListener = (
     // eslint-disable-next-line @typescript-eslint/no-empty-function
     onDataChange = (_newData: TeacherClassModel[]) => {},
-  ): Promise<() => void> => {
+  ): UnSubscribe => {
     const error = () => console.error('error');
     let unSubscribeAccInfo = () => console.info('un implemented');
 
@@ -255,7 +268,7 @@ export default class StudentApi extends AuthApi implements StudentApiInterface {
 
       if (userId === null) return error;
 
-      const query = await firebase
+      const query = firebase
         .firestore()
         .collection(AuthApi.AUTH_ROOT_COLLECTION_NAME)
         .doc(userId);
@@ -395,6 +408,36 @@ export default class StudentApi extends AuthApi implements StudentApiInterface {
 
     return this.success(true);
     // throw new Error('Method not implemented.');
+  };
+
+  getPresentClassId = (
+    sessionId: string[],
+    cb: (givenPresenceClassId: string[]) => void,
+  ): UnSubscribe => {
+    if (sessionId.length === 0) return () => null;
+
+    const userId = this.getUserUid();
+    const unSubscribe = firebase
+      .firestore()
+      .collection(TeacherApi.CLASSES_SESSIONS_STUDENT_COLLECTION_NAME)
+      .where('sessionId', 'in', sessionId)
+      .where('studentId', '==', userId)
+      .where('present', '==', true)
+      .onSnapshot(snapshot => {
+        const { docs } = snapshot;
+        const data = docs
+          .map(
+            e =>
+              new SessionStudentModel(
+                (e.data() as unknown) as SessionStudentInterface,
+              ),
+          )
+          .map(e => e.classId);
+
+        cb(data);
+      });
+
+    return unSubscribe;
   };
 
   getAttendanceReport = async (
