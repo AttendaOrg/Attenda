@@ -89,12 +89,16 @@ export const throttle = <T>(
 
   return (...args) => {
     if (!lastRan) {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
       callback.apply(this, args);
       lastRan = Date.now();
     } else {
       clearTimeout(lastFunc);
       lastFunc = (setTimeout(() => {
         if (Date.now() - lastRan >= waitFor) {
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
           callback.apply(this, args);
           lastRan = Date.now();
         }

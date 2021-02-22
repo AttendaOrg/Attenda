@@ -163,7 +163,6 @@ class MyAccountPage extends React.Component<Props, State> {
           onPositivePopupClick={() => {
             navigation.navigate('SignIn');
           }}
-          // onLogOutClick={() => navigation.navigate('SignIn')}
           onLogOutClick={onLogOut}
           onEditProfilePictureClick={() => null}
         />
@@ -180,16 +179,23 @@ class MyAccountPage extends React.Component<Props, State> {
           visible={showUnsavedDiscardPopup}
           title="Discard Changes?"
           text="You have some unsaved changes."
-          negativeButtonText="Cancel"
-          positiveButtonText="Discard"
+          negativeButtonText="Discard"
+          positiveButtonText="Save"
           onDismiss={() => this.setState({ showUnsavedDiscardPopup: false })}
           onNegativeButtonClick={() =>
-            this.setState({ showUnsavedDiscardPopup: false })
+            this.setState({
+              currName: info?.name ?? '',
+              showUnsavedDiscardPopup: false,
+            })
           }
-          onPositiveButtonClick={() => {
-            this.setState({ currName: info?.name ?? '' }, () => {
-              navigation.goBack();
-            });
+          onPositiveButtonClick={async () => {
+            const {
+              state: { currName },
+            } = this;
+
+            await onNameChange(currName);
+
+            this.setState({ showUnsavedDiscardPopup: false });
           }}
         />
       </>
