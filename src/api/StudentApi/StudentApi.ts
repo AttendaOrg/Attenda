@@ -18,6 +18,7 @@ import ClassStudentModel, {
   ClassStudentModelInterface,
 } from '../TeacherApi/model/ClassStudentModel';
 import { hashMacId } from '../util/hash';
+import { getMonthRange } from '../../util';
 
 interface StudentApiInterface {
   /**
@@ -67,9 +68,11 @@ interface StudentApiInterface {
   /**
    * get attendance report of a class
    * @param classId
+   * @param month
    */
   getAttendanceReport(
     classId: string,
+    month: Date,
   ): Promise<WithError<SessionStudentModel[]>>;
 
   /**
@@ -442,6 +445,7 @@ export default class StudentApi extends AuthApi implements StudentApiInterface {
 
   getAttendanceReport = async (
     classId: string,
+    month: Date,
   ): Promise<WithError<SessionStudentModel[]>> => {
     try {
       const userId = this.getUserUid();
@@ -449,12 +453,17 @@ export default class StudentApi extends AuthApi implements StudentApiInterface {
       if (userId === null)
         return this.error(BasicErrors.USER_NOT_AUTHENTICATED);
 
+      const [startDayOfTheMonth, nextMonthStartDay] = getMonthRange(month);
+
       // get session list
       const currentSessionDocs = await firebase
         .firestore()
         .collection(TeacherApi.CLASSES_SESSIONS_STUDENT_COLLECTION_NAME)
         .where('classId', '==', classId)
         .where('studentId', '==', userId)
+        .where('sessionTime', '>=', startDayOfTheMonth)
+        .where('sessionTime', '<', nextMonthStartDay)
+        .orderBy('sessionTime')
         .get();
 
       const sessions: SessionStudentModel[] = currentSessionDocs.docs.map(
@@ -470,6 +479,8 @@ export default class StudentApi extends AuthApi implements StudentApiInterface {
 
       return this.success(sessions);
     } catch (ex) {
+      console.log(ex);
+
       return this.error(BasicErrors.EXCEPTION);
     }
   };

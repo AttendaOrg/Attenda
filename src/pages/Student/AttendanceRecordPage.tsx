@@ -76,7 +76,7 @@ const AttendanceRecordPage: React.FC<Props> = ({ route }): JSX.Element => {
 
   useEffect(() => {
     (async () => {
-      const [mReports] = await studentApi.getAttendanceReport(classId);
+      const [mReports] = await studentApi.getAttendanceReport(classId, month);
 
       if (mReports !== null) {
         setReports(mReports);

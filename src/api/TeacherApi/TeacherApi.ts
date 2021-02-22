@@ -19,6 +19,7 @@ import ClassStudentModel, {
   ClassStudentModelInterface,
 } from './model/ClassStudentModel';
 import { hashMacId } from '../util/hash';
+import { getMonthRange } from '../../util';
 
 interface TeacherApiInterface {
   //#region class
@@ -232,28 +233,6 @@ export default class TeacherApi extends AuthApi implements TeacherApiInterface {
 
   static readonly CLASSES_SESSIONS_STUDENT_COLLECTION_NAME =
     'sessions_students';
-
-  //#region helper methods
-  /**
-   * gets the starting date of the month and starting day of the next month
-   * @param month
-   * @returns [startDayOfTheMonth,nextMonthStartDay]
-   * @example
-   * const date = new Date(); // Fri Jan 22 2021 22:33:08 GMT+0530 (India Standard Time)
-   * const [ startDayOfTheMonth,nextMonthStartDay ] = getMonthRange(date);
-   * // [Wed Dec 01 2021 00:00:00 GMT+0530 (India Standard Time), Sat Jan 01 2022 00:00:00 GMT+0530 (India Standard Time)]
-   */
-  getMonthRange = (month: Date): [Date, Date] => {
-    const startingMonthDate = new Date(month);
-    const endingMonthDate = new Date(month);
-
-    startingMonthDate.setDate(1);
-    endingMonthDate.setDate(1);
-    endingMonthDate.setMonth(month.getMonth() + 1);
-
-    return [startingMonthDate, endingMonthDate];
-  };
-  //#endregion
 
   //#region class
   createClass = async (
@@ -906,7 +885,7 @@ export default class TeacherApi extends AuthApi implements TeacherApiInterface {
       if (userId === null)
         return this.error(BasicErrors.USER_NOT_AUTHENTICATED);
 
-      const [startDayOfTheMonth, nextMonthStartDay] = this.getMonthRange(month);
+      const [startDayOfTheMonth, nextMonthStartDay] = getMonthRange(month);
 
       const result = await firebase
         .firestore()
@@ -915,6 +894,7 @@ export default class TeacherApi extends AuthApi implements TeacherApiInterface {
         .where('teacherId', '==', userId)
         .where('sessionDate', '>=', startDayOfTheMonth)
         .where('sessionDate', '<', nextMonthStartDay)
+        .orderBy('sessionDate')
         .get();
 
       const sessionInfos: SessionInfoModel[] = result.docs.map(doc => {
