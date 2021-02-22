@@ -107,7 +107,7 @@ const ClassCard: React.FC<Props> = ({
             </Text>
 
             <Text style={styles.attendanceGiven}>
-              {isSessionLive && alreadyGiven && 'Attendance is given'}
+              {isSessionLive && alreadyGiven && 'You have already responded'}
             </Text>
             <View style={styles.moreIcon}>
               <MenuOptionsPopover value={classId} options={options} />
