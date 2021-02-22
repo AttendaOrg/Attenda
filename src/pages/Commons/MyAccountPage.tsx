@@ -143,7 +143,6 @@ class MyAccountPage extends React.Component<Props, State> {
         nameError,
         showUnsavedDiscardPopup,
         showLogoutError,
-        currName,
       },
     } = this;
 
@@ -152,7 +151,7 @@ class MyAccountPage extends React.Component<Props, State> {
         <MyAccount
           onNameType={onNameType}
           errors={{ nameError }}
-          name={currName ?? ''}
+          name={info?.name ?? ''}
           email={info?.email ?? ''}
           userRole={info?.role ?? ''}
           onNameChange={onNameChange}
