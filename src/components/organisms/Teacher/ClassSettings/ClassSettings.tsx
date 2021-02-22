@@ -20,14 +20,17 @@ const styles = StyleSheet.create({
     fontSize: 24,
   },
   captionContainer: {
-    // flex: 0.5,
+    // flex: 1,
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginVertical: 5,
     marginEnd: 8,
   },
+  row: {
+    flex: 1,
+    flexDirection: 'row',
+  },
   captionText: {
-    width: '90%',
     fontWeight: 'normal',
     color: '#000000',
     fontSize: 18,
@@ -134,55 +137,40 @@ const ClassSettings: React.FC<ClassSettingsPops> = ({
         />
       </View>
 
-      {/* <View style={styles.captionContainer}>
-        <Text style={styles.captionText}>Disable link</Text>
-        <Switch
-          trackColor={{ false: '#767577', true: '#81b0ff' }}
-          thumbColor="#f4f3f4"
-          ios_backgroundColor="#3e3e3e"
-          onValueChange={toggleLinkSwitch}
-          value={isLinkEnabled}
-        />
-      </View> */}
-
       <View style={styles.captionContainer}>
-        <Text style={styles.captionText} numberOfLines={1}>
-          Invite code: {code}
-        </Text>
+        <View style={styles.row}>
+          <Text style={styles.captionText}>Invite code: </Text>
+          <Text style={styles.captionText} selectable>
+            {code}
+          </Text>
+        </View>
+
         <Icon
           name="edit"
           type="font-awesome"
           color="#2196F3"
-          style={{ marginRight: 8 }}
           onPress={onEditClassCodeClick}
         />
+        <View style={{ width: 8 }} />
         <Icon
           name="share"
           type="font-awesome"
           color="#2196F3"
-          style={{ marginRight: 8 }}
           onPress={onCodeShare}
         />
       </View>
 
       <View style={styles.captionContainer}>
-        <Text
-          style={{
-            width: '90%',
-            fontWeight: 'normal',
-            color: '#000000',
-            fontSize: 18,
-            marginBottom: 25,
-          }}
-          numberOfLines={1}
-        >
-          Invitation link : {link}
-        </Text>
+        <View style={styles.row}>
+          <Text style={styles.captionText}>Invitation link: </Text>
+          <Text style={styles.captionText} selectable>
+            {link}
+          </Text>
+        </View>
         <Icon
           name="share"
           type="font-awesome"
           color="#2196F3"
-          style={{ marginEnd: 8 }}
           onPress={onLinkShare}
         />
       </View>

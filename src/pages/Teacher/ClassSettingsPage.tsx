@@ -123,6 +123,14 @@ class ClassSettingsPage extends React.PureComponent<Props, State> {
 
     return classId;
   };
+
+  getClassCode = (): string => {
+    const {
+      currentInfo: { classCode },
+    } = this.state;
+
+    return classCode ?? '';
+  };
   //#endregion lifecycle
 
   // #region network calls
@@ -294,7 +302,7 @@ class ClassSettingsPage extends React.PureComponent<Props, State> {
 
   // #region Invite code
   onCodeShare = (): void => {
-    const classId = this.getClassId();
+    const classId = this.getClassCode();
 
     try {
       // TODO: create a message to explain the action
