@@ -173,7 +173,10 @@ test('give presence', async () => {
 
 test('get attendance report', async () => {
   // because of the previous test the session should be 1
-  const [sessions] = await studentApi.getAttendanceReport(globalClassId);
+  const [sessions] = await studentApi.getAttendanceReport(
+    globalClassId,
+    new Date(),
+  );
 
   expect(sessions?.length).toBe(1);
 });

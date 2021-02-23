@@ -2,7 +2,9 @@ import firebase from 'firebase';
 import { firebaseConfig } from '../util/configs/firebase';
 
 const DEFAULT_HOST: string =
-  process.env.REACT_NATIVE_FIREBASE_EMULATOR_HOST ?? 'localhost';
+  process.env.NODE_ENV === 'testing'
+    ? 'localhost'
+    : process.env.REACT_NATIVE_FIREBASE_EMULATOR_HOST ?? 'localhost';
 const defaultUseEmulator =
   process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'testing';
 
