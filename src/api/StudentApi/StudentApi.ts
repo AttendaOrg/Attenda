@@ -50,9 +50,6 @@ interface StudentApiInterface {
    */
   getEnrolledClassList(page: number): Promise<WithError<TeacherClassModel[]>>;
 
-  // TODO: get the class info from TeacherApi ?
-  // getClassInfo(classCode: string): ClassInfo;
-
   /**
    * give present to the class session
    * @param classId

@@ -978,6 +978,23 @@ export default class TeacherApi extends AuthApi implements TeacherApiInterface {
     }
   };
 
+  getStudentName = async (
+    classId: string,
+    studentId: string,
+  ): Promise<string> => {
+    const student = await firebase
+      .firestore()
+      .collection(TeacherApi.CLASSES_COLLECTION_NAME)
+      .doc(classId)
+      .collection(TeacherApi.CLASSES_JOINED_STUDENT_COLLECTION_NAME)
+      .doc(studentId)
+      .get();
+
+    const data = (student.data() as unknown) as ClassStudentModelInterface;
+
+    return data.studentName ?? '';
+  };
+
   editStudentAttendanceReport = async (
     classId: string,
     sessionId: string,
@@ -999,10 +1016,24 @@ export default class TeacherApi extends AuthApi implements TeacherApiInterface {
         .where('studentId', '==', studentId)
         .get();
 
-      // if the student not found in the session throw an error
-      // if(result.docs.length ===0) return this.error(BasicErrors.EXCEPTION)
-      // TODO: only update single entity
-      // BUG: if there is no entry add an entry
+      if (result.docs.length === 0) {
+        const studentName = await this.getStudentName(classId, studentId);
+
+        // if there is no entry add an entry
+        await firebase
+          .firestore()
+          .collection(TeacherApi.CLASSES_SESSIONS_STUDENT_COLLECTION_NAME)
+          .add(
+            new SessionStudentModel({
+              classId,
+              sessionId,
+              studentId,
+              studentName,
+              whom: UserRole.TEACHER,
+            }).toJson(),
+          );
+      }
+      // NOTE: this should be only one update who knows ?
       await Promise.all(
         result.docs.map(user =>
           user.ref.update(
