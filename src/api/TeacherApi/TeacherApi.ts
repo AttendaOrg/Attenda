@@ -989,7 +989,9 @@ export default class TeacherApi extends AuthApi implements TeacherApiInterface {
   };
 
   getLiveStudentAttendance = (
+    classId: string,
     sessionId: string,
+    listOfJoinedStudent: ClassStudentModel[],
     cb: (sessions: SessionStudentModel[]) => void,
   ): (() => void) => {
     const error = () => console.log('error');
@@ -1015,7 +1017,27 @@ export default class TeacherApi extends AuthApi implements TeacherApiInterface {
             ),
         );
 
-        cb(sessions);
+        const sessionStudentIds = sessions.map(e => e.studentId);
+
+        const allStudentAttendance = listOfJoinedStudent.map(student => {
+          const studentId = student.studentId ?? '';
+          const studentName = student.studentName ?? '';
+
+          // if there is already student given present document return it
+          if (sessionStudentIds.includes(studentId))
+            return sessions.filter(s => s.studentId === studentId)[0];
+
+          // or return a dummy session student
+          return new SessionStudentModel({
+            classId,
+            sessionId,
+            studentId,
+            studentName,
+            present: false,
+          });
+        });
+
+        cb(allStudentAttendance);
       });
       // const sessions: SessionStudentModel[] = currentSessionDocs.docs.map(
       //   doc =>
@@ -1145,6 +1167,9 @@ export default class TeacherApi extends AuthApi implements TeacherApiInterface {
     }
   };
 
+  /**
+   * @deprecated this method is deprecated @see getLiveStudentAttendance
+   */
   getSessionAttendanceReport = async (
     classId: string,
     sessionId: string,
@@ -1156,16 +1181,16 @@ export default class TeacherApi extends AuthApi implements TeacherApiInterface {
         return this.error(BasicErrors.USER_NOT_AUTHENTICATED);
 
       // path to the session
-      const session = await firebase
+      const presentGivenStudentData = await firebase
         .firestore()
         .collection(TeacherApi.CLASSES_SESSIONS_STUDENT_COLLECTION_NAME)
         .where('classId', '==', classId)
         .where('sessionId', '==', sessionId)
         .get();
 
-      const { docs } = session;
+      const { docs } = presentGivenStudentData;
 
-      const students = docs.map(doc => {
+      const presentGivenStudent = docs.map(doc => {
         const data: firebase.firestore.DocumentData = doc.data();
 
         const info: SessionStudentInterface = {
@@ -1182,7 +1207,50 @@ export default class TeacherApi extends AuthApi implements TeacherApiInterface {
         return new SessionStudentModel(info);
       });
 
-      return this.success(students);
+      const presentGivenStudentIds = presentGivenStudent.map(
+        student => student.studentId,
+      );
+
+      const [allStudents] = await this.getAllStudentList(classId);
+
+      if (allStudents?.length === presentGivenStudent.length) {
+        console.log(presentGivenStudent);
+
+        return this.success(presentGivenStudent);
+      }
+
+      const totalSessionStudent =
+        allStudents
+          ?.map(student => {
+            const studentId = student.studentId ?? '';
+            const studentName = student.studentName ?? '';
+
+            if (presentGivenStudentIds.includes(studentId))
+              return presentGivenStudent.filter(
+                s => s.studentId === studentId,
+              )[0];
+
+            return new SessionStudentModel({
+              classId,
+              sessionId,
+              studentId,
+              studentName,
+              present: false,
+            });
+          })
+          .filter(e => {
+            if (e === undefined) {
+              console.log('undefined ?');
+
+              return false;
+            }
+
+            return true;
+          }) ?? [];
+
+      console.log(totalSessionStudent);
+
+      return this.success(totalSessionStudent);
     } catch (e) {
       return this.error(BasicErrors.EXCEPTION);
     }

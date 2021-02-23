@@ -18,6 +18,9 @@ import BaseApi from '../BaseApi';
 import AccountInfo from '../model/AccountInfo';
 import StudentApi from '../StudentApi';
 import ClassStudentModel from './model/ClassStudentModel';
+import SessionStudentModel, {
+  SessionStudentInterface,
+} from './model/SessionStudentModel';
 
 initAdminSdkForTest();
 const authApi = new AuthApi(BaseApi.testOptions);
@@ -389,31 +392,31 @@ test('edit student attendance report', async () => {
 
     // by default the student present will be false and whole will be student
     // FIXME: auto populate the getSessionAttendanceReport with those student who didn't give present
-    // expect(student?.present).toBe(false);
-    // expect(student?.whom).toBe(UserRole.STUDENT);
+    expect(student?.present).toBe(false);
+    expect(student?.whom).toBe(UserRole.STUDENT);
 
     // edit the attendance
-    // await teacherApi.editStudentAttendanceReport(
-    //   globalClassId,
-    //   sessionId,
-    //   student?.studentId ?? '',
-    //   true,
-    // );
+    await teacherApi.editStudentAttendanceReport(
+      globalClassId,
+      sessionId,
+      student?.studentId ?? '',
+      true,
+    );
 
-    // const doc = await admin
-    //   .firestore()
-    //   .collection(TeacherApi.CLASSES_SESSIONS_STUDENT_COLLECTION_NAME)
-    //   .where('classId', '==', globalClassId)
-    //   .where('sessionId', '==', sessionId)
-    //   .where('studentId', '==', student?.studentId ?? '')
-    //   .get();
-    // const student2 = new SessionStudentModel(
-    // FIXME: because the default user was not returned it will cause problem
-    //   (doc.docs[0].data() as unknown) as SessionStudentInterface,
-    // );
+    const doc = await admin
+      .firestore()
+      .collection(TeacherApi.CLASSES_SESSIONS_STUDENT_COLLECTION_NAME)
+      .where('classId', '==', globalClassId)
+      .where('sessionId', '==', sessionId)
+      .where('studentId', '==', student?.studentId ?? '')
+      .get();
+    const student2 = new SessionStudentModel(
+      // FIXME: because the default user was not returned it will cause problem
+      (doc.docs[0].data() as unknown) as SessionStudentInterface,
+    );
 
-    // expect(student2?.present).toBe(true);
-    // expect(student2?.whom).toBe(UserRole.TEACHER);
+    expect(student2?.present).toBe(true);
+    expect(student2?.whom).toBe(UserRole.TEACHER);
   }
 });
 

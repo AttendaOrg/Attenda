@@ -397,6 +397,7 @@ export default class StudentApi extends AuthApi implements StudentApiInterface {
       .where('studentId', '==', userId)
       .where('sessionId', '==', sessionId)
       .where('classId', '==', classId)
+      .where('present', '==', true)
       .get();
 
     if (queryPresentGiven.docs.length === 0) {

@@ -167,24 +167,34 @@ const CurrentAttendanceSessionPage: React.FC<Props> = ({
       const {
         params: { sessionId, classId },
       } = route;
-      const [students] = await teacherApi.getAllStudentList(classId);
-      const newStudents = mergeStudentListWithAttendanceInfo(students ?? []);
-
-      setListItems(newStudents);
-
-      const unSubscribe = teacherApi.getLiveStudentAttendance(
-        sessionId,
-        sessions => {
-          const Students = mergeStudentListWithAttendanceInfo(
-            students ?? [],
-            sessions,
-          );
-
-          setListItems(Students);
-        },
+      const [listOfAllJoinedStudents] = await teacherApi.getAllStudentList(
+        classId,
+      );
+      const newStudents = mergeStudentListWithAttendanceInfo(
+        listOfAllJoinedStudents ?? [],
       );
 
-      return unSubscribe;
+      if (listOfAllJoinedStudents !== null) {
+        setListItems(newStudents);
+
+        const unSubscribe = teacherApi.getLiveStudentAttendance(
+          classId,
+          sessionId,
+          listOfAllJoinedStudents,
+          sessionsStudents => {
+            const Students = mergeStudentListWithAttendanceInfo(
+              listOfAllJoinedStudents ?? [],
+              sessionsStudents,
+            );
+
+            setListItems(Students);
+          },
+        );
+
+        return unSubscribe;
+      }
+
+      return () => console.log('not implemented');
     })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

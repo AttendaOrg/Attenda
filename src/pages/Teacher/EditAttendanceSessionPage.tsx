@@ -10,6 +10,8 @@ import EditAttendanceSession, {
 import { SimpleHeaderBackNavigationOptions } from '../../components/templates/SimpleHeaderNavigationOptions';
 import { teacherApi } from '../../api/TeacherApi';
 import SessionStudentModel from '../../api/TeacherApi/model/SessionStudentModel';
+import ClassStudentModel from '../../api/TeacherApi/model/ClassStudentModel';
+import { CurrentAttendanceSessionDataProps } from '../../components/organisms/Teacher/CurrentAttendanceSession';
 
 type Props = StackScreenProps<RootStackParamList, 'EditAttendanceSession'>;
 
@@ -18,12 +20,44 @@ export const EditAttendanceSessionNavigationOptions: StackNavigationOptions = {
   title: 'Attendance record',
 };
 
-const transform = (data: SessionStudentModel): SessionStudentListDataProps => ({
-  key: data.studentId,
+const transformClassStudentModelToDataProps = (
+  data: ClassStudentModel,
+  present = false,
+): SessionStudentListDataProps => ({
+  key: data.studentId ?? '',
   name: data.studentName ?? '',
-  present: data.present,
-  rollNo: 'rollNo', // TODO: do we really need roll no
+  present,
+  rollNo: data.rollNo, // TODO: do we really need roll no
 });
+
+const findSessionByStudentId = (
+  sessions: SessionStudentModel[],
+  studentId: string,
+): SessionStudentModel | null => {
+  const found = sessions.filter(session => session.studentId === studentId);
+
+  if (found.length === 0) return null;
+
+  return found[0];
+};
+
+const mergeStudentListWithAttendanceInfo = (
+  students: ClassStudentModel[],
+  sessions: SessionStudentModel[] = [],
+): SessionStudentListDataProps[] => {
+  // loop through all student registered in a class
+
+  return students.map<CurrentAttendanceSessionDataProps>(student => {
+    const found: SessionStudentModel | null = findSessionByStudentId(
+      sessions,
+      student.studentId ?? '',
+    );
+
+    if (found === null) return transformClassStudentModelToDataProps(student);
+
+    return transformClassStudentModelToDataProps(student, found.present);
+  });
+};
 
 const EditAttendanceSessionPage: React.FC<Props> = ({ route }): JSX.Element => {
   const [listItems, setListItems] = useState<SessionStudentListDataProps[]>([]);
@@ -33,23 +67,35 @@ const EditAttendanceSessionPage: React.FC<Props> = ({ route }): JSX.Element => {
 
   useEffect(() => {
     (async () => {
-      const [lists] = await teacherApi.getSessionAttendanceReport(
+      const [listsOfAllJoinedStudents] = await teacherApi.getAllStudentList(
         classId,
-        sessionId,
       );
 
-      if (lists !== null) setListItems(lists.map(transform));
+      if (listsOfAllJoinedStudents !== null) {
+        setListItems(
+          listsOfAllJoinedStudents.map(e =>
+            transformClassStudentModelToDataProps(e),
+          ),
+        );
 
-      const unSubscribe = teacherApi.getLiveStudentAttendance(
-        sessionId,
-        sessions => {
-          const Sessions = sessions.map(transform);
+        const unSubscribe = teacherApi.getLiveStudentAttendance(
+          classId,
+          sessionId,
+          listsOfAllJoinedStudents,
+          sessionsStudent => {
+            setListItems(
+              mergeStudentListWithAttendanceInfo(
+                listsOfAllJoinedStudents,
+                sessionsStudent,
+              ),
+            );
+          },
+        );
 
-          setListItems(Sessions);
-        },
-      );
+        return unSubscribe;
+      }
 
-      return unSubscribe;
+      return () => console.log('un implemented');
     })();
   }, [classId, sessionId]);
 

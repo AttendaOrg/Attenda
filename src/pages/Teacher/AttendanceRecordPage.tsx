@@ -37,6 +37,7 @@ export const convertSessionInfoToMarkedDates = (
     const time = convertTime(sessionDate);
 
     if (Object.keys(markedData).includes(date)) {
+      // BUG: there can be more than two session in same time more specifically in minutes
       // NOTE: i am explicitly not setting it to a dynamic value because if the value is false
       // the indicator will turn into red which is not the behavior we want.
       markedData[date] = { ...markedData[date], [time]: true };
@@ -96,7 +97,9 @@ const AttendanceSessionRecordTab: React.FC<Props> = ({ navigation, route }) => {
       matchDate(sessionDate, d),
     );
 
-    if (report.length === 1) {
+    // BUG: there can be more than two session in same time more specifically in minutes
+    // so fix it
+    if (report.length > 0) {
       const [match] = report;
 
       navigation.push('EditAttendanceSession', {
