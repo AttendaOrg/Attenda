@@ -44,6 +44,8 @@ export enum BasicErrors {
   ALREADY_PRESENT_GIVEN,
 }
 
+export type RealTimeListenerUnSubscriber = () => void;
+
 export const convertErrorToMsg = (errCode: BasicErrors | null): string => {
   // on compile typescript enum converts to a json object.
   // which have the following structure

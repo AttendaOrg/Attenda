@@ -1,7 +1,11 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import firebase from 'firebase';
 import AuthApi from '../AuthApi';
-import { BasicErrors, WithError } from '../BaseApi';
+import {
+  BasicErrors,
+  RealTimeListenerUnSubscriber,
+  WithError,
+} from '../BaseApi';
 import TeacherApi from '../TeacherApi';
 import AccountInfo, { AccountInfoProps } from '../model/AccountInfo';
 import TeacherClassModel, {
@@ -78,7 +82,7 @@ interface StudentApiInterface {
   getEnrolledClassListListener(
     // eslint-disable-next-line @typescript-eslint/no-empty-function
     onDataChange: (newData: TeacherClassModel[]) => void,
-  ): UnSubscribe;
+  ): RealTimeListenerUnSubscriber;
 
   /**
    * given the session ids add a listener for getting classIds
@@ -89,7 +93,7 @@ interface StudentApiInterface {
   getPresentClassId(
     sessionId: string[],
     cb: (givenPresenceClassId: string[]) => void,
-  ): UnSubscribe;
+  ): RealTimeListenerUnSubscriber;
 
   /**
    * leave the joined class
@@ -97,8 +101,6 @@ interface StudentApiInterface {
    */
   leaveClass(classId: string): Promise<WithError<boolean>>;
 }
-
-type UnSubscribe = () => void;
 
 // noinspection JSUnusedLocalSymbols
 export default class StudentApi extends AuthApi implements StudentApiInterface {
@@ -259,7 +261,7 @@ export default class StudentApi extends AuthApi implements StudentApiInterface {
   getEnrolledClassListListener = (
     // eslint-disable-next-line @typescript-eslint/no-empty-function
     onDataChange = (_newData: TeacherClassModel[]) => {},
-  ): UnSubscribe => {
+  ): RealTimeListenerUnSubscriber => {
     const error = () => console.error('error');
     let unSubscribeAccInfo = () => console.info('un implemented');
 
@@ -426,7 +428,7 @@ export default class StudentApi extends AuthApi implements StudentApiInterface {
   getPresentClassId = (
     sessionId: string[],
     cb: (givenPresenceClassId: string[]) => void,
-  ): UnSubscribe => {
+  ): RealTimeListenerUnSubscriber => {
     if (sessionId.length === 0) return () => null;
 
     const userId = this.getUserUid();

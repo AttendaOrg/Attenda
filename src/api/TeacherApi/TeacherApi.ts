@@ -1,7 +1,11 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import firebase from 'firebase';
 import AuthApi from '../AuthApi';
-import { BasicErrors, WithError } from '../BaseApi';
+import {
+  BasicErrors,
+  RealTimeListenerUnSubscriber,
+  WithError,
+} from '../BaseApi';
 import TeacherClassModel, {
   TeacherClassModelProps,
 } from './model/TeacherClassModel';
@@ -254,7 +258,7 @@ export default class TeacherApi extends AuthApi implements TeacherApiInterface {
     }
   };
 
-  getClassInfo = async (
+  getClassInfoByIdOrCode = async (
     classId: string,
   ): Promise<WithError<TeacherClassModel>> => {
     try {
@@ -307,6 +311,95 @@ export default class TeacherApi extends AuthApi implements TeacherApiInterface {
       return this.success(match[0]);
     } catch (e) {
       return this.error(BasicErrors.EXCEPTION);
+    }
+  };
+
+  getClassInfo = async (
+    classId: string,
+  ): Promise<WithError<TeacherClassModel>> => {
+    try {
+      const userId = this.getUserUid();
+
+      if (userId === null)
+        return this.error(BasicErrors.USER_NOT_AUTHENTICATED);
+
+      // NOTE: because firebase doesn't support logical OR query
+      // we have to perform multiple query
+
+      const classDoc = await firebase
+        .firestore()
+        .collection(TeacherApi.CLASSES_COLLECTION_NAME)
+        .doc(classId)
+        .get();
+
+      if (!classDoc.exists) return this.error(BasicErrors.NO_CLASS_FOUND);
+
+      const data = classDoc.data();
+      const fullData: TeacherClassModelProps = {
+        ...((data as unknown) as TeacherClassModelProps),
+        classId: classDoc.id,
+      };
+
+      return this.success(new TeacherClassModel(fullData));
+    } catch (e) {
+      return this.error(BasicErrors.EXCEPTION);
+    }
+  };
+
+  getClassInfoByCode = async (
+    classCode: string,
+  ): Promise<WithError<TeacherClassModel>> => {
+    try {
+      const classDocs = await firebase
+        .firestore()
+        .collection(TeacherApi.CLASSES_COLLECTION_NAME)
+        .where('classCode', '==', classCode)
+        .get();
+
+      if (classDocs.docs.length === 0)
+        return this.error(BasicErrors.NO_CLASS_FOUND);
+
+      const [classDoc] = classDocs.docs;
+
+      const data = classDoc.data();
+      const fullData: TeacherClassModelProps = {
+        ...((data as unknown) as TeacherClassModelProps),
+        classId: classDoc.id,
+      };
+
+      return this.success(new TeacherClassModel(fullData));
+    } catch (e) {
+      return this.error(BasicErrors.EXCEPTION);
+    }
+  };
+
+  getClassInfoRealTime = (
+    classId: string,
+    cb: (classInfo: TeacherClassModel) => void,
+  ): RealTimeListenerUnSubscriber => {
+    const error = (msg: string | undefined | number = 'un attach'): void =>
+      console.error(msg);
+
+    try {
+      const userId = this.getUserUid();
+
+      if (userId === null) return error;
+
+      return firebase
+        .firestore()
+        .collection(TeacherApi.CLASSES_COLLECTION_NAME)
+        .doc(classId)
+        .onSnapshot(snapShot => {
+          const data = snapShot.data();
+          const fullData: TeacherClassModelProps = {
+            ...((data as unknown) as TeacherClassModelProps),
+            classId: snapShot.id,
+          };
+
+          cb(new TeacherClassModel(fullData));
+        });
+    } catch (e) {
+      return error;
     }
   };
 

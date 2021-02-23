@@ -20,6 +20,7 @@ import ChangeClassCode, {
   InfoTextType,
 } from '../../components/organisms/Teacher/ChangeClassCode';
 import GlobalContext from '../../context/GlobalContext';
+import { RealTimeListenerUnSubscriber } from '../../api/BaseApi';
 
 type Props = StackScreenProps<RootStackParamList, 'ClassSettings'>;
 
@@ -93,7 +94,7 @@ class ClassSettingsPage extends React.PureComponent<Props, State> {
   async componentDidMount(): Promise<void> {
     const { navigation } = this.props;
 
-    await this.fetchUpdateClassInfo();
+    this.removeUpdateClassInfoListener = await this.attachUpdateClassInfo();
 
     // BUG: for some reason react-navigation is not showing the correct return type
     // expected () => removeListener(type, callback); but got () => void
@@ -105,6 +106,8 @@ class ClassSettingsPage extends React.PureComponent<Props, State> {
     const { navigation } = this.props;
 
     navigation.removeListener('beforeRemove', this.callback);
+
+    this.removeUpdateClassInfoListener();
   }
 
   callback = (e: NavigationEventListenerCallback): void => {
@@ -113,6 +116,10 @@ class ClassSettingsPage extends React.PureComponent<Props, State> {
       // prevent from going back
       e.preventDefault();
     }
+  };
+
+  removeUpdateClassInfoListener = (): void => {
+    console.log('never was attached');
   };
 
   getClassId = (): string => {
@@ -154,25 +161,24 @@ class ClassSettingsPage extends React.PureComponent<Props, State> {
       classId,
       TeacherClassModel.Update({ title, section, description, isActiveInvite }),
     );
-    await this.fetchUpdateClassInfo();
     this.updateHeader();
   };
 
-  fetchUpdateClassInfo = async (): Promise<void> => {
+  attachUpdateClassInfo = (): RealTimeListenerUnSubscriber => {
     const {
       route: {
         params: { classId },
       },
     } = this.props;
 
-    const [info] = await teacherApi.getClassInfo(classId);
-
-    if (info !== null)
-      this.setState({
-        currentInfo: info.toJson(),
-        prevInfo: info.toJson(),
-        currClassCode: info.classCode,
-      });
+    return teacherApi.getClassInfoRealTime(classId, classInfo => {
+      if (classInfo !== null)
+        this.setState({
+          currentInfo: classInfo.toJson(),
+          prevInfo: classInfo.toJson(),
+          currClassCode: classInfo.classCode,
+        });
+    });
   };
 
   validateClassCode = async (classCode: string): Promise<void> => {
@@ -344,14 +350,6 @@ class ClassSettingsPage extends React.PureComponent<Props, State> {
     } = this;
 
     context.changeSpinnerLoading(true);
-    // DOABLE:
-    // TODO: use an realtime listener for getting class info
-    this.setState(({ currentInfo }) => ({
-      currentInfo: {
-        ...currentInfo,
-        isActiveInvite: !(currentInfo.isActiveInvite ?? false),
-      },
-    }));
     await teacherApi.changeInviteCodeEnableStatus(classId, !isActiveInvite);
     // await this.updateClassInfo();
     context.changeSpinnerLoading(false);

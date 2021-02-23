@@ -35,7 +35,9 @@ const transformToStudentListDataProps = (
   } = cls;
 
   return {
-    attendance: 'Your Attendance: 70%', // TODO: get attendance summery from the class info
+    // TODO: get attendance summery from the class info
+    // we will do it with a cloud function because it is too intensive calculation
+    attendance: 'Your Attendance: 70%',
     section,
     showShimmer: false,
     backgroundImage: classBack,
