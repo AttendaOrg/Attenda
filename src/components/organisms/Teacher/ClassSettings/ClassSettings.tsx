@@ -1,5 +1,12 @@
 import React from 'react';
-import { StyleSheet, View, ScrollView, Text, Switch } from 'react-native';
+import {
+  StyleSheet,
+  View,
+  ScrollView,
+  Text,
+  Switch,
+  Platform,
+} from 'react-native';
 import { Input, Icon } from 'react-native-elements';
 // import { ScrollView } from 'react-native-gesture-handler';
 import { inputContainerStyle } from '../../../../util/Styles';
@@ -77,6 +84,8 @@ const ClassSettings: React.FC<ClassSettingsPops> = ({
   onLinkShare,
   onEditClassCodeClick,
 }): JSX.Element => {
+  const shareIconName = Platform.OS === 'web' ? 'content-copy' : 'share';
+
   return (
     <ScrollView style={styles.container}>
       <View style={styles.headlineTextContainer}>
@@ -147,14 +156,14 @@ const ClassSettings: React.FC<ClassSettingsPops> = ({
 
         <Icon
           name="edit"
-          type="font-awesome"
+          type="material"
           color="#2196F3"
           onPress={onEditClassCodeClick}
         />
         <View style={{ width: 8 }} />
         <Icon
-          name="share"
-          type="font-awesome"
+          name={shareIconName}
+          type="material"
           color="#2196F3"
           onPress={onCodeShare}
         />
@@ -168,8 +177,8 @@ const ClassSettings: React.FC<ClassSettingsPops> = ({
           </Text>
         </View>
         <Icon
-          name="share"
-          type="font-awesome"
+          name={shareIconName}
+          type="material"
           color="#2196F3"
           onPress={onLinkShare}
         />

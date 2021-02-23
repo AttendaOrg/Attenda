@@ -3,7 +3,8 @@ import {
   StackNavigationOptions,
   StackScreenProps,
 } from '@react-navigation/stack';
-import { Share, View } from 'react-native';
+// NOTICE: maybe remove use some other method because Clipboard from react-native is deprecated and will be remove soon
+import { Share, View, Clipboard } from 'react-native';
 import { IconButton } from 'react-native-paper';
 import { RootStackParamList } from '../../App';
 import ClassSettings from '../../components/organisms/Teacher/ClassSettings';
@@ -301,27 +302,31 @@ class ClassSettingsPage extends React.PureComponent<Props, State> {
   // #endregion change handler
 
   // #region Invite code
-  onCodeShare = (): void => {
+  onCodeShare = async (): Promise<void> => {
     const classId = this.getClassCode();
 
     try {
       // TODO: create a message to explain the action
-      Share.share({ message: classId, title: 'Invite Code' });
+      await Share.share({ message: classId, title: 'Invite Code' });
     } catch (error) {
-      //   console.log(error);
+      console.log(Clipboard);
+      Clipboard.setString(classId);
     }
   };
 
-  onLinkShare = (): void => {
+  onLinkShare = async (): Promise<void> => {
+    const url = 'https://attenda.app.to/A454SDS';
+
     try {
       // TODO: generate valid link
-      Share.share({
+      await Share.share({
         message: 'https://attenda.app.to/A454SDS',
-        url: 'https://attenda.app.to/A454SDS',
+        url,
         title: 'Invite Code Link',
       });
     } catch (error) {
       //   console.log(error);
+      Clipboard.setString(url);
     }
   };
 
