@@ -1030,6 +1030,7 @@ export default class TeacherApi extends AuthApi implements TeacherApiInterface {
               studentId,
               studentName,
               whom: UserRole.TEACHER,
+              present: true,
             }).toJson(),
           );
       }
