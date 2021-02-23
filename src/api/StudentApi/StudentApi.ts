@@ -391,23 +391,36 @@ export default class StudentApi extends AuthApi implements StudentApiInterface {
 
     if (sessionInfo.macId !== hashMac)
       return this.error(BasicErrors.MAC_ID_DOES_NOT_MATCH);
-    // TODO: check if the student already give response the update it or else insert new.
-    // give present
-    await firebase
+
+    const queryPresentGiven = await firebase
       .firestore()
       .collection(TeacherApi.CLASSES_SESSIONS_STUDENT_COLLECTION_NAME)
-      .add(
-        new SessionStudentModel({
-          whom: UserRole.STUDENT,
-          studentId: userId,
-          sessionTime: new Date(),
-          present: true,
-          lastUpdateTime: new Date(),
-          sessionId,
-          classId,
-          studentName: displayName,
-        }).toJson(),
-      );
+      .where('studentId', '==', userId)
+      .where('sessionId', '==', sessionId)
+      .where('classId', '==', classId)
+      .get();
+
+    if (queryPresentGiven.docs.length === 0) {
+      // there is no attendance record for the session insert an record
+      // or don't do anything because the student doesn't have the permission to update the field
+      await firebase
+        .firestore()
+        .collection(TeacherApi.CLASSES_SESSIONS_STUDENT_COLLECTION_NAME)
+        .add(
+          new SessionStudentModel({
+            whom: UserRole.STUDENT,
+            studentId: userId,
+            sessionTime: new Date(),
+            present: true,
+            lastUpdateTime: new Date(),
+            sessionId,
+            classId,
+            studentName: displayName,
+          }).toJson(),
+        );
+    } else {
+      return this.error(BasicErrors.ALREADY_PRESENT_GIVEN);
+    }
 
     return this.success(true);
     // throw new Error('Method not implemented.');

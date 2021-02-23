@@ -24,7 +24,9 @@ export const Default = (): JSX.Element => (
     userImage={imageSrc}
     name={text('teacherName', 'Aditya Bhargava')}
     rollNo={text('rollNo', 'IITE1557454F')}
-    onRollChange={newRollNo => action('onRollChange')(newRollNo)}
+    onRollChange={async (newRollNo): Promise<void> =>
+      action('onRollChange')(newRollNo)
+    }
   />
 );
 

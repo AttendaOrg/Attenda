@@ -176,13 +176,6 @@ interface TeacherApiInterface {
   ): Promise<WithError<SessionInfoModel[]>>;
 
   /**
-   * get summery of all student's attendance report
-   * @param classId
-   * @returns unknown TODO: figure out the data structure
-   */
-  getAllStudentAttendanceSummery(classId: string): Promise<WithError<unknown>>;
-
-  /**
    * gets the attendance report if a student by month
    * @param classId
    * @param studentId
@@ -762,25 +755,9 @@ export default class TeacherApi extends AuthApi implements TeacherApiInterface {
 
       const [students] = await this.getAllStudentList(classId);
 
-      if (students !== null) {
-        // QUESTION: do we need to pre-populate session student table ?
-        // apparently the answer is no
-        // await Promise.all(
-        //   students.map(student => {
-        //     return firebase
-        //       .firestore()
-        //       .collection(TeacherApi.CLASSES_SESSIONS_STUDENT_COLLECTION_NAME)
-        //       .add(
-        //         // TODO: only add those student who has joined the class
-        //         new SessionStudentModel({
-        //           studentId: student.studentId ?? '',
-        //           classId,
-        //           sessionId: sessionDoc.id,
-        //         }).toJson(),
-        //       );
-        //   }),
-        // );
-      }
+      // if (students !== null)
+      // QUESTION: do we need to pre-populate session student table ?
+      // apparently the answer is no
 
       return this.success(sessionDoc.id);
     } catch (e) {
@@ -916,14 +893,6 @@ export default class TeacherApi extends AuthApi implements TeacherApiInterface {
     } catch (e) {
       return this.error(BasicErrors.EXCEPTION);
     }
-  };
-
-  getAllStudentAttendanceSummery = (
-    classId: string,
-  ): Promise<WithError<unknown>> => {
-    // TODO: implement this method
-    // this could be a helper method to return only necessary data?
-    throw new Error('Method not implemented.');
   };
 
   getLiveStudentAttendance = (
@@ -1090,6 +1059,40 @@ export default class TeacherApi extends AuthApi implements TeacherApiInterface {
 
       return this.success(students);
     } catch (e) {
+      return this.error(BasicErrors.EXCEPTION);
+    }
+  };
+
+  changeStudentRollNo = async (
+    classId: string,
+    studentId: string,
+    newRollNo: string,
+  ): Promise<WithError<boolean>> => {
+    try {
+      const userId = this.getUserUid();
+
+      if (userId === null)
+        return this.error(BasicErrors.USER_NOT_AUTHENTICATED);
+
+      const student = await firebase
+        .firestore()
+        .collection(TeacherApi.CLASSES_COLLECTION_NAME)
+        .doc(classId)
+        .collection(TeacherApi.CLASSES_JOINED_STUDENT_COLLECTION_NAME)
+        .doc(studentId)
+        .get();
+
+      if (!student.exists)
+        return this.error(BasicErrors.USER_DOES_NOT_EXIST_IN_CLASS);
+
+      student.ref.update(
+        ClassStudentModel.Update({
+          rollNo: newRollNo,
+        }),
+      );
+
+      return this.success(true);
+    } catch (error) {
       return this.error(BasicErrors.EXCEPTION);
     }
   };

@@ -107,11 +107,15 @@ const EditStudentAttendanceRecordPage: React.FC<Props> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [classId, studentId]);
 
+  const onRollChange = async (newRollNo: string) => {
+    await teacherApi.changeStudentRollNo(classId, studentId, newRollNo);
+  };
+
   return (
     <EditStudentAttendanceRecord
       userInfo={{
         name: studentInfo?.studentName ?? '', // get the name form api
-        onRollChange: () => null, // TODO: update roll no
+        onRollChange, // TODO: update roll no
         rollNo: studentInfo?.rollNo ?? '',
         userImage: imageSrc, // TODO: get the profile pic from api
       }}

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Image,
   StyleSheet,
@@ -45,7 +45,7 @@ export interface UserInfoPops {
   userImage: ImageSource;
   name: string;
   rollNo: string;
-  onRollChange: (newRollNo: string) => void;
+  onRollChange: (newRollNo: string) => Promise<void>;
 }
 
 const UserInfo: React.FC<UserInfoPops> = ({
@@ -60,10 +60,9 @@ const UserInfo: React.FC<UserInfoPops> = ({
   const action = isRollNoEditing ? (
     <TouchableOpacity
       style={{ marginHorizontal: 6 }}
-      onPress={() => {
+      onPress={async () => {
+        await onRollChange(_rollNo);
         setIsRollNoEditing(false);
-        onRollChange(_rollNo);
-        // reset it ???
         setRollNo(_rollNo);
       }}
     >
@@ -78,6 +77,10 @@ const UserInfo: React.FC<UserInfoPops> = ({
     </TouchableOpacity>
   );
 
+  useEffect(() => {
+    setRollNo(rollNo);
+  }, [rollNo]);
+
   return (
     <View style={styles.container}>
       <Image source={userImage} style={styles.image} />
@@ -91,7 +94,7 @@ const UserInfo: React.FC<UserInfoPops> = ({
             style={{ borderBottomColor: '#000', borderBottomWidth: 1 }}
           />
         ) : (
-          <Text style={styles.rollNo}>{rollNo}</Text>
+          <Text style={styles.rollNo}>{_rollNo}</Text>
         )}
         {action}
       </View>

@@ -38,7 +38,8 @@ export const Default = (): JSX.Element => {
     <EditStudentAttendanceRecord
       userInfo={object('userInfo', {
         name: 'Prasanta Barman',
-        onRollChange: rollNo => action('onRollChange')(rollNo),
+        onRollChange: async (rollNo): Promise<void> =>
+          action('onRollChange')(rollNo),
         rollNo: 'IITE1557454',
         userImage: imageSrc,
       })}
@@ -55,7 +56,8 @@ export const Default = (): JSX.Element => {
 const WorkingPrototype = (): JSX.Element => {
   const [userInfo, setUserInfo] = useState<UserInfoPops>({
     name: 'Prasanta Barman',
-    onRollChange: rollNo => setUserInfo({ ...userInfo, rollNo }),
+    onRollChange: async (rollNo: string): Promise<void> =>
+      setUserInfo({ ...userInfo, rollNo }),
     rollNo: 'IITE1557454',
     userImage: imageSrc,
   });

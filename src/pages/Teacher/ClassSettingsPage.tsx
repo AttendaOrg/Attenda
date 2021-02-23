@@ -344,6 +344,7 @@ class ClassSettingsPage extends React.PureComponent<Props, State> {
     } = this;
 
     context.changeSpinnerLoading(true);
+    // DOABLE:
     // TODO: use an realtime listener for getting class info
     this.setState(({ currentInfo }) => ({
       currentInfo: {
