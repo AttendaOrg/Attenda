@@ -59,7 +59,7 @@ const ForgotPasswordPage: React.FC<Props> = ({ navigation }): JSX.Element => {
 
     const [success, error] = await authApi.sendPasswordResetEmail(
       email,
-      'http://dummy/url',
+      'http://localhost:19006',
     );
 
     globalContext.changeSpinnerLoading(false);

@@ -73,4 +73,56 @@ export const matchDate = (date1: Date, date2: Date): boolean =>
   date1.getHours() === date2.getHours() &&
   date1.getMinutes() === date2.getMinutes();
 
+/**
+ * gets the starting date of the month and starting day of the next month
+ * @param month
+ * @returns [startDayOfTheMonth,nextMonthStartDay]
+ * @example
+ * const date = new Date(); // Fri Jan 22 2021 22:33:08 GMT+0530 (India Standard Time)
+ * const [ startDayOfTheMonth,nextMonthStartDay ] = getMonthRange(date);
+ * // [Wed Dec 01 2021 00:00:00 GMT+0530 (India Standard Time), Sat Jan 01 2022 00:00:00 GMT+0530 (India Standard Time)]
+ */
+export const getMonthRange = (month: Date): [Date, Date] => {
+  const startingMonthDate = new Date(month);
+  const endingMonthDate = new Date(month);
+
+  startingMonthDate.setDate(1);
+  endingMonthDate.setDate(1);
+  endingMonthDate.setMonth(month.getMonth() + 1);
+
+  return [startingMonthDate, endingMonthDate];
+};
+
 export default {};
+
+/**
+ * throttles a function calls for specific amount of time
+ * @param callback
+ * @param waitFor
+ */
+export const throttle = <T>(
+  callback: (arg: T) => void,
+  waitFor: number,
+): ((arg: T) => void) => {
+  let lastFunc: number | undefined;
+  let lastRan = 0;
+
+  return (...args) => {
+    if (!lastRan) {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      callback.apply(this, args);
+      lastRan = Date.now();
+    } else {
+      clearTimeout(lastFunc);
+      lastFunc = (setTimeout(() => {
+        if (Date.now() - lastRan >= waitFor) {
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
+          callback.apply(this, args);
+          lastRan = Date.now();
+        }
+      }, waitFor - (Date.now() - lastRan)) as unknown) as number;
+    }
+  };
+};

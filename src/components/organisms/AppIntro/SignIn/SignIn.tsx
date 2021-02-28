@@ -25,14 +25,15 @@ const styles = StyleSheet.create({
   inputStyle: {
     fontSize: 14,
   },
-  forgotPasswordText: {
-    textAlign: 'right',
-    marginVertical: 8,
-    marginTop: 0,
-  },
   goSignUpContainer: {
     justifyContent: 'flex-end',
     // flex: 1,
+  },
+  forgotPasswordContainer: {
+    flex: 1,
+    alignItems: 'flex-end',
+    paddingVertical: 8,
+    paddingTop: 0,
   },
 });
 
@@ -104,9 +105,11 @@ const SignIn: React.FC<SignInPops> = ({
         />
       </View>
 
-      <TouchableOpacity onPress={onForgotPasswordClick}>
-        <Text style={styles.forgotPasswordText}>forgot password ?</Text>
-      </TouchableOpacity>
+      <View style={styles.forgotPasswordContainer}>
+        <TouchableOpacity onPress={onForgotPasswordClick}>
+          <Text>forgot password ?</Text>
+        </TouchableOpacity>
+      </View>
 
       <Button title="Sign In" onPress={onSignInClick} />
 

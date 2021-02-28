@@ -42,6 +42,12 @@ const styles = StyleSheet.create({
     color: lightColor,
     // marginTop: 6,
   },
+  listItems: {
+    flexGrow: 1,
+  },
+  appVersion: {
+    padding: 16,
+  },
 });
 
 export enum DrawerListItems {
@@ -57,6 +63,7 @@ export interface DrawerContentPops {
   email: string;
   avatar?: ImageSourcePropType;
   onListItemCLick: (item: DrawerListItems) => void;
+  appVersion: string;
 }
 
 const DrawerContent: React.FC<DrawerContentPops> = ({
@@ -64,6 +71,7 @@ const DrawerContent: React.FC<DrawerContentPops> = ({
   email,
   avatar = require('../../../../../assets/images/user.jpg'),
   onListItemCLick,
+  appVersion,
 }): JSX.Element => {
   return (
     <View style={styles.container}>
@@ -78,32 +86,37 @@ const DrawerContent: React.FC<DrawerContentPops> = ({
           <Text style={styles.textEmail}>{email}</Text>
         </View>
       </View>
-      <List.Item
-        title="Classes"
-        left={props => <List.Icon {...props} icon="home" />}
-        onPress={() => onListItemCLick(DrawerListItems.CLASSES)}
-      />
-      <List.Item
-        title="My Account"
-        left={props => <List.Icon {...props} icon="account-box" />}
-        onPress={() => onListItemCLick(DrawerListItems.MY_ACCOUNT)}
-      />
-      <Divider />
-      <List.Item
-        title="Contact Us"
-        left={props => <List.Icon {...props} icon="email" />}
-        onPress={() => onListItemCLick(DrawerListItems.CONTACT_US)}
-      />
-      <List.Item
-        title="Privacy Policy"
-        left={props => <List.Icon {...props} icon="lock" />}
-        onPress={() => onListItemCLick(DrawerListItems.PRIVACY_POLICY)}
-      />
-      <List.Item
-        title="Terms of service"
-        left={props => <List.Icon {...props} icon="format-list-numbered" />}
-        onPress={() => onListItemCLick(DrawerListItems.TERMS_OF_SERVICE)}
-      />
+      <View style={styles.listItems}>
+        <List.Item
+          title="Classes"
+          left={props => <List.Icon {...props} icon="home" />}
+          onPress={() => onListItemCLick(DrawerListItems.CLASSES)}
+        />
+        <List.Item
+          title="My Account"
+          left={props => <List.Icon {...props} icon="account-box" />}
+          onPress={() => onListItemCLick(DrawerListItems.MY_ACCOUNT)}
+        />
+        <Divider />
+        <List.Item
+          title="Contact Us"
+          left={props => <List.Icon {...props} icon="email" />}
+          onPress={() => onListItemCLick(DrawerListItems.CONTACT_US)}
+        />
+        <List.Item
+          title="Privacy Policy"
+          left={props => <List.Icon {...props} icon="lock" />}
+          onPress={() => onListItemCLick(DrawerListItems.PRIVACY_POLICY)}
+        />
+        <List.Item
+          title="Terms of service"
+          left={props => <List.Icon {...props} icon="format-list-numbered" />}
+          onPress={() => onListItemCLick(DrawerListItems.TERMS_OF_SERVICE)}
+        />
+      </View>
+      <View style={styles.appVersion}>
+        <Text style={{ textAlign: 'center' }}>App version: {appVersion}</Text>
+      </View>
     </View>
   );
 };

@@ -1,6 +1,7 @@
 import React from 'react';
 import { Image, Dimensions, StyleSheet, Text, View } from 'react-native';
 import { FAB } from 'react-native-paper';
+import { UserRole } from '../../../../api';
 import Arrow from '../../../atoms/Icons/Arrow';
 
 const styles = StyleSheet.create({
@@ -44,9 +45,18 @@ const imageSource = require('../../../../../assets/images/empty.png');
 
 export interface EmptyClassPops {
   onFabClick: () => void;
+  userRole: UserRole;
 }
 
-const EmptyClass: React.FC<EmptyClassPops> = ({ onFabClick }): JSX.Element => {
+const EmptyClass: React.FC<EmptyClassPops> = ({
+  onFabClick,
+  userRole,
+}): JSX.Element => {
+  const text =
+    userRole === UserRole.TEACHER
+      ? 'Create your first class'
+      : 'Join your first class';
+
   return (
     <View style={styles.container}>
       <Image source={imageSource} style={styles.largeImage} />
@@ -56,7 +66,7 @@ const EmptyClass: React.FC<EmptyClassPops> = ({ onFabClick }): JSX.Element => {
       </View>
 
       <View style={styles.belowTextContainer}>
-        <Text style={styles.text}>Join your first class</Text>
+        <Text style={styles.text}>{text}</Text>
       </View>
 
       <View style={styles.arrowContainer}>

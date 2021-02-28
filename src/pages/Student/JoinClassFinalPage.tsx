@@ -44,15 +44,15 @@ const JoinClassFinalPage: React.FC<Props> = ({
     (async () => {
       globalContext.changeSpinnerLoading(true);
 
-      const [info] = await teacherApi.getClassInfo(classCode);
+      const [info] = await teacherApi.getClassInfoByCode(classCode);
       const [success] = await studentApi.validateClassJoin(classCode, rollNo); // TODO: handle error if there validate join class is failed
 
       if (info !== null)
         setAccInfo({
           className: info.title,
           section: info.section,
-          teacher: '', // TODO: get the teacher name from the api
           classId: info.classId ?? '',
+          teacher: info.teacherName ?? '',
         });
       globalContext.changeSpinnerLoading(false);
     })();

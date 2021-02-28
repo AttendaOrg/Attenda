@@ -25,7 +25,7 @@ export interface StudentListPops {
   onChangeChecked: (rollNo: string, checked: boolean) => void;
   showChecked?: boolean;
   onChangeShowChecked: (active: boolean) => void;
-  onProfileClick: (rollNo: string) => void;
+  onProfileClick: (studentId: string) => void;
 }
 
 const StudentList: React.FC<StudentListPops> = ({
@@ -45,7 +45,7 @@ const StudentList: React.FC<StudentListPops> = ({
               onChangeShowChecked(true);
               onChangeChecked(data.item.rollNo, !data.item.checked);
             }}
-            onProfileClick={() => onProfileClick(data.item.rollNo)}
+            onProfileClick={() => onProfileClick(data.item.key)}
             showChecked={showChecked}
             name={data.item.name}
             rollNo={data.item.rollNo}

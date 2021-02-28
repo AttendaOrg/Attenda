@@ -20,6 +20,7 @@ export default {
 export const Default = (): JSX.Element => (
   <StartAttendanceSession
     title={text('title', 'Computer science data structures and algorithms')}
+    section={text('section', 'Computer science')}
     onStartSession={date => action('onStartSession')(date)}
   />
 );

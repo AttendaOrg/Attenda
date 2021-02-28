@@ -11,7 +11,6 @@ import {
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { Button, Dialog, Paragraph } from 'react-native-paper';
-import { useIsFocused } from '@react-navigation/native';
 import { RootStackParamList } from '../../App';
 import StudentList, {
   StudentListData,
@@ -35,30 +34,16 @@ export const StudentListNavigationOptions: OptionsProps = () => ({
   title: 'Students',
 });
 
-const initialListData = [
-  {
-    name: 'Prasanta Barman',
-    rollNo: 'IIT2154',
-    key: 'IIT2154',
-    checked: false,
-  },
-  {
-    name: 'Apurba Roy',
-    rollNo: 'IIT2441454',
-    key: 'IIT2441454',
-    checked: false,
-  },
-];
-
 const transform = (data: ClassStudentModel): StudentListData => {
-  const { studentId = '', email, rollNo } = data;
+  const { studentId = '', rollNo, studentName } = data;
 
   return {
     checked: false,
     key: studentId ?? '',
-    name: email, // TODO: add name
+    name: studentName ?? '',
     rollNo,
-    // percentage: `${totalAttendancePercentage} %`, // if we pass percentage it will not show the select
+    // if we pass percentage it will not show the select
+    // percentage: `${totalAttendancePercentage} %`,
   };
 };
 

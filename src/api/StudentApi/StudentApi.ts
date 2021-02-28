@@ -1,7 +1,11 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import firebase from 'firebase';
 import AuthApi from '../AuthApi';
-import { BasicErrors, WithError } from '../BaseApi';
+import {
+  BasicErrors,
+  RealTimeListenerUnSubscriber,
+  WithError,
+} from '../BaseApi';
 import TeacherApi from '../TeacherApi';
 import AccountInfo, { AccountInfoProps } from '../model/AccountInfo';
 import TeacherClassModel, {
@@ -18,6 +22,7 @@ import ClassStudentModel, {
   ClassStudentModelInterface,
 } from '../TeacherApi/model/ClassStudentModel';
 import { hashMacId } from '../util/hash';
+import { getMonthRange } from '../../util';
 
 interface StudentApiInterface {
   /**
@@ -49,9 +54,6 @@ interface StudentApiInterface {
    */
   getEnrolledClassList(page: number): Promise<WithError<TeacherClassModel[]>>;
 
-  // TODO: get the class info from TeacherApi ?
-  // getClassInfo(classCode: string): ClassInfo;
-
   /**
    * give present to the class session
    * @param classId
@@ -67,9 +69,11 @@ interface StudentApiInterface {
   /**
    * get attendance report of a class
    * @param classId
+   * @param month
    */
   getAttendanceReport(
     classId: string,
+    month: Date,
   ): Promise<WithError<SessionStudentModel[]>>;
 
   /**
@@ -78,7 +82,18 @@ interface StudentApiInterface {
   getEnrolledClassListListener(
     // eslint-disable-next-line @typescript-eslint/no-empty-function
     onDataChange: (newData: TeacherClassModel[]) => void,
-  ): Promise<() => void>;
+  ): RealTimeListenerUnSubscriber;
+
+  /**
+   * given the session ids add a listener for getting classIds
+   * in which class student has given present
+   * @param sessionId `string[]`
+   * @param cb `(givenPresenceClassId: string[]) => void`
+   */
+  getPresentClassId(
+    sessionId: string[],
+    cb: (givenPresenceClassId: string[]) => void,
+  ): RealTimeListenerUnSubscriber;
 
   /**
    * leave the joined class
@@ -167,6 +182,7 @@ export default class StudentApi extends AuthApi implements StudentApiInterface {
   ): Promise<WithError<boolean>> => {
     try {
       const userId = this.getUserUid();
+      const displayName = this.getUserDisplayName();
 
       if (userId === null)
         return this.error(BasicErrors.USER_NOT_AUTHENTICATED);
@@ -194,6 +210,7 @@ export default class StudentApi extends AuthApi implements StudentApiInterface {
         joinedDate: new Date(),
         studentId: userId,
         totalAttendancePercentage: 0,
+        studentName: displayName,
       });
 
       await firebase
@@ -241,10 +258,10 @@ export default class StudentApi extends AuthApi implements StudentApiInterface {
     }
   };
 
-  getEnrolledClassListListener = async (
+  getEnrolledClassListListener = (
     // eslint-disable-next-line @typescript-eslint/no-empty-function
     onDataChange = (_newData: TeacherClassModel[]) => {},
-  ): Promise<() => void> => {
+  ): RealTimeListenerUnSubscriber => {
     const error = () => console.error('error');
     let unSubscribeAccInfo = () => console.info('un implemented');
 
@@ -253,7 +270,7 @@ export default class StudentApi extends AuthApi implements StudentApiInterface {
 
       if (userId === null) return error;
 
-      const query = await firebase
+      const query = firebase
         .firestore()
         .collection(AuthApi.AUTH_ROOT_COLLECTION_NAME)
         .doc(userId);
@@ -341,6 +358,7 @@ export default class StudentApi extends AuthApi implements StudentApiInterface {
     macId: string,
   ): Promise<WithError<boolean>> => {
     const userId = this.getUserUid();
+    const displayName = this.getUserDisplayName();
 
     if (userId === null) return this.error(BasicErrors.USER_NOT_AUTHENTICATED);
 
@@ -372,29 +390,75 @@ export default class StudentApi extends AuthApi implements StudentApiInterface {
 
     if (sessionInfo.macId !== hashMac)
       return this.error(BasicErrors.MAC_ID_DOES_NOT_MATCH);
-    // TODO: check if the student already give response the update it or else insert new.
-    // give present
-    await firebase
+
+    const queryPresentGiven = await firebase
       .firestore()
       .collection(TeacherApi.CLASSES_SESSIONS_STUDENT_COLLECTION_NAME)
-      .add(
-        new SessionStudentModel({
-          whom: UserRole.STUDENT,
-          studentId: userId,
-          sessionTime: new Date(),
-          present: true,
-          lastUpdateTime: new Date(),
-          sessionId,
-          classId,
-        }).toJson(),
-      );
+      .where('studentId', '==', userId)
+      .where('sessionId', '==', sessionId)
+      .where('classId', '==', classId)
+      .where('present', '==', true)
+      .get();
+
+    if (queryPresentGiven.docs.length === 0) {
+      // there is no attendance record for the session insert an record
+      // or don't do anything because the student doesn't have the permission to update the field
+      await firebase
+        .firestore()
+        .collection(TeacherApi.CLASSES_SESSIONS_STUDENT_COLLECTION_NAME)
+        .add(
+          new SessionStudentModel({
+            whom: UserRole.STUDENT,
+            studentId: userId,
+            sessionTime: new Date(),
+            present: true,
+            lastUpdateTime: new Date(),
+            sessionId,
+            classId,
+            studentName: displayName,
+          }).toJson(),
+        );
+    } else {
+      return this.error(BasicErrors.ALREADY_PRESENT_GIVEN);
+    }
 
     return this.success(true);
     // throw new Error('Method not implemented.');
   };
 
+  getPresentClassId = (
+    sessionId: string[],
+    cb: (givenPresenceClassId: string[]) => void,
+  ): RealTimeListenerUnSubscriber => {
+    if (sessionId.length === 0) return () => null;
+
+    const userId = this.getUserUid();
+    const unSubscribe = firebase
+      .firestore()
+      .collection(TeacherApi.CLASSES_SESSIONS_STUDENT_COLLECTION_NAME)
+      .where('sessionId', 'in', sessionId)
+      .where('studentId', '==', userId)
+      .where('present', '==', true)
+      .onSnapshot(snapshot => {
+        const { docs } = snapshot;
+        const data = docs
+          .map(
+            e =>
+              new SessionStudentModel(
+                (e.data() as unknown) as SessionStudentInterface,
+              ),
+          )
+          .map(e => e.classId);
+
+        cb(data);
+      });
+
+    return unSubscribe;
+  };
+
   getAttendanceReport = async (
     classId: string,
+    month: Date,
   ): Promise<WithError<SessionStudentModel[]>> => {
     try {
       const userId = this.getUserUid();
@@ -402,12 +466,17 @@ export default class StudentApi extends AuthApi implements StudentApiInterface {
       if (userId === null)
         return this.error(BasicErrors.USER_NOT_AUTHENTICATED);
 
+      const [startDayOfTheMonth, nextMonthStartDay] = getMonthRange(month);
+
       // get session list
       const currentSessionDocs = await firebase
         .firestore()
         .collection(TeacherApi.CLASSES_SESSIONS_STUDENT_COLLECTION_NAME)
         .where('classId', '==', classId)
         .where('studentId', '==', userId)
+        .where('sessionTime', '>=', startDayOfTheMonth)
+        .where('sessionTime', '<', nextMonthStartDay)
+        .orderBy('sessionTime')
         .get();
 
       const sessions: SessionStudentModel[] = currentSessionDocs.docs.map(
@@ -423,6 +492,8 @@ export default class StudentApi extends AuthApi implements StudentApiInterface {
 
       return this.success(sessions);
     } catch (ex) {
+      console.log(ex);
+
       return this.error(BasicErrors.EXCEPTION);
     }
   };

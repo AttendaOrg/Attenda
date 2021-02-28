@@ -23,15 +23,17 @@ interface SpinnerLoaderProps {
    * @default false
    */
   show?: boolean;
+  size?: 'small' | 'large' | undefined;
 }
 
 const SpinnerLoader: React.FC<SpinnerLoaderProps> = ({
   show = false,
+  size = 'large',
 }): JSX.Element => {
   if (show)
     return (
       <View style={styles.container}>
-        <ActivityIndicator animating size="large" color={primaryColor} />
+        <ActivityIndicator animating size={size} color={primaryColor} />
       </View>
     );
 

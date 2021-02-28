@@ -1,10 +1,4 @@
-import React, {
-  useCallback,
-  useContext,
-  useEffect,
-  useRef,
-  useState,
-} from 'react';
+import React from 'react';
 import {
   StackNavigationOptions,
   StackScreenProps,
@@ -16,6 +10,8 @@ import { authApi } from '../../api/AuthApi';
 import SingleButtonPopup from '../../components/molecules/SingleButtonPopup';
 import GlobalContext from '../../context/GlobalContext';
 import AccountInfo from '../../api/model/AccountInfo';
+import { NavigationEventListenerCallback } from '../../util/hooks/useConfirmBack';
+import DoubleButtonPopup from '../../components/molecules/DoubleButtonPopup';
 
 type Props = StackScreenProps<RootStackParamList, 'MyAccount'>;
 
@@ -24,63 +20,104 @@ export const MyAccountNavigationOptions: StackNavigationOptions = {
   title: 'My Account',
 };
 
-const MyAccountPage: React.FC<Props> = ({ navigation }): JSX.Element => {
-  // our component doesn't need no know about the global spinner so we are using the ref to update the info
-  const [showPopup, setShowPopup] = useState(false);
-  const [nameError, setNameError] = useState('');
-  const [info, setInfo] = useState<AccountInfo | null>(null);
-  const [showLogOutPopup, setShowLogOutPopup] = useState(false);
-  const globalContext = useRef(useContext(GlobalContext));
+interface State {
+  info: AccountInfo | null;
+  currName: string;
+  nameError: string;
+  showPopup: boolean;
+  showLogoutError: boolean;
+  showUnsavedDiscardPopup: boolean;
+}
 
-  const loadInfo = useCallback(async () => {
-    if (info !== null) return;
-    globalContext.current.changeSpinnerLoading(true);
+class MyAccountPage extends React.Component<Props, State> {
+  // eslint-disable-next-line react/static-property-placement
+  context!: React.ContextType<typeof GlobalContext>;
 
-    const [_info] = await authApi.getAccountInfo();
+  constructor(prop: Props) {
+    super(prop);
 
-    globalContext.current.changeSpinnerLoading(false);
+    this.state = {
+      info: null,
+      currName: '',
+      nameError: '',
+      showLogoutError: false,
+      showPopup: false,
+      showUnsavedDiscardPopup: false,
+    };
+  }
 
-    if (_info != null) {
-      setInfo(_info);
-      setShowPopup(false);
-    } else {
-      setShowPopup(true);
+  async componentDidMount(): Promise<void> {
+    const { navigation } = this.props;
+
+    await this.loadInfo();
+    navigation.addListener('beforeRemove', this.callback);
+  }
+
+  componentWillUnmount(): void {
+    const { navigation } = this.props;
+
+    navigation.removeListener('beforeRemove', this.callback);
+  }
+
+  callback = (e: NavigationEventListenerCallback): void => {
+    const { info, currName } = this.state;
+
+    console.log(`${info?.name} !== ${currName}`);
+
+    if (info?.name !== currName) {
+      // prevent from going back
+      e.preventDefault();
+      this.setState({ showUnsavedDiscardPopup: true });
     }
-  }, [info]);
+  };
 
-  useEffect(() => {
-    loadInfo();
-  }, [loadInfo]);
+  loadInfo = async (): Promise<void> => {
+    const { context } = this;
 
-  const onLogOut = async () => {
+    context.changeSpinnerLoading(true);
+
+    const [info] = await authApi.getAccountInfo();
+
+    context.changeSpinnerLoading(false);
+
+    if (info != null) {
+      this.setState({ info, currName: info.name, showPopup: false });
+    } else {
+      this.setState({ showPopup: true });
+    }
+  };
+
+  onLogOut = async (): Promise<void> => {
     // start the loading spinner this will unloading of the spinner will be happen by the onAuthStateChangeListener
-    globalContext.current.changeSpinnerLoading(true);
+    const { context } = this;
+
+    context.changeSpinnerLoading(true);
     await authApi.logOut();
   };
 
-  const revalidateError = (_name: string): boolean => {
+  revalidateError = (_name: string): boolean => {
     if (_name.length < 3) {
-      setNameError('Name must contain at least 3 letters.');
+      this.setState({ nameError: 'Name must contain at least 3 letters.' });
 
       return false;
     }
-    setNameError('');
+    this.setState({ nameError: '' });
 
     return true;
   };
 
-  const onNameChange = async (newName: string): Promise<boolean> => {
-    if (revalidateError(newName)) {
-      const accInfo = new AccountInfo({
-        name: newName,
-      });
+  onNameChange = async (newName: string): Promise<boolean> => {
+    const { context } = this;
 
-      globalContext.current.changeSpinnerLoading(true);
+    if (this.revalidateError(newName)) {
+      context.changeSpinnerLoading(true);
       // TODO: Do something with the error
       // BUG: if there is no internet connection the promise doesn't resolve
-      const [success, _error] = await authApi.updateAccountInfo(accInfo);
+      const [success] = await authApi.updateName(newName);
 
-      globalContext.current.changeSpinnerLoading(false);
+      await this.loadInfo();
+
+      context.changeSpinnerLoading(false);
 
       return success === true;
     }
@@ -88,36 +125,80 @@ const MyAccountPage: React.FC<Props> = ({ navigation }): JSX.Element => {
     return false;
   };
 
-  return (
-    <>
-      <MyAccount
-        errors={{ nameError }}
-        name={info?.name ?? ''}
-        email={info?.email ?? ''}
-        userRole={info?.role ?? ''}
-        onNameChange={onNameChange}
-        revalidateError={revalidateError}
-        onChangePasswordClick={() => navigation.push('ChangePassword')}
-        // QUESTION: should reset the stack ?
-        showPopup={showLogOutPopup}
-        onDismissPopup={() => setShowLogOutPopup(false)}
-        onPositivePopupClick={() => {
-          navigation.navigate('SignIn');
-        }}
-        // onLogOutClick={() => navigation.navigate('SignIn')}
-        onLogOutClick={onLogOut}
-        onEditProfilePictureClick={() => null}
-      />
-      <SingleButtonPopup
-        visible={showPopup}
-        title="Ooops..."
-        text="Something went wrong. Please refresh the page."
-        buttonText="Retry"
-        onDismiss={() => setShowPopup(false)}
-        onButtonClick={loadInfo}
-      />
-    </>
-  );
-};
+  onNameType = (currName: string): void => {
+    this.setState({ currName });
+  };
+
+  render(): JSX.Element {
+    const {
+      loadInfo,
+      onLogOut,
+      onNameChange,
+      onNameType,
+      revalidateError,
+      props: { navigation },
+      state: {
+        info,
+        showPopup,
+        nameError,
+        showUnsavedDiscardPopup,
+        showLogoutError,
+      },
+    } = this;
+
+    return (
+      <>
+        <MyAccount
+          onNameType={onNameType}
+          errors={{ nameError }}
+          name={info?.name ?? ''}
+          email={info?.email ?? ''}
+          userRole={info?.role ?? ''}
+          onNameChange={onNameChange}
+          revalidateError={revalidateError}
+          onChangePasswordClick={() => navigation.push('ChangePassword')}
+          // QUESTION: should reset the stack ?
+          showPopup={showLogoutError}
+          onDismissPopup={() => this.setState({ showLogoutError: false })}
+          onPositivePopupClick={() => {
+            navigation.navigate('SignIn');
+          }}
+          onLogOutClick={onLogOut}
+          onEditProfilePictureClick={() => null}
+        />
+        <SingleButtonPopup
+          visible={showPopup}
+          title="Error"
+          text="Something went wrong. Please refresh the page."
+          buttonText="Retry"
+          onDismiss={() => this.setState({ showPopup: false })}
+          onButtonClick={loadInfo}
+        />
+
+        <DoubleButtonPopup
+          visible={showUnsavedDiscardPopup}
+          title="Discard Changes?"
+          text="You have some unsaved changes."
+          negativeButtonText="Cancel"
+          positiveButtonText="Discard"
+          onDismiss={() => this.setState({ showUnsavedDiscardPopup: false })}
+          onNegativeButtonClick={() =>
+            this.setState({ showUnsavedDiscardPopup: false })
+          }
+          onPositiveButtonClick={async () => {
+            this.setState(
+              {
+                showUnsavedDiscardPopup: false,
+                currName: info?.name ?? '',
+              },
+              () => navigation.goBack(),
+            );
+          }}
+        />
+      </>
+    );
+  }
+}
+MyAccountPage.contextType = GlobalContext;
 
 export default MyAccountPage;

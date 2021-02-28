@@ -1,31 +1,38 @@
 import React from 'react';
 import { Platform } from 'react-native';
-import { select, withKnobs } from '@storybook/addon-knobs';
-import { storiesOf } from '@storybook/react-native';
 import { action } from '@storybook/addon-actions';
+import { boolean, select, text, withKnobs } from '@storybook/addon-knobs';
+import { storiesOf } from '@storybook/react-native';
 import CenterView from '../../../atoms/CenterView';
-import EmptyClass from './EmptyClass';
-import { UserRole } from '../../../../api';
+import ChangeClassCode, { InfoTextType } from './ChangeClassCode';
 
-const STORY_NAME = 'Organisms/Common/EmptyClass';
+const STORY_NAME = 'Organisms/Teacher/ChangeClassCode';
 
 // it will only work with web
 // because react native does not supports the modern api
 export default {
   title: STORY_NAME,
   decorators: [withKnobs],
-  component: EmptyClass,
+  component: ChangeClassCode,
 };
 
 // Default For Web And android Component
 export const Default = (): JSX.Element => (
-  <EmptyClass
-    onFabClick={() => action('onFabClick')()}
-    userRole={select(
-      'UserRole',
-      [UserRole.STUDENT, UserRole.TEACHER, UserRole.UNKNOWN],
-      UserRole.STUDENT,
+  <ChangeClassCode
+    showDialog={boolean('showDialog', true)}
+    showSpinner={boolean('showSpinner', true)}
+    initialClassCode={text('initialClassCode', 'ClassCode')}
+    onClassCodeChange={(newText: string) =>
+      action('onClassCodeChange')(newText)
+    }
+    infoText={text('infoText', 'infoText')}
+    infoType={select(
+      'infoText',
+      [InfoTextType.ERROR, InfoTextType.SUCCESS],
+      InfoTextType.SUCCESS,
     )}
+    onDismissDialog={() => action('onDismissDialog')()}
+    onSaveClassCode={() => action('onDismissDialog')()}
   />
 );
 

@@ -35,6 +35,9 @@ export const Default = (): JSX.Element => (
     }
     onCodeShare={() => action('onCodeShare')()}
     onLinkShare={() => action('onLinkShare')()}
+    onEditClassCodeClick={() => action('onEditClassCodeClick')()}
+    sectionErrorMsg={text('sectionErrorMsg', 'sectionErrorMsg')}
+    titleErrorMsg={text('titleErrorMsg', 'titleErrorMsg')}
   />
 );
 

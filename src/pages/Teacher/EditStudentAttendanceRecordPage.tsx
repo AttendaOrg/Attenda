@@ -1,17 +1,17 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import {
   StackNavigationOptions,
   StackScreenProps,
 } from '@react-navigation/stack';
 import { RootStackParamList } from '../../App';
-import EditStudentAttendanceRecord, {
-  EditStudentAttendanceRecordPops,
-} from '../../components/organisms/Teacher/EditStudentAttendanceRecord';
+import EditStudentAttendanceRecord from '../../components/organisms/Teacher/EditStudentAttendanceRecord';
 import { SimpleHeaderBackNavigationOptions } from '../../components/templates/SimpleHeaderNavigationOptions';
 import { teacherApi } from '../../api/TeacherApi';
 import SessionStudentModel from '../../api/TeacherApi/model/SessionStudentModel';
 import { MarkedDates } from '../../components/organisms/Student/AttendanceRecord';
 import { convertDateFormat, convertTime, matchDate } from '../../util';
+import ClassStudentModel from '../../api/TeacherApi/model/ClassStudentModel';
+import GlobalContext from '../../context/GlobalContext';
 
 type Props = StackScreenProps<
   RootStackParamList,
@@ -25,29 +25,6 @@ export const EditStudentAttendanceRecordNavigationOptions: StackNavigationOption
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const imageSrc = require('../../../assets/images/user.jpg');
-
-const dummyData: EditStudentAttendanceRecordPops = {
-  userInfo: {
-    name: 'Prasanta Barman',
-    onRollChange: () => null,
-    rollNo: 'IITE1557454',
-    userImage: imageSrc,
-  },
-  markedDates: {
-    '2020-12-12': {
-      '03:50 AM': false,
-      '10:50 AM': true,
-    },
-    '2020-12-11': {
-      '03:50 AM': true,
-      '10:50 AM': true,
-    },
-  },
-  percentage: '95%',
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
-  onChangeAttendance: async () => {},
-  onMonthChange: () => null,
-};
 
 export const convertSessionStudentModelToMarkedDates = (
   data: SessionStudentModel[],
@@ -71,7 +48,11 @@ const EditStudentAttendanceRecordPage: React.FC<Props> = ({
   route,
 }): JSX.Element => {
   const [reports, setReports] = useState<SessionStudentModel[]>([]);
+  const [studentInfo, setStudentInfo] = useState<ClassStudentModel | null>(
+    null,
+  );
   const [currentMonth, setCurrentMonth] = useState(new Date());
+  const globalContext = useContext(GlobalContext);
   const {
     params: { classId, studentId },
   } = route;
@@ -86,10 +67,6 @@ const EditStudentAttendanceRecordPage: React.FC<Props> = ({
     // TODO: handel error ?
     if (info !== null) setReports(info);
   }, [classId, currentMonth, studentId]);
-
-  useEffect(() => {
-    fetchData();
-  }, [fetchData]);
 
   const onChangeAttendance = async (
     date: string,
@@ -115,10 +92,34 @@ const EditStudentAttendanceRecordPage: React.FC<Props> = ({
     }
   };
 
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+
+  useEffect(() => {
+    (async () => {
+      globalContext.changeSpinnerLoading(true);
+      const [student] = await teacherApi.getStudentInfo(classId, studentId);
+
+      globalContext.changeSpinnerLoading(false);
+      if (student !== null) setStudentInfo(student);
+    })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [classId, studentId]);
+
+  const onRollChange = async (newRollNo: string) => {
+    await teacherApi.changeStudentRollNo(classId, studentId, newRollNo);
+  };
+
   return (
     <EditStudentAttendanceRecord
-      // eslint-disable-next-line react/jsx-props-no-spreading
-      {...dummyData}
+      userInfo={{
+        name: studentInfo?.studentName ?? '', // get the name form api
+        onRollChange, // TODO: update roll no
+        rollNo: studentInfo?.rollNo ?? '',
+        userImage: imageSrc, // TODO: get the profile pic from api
+      }}
+      percentage={`${studentInfo?.totalAttendancePercentage ?? 0} %`}
       markedDates={convertSessionStudentModelToMarkedDates(reports)}
       onMonthChange={setCurrentMonth}
       onChangeAttendance={onChangeAttendance}

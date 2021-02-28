@@ -2,7 +2,9 @@ import firebase from 'firebase';
 import { firebaseConfig } from '../util/configs/firebase';
 
 const DEFAULT_HOST: string =
-  process.env.REACT_NATIVE_FIREBASE_EMULATOR_HOST ?? 'localhost';
+  process.env.NODE_ENV === 'testing'
+    ? 'localhost'
+    : process.env.REACT_NATIVE_FIREBASE_EMULATOR_HOST ?? 'localhost';
 const defaultUseEmulator =
   process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'testing';
 
@@ -30,6 +32,7 @@ export enum BasicErrors {
   NO_EMAIL_ATTACHED_WITH_ACCOUNT,
   EXCEPTION,
   AUTH_EMAIL_ALREADY_IN_USE,
+  AUTH_NAME_CANT_BE_ADDED,
   WEAK_PASSWORD,
   AUTH_WRONG_PASSWORD,
   AUTH_USER_NOT_FOUND,
@@ -38,7 +41,10 @@ export enum BasicErrors {
   NO_CLASS_FOUND,
   INVALID_INPUT,
   MAC_ID_DOES_NOT_MATCH,
+  ALREADY_PRESENT_GIVEN,
 }
+
+export type RealTimeListenerUnSubscriber = () => void;
 
 export const convertErrorToMsg = (errCode: BasicErrors | null): string => {
   // on compile typescript enum converts to a json object.

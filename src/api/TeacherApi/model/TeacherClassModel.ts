@@ -7,6 +7,7 @@ export interface TeacherClassModelProps {
    * @required
    */
   section: string;
+  teacherName?: string | null;
   classCode?: string;
   description?: string;
   inviteLink?: string;
@@ -16,6 +17,7 @@ export interface TeacherClassModelProps {
   classId?: string | null;
   teacherId: string | null;
   isArchived?: boolean;
+  alreadyGiven?: boolean;
 }
 
 export default class TeacherClassModel implements TeacherClassModelProps {
@@ -39,7 +41,11 @@ export default class TeacherClassModel implements TeacherClassModelProps {
 
   teacherId: string | null;
 
+  teacherName: string | null;
+
   isArchived = false;
+
+  alreadyGiven = false;
 
   constructor(data: TeacherClassModelProps) {
     this.classCode = data?.classCode ?? '';
@@ -53,7 +59,12 @@ export default class TeacherClassModel implements TeacherClassModelProps {
     this.classId = data?.classId ?? null;
     this.teacherId = data?.teacherId ?? null;
     this.isArchived = data?.isArchived ?? false;
+    this.teacherName = data?.teacherName ?? null;
   }
+
+  setAlreadyGiven = (given: boolean): void => {
+    this.alreadyGiven = given;
+  };
 
   // noinspection DuplicatedCode
   static readonly Update = ({
@@ -68,6 +79,7 @@ export default class TeacherClassModel implements TeacherClassModelProps {
     classId,
     teacherId,
     isArchived,
+    teacherName,
   }: Partial<TeacherClassModelProps>): Partial<TeacherClassModelProps> => {
     const obj: Partial<TeacherClassModelProps> = {};
 
@@ -82,8 +94,13 @@ export default class TeacherClassModel implements TeacherClassModelProps {
     if (classId !== undefined) obj.classId = classId;
     if (teacherId !== undefined) obj.teacherId = teacherId;
     if (isArchived !== undefined) obj.isArchived = isArchived;
+    if (teacherName !== undefined) obj.teacherName = teacherName;
 
     return obj;
+  };
+
+  setTeacherName = (name: string | null): void => {
+    this.teacherName = name;
   };
 
   toJson = (): TeacherClassModelProps => {
@@ -99,6 +116,7 @@ export default class TeacherClassModel implements TeacherClassModelProps {
       classId: this.classId,
       teacherId: this.teacherId,
       isArchived: this.isArchived,
+      teacherName: this.teacherName,
     };
   };
 }

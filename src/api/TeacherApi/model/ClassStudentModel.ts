@@ -6,6 +6,7 @@ export interface ClassStudentModelInterface {
   joinedDate?: Date | null;
   studentId?: string | null;
   archived?: boolean;
+  studentName: string | null;
 }
 
 export default class ClassStudentModel implements ClassStudentModelInterface {
@@ -23,6 +24,8 @@ export default class ClassStudentModel implements ClassStudentModelInterface {
 
   archived = false;
 
+  studentName: string | null = null;
+
   constructor(data: Partial<ClassStudentModelInterface>) {
     if (typeof data.email === 'string') this.email = data.email;
     if (typeof data.rollNo === 'string') this.rollNo = data.rollNo;
@@ -32,6 +35,8 @@ export default class ClassStudentModel implements ClassStudentModelInterface {
     if (data.joinedDate instanceof Date) this.joinedDate = data.joinedDate;
     if (typeof data.studentId === 'string') this.studentId = data.studentId;
     if (typeof data.archived === 'boolean') this.archived = data.archived;
+    if (typeof data.studentName === 'string')
+      this.studentName = data.studentName;
   }
 
   static Update(
@@ -46,6 +51,7 @@ export default class ClassStudentModel implements ClassStudentModelInterface {
       joinedDate,
       studentId,
       archived,
+      studentName,
     } = data;
 
     if (typeof email === 'string') obj.email = email;
@@ -56,6 +62,7 @@ export default class ClassStudentModel implements ClassStudentModelInterface {
     if (joinedDate instanceof Date) obj.joinedDate = joinedDate;
     if (typeof data.studentId === 'string') obj.studentId = studentId;
     if (typeof data.archived === 'boolean') obj.archived = archived;
+    if (typeof data.studentName === 'string') obj.studentName = studentName;
 
     return obj;
   }
@@ -73,6 +80,7 @@ export default class ClassStudentModel implements ClassStudentModelInterface {
       joinedDate,
       studentId,
       archived,
+      studentName,
     } = this;
 
     return {
@@ -83,6 +91,7 @@ export default class ClassStudentModel implements ClassStudentModelInterface {
       joinedDate,
       studentId,
       archived,
+      studentName,
     };
   }
 }

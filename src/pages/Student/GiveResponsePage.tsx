@@ -38,7 +38,7 @@ const GiveResponsePage: React.FC<Props> = ({
       'macId',
     ); // TODO: get the mac id from native api
 
-    console.log(success, error);
+    console.log(success, studentApi.convertErrorToMsg(error));
 
     if (success === true) navigation.replace('SuccessResponse');
     else navigation.replace('UnsuccessfulResponse');

@@ -26,7 +26,7 @@ const transformToStudentListDataProps = (
   const { title, section, classId, isLive, classCode, currentSessionId } = cls;
 
   return {
-    attendance: '70', // TODO: get attendance summery from the class info
+    attendance: '70 students', // TODO: get attendance summery from the class info
     section,
     showShimmer: false,
     backgroundImage: classBack,
@@ -92,10 +92,20 @@ class TeacherClassListPage extends React.PureComponent<Props, State> {
         showShimmer={loading}
         onFabClick={() => navigation.push('CreateClass')}
         data={newData}
-        onClassClick={classId => {
-          navigation.push('StartAttendanceSession', {
-            classId,
-          });
+        onClassClick={(classId, title, section, isLive, sessionId) => {
+          if (isLive && sessionId !== null)
+            navigation.push('CurrentAttendanceSession', {
+              classId,
+              sessionId,
+              sessionTime: new Date().toISOString(),
+              showStopDialog: false,
+            });
+          else
+            navigation.push('StartAttendanceSession', {
+              classId,
+              title,
+              section,
+            });
         }}
         options={[
           {

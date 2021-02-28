@@ -30,16 +30,23 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginVertical: 8,
   },
+  sectionText: {
+    marginVertical: 8,
+    marginTop: 0,
+    textAlign: 'center',
+  },
 });
 
 export interface StartAttendanceSessionPops {
   title: string;
   onStartSession: (date: Date) => void;
+  section: string;
 }
 
 const StartAttendanceSession: React.FC<StartAttendanceSessionPops> = ({
   onStartSession,
   title,
+  section,
 }): JSX.Element => {
   const [dateTime, setDateTime] = useState(new Date());
   const [showDatePopup, setShowDatePopup] = useState(false);
@@ -52,6 +59,7 @@ const StartAttendanceSession: React.FC<StartAttendanceSessionPops> = ({
       />
       <View>
         <Text style={styles.titleText}>{title}</Text>
+        <Text style={styles.sectionText}>{section}</Text>
         <View style={styles.timeContainer}>
           <TouchableOpacity
             style={{ flex: 1, marginRight: 6 }}

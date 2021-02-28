@@ -1,6 +1,7 @@
 import React from 'react';
 import { FlatList, StyleSheet, View } from 'react-native';
 import { FAB } from 'react-native-paper';
+import { UserRole } from '../../../../api';
 import ClassCard from '../../../molecules/ClassCard';
 import { ClassCardPops } from '../../../molecules/ClassCard/ClassCard';
 import { MenuOptionsPopoverDataProps } from '../../../molecules/MenuOptionsPopover';
@@ -29,7 +30,13 @@ export interface StudentListDataProps extends ClassCardPops {
 export interface TeacherClassListPops {
   data: StudentListDataProps[];
   onFabClick: () => void;
-  onClassClick: (classId: string) => void;
+  onClassClick: (
+    classId: string,
+    name: string,
+    section: string,
+    isLive: boolean,
+    currentSessionId: string | null,
+  ) => void;
   /**
    * @deprecated this function is deprecated
    * @use options props
@@ -47,7 +54,8 @@ const TeacherClassList: React.FC<TeacherClassListPops> = ({
   options = [],
   showShimmer = false,
 }): JSX.Element => {
-  if (data.length === 0) return <EmptyClass onFabClick={onFabClick} />;
+  if (data.length === 0)
+    return <EmptyClass onFabClick={onFabClick} userRole={UserRole.TEACHER} />;
 
   return (
     <View style={styles.container}>
@@ -64,7 +72,15 @@ const TeacherClassList: React.FC<TeacherClassListPops> = ({
             isSessionLive={item.isSessionLive}
             currentSessionId={item.currentSessionId}
             classId={item.key}
-            onCardClick={() => onClassClick(item.key)}
+            onCardClick={() =>
+              onClassClick(
+                item.key,
+                item.className,
+                item.section,
+                item.isSessionLive ?? false,
+                item.currentSessionId,
+              )
+            }
             options={options}
             onMoreIconClick={onMoreIconClick}
             backgroundImage={item.backgroundImage}

@@ -27,6 +27,7 @@ function loadStories() {
   require('../src/components/organisms/AppIntro/SignUp/SignUp.stories');
   require('../src/components/organisms/Common/ChangePassword/ChangePassword.stories');
   require('../src/components/organisms/Common/ConnectionLost/ConnectionLost.stories');
+  require('../src/components/organisms/Common/DrawerContent/DrawerContent.stories');
   require('../src/components/organisms/Common/EmptyClass/EmptyClass.stories');
   require('../src/components/organisms/Common/MyAccount/MyAccount.stories');
   require('../src/components/organisms/Student/AttendanceRecord/AttendanceRecord.stories');
@@ -39,6 +40,7 @@ function loadStories() {
   require('../src/components/organisms/Student/UnsuccessfulResponse/UnsuccessfulResponse.stories');
   require('../src/components/organisms/Teacher/AttendanceRecordStudentList/AttendanceRecordStudentList.stories');
   require('../src/components/organisms/Teacher/AttendanceSessionRecord/AttendanceSessionRecord.stories');
+  require('../src/components/organisms/Teacher/ChangeClassCode/ChangeClassCode.stories');
   require('../src/components/organisms/Teacher/ClassSettings/ClassSettings.stories');
   require('../src/components/organisms/Teacher/CreateClass/CreateClass.stories');
   require('../src/components/organisms/Teacher/CurrentAttendanceSession/CurrentAttendanceSession.stories');
@@ -75,6 +77,7 @@ const stories = [
   '../src/components/organisms/AppIntro/SignUp/SignUp.stories',
   '../src/components/organisms/Common/ChangePassword/ChangePassword.stories',
   '../src/components/organisms/Common/ConnectionLost/ConnectionLost.stories',
+  '../src/components/organisms/Common/DrawerContent/DrawerContent.stories',
   '../src/components/organisms/Common/EmptyClass/EmptyClass.stories',
   '../src/components/organisms/Common/MyAccount/MyAccount.stories',
   '../src/components/organisms/Student/AttendanceRecord/AttendanceRecord.stories',
@@ -87,6 +90,7 @@ const stories = [
   '../src/components/organisms/Student/UnsuccessfulResponse/UnsuccessfulResponse.stories',
   '../src/components/organisms/Teacher/AttendanceRecordStudentList/AttendanceRecordStudentList.stories',
   '../src/components/organisms/Teacher/AttendanceSessionRecord/AttendanceSessionRecord.stories',
+  '../src/components/organisms/Teacher/ChangeClassCode/ChangeClassCode.stories',
   '../src/components/organisms/Teacher/ClassSettings/ClassSettings.stories',
   '../src/components/organisms/Teacher/CreateClass/CreateClass.stories',
   '../src/components/organisms/Teacher/CurrentAttendanceSession/CurrentAttendanceSession.stories',

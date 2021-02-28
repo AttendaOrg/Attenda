@@ -105,6 +105,7 @@ export interface MyAccountPops {
   onPositivePopupClick: () => void;
   errors?: Errors;
   revalidateError?: (_name: string) => boolean;
+  onNameType?: (name: string) => void;
 }
 
 const MyAccount: React.FC<MyAccountPops> = ({
@@ -120,6 +121,7 @@ const MyAccount: React.FC<MyAccountPops> = ({
   showPopup,
   errors,
   revalidateError = () => null,
+  onNameType = () => null,
 }): JSX.Element => {
   const [name, setName] = useState(initialName);
   const [isEditing, setIsEditing] = useState(false);
@@ -135,6 +137,8 @@ const MyAccount: React.FC<MyAccountPops> = ({
   const updateName = (_name: string) => {
     if (hasFormTrySubmitted) revalidateError(_name);
     setName(_name);
+
+    onNameType(_name);
   };
 
   return (
@@ -169,29 +173,42 @@ const MyAccount: React.FC<MyAccountPops> = ({
             containerStyle={inputContainerStyle}
             errorMessage={errors?.nameError}
             rightIcon={
-              <Icon
-                name={isEditing ? 'done' : 'edit'}
-                color="#6A6A6A"
-                size={24}
-                onPress={async () => {
-                  // because the setState call will be last so we will work with this variable
-                  let computedIsEditing = !isEditing;
+              <View style={{ flexDirection: 'row' }}>
+                <Icon
+                  name={isEditing ? 'done' : 'edit'}
+                  color="#6A6A6A"
+                  size={24}
+                  onPress={async () => {
+                    // because the setState call will be last so we will work with this variable
+                    let computedIsEditing = !isEditing;
 
-                  if (computedIsEditing) {
-                    // if the editing is true focus the input
-                    ref?.current?.focus();
-                  } else {
-                    // if it is first time trying to change name set remember it
-                    // because before first time will will not revalidate the name error on every key press
-                    if (!hasFormTrySubmitted) setHasFormTrySubmitted(true);
-                    const success = await onNameChange(name);
+                    if (computedIsEditing) {
+                      // if the editing is true focus the input
+                      ref?.current?.focus();
+                    } else {
+                      // if it is first time trying to change name set remember it
+                      // because before first time will will not revalidate the name error on every key press
+                      if (!hasFormTrySubmitted) setHasFormTrySubmitted(true);
+                      const success = await onNameChange(name);
 
-                    if (!success) computedIsEditing = isEditing;
-                  }
+                      if (!success) computedIsEditing = isEditing;
+                    }
 
-                  setIsEditing(computedIsEditing);
-                }}
-              />
+                    setIsEditing(computedIsEditing);
+                  }}
+                />
+                {isEditing && (
+                  <Icon
+                    name="close"
+                    color="#6A6A6A"
+                    size={24}
+                    onPress={() => {
+                      updateName(initialName);
+                      setIsEditing(false);
+                    }}
+                  />
+                )}
+              </View>
             }
           />
         </View>

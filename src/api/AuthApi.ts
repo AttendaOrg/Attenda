@@ -115,6 +115,10 @@ class AuthApi extends BaseApi implements AuthApiInterface {
     return firebase.auth().currentUser?.uid ?? null;
   };
 
+  getUserDisplayName = (): string | null => {
+    return firebase.auth().currentUser?.displayName ?? null;
+  };
+
   loginWithEmailAndPassword = async (
     email: string,
     password: string,
@@ -152,26 +156,17 @@ class AuthApi extends BaseApi implements AuthApiInterface {
     name: string,
   ): Promise<WithError<boolean>> => {
     try {
-      await firebase.auth().createUserWithEmailAndPassword(email, password);
+      const { user } = await firebase
+        .auth()
+        .createUserWithEmailAndPassword(email, password);
 
-      const userId = this.getUserUid();
-
-      if (userId !== null) {
-        const path = firebase
-          .firestore()
-          .collection(AuthApi.AUTH_ROOT_COLLECTION_NAME)
-          .doc(userId);
-
-        const user = await path.get();
-        const updateInfo = new AccountInfo({ name });
-
-        // checks if the path exist
-        if (user.exists) {
-          await path.update(updateInfo.toJson());
-        } else {
-          // if the path does not exist create a new path
-          await path.set(updateInfo.toJson());
-        }
+      try {
+        // NOTE: using firebase auth profile to store name
+        await user?.updateProfile({
+          displayName: name,
+        });
+      } catch (error) {
+        return this.error(BasicErrors.AUTH_NAME_CANT_BE_ADDED);
       }
 
       return this.success(true);
@@ -311,6 +306,7 @@ class AuthApi extends BaseApi implements AuthApiInterface {
         return this.error(BasicErrors.USER_NOT_AUTHENTICATED);
 
       const email = firebase.auth().currentUser?.email ?? '';
+      const name = firebase.auth().currentUser?.displayName ?? '';
 
       const doc = await firebase
         .firestore()
@@ -325,7 +321,7 @@ class AuthApi extends BaseApi implements AuthApiInterface {
 
       const accountInfoData = (doc.data() as unknown) as AccountInfoProps;
 
-      const info = new AccountInfo({ ...accountInfoData, email });
+      const info = new AccountInfo({ ...accountInfoData, email, name });
 
       return this.success(info);
       // console.log('no login user');
@@ -340,6 +336,7 @@ class AuthApi extends BaseApi implements AuthApiInterface {
   ): Promise<WithError<boolean>> => {
     try {
       const userId = this.getUserUid();
+      const currName = firebase.auth().currentUser?.displayName;
 
       if (userId === null)
         return this.error(BasicErrors.USER_NOT_AUTHENTICATED);
@@ -349,6 +346,27 @@ class AuthApi extends BaseApi implements AuthApiInterface {
         .collection(AuthApi.AUTH_ROOT_COLLECTION_NAME)
         .doc(userId)
         .update(accountInfo.toJson());
+
+      if (accountInfo.name !== currName) {
+        console.info('NOTICE: using database for the name');
+        await firebase.auth().currentUser?.updateProfile({
+          displayName: accountInfo.name,
+        });
+      }
+
+      return this.success(true);
+    } catch (e) {
+      return this.error(BasicErrors.EXCEPTION);
+    }
+  };
+
+  updateName = async (name: string): Promise<WithError<boolean>> => {
+    try {
+      await firebase.auth().currentUser?.updateProfile({
+        displayName: name,
+      });
+
+      // TODO: in teacher case update the name in all created class
 
       return this.success(true);
     } catch (e) {

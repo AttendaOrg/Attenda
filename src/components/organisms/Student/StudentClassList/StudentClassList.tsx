@@ -5,6 +5,7 @@ import ClassCard from '../../../molecules/ClassCard';
 import { ClassCardPops } from '../../../molecules/ClassCard/ClassCard';
 import EmptyClass from '../../Common/EmptyClass';
 import { MenuOptionsPopoverDataProps } from '../../../molecules/MenuOptionsPopover';
+import { UserRole } from '../../../../api';
 
 const styles = StyleSheet.create({
   container: {
@@ -29,7 +30,11 @@ export interface StudentListDataProps extends ClassCardPops {
 export interface StudentClassListPops {
   data: StudentListDataProps[];
   onFabClick: () => void;
-  onClassClick: (classId: string, sessionId: string | null) => void;
+  onClassClick: (
+    classId: string,
+    sessionId: string | null,
+    alreadyGiven: boolean,
+  ) => void;
   /**
    * @deprecated this function is deprecated
    * @use options props
@@ -47,7 +52,8 @@ const StudentClassList: React.FC<StudentClassListPops> = ({
   options = [],
   showShimmer = false,
 }): JSX.Element => {
-  if (data.length === 0) return <EmptyClass onFabClick={onFabClick} />;
+  if (data.length === 0)
+    return <EmptyClass onFabClick={onFabClick} userRole={UserRole.STUDENT} />;
 
   return (
     <View style={styles.container}>
@@ -56,6 +62,7 @@ const StudentClassList: React.FC<StudentClassListPops> = ({
         ItemSeparatorComponent={() => <View style={styles.separator} />}
         renderItem={({ item }) => (
           <ClassCard
+            alreadyGiven={item.alreadyGiven}
             showShimmer={showShimmer}
             className={item.className}
             section={item.section}
@@ -64,7 +71,13 @@ const StudentClassList: React.FC<StudentClassListPops> = ({
             isSessionLive={item.isSessionLive}
             classId={item.key}
             currentSessionId={item.currentSessionId}
-            onCardClick={() => onClassClick(item.key, item.currentSessionId)}
+            onCardClick={() =>
+              onClassClick(
+                item.key,
+                item.currentSessionId,
+                item.alreadyGiven ?? false,
+              )
+            }
             options={options}
             onMoreIconClick={onMoreIconClick}
             backgroundImage={item.backgroundImage}

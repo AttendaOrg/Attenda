@@ -1,5 +1,12 @@
 import React from 'react';
-import { StyleSheet, View, ScrollView, Text, Switch } from 'react-native';
+import {
+  StyleSheet,
+  View,
+  ScrollView,
+  Text,
+  Switch,
+  Platform,
+} from 'react-native';
 import { Input, Icon } from 'react-native-elements';
 // import { ScrollView } from 'react-native-gesture-handler';
 import { inputContainerStyle } from '../../../../util/Styles';
@@ -20,14 +27,17 @@ const styles = StyleSheet.create({
     fontSize: 24,
   },
   captionContainer: {
-    // flex: 0.5,
+    // flex: 1,
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginVertical: 5,
     marginEnd: 8,
   },
+  row: {
+    flex: 1,
+    flexDirection: 'row',
+  },
   captionText: {
-    width: '90%',
     fontWeight: 'normal',
     color: '#000000',
     fontSize: 18,
@@ -54,6 +64,7 @@ export interface ClassSettingsPops {
   // toggleLinkSwitch: (isLinkEnabled: boolean) => void;
   onCodeShare: () => void;
   onLinkShare: () => void;
+  onEditClassCodeClick: () => void;
 }
 
 const ClassSettings: React.FC<ClassSettingsPops> = ({
@@ -71,7 +82,10 @@ const ClassSettings: React.FC<ClassSettingsPops> = ({
   toggleShareSwitch,
   onCodeShare,
   onLinkShare,
+  onEditClassCodeClick,
 }): JSX.Element => {
+  const shareIconName = Platform.OS === 'web' ? 'content-copy' : 'share';
+
   return (
     <ScrollView style={styles.container}>
       <View style={styles.headlineTextContainer}>
@@ -132,48 +146,40 @@ const ClassSettings: React.FC<ClassSettingsPops> = ({
         />
       </View>
 
-      {/* <View style={styles.captionContainer}>
-        <Text style={styles.captionText}>Disable link</Text>
-        <Switch
-          trackColor={{ false: '#767577', true: '#81b0ff' }}
-          thumbColor="#f4f3f4"
-          ios_backgroundColor="#3e3e3e"
-          onValueChange={toggleLinkSwitch}
-          value={isLinkEnabled}
-        />
-      </View> */}
-
       <View style={styles.captionContainer}>
-        <Text style={styles.captionText} numberOfLines={1}>
-          Class code : {code}
-        </Text>
+        <View style={styles.row}>
+          <Text style={styles.captionText}>Invite code: </Text>
+          <Text style={styles.captionText} selectable>
+            {code}
+          </Text>
+        </View>
+
         <Icon
-          name="share"
-          type="font-awesome"
+          name="edit"
+          type="material"
           color="#2196F3"
-          style={{ marginRight: 8 }}
+          onPress={onEditClassCodeClick}
+        />
+        <View style={{ width: 8 }} />
+        <Icon
+          name={shareIconName}
+          type="material"
+          color="#2196F3"
           onPress={onCodeShare}
         />
       </View>
 
       <View style={styles.captionContainer}>
-        <Text
-          style={{
-            width: '90%',
-            fontWeight: 'normal',
-            color: '#000000',
-            fontSize: 18,
-            marginBottom: 25,
-          }}
-          numberOfLines={1}
-        >
-          Invitation link : {link}
-        </Text>
+        <View style={styles.row}>
+          <Text style={styles.captionText}>Invitation link: </Text>
+          <Text style={styles.captionText} selectable>
+            {link}
+          </Text>
+        </View>
         <Icon
-          name="share"
-          type="font-awesome"
+          name={shareIconName}
+          type="material"
           color="#2196F3"
-          style={{ marginEnd: 8 }}
           onPress={onLinkShare}
         />
       </View>
