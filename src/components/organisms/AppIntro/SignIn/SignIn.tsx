@@ -4,7 +4,7 @@ import { Button, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Input } from 'react-native-elements';
 import { inputContainerStyle } from '../../../../util/Styles';
 import DividerText from '../../../atoms/DividerText/DividerText';
-import SignInImageComponent from '../../../atoms/Images/SignIn';
+import SignInImageComponent from '../../../atoms/Images/SignInImageComponent';
 import OauthProvider, {
   OauthProviderProps,
 } from '../../../molecules/OauthProvider/OauthProvider';
@@ -74,10 +74,7 @@ const SignIn: React.FC<SignInPops> = ({
   return (
     <View style={styles.container}>
       {/* <View style={{ marginTop: 20 }}> */}
-      <KeyboardAdjustImageView
-        imageSource={imageSource}
-        svgImg={SignInImageComponent}
-      />
+      <KeyboardAdjustImageView svgImg={SignInImageComponent} />
       {/* </View> */}
 
       <View style={styles.signInContainer}>

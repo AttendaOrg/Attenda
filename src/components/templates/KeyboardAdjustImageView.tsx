@@ -31,7 +31,7 @@ export interface KeyboardAdjustImageViewPops {
   /**
    * @deprecated this props is deprecated use SvgImage
    */
-  imageSource: ImageSourcePropType;
+  imageSource?: ImageSourcePropType;
   svgImg: React.FC<IconsPops>;
 }
 
