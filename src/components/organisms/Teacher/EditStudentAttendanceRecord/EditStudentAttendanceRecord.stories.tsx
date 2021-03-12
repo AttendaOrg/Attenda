@@ -19,7 +19,7 @@ export default {
 };
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const imageSrc = require('../../../../../assets/images/study.png');
+const imageSrc = require('../../../../../assets/images/user.jpg');
 
 // Default For Web And android Component
 export const Default = (): JSX.Element => {

@@ -5,6 +5,7 @@ import { Button, TextInput } from 'react-native-paper';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import KeyboardAdjustImageView from '../../../templates/KeyboardAdjustImageView';
 import { convertDate, convertTime } from '../../../../util';
+import StartAttendanceSessionImageComponent from '../../../atoms/Images/StartAttendanceSessionImageComponent';
 
 const styles = StyleSheet.create({
   container: {
@@ -54,9 +55,7 @@ const StartAttendanceSession: React.FC<StartAttendanceSessionPops> = ({
 
   return (
     <View style={styles.container}>
-      <KeyboardAdjustImageView
-        imageSource={require('../../../../../assets/images/startAttendanceSession.png')}
-      />
+      <KeyboardAdjustImageView svgImg={StartAttendanceSessionImageComponent} />
       <View>
         <Text style={styles.titleText}>{title}</Text>
         <Text style={styles.sectionText}>{section}</Text>

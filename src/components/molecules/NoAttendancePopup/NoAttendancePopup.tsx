@@ -2,6 +2,7 @@ import React from 'react';
 import { StyleSheet, Text, View, Image, Dimensions } from 'react-native';
 import { Dialog } from 'react-native-paper';
 import AntIcon from 'react-native-vector-icons/AntDesign';
+import SearchingImageComponent from '../../atoms/Images/SearchingImageComponent';
 
 const styles = StyleSheet.create({
   centeredView: {
@@ -46,7 +47,10 @@ const NoAttendancePopup: React.FC<NoAttendancePopupPops> = ({
   return (
     <Dialog visible={visible} onDismiss={onDismiss}>
       <View style={styles.centeredView}>
-        <Image source={imageSource} style={styles.largeImage} />
+        {/* <Image source={imageSource} style={styles.largeImage} /> */}
+        <View style={styles.largeImage}>
+          <SearchingImageComponent />
+        </View>
         <View style={styles.icon}>
           <AntIcon
             name="close"

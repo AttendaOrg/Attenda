@@ -5,6 +5,7 @@ import { Button } from 'react-native-paper';
 import { Input } from 'react-native-elements';
 import { inputContainerStyle } from '../../../../util/Styles';
 import KeyboardAdjustImageView from '../../../templates/KeyboardAdjustImageView';
+import ForgotPasswordImageComponent from '../../../atoms/Images/ForgotPasswordImageComponent';
 
 const styles = StyleSheet.create({
   container: {
@@ -47,9 +48,7 @@ const ForgotPassword: React.FC<ForgotPasswordPops> = ({
   return (
     <View style={styles.container}>
       {/* <View style={{ marginTop: 20 }}> */}
-      <KeyboardAdjustImageView
-        imageSource={require('../../../../../assets/images/forgot_password.png')}
-      />
+      <KeyboardAdjustImageView svgImg={ForgotPasswordImageComponent} />
       {/* </View> */}
 
       <View>
