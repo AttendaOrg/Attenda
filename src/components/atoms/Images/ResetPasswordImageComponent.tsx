@@ -3,7 +3,7 @@ import { Dimensions } from 'react-native';
 import Svg, { G, Path, Text } from 'react-native-svg';
 import { IconsPops } from '../Icons';
 
-const ForgotPasswordImageComponent: React.FC<IconsPops> = ({
+const ResetPasswordImageComponent: React.FC<IconsPops> = ({
   height = Dimensions.get('screen').height * 0.4,
   width = Dimensions.get('screen').height * 0.44,
 }): JSX.Element => {
@@ -275,4 +275,4 @@ const ForgotPasswordImageComponent: React.FC<IconsPops> = ({
   );
 };
 
-export default ForgotPasswordImageComponent;
+export default ResetPasswordImageComponent;

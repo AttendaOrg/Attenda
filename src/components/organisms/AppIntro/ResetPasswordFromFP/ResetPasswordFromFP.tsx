@@ -3,6 +3,8 @@ import { StyleSheet, View } from 'react-native';
 import { Input } from 'react-native-elements';
 import { Button } from 'react-native-paper';
 import { inputContainerStyle } from '../../../../util/Styles';
+import ForgotPasswordImageComponent from '../../../atoms/Images/ForgotPasswordImageComponent';
+import ResetPasswordImageComponent from '../../../atoms/Images/ResetPasswordImageComponent';
 import KeyboardAdjustImageView from '../../../templates/KeyboardAdjustImageView';
 
 const styles = StyleSheet.create({
@@ -72,7 +74,7 @@ const ResetPasswordFromFP: React.FC<ResetPasswordFromFPPops> = ({
 
   return (
     <View style={styles.container}>
-      <KeyboardAdjustImageView imageSource={imageSrc} />
+      <KeyboardAdjustImageView svgImg={ResetPasswordImageComponent} />
       <View style={{ marginTop: 30 }} />
 
       <Input
