@@ -23,6 +23,7 @@ function loadStories() {
   require('../src/components/organisms/AppIntro/ChooseRole/ChooseRole.stories');
   require('../src/components/organisms/AppIntro/ForgotPassword/ForgotPassword.stories');
   require('../src/components/organisms/AppIntro/Loading/Loading.stories');
+  require('../src/components/organisms/AppIntro/ResetPasswordFromFP/ResetPasswordFromFP.stories');
   require('../src/components/organisms/AppIntro/SignIn/SignIn.stories');
   require('../src/components/organisms/AppIntro/SignUp/SignUp.stories');
   require('../src/components/organisms/Common/ChangePassword/ChangePassword.stories');
@@ -73,6 +74,7 @@ const stories = [
   '../src/components/organisms/AppIntro/ChooseRole/ChooseRole.stories',
   '../src/components/organisms/AppIntro/ForgotPassword/ForgotPassword.stories',
   '../src/components/organisms/AppIntro/Loading/Loading.stories',
+  '../src/components/organisms/AppIntro/ResetPasswordFromFP/ResetPasswordFromFP.stories',
   '../src/components/organisms/AppIntro/SignIn/SignIn.stories',
   '../src/components/organisms/AppIntro/SignUp/SignUp.stories',
   '../src/components/organisms/Common/ChangePassword/ChangePassword.stories',
