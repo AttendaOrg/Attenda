@@ -7,6 +7,7 @@ import {
   Text,
   TouchableOpacity,
 } from 'react-native';
+import ConnectionLostImageComponent from '../../../atoms/Images/ConnectionLostImageComponent';
 
 const styles = StyleSheet.create({
   container: {
@@ -52,7 +53,10 @@ const ConnectionLost: React.FC<ConnectionLostPops> = ({
 }): JSX.Element => {
   return (
     <View style={styles.container}>
-      <Image source={imageSource} style={styles.largeImage} />
+      {/* <Image source={imageSource} style={styles.largeImage} /> */}
+      <View style={styles.largeImage}>
+        <ConnectionLostImageComponent />
+      </View>
       <Text style={styles.textUp}>Connection Lost</Text>
       <Text style={styles.textDown}>
         You are offline. Check your connection.

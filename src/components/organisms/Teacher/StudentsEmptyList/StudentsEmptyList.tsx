@@ -7,6 +7,7 @@ import {
   Button,
   Text,
 } from 'react-native';
+import EmptyStudenImageComponent from '../../../atoms/Images/EmptyStudenImageComponent';
 
 const styles = StyleSheet.create({
   container: {
@@ -46,7 +47,10 @@ const StudentsEmptyList: React.FC<StudentsEmptyListPops> = ({
 }): JSX.Element => {
   return (
     <View style={styles.container}>
-      <Image source={imageSource} style={styles.largeImage} />
+      {/* <Image source={imageSource} style={styles.largeImage} /> */}
+      <View style={styles.largeImage}>
+        <EmptyStudenImageComponent />
+      </View>
 
       <View style={styles.textContainer}>
         <Text style={styles.text}>Invite students</Text>

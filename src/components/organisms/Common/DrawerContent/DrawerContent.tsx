@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import { Divider, List } from 'react-native-paper';
 import { lightColor } from '../../../../util/Colors';
+import DrawerBackgroundImageComponent from '../../../atoms/Images/DrawerBackgroundImageComponent';
 
 const styles = StyleSheet.create({
   container: {
@@ -76,10 +77,13 @@ const DrawerContent: React.FC<DrawerContentPops> = ({
   return (
     <View style={styles.container}>
       <View style={styles.backgroundImageContainer}>
-        <Image
+        {/* <Image
           source={require('../../../../../assets/images/drawer-back.png')}
           style={styles.backgroundImage}
-        />
+        /> */}
+        <View style={styles.backgroundImage}>
+          <DrawerBackgroundImageComponent />
+        </View>
         <View style={styles.imageContainer}>
           <Image source={avatar} style={styles.avatarImage} />
           <Text style={styles.textName}>{name}</Text>

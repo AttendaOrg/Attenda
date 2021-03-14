@@ -12,6 +12,8 @@ import {
   TextStyle,
 } from 'react-native';
 import { CheckBox } from 'react-native-elements';
+import Svg from 'react-native-svg';
+import ChooseRoleImageComponent from '../../../atoms/Images/ChooseRoleImageComponent';
 
 // styes.checkBoxStyle does returns number not object thats why for web its gives warning
 // because react-native-element expect StyleProp<ViewStyle> as prop type
@@ -80,7 +82,11 @@ const ChooseRole: React.FC<ChooseRolePops> = ({
 
   return (
     <View style={styles.container}>
-      <Image source={imageSource} style={styles.largeImage} />
+      {/* <Image source={ChooseRoleImageComponent} style={styles.largeImage} /> */}
+      {/* <ChooseRoleImageComponent style={styles.largeImage} /> */}
+      <View style={styles.largeImage}>
+        <ChooseRoleImageComponent />
+      </View>
 
       <View style={styles.footerContainer}>
         <Text style={styles.headlineText}>Choose Your Role</Text>

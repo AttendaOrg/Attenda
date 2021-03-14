@@ -7,6 +7,7 @@ import {
   Button,
   Text,
 } from 'react-native';
+import SuccessResponseImageComponent from '../../../atoms/Images/SuccessResponseImageComponent';
 
 const styles = StyleSheet.create({
   container: {
@@ -21,7 +22,7 @@ const styles = StyleSheet.create({
     width: Dimensions.get('window').width,
   },
   textContainer: {
-    marginTop: 20,
+    marginTop: 30,
   },
   text: {
     fontWeight: 'normal',
@@ -46,7 +47,10 @@ const SuccessResponse: React.FC<SuccessResponsePops> = ({
 }): JSX.Element => {
   return (
     <View style={styles.container}>
-      <Image source={imageSource} style={styles.largeImage} />
+      {/* <Image source={imageSource} style={styles.largeImage} /> */}
+      <View style={styles.largeImage}>
+        <SuccessResponseImageComponent />
+      </View>
 
       <View style={styles.textContainer}>
         <Text style={styles.text}>Your response is recorded</Text>

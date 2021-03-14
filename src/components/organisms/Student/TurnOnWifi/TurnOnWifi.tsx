@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
+import TurnOnWifiImageComponent from '../../../atoms/Images/TurnOnWifiImageComponent';
 
 const styles = StyleSheet.create({
   container: {
@@ -58,7 +59,10 @@ const TurnOnWifi: React.FC<TurnOnWifiPops> = ({
       <TouchableOpacity onPress={onCloseBtnClick} style={styles.closeIcon}>
         <MaterialIcons size={24} name="close" />
       </TouchableOpacity>
-      <Image source={imageSource} style={styles.largeImage} />
+      {/* <Image source={imageSource} style={styles.largeImage} /> */}
+      <View style={styles.largeImage}>
+        <TurnOnWifiImageComponent />
+      </View>
       <Text style={styles.text}>Turn on your wifi</Text>
     </View>
   );

@@ -1,5 +1,6 @@
 import React from 'react';
 import { Button, StyleSheet, Text, View } from 'react-native';
+import JoinClassImageComponent from '../../../atoms/Images/JoinClassImageComponent';
 import KeyboardAdjustImageView from '../../../templates/KeyboardAdjustImageView';
 
 const styles = StyleSheet.create({
@@ -47,7 +48,7 @@ const JoinClassFinal: React.FC<JoinClassFinalPops> = ({
 }): JSX.Element => {
   return (
     <View style={styles.container}>
-      <KeyboardAdjustImageView imageSource={imageSrc} />
+      <KeyboardAdjustImageView svgImg={JoinClassImageComponent} />
       <Text style={styles.classNameText}>{className}</Text>
       <Text style={styles.sectionText}>{section}</Text>
       <Text style={styles.teacherNameText}>By: {teacher}</Text>

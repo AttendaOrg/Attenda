@@ -3,6 +3,7 @@ import { StyleSheet, View } from 'react-native';
 import { Input } from 'react-native-elements';
 import { Button } from 'react-native-paper';
 import { inputContainerStyle } from '../../../../util/Styles';
+import JoinClassImageComponent from '../../../atoms/Images/JoinClassImageComponent';
 import KeyboardAdjustImageView from '../../../templates/KeyboardAdjustImageView';
 
 const styles = StyleSheet.create({
@@ -58,7 +59,7 @@ const JoinClassForm: React.FC<JoinClassFormPops> = ({
 
   return (
     <View style={styles.container}>
-      <KeyboardAdjustImageView imageSource={imageSrc} />
+      <KeyboardAdjustImageView svgImg={JoinClassImageComponent} />
       {!joinCode && (
         <Input
           placeholder="Class Code"

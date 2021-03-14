@@ -3,6 +3,7 @@ import { Image, Dimensions, StyleSheet, Text, View } from 'react-native';
 import { FAB } from 'react-native-paper';
 import { UserRole } from '../../../../api';
 import Arrow from '../../../atoms/Icons/Arrow';
+import EmptyClassImageComponent from '../../../atoms/Images/EmptyClassImageComponent';
 
 const styles = StyleSheet.create({
   container: {
@@ -11,7 +12,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
   largeImage: {
-    height: Dimensions.get('window').height * 0.4,
+    height: Dimensions.get('window').height * 0.45,
     width: Dimensions.get('window').width,
   },
   aboveTextContainer: {
@@ -59,7 +60,10 @@ const EmptyClass: React.FC<EmptyClassPops> = ({
 
   return (
     <View style={styles.container}>
-      <Image source={imageSource} style={styles.largeImage} />
+      {/* <Image source={imageSource} style={styles.largeImage} /> */}
+      <View style={styles.largeImage}>
+        <EmptyClassImageComponent />
+      </View>
 
       <View style={styles.aboveTextContainer}>
         <Text style={styles.text}>No class found</Text>

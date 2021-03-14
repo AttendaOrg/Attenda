@@ -8,6 +8,7 @@ import {
   RefreshControl,
   ScrollView,
 } from 'react-native';
+import UnsuccessResponseImageComponent from '../../../atoms/Images/UnsuccessResponseImageComponent';
 
 const styles = StyleSheet.create({
   container: {
@@ -49,7 +50,10 @@ const UnsuccessfulResponse: React.FC<UnsuccessfulResponsePops> = ({
         <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
       }
     >
-      <Image source={imageSource} style={styles.largeImage} />
+      {/* <Image source={imageSource} style={styles.largeImage} /> */}
+      <View style={styles.largeImage}>
+        <UnsuccessResponseImageComponent />
+      </View>
       <View style={styles.textContainer}>
         <Text style={styles.text}>Something went wrong</Text>
       </View>

@@ -5,6 +5,7 @@ import { Button } from 'react-native-paper';
 import { Input } from 'react-native-elements';
 import { inputContainerStyle } from '../../../../util/Styles';
 import KeyboardAdjustImageView from '../../../templates/KeyboardAdjustImageView';
+import CreateClassImageComponent from '../../../atoms/Images/CreateClassImageComponent';
 
 const styles = StyleSheet.create({
   container: {
@@ -31,9 +32,7 @@ const CreateClass: React.FC<CreateClassPops> = ({ onDone }): JSX.Element => {
 
   return (
     <View style={styles.container}>
-      <KeyboardAdjustImageView
-        imageSource={require('../../../../../assets/images/createClass.png')}
-      />
+      <KeyboardAdjustImageView svgImg={CreateClassImageComponent} />
       <View>
         <Input
           value={title}

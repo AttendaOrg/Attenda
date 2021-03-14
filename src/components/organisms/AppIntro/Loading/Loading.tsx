@@ -31,7 +31,7 @@ const Loading = (): JSX.Element => {
       </View>
 
       <View style={styles.aboveTextContainer}>
-        <Text>From</Text>
+        <Text>By</Text>
         <Text style={styles.text}>Softlake</Text>
       </View>
     </View>

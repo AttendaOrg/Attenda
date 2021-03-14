@@ -2,6 +2,7 @@
 import React from 'react';
 import { Image, StyleSheet, Text, View } from 'react-native';
 import { lightColor } from '../../../util/Colors';
+import AttendanceRecordImageComponent from '../../atoms/Images/AttendanceRecordImageComponent';
 
 const styles = StyleSheet.create({
   container: {
@@ -28,7 +29,7 @@ const styles = StyleSheet.create({
     marginVertical: 6,
   },
   image: {
-    height: 200,
+    height: 300,
     width: 350,
     // borderRadius: 100,
   },
@@ -51,7 +52,10 @@ const ClassDetails: React.FC<ClassDetailsPops> = ({
 }): JSX.Element => {
   return (
     <View style={styles.container}>
-      <Image source={imageSrc} style={styles.image} />
+      {/* <Image source={imageSrc} style={styles.image} /> */}
+      <View style={styles.image}>
+        <AttendanceRecordImageComponent />
+      </View>
       <Text style={styles.className}>{className}</Text>
       <Text style={styles.section}>{section}</Text>
       {teacherName !== undefined && (

@@ -3,6 +3,7 @@ import { StyleSheet, View } from 'react-native';
 import { Input } from 'react-native-elements';
 import { Button } from 'react-native-paper';
 import { inputContainerStyle } from '../../../../util/Styles';
+import ForgotPasswordImageComponent from '../../../atoms/Images/ForgotPasswordImageComponent';
 import ResetPasswordImageComponent from '../../../atoms/Images/ResetPasswordImageComponent';
 import KeyboardAdjustImageView from '../../../templates/KeyboardAdjustImageView';
 
@@ -25,58 +26,38 @@ const styles = StyleSheet.create({
 const imageSrc = require('../../../../../assets/images/changePassword.png');
 
 interface Errors {
-  currentPasswordError: string;
   newPasswordError: string;
   confirmPasswordError: string;
 }
 
-export interface ChangePasswordPops {
-  currentPassword?: string;
+export interface ResetPasswordFromFPPops {
   newPassword?: string;
   confirmPassword?: string;
-  onDone: (currentPass: string, newPass: string, confirmPass: string) => void;
+  onDone: (newPass: string, confirmPass: string) => void;
   errors?: Errors;
-  revalidateError?: (
-    currentPass: string,
-    newPass: string,
-    confirmPass: string,
-  ) => void;
+  revalidateError?: (newPass: string, confirmPass: string) => void;
 }
 
-const ChangePassword: React.FC<ChangePasswordPops> = ({
+const ResetPasswordFromFP: React.FC<ResetPasswordFromFPPops> = ({
   onDone,
   errors = {
     confirmPasswordError: '',
-    currentPasswordError: '',
     newPasswordError: '',
   },
   revalidateError = () => null,
 }): JSX.Element => {
-  const [currentPass, setCurrentPass] = useState('');
   const [newPass, setNewPass] = useState('');
   const [confirmPass, setConfirmPass] = useState('');
   const [hasFromTrySubmitted, setHasFromTrySubmitted] = useState(false);
 
-  const {
-    confirmPasswordError = '',
-    currentPasswordError = '',
-    newPasswordError = '',
-  } = errors;
+  const { confirmPasswordError = '', newPasswordError = '' } = errors;
 
   const tryRevalidatingError = ({
-    _currentPassword = currentPass,
     _newPassword = newPass,
     _confirmPassword = confirmPass,
   } = {}) => {
     if (hasFromTrySubmitted === true)
-      revalidateError(_currentPassword, _newPassword, _confirmPassword);
-  };
-
-  const updateCurrentPassword = (_currentPassword: string) => {
-    setCurrentPass(_currentPassword);
-    tryRevalidatingError({
-      _currentPassword,
-    });
+      revalidateError(_newPassword, _confirmPassword);
   };
 
   const updateNewPassword = (_newPassword: string) => {
@@ -95,16 +76,7 @@ const ChangePassword: React.FC<ChangePasswordPops> = ({
     <View style={styles.container}>
       <KeyboardAdjustImageView svgImg={ResetPasswordImageComponent} />
       <View style={{ marginTop: 30 }} />
-      <Input
-        placeholder="Current Password"
-        containerStyle={inputContainerStyle}
-        style={styles.inputStyle}
-        labelStyle={{ margin: 0 }}
-        errorStyle={{ margin: 0 }}
-        onChangeText={updateCurrentPassword}
-        errorMessage={currentPasswordError}
-        secureTextEntry
-      />
+
       <Input
         placeholder="New Password"
         containerStyle={inputContainerStyle}
@@ -128,14 +100,14 @@ const ChangePassword: React.FC<ChangePasswordPops> = ({
           color="#2196f3"
           onPress={() => {
             if (hasFromTrySubmitted === false) setHasFromTrySubmitted(true);
-            onDone(currentPass, newPass, confirmPass);
+            onDone(newPass, confirmPass);
           }}
         >
-          DONE
+          RESET
         </Button>
       </View>
     </View>
   );
 };
 
-export default ChangePassword;
+export default ResetPasswordFromFP;

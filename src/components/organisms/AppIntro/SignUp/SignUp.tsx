@@ -4,6 +4,7 @@ import { Button, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { CheckBox, Input } from 'react-native-elements';
 import { primaryColor } from '../../../../util/Colors';
 import { inputContainerStyle } from '../../../../util/Styles';
+import SignUpImageComponent from '../../../atoms/Images/SignUpImageComponent';
 import KeyboardAdjustImageView from '../../../templates/KeyboardAdjustImageView';
 
 const styles = StyleSheet.create({
@@ -136,8 +137,9 @@ const SignUp: React.FC<SignUpPops> = ({
   return (
     <View style={styles.container}>
       {/* <View style={{ marginTop: 30 }}> */}
-      <KeyboardAdjustImageView imageSource={imageSource} />
+      {/* <KeyboardAdjustImageView imageSource={imageSource} /> */}
       {/* </View> */}
+      <KeyboardAdjustImageView svgImg={SignUpImageComponent} />
 
       <View style={styles.signUpContainer}>
         <Text style={styles.signUpText}>Sign Up</Text>
