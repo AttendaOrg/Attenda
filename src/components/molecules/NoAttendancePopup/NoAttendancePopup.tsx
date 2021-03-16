@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, View, Image, Dimensions } from 'react-native';
+import { StyleSheet, Text, View, Dimensions } from 'react-native';
 import { Dialog } from 'react-native-paper';
 import AntIcon from 'react-native-vector-icons/AntDesign';
 import SearchingImageComponent from '../../atoms/Images/SearchingImageComponent';
@@ -36,9 +36,6 @@ export interface NoAttendancePopupPops {
   onDismiss: () => void;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const imageSource = require('../../../../assets/images/attendanceNotStarted.png');
-
 const NoAttendancePopup: React.FC<NoAttendancePopupPops> = ({
   visible,
   onCancelClick,
@@ -47,7 +44,6 @@ const NoAttendancePopup: React.FC<NoAttendancePopupPops> = ({
   return (
     <Dialog visible={visible} onDismiss={onDismiss}>
       <View style={styles.centeredView}>
-        {/* <Image source={imageSource} style={styles.largeImage} /> */}
         <View style={styles.largeImage}>
           <SearchingImageComponent />
         </View>

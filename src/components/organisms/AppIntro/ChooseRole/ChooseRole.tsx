@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 import React, { useState } from 'react';
 import {
-  Image,
   Button,
   Dimensions,
   StyleSheet,
@@ -12,7 +11,6 @@ import {
   TextStyle,
 } from 'react-native';
 import { CheckBox } from 'react-native-elements';
-import Svg from 'react-native-svg';
 import ChooseRoleImageComponent from '../../../atoms/Images/ChooseRoleImageComponent';
 
 // styes.checkBoxStyle does returns number not object thats why for web its gives warning
@@ -62,8 +60,6 @@ const styles = StyleSheet.create({
   },
 });
 
-const imageSource = require('../../../../../assets/images/chooseRole.jpg');
-
 export enum Role {
   Student,
   Teacher,
@@ -82,8 +78,6 @@ const ChooseRole: React.FC<ChooseRolePops> = ({
 
   return (
     <View style={styles.container}>
-      {/* <Image source={ChooseRoleImageComponent} style={styles.largeImage} /> */}
-      {/* <ChooseRoleImageComponent style={styles.largeImage} /> */}
       <View style={styles.largeImage}>
         <ChooseRoleImageComponent />
       </View>

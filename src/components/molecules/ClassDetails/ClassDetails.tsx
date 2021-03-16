@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 import React from 'react';
-import { Image, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 import { lightColor } from '../../../util/Colors';
 import AttendanceRecordImageComponent from '../../atoms/Images/AttendanceRecordImageComponent';
 
@@ -35,8 +35,6 @@ const styles = StyleSheet.create({
   },
 });
 
-const imageSrc = require('../../../../assets/images/attendanceRecord.png');
-
 export interface ClassDetailsPops {
   className: string;
   section: string;
@@ -52,7 +50,6 @@ const ClassDetails: React.FC<ClassDetailsPops> = ({
 }): JSX.Element => {
   return (
     <View style={styles.container}>
-      {/* <Image source={imageSrc} style={styles.image} /> */}
       <View style={styles.image}>
         <AttendanceRecordImageComponent />
       </View>

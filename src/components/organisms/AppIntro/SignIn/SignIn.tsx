@@ -38,8 +38,6 @@ const styles = StyleSheet.create({
   },
 });
 
-const imageSource = require('../../../../../assets/images/signin.png');
-
 interface Errors {
   emailError: string;
   passwordError: string;

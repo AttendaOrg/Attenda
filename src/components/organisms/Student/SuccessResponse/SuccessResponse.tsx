@@ -1,12 +1,5 @@
 import React from 'react';
-import {
-  Dimensions,
-  StyleSheet,
-  View,
-  Image,
-  Button,
-  Text,
-} from 'react-native';
+import { Dimensions, StyleSheet, View, Button, Text } from 'react-native';
 import SuccessResponseImageComponent from '../../../atoms/Images/SuccessResponseImageComponent';
 
 const styles = StyleSheet.create({
@@ -35,9 +28,6 @@ const styles = StyleSheet.create({
   },
 });
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const imageSource = require('../../../../../assets/images/successResponse.jpg');
-
 export interface SuccessResponsePops {
   onDoneClick: () => void;
 }
@@ -47,7 +37,6 @@ const SuccessResponse: React.FC<SuccessResponsePops> = ({
 }): JSX.Element => {
   return (
     <View style={styles.container}>
-      {/* <Image source={imageSource} style={styles.largeImage} /> */}
       <View style={styles.largeImage}>
         <SuccessResponseImageComponent />
       </View>

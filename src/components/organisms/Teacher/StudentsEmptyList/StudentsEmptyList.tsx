@@ -1,12 +1,5 @@
 import React from 'react';
-import {
-  Dimensions,
-  StyleSheet,
-  View,
-  Image,
-  Button,
-  Text,
-} from 'react-native';
+import { Dimensions, StyleSheet, View, Button, Text } from 'react-native';
 import EmptyStudenImageComponent from '../../../atoms/Images/EmptyStudenImageComponent';
 
 const styles = StyleSheet.create({
@@ -35,9 +28,6 @@ const styles = StyleSheet.create({
   },
 });
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const imageSource = require('../../../../../assets/images/emptyStudent.jpg');
-
 export interface StudentsEmptyListPops {
   onInviteClick: () => void;
 }
@@ -47,7 +37,6 @@ const StudentsEmptyList: React.FC<StudentsEmptyListPops> = ({
 }): JSX.Element => {
   return (
     <View style={styles.container}>
-      {/* <Image source={imageSource} style={styles.largeImage} /> */}
       <View style={styles.largeImage}>
         <EmptyStudenImageComponent />
       </View>

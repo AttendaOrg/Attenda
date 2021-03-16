@@ -3,7 +3,6 @@ import { StyleSheet, View } from 'react-native';
 import { Input } from 'react-native-elements';
 import { Button } from 'react-native-paper';
 import { inputContainerStyle } from '../../../../util/Styles';
-import ForgotPasswordImageComponent from '../../../atoms/Images/ForgotPasswordImageComponent';
 import ResetPasswordImageComponent from '../../../atoms/Images/ResetPasswordImageComponent';
 import KeyboardAdjustImageView from '../../../templates/KeyboardAdjustImageView';
 
@@ -22,17 +21,12 @@ const styles = StyleSheet.create({
   },
 });
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const imageSrc = require('../../../../../assets/images/changePassword.png');
-
 interface Errors {
   newPasswordError: string;
   confirmPasswordError: string;
 }
 
 export interface ResetPasswordFromFPPops {
-  newPassword?: string;
-  confirmPassword?: string;
   onDone: (newPass: string, confirmPass: string) => void;
   errors?: Errors;
   revalidateError?: (newPass: string, confirmPass: string) => void;
