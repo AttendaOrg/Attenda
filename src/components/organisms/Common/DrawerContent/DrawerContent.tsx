@@ -56,6 +56,8 @@ export enum DrawerListItems {
   CONTACT_US,
   PRIVACY_POLICY,
   TERMS_OF_SERVICE,
+  DEBUG_SETTINGS,
+  EDIT_DEBUG_SETTINGS,
 }
 
 export interface DrawerContentPops {
@@ -112,6 +114,18 @@ const DrawerContent: React.FC<DrawerContentPops> = ({
           title="Terms of service"
           left={props => <List.Icon {...props} icon="format-list-numbered" />}
           onPress={() => onListItemCLick(DrawerListItems.TERMS_OF_SERVICE)}
+        />
+
+        <List.Item
+          title="Debug Setting"
+          left={props => <List.Icon {...props} icon="format-list-numbered" />}
+          onPress={() => onListItemCLick(DrawerListItems.DEBUG_SETTINGS)}
+        />
+
+        <List.Item
+          title="Edit Debug Setting"
+          left={props => <List.Icon {...props} icon="format-list-numbered" />}
+          onPress={() => onListItemCLick(DrawerListItems.EDIT_DEBUG_SETTINGS)}
         />
       </View>
       <View style={styles.appVersion}>
