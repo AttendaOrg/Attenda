@@ -49,7 +49,12 @@ const DrawerContentPage: React.FC<Props> = ({ navigation }): JSX.Element => {
         break;
       case DrawerListItems.TERMS_OF_SERVICE:
         Linking.openURL(TERMS_URL);
-
+        break;
+      case DrawerListItems.DEBUG_SETTINGS:
+        navigation.navigate('App', { screen: 'DebugSettings' });
+        break;
+      case DrawerListItems.EDIT_DEBUG_SETTINGS:
+        navigation.navigate('App', { screen: 'EditDebugSettings' });
         break;
       default:
         break;
@@ -78,7 +83,7 @@ const DrawerContentPage: React.FC<Props> = ({ navigation }): JSX.Element => {
       name={name}
       email={email}
       onListItemCLick={onListItemCLick}
-      appVersion={Constants.manifest.version ?? ''}
+      appVersion={Constants?.manifest?.version ?? ''}
     />
   );
 };

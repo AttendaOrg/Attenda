@@ -5,6 +5,7 @@ import {
   StackScreenProps,
 } from '@react-navigation/stack';
 import { Text, View } from 'react-native';
+import { RnAndroidHotspot } from 'rn-android-hotspot';
 import { Button, IconButton } from 'react-native-paper';
 import { RootStackParamList, TeacherClassListNavigationProps } from '../../App';
 import CurrentAttendanceSession, {
@@ -203,12 +204,17 @@ const CurrentAttendanceSessionPage: React.FC<Props> = ({
     setShowSaveDialog(false);
   };
 
+  const stopHotSpot = async () => {
+    await RnAndroidHotspot.stopHotspot();
+  };
+
   const onSaveSession = async () => {
     const {
       params: { classId, sessionId },
     } = route;
 
     await teacherApi.saveClassSession(classId, sessionId);
+    await stopHotSpot();
     navigation.navigate('TeacherClassList', { withDismiss: true });
   };
 
@@ -218,6 +224,7 @@ const CurrentAttendanceSessionPage: React.FC<Props> = ({
     } = route;
 
     await teacherApi.discardClassSession(classId, sessionId);
+    await stopHotSpot();
 
     navigation.navigate('TeacherClassList', { withDismiss: true });
   };

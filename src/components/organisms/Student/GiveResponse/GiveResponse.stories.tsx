@@ -1,10 +1,9 @@
 import React from 'react';
 import { Platform } from 'react-native';
-import { withKnobs } from '@storybook/addon-knobs';
+import { select, withKnobs } from '@storybook/addon-knobs';
 import { storiesOf } from '@storybook/react-native';
-import { action } from '@storybook/addon-actions';
 import CenterView from '../../../atoms/CenterView';
-import GiveResponse from './GiveResponse';
+import GiveResponse, { GiveResponseLoadingState } from './GiveResponse';
 
 const STORY_NAME = 'Organisms/Student/GiveResponse';
 
@@ -18,7 +17,16 @@ export default {
 
 // Default For Web And android Component
 export const Default = (): JSX.Element => (
-  <GiveResponse onPresentClick={() => action('onPresentClick')()} />
+  <GiveResponse
+    loadingState={select(
+      'loadingState',
+      {
+        DEFAULT: GiveResponseLoadingState.DEFAULT,
+        SEARCHING_TEACHER: GiveResponseLoadingState.SEARCHING_TEACHER,
+      },
+      GiveResponseLoadingState.DEFAULT,
+    )}
+  />
 );
 
 // if the platform is not web only then render it
