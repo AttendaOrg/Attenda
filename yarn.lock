@@ -16068,6 +16068,11 @@ ripemd160@^2.0.0, ripemd160@^2.0.1:
     hash-base "^3.0.0"
     inherits "^2.0.1"
 
+"rn-android-hotspot@npm:hotspot-module-spec@^0.3.5-bug-2":
+  version "0.3.5-bug-2"
+  resolved "http://localhost:4873/hotspot-module-spec/-/hotspot-module-spec-0.3.5-bug-2.tgz#45bdc6e2b21aef77fee7423ce2c2cb8dedfbe71e"
+  integrity sha512-H1iLNecsIVx5jh4I7JHMOnt5jG1Tqz2DalG19hQcpfBx+gl0IPMu69QpHKONekIPKOgN6zcUFik2J24S1Qq2Ag==
+
 rn-avatar@^1.0.3:
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/rn-avatar/-/rn-avatar-1.0.3.tgz#15360332fbbca5d42d94916ec94329705972865a"

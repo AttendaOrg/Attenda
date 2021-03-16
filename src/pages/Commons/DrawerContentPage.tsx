@@ -78,7 +78,7 @@ const DrawerContentPage: React.FC<Props> = ({ navigation }): JSX.Element => {
       name={name}
       email={email}
       onListItemCLick={onListItemCLick}
-      appVersion={Constants.manifest.version ?? ''}
+      appVersion={Constants?.manifest?.version ?? ''}
     />
   );
 };

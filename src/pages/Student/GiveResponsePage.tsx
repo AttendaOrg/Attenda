@@ -3,7 +3,12 @@ import {
   StackNavigationOptions,
   StackScreenProps,
 } from '@react-navigation/stack';
-import { Dialog } from 'react-native-paper';
+import { Button, Dialog } from 'react-native-paper';
+import {
+  RnAndroidHotspot,
+  useWifiHotSpotListScannerListener,
+  useWifiStateChangeLister,
+} from 'rn-android-hotspot';
 import { RootStackParamList } from '../../App';
 import GiveResponse from '../../components/organisms/Student/GiveResponse';
 import SimpleCloseNavigationOptions from '../../components/templates/SimpleCloseNavigationOption';
@@ -11,6 +16,7 @@ import { HEADER_AB_TEST_NEW } from '../../util/constant';
 import { SimpleHeaderBackNavigationOptions } from '../../components/templates/SimpleHeaderNavigationOptions';
 import TurnOnWifi from '../../components/organisms/Student/TurnOnWifi';
 import { studentApi } from '../../api/StudentApi';
+import { requestLocationPermission } from '../../util';
 
 type Props = StackScreenProps<RootStackParamList, 'GiveResponse'>;
 
@@ -26,11 +32,20 @@ const GiveResponsePage: React.FC<Props> = ({
   const {
     params: { classId, sessionId },
   } = route;
+  const [isWifiOn, stopListening] = useWifiStateChangeLister();
 
-  useEffect(() => {
-    setShowTurnOnWifiPopUp(true);
-  }, []);
+  const [
+    wifiHotSpotListItems,
+    _error,
+    rescan,
+    stopHotSpotListener,
+  ] = useWifiHotSpotListScannerListener();
 
+  const turnOnWifi = async () => {
+    await RnAndroidHotspot.startWifi();
+  };
+
+  // TODO: remove this method because we will automatically give response
   const onPresentClick = async () => {
     const [success, error] = await studentApi.giveResponse(
       classId,
@@ -44,14 +59,54 @@ const GiveResponsePage: React.FC<Props> = ({
     else navigation.replace('UnsuccessfulResponse');
   };
 
+  useEffect(() => {
+    setShowTurnOnWifiPopUp(!isWifiOn);
+
+    return stopListening;
+  }, [isWifiOn, stopListening]);
+
+  useEffect(() => {
+    const hasMatch = async () => {
+      Promise.all(
+        wifiHotSpotListItems.map(async wifi => {
+          const [success, error] = await studentApi.giveResponse(
+            classId,
+            sessionId,
+            wifi.macId,
+          ); // TODO: get the mac id from native api
+
+          console.log(success, studentApi.convertErrorToMsg(error));
+
+          if (success === true) navigation.replace('SuccessResponse');
+          // else navigation.replace('UnsuccessfulResponse');
+        }),
+      );
+    };
+
+    hasMatch();
+
+    return stopHotSpotListener;
+  }, [
+    classId,
+    navigation,
+    stopHotSpotListener,
+    wifiHotSpotListItems,
+    sessionId,
+  ]);
+
+  useEffect(() => {
+    (async () => {
+      await requestLocationPermission();
+      await RnAndroidHotspot.displayLocationSettingsRequest();
+    })();
+  }, []);
+
   return (
     <>
       <GiveResponse onPresentClick={onPresentClick} />
-      <Dialog
-        visible={showTurnOnWifiPopUp}
-        onDismiss={() => setShowTurnOnWifiPopUp(false)}
-      >
-        <TurnOnWifi onCloseBtnClick={() => setShowTurnOnWifiPopUp(false)} />
+      <Dialog visible={showTurnOnWifiPopUp} onDismiss={() => null}>
+        <TurnOnWifi onCloseBtnClick={() => null} />
+        <Button onPress={turnOnWifi}>Turn On Wifi</Button>
       </Dialog>
     </>
   );

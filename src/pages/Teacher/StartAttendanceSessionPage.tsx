@@ -3,10 +3,12 @@ import {
   StackNavigationOptions,
   StackScreenProps,
 } from '@react-navigation/stack';
+import { RnAndroidHotspot } from 'rn-android-hotspot';
 import { RootStackParamList } from '../../App';
 import StartAttendanceSession from '../../components/organisms/Teacher/StartAttendanceSession';
 import { SimpleHeaderBackNavigationOptions } from '../../components/templates/SimpleHeaderNavigationOptions';
 import { teacherApi } from '../../api/TeacherApi';
+import { requestLocationPermission } from '../../util';
 
 type Props = StackScreenProps<RootStackParamList, 'StartAttendanceSession'>;
 
@@ -21,19 +23,44 @@ const StartAttendanceSessionPage: React.FC<Props> = ({
     params: { classId, title, section },
   },
 }): JSX.Element => {
-  const onStartSession = async (date: Date) => {
-    const [sessionId] = await teacherApi.startClassSession(
-      classId,
-      'macId',
-      date,
-    );
+  const startSession = async (date: Date) => {
+    const { success: macId } = await RnAndroidHotspot.getHotspotMacId();
 
-    navigation.push('CurrentAttendanceSession', {
-      classId,
-      sessionId: sessionId ?? '',
-      showStopDialog: false,
-      sessionTime: date.toISOString(),
-    });
+    if (macId !== undefined) {
+      const [sessionId] = await teacherApi.startClassSession(
+        classId,
+        macId,
+        date,
+      );
+
+      navigation.push('CurrentAttendanceSession', {
+        classId,
+        sessionId: sessionId ?? '',
+        showStopDialog: false,
+        sessionTime: date.toISOString(),
+      });
+    }
+  };
+
+  const onStartSession = async (date: Date) => {
+    const {
+      success: isHotspotRunning,
+    } = await RnAndroidHotspot.isHotspotRunning();
+
+    if (isHotspotRunning === true) {
+      await startSession(date);
+    } else {
+      await requestLocationPermission();
+      await RnAndroidHotspot.askWifiStatePermission();
+      await RnAndroidHotspot.displayLocationSettingsRequest();
+      const { success: s, errorCode } = await RnAndroidHotspot.startHotspot();
+
+      console.log(s, errorCode);
+      const { success } = await RnAndroidHotspot.isHotspotRunning();
+
+      if (success === true) await startSession(date);
+      // TODO: else show user to tun on hotspot
+    }
   };
 
   return (
