@@ -116,12 +116,12 @@ const DrawerContent: React.FC<DrawerContentPops> = ({
           onPress={() => onListItemCLick(DrawerListItems.TERMS_OF_SERVICE)}
         />
 
+        <Divider />
         <List.Item
           title="Debug Setting"
           left={props => <List.Icon {...props} icon="format-list-numbered" />}
           onPress={() => onListItemCLick(DrawerListItems.DEBUG_SETTINGS)}
         />
-
         <List.Item
           title="Edit Debug Setting"
           left={props => <List.Icon {...props} icon="format-list-numbered" />}
