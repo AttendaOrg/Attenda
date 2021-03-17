@@ -8,7 +8,7 @@ import { RootStackParamList } from '../../App';
 import StartAttendanceSession from '../../components/organisms/Teacher/StartAttendanceSession';
 import { SimpleHeaderBackNavigationOptions } from '../../components/templates/SimpleHeaderNavigationOptions';
 import { teacherApi } from '../../api/TeacherApi';
-import { requestLocationPermission } from '../../util';
+import { requestLocationPermission } from '../../util/permissions';
 
 type Props = StackScreenProps<RootStackParamList, 'StartAttendanceSession'>;
 

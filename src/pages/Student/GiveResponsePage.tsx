@@ -17,7 +17,7 @@ import SimpleCloseNavigationOptions from '../../components/templates/SimpleClose
 import { HEADER_AB_TEST_NEW } from '../../util/constant';
 import { SimpleHeaderBackNavigationOptions } from '../../components/templates/SimpleHeaderNavigationOptions';
 import { studentApi } from '../../api/StudentApi';
-import { requestLocationPermission } from '../../util';
+import { requestLocationPermission } from '../../util/permissions';
 import ImagePopup from '../../components/molecules/ImagePopup/ImagePopup';
 import TurnOnWifiImageComponent from '../../components/atoms/Images/TurnOnWifiImageComponent';
 
