@@ -84,6 +84,12 @@ import LoadingPage, { LoadingPageNavigationOptions } from './pages/LoadingPage';
 import AuthApi, { authApi } from './api/AuthApi';
 import GlobalContext, { GlobalContextProvider } from './context/GlobalContext';
 import SpinnerLoader from './components/molecules/SpinnerLoader';
+import DebugSettingsPage, {
+  DebugSettingsNavigationOptions,
+} from './pages/Commons/DebugSettingsPage';
+import EditDebugSettingsPage, {
+  EditDebugSettingsNavigationOptions,
+} from './pages/Commons/EditDebugSettingsPage';
 
 export type TeacherClassListNavigationProps = {
   withDismiss?: boolean;
@@ -155,6 +161,9 @@ export type RootStackParamList = {
   MyAccount: undefined;
   ChangePassword: undefined;
   Loading: undefined;
+  // developer settings
+  EditDebugSettings: undefined;
+  DebugSettings: undefined;
 };
 
 export const Stack = createStackNavigator<RootStackParamList>();
@@ -356,54 +365,56 @@ class AuthProvider extends React.PureComponent<Props> {
             />
           </>
           {/* student */}
-          <Stack.Screen
-            name="StudentClassList"
-            component={StudentClassListPage}
-            options={StudentClassListNavigationOptions}
-          />
-
-          <Stack.Screen
-            name="JoinClassFinal"
-            component={JoinClassFinalPage}
-            options={JoinClassFinalNavigationOptions}
-          />
-
-          <Stack.Screen
-            name="JoinClassForm"
-            component={JoinClassFormPage}
-            options={JoinClassFormNavigationOptions}
-          />
-
-          {/* this route is deprecated using popup instead */}
-          <Stack.Screen
-            name="TurnOnWifi"
-            component={TurnOnWifiPage}
-            options={TurnOnWifiNavigationOptions}
-          />
-
-          <Stack.Screen
-            name="GiveResponse"
-            component={GiveResponsePage}
-            options={GiveResponseNavigationOptions}
-          />
-
-          <Stack.Screen
-            name="SuccessResponse"
-            component={SuccessResponsePage}
-            options={SuccessResponseNavigationOptions}
-          />
-          <Stack.Screen
-            name="UnsuccessfulResponse"
-            component={UnsuccessfulResponsePage}
-            options={UnsuccessfulResponseNavigationOptions}
-          />
-          <Stack.Screen
-            name="StudentAttendanceRecord"
-            component={AttendanceRecordPage}
-            options={AttendanceRecordNavigationOptions}
-          />
           <>
-            {/* account */}
+            <Stack.Screen
+              name="StudentClassList"
+              component={StudentClassListPage}
+              options={StudentClassListNavigationOptions}
+            />
+
+            <Stack.Screen
+              name="JoinClassFinal"
+              component={JoinClassFinalPage}
+              options={JoinClassFinalNavigationOptions}
+            />
+
+            <Stack.Screen
+              name="JoinClassForm"
+              component={JoinClassFormPage}
+              options={JoinClassFormNavigationOptions}
+            />
+
+            {/* this route is deprecated using popup instead */}
+            <Stack.Screen
+              name="TurnOnWifi"
+              component={TurnOnWifiPage}
+              options={TurnOnWifiNavigationOptions}
+            />
+
+            <Stack.Screen
+              name="GiveResponse"
+              component={GiveResponsePage}
+              options={GiveResponseNavigationOptions}
+            />
+
+            <Stack.Screen
+              name="SuccessResponse"
+              component={SuccessResponsePage}
+              options={SuccessResponseNavigationOptions}
+            />
+            <Stack.Screen
+              name="UnsuccessfulResponse"
+              component={UnsuccessfulResponsePage}
+              options={UnsuccessfulResponseNavigationOptions}
+            />
+            <Stack.Screen
+              name="StudentAttendanceRecord"
+              component={AttendanceRecordPage}
+              options={AttendanceRecordNavigationOptions}
+            />
+          </>
+          {/* account */}
+          <>
             <Stack.Screen
               name="MyAccount"
               component={MyAccountPage}
@@ -413,6 +424,19 @@ class AuthProvider extends React.PureComponent<Props> {
               name="ChangePassword"
               component={ChangePasswordPage}
               options={ChangePasswordNavigationOptions}
+            />
+          </>
+          {/* developer setting */}
+          <>
+            <Stack.Screen
+              name="DebugSettings"
+              component={DebugSettingsPage}
+              options={DebugSettingsNavigationOptions}
+            />
+            <Stack.Screen
+              name="EditDebugSettings"
+              component={EditDebugSettingsPage}
+              options={EditDebugSettingsNavigationOptions}
             />
           </>
         </Stack.Navigator>

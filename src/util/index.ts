@@ -1,3 +1,5 @@
+import { PermissionsAndroid } from 'react-native';
+
 export const isValidEmail = (email: string): boolean => {
   const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
@@ -125,4 +127,29 @@ export const throttle = <T>(
       }, waitFor - (Date.now() - lastRan)) as unknown) as number;
     }
   };
+};
+
+export const requestLocationPermission = async (): Promise<boolean> => {
+  try {
+    const granted = await PermissionsAndroid.requestMultiple([
+      PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+      PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION,
+    ]);
+
+    // console.log(granted);
+    if (
+      granted['android.permission.ACCESS_COARSE_LOCATION'] ===
+        PermissionsAndroid.RESULTS.GRANTED &&
+      granted['android.permission.ACCESS_FINE_LOCATION'] ===
+        PermissionsAndroid.RESULTS.GRANTED
+    ) {
+      return true;
+    }
+
+    return false;
+  } catch (err) {
+    // console.warn(err);
+
+    return false;
+  }
 };
