@@ -10,6 +10,7 @@ function loadStories() {
   require('../src/components/molecules/ClassCard/ClassCard.stories');
   require('../src/components/molecules/ClassDetails/ClassDetails.stories');
   require('../src/components/molecules/DoubleButtonPopup/DoubleButtonPopup.stories');
+  require('../src/components/molecules/ImagePopup/ImagePopup.stories');
   require('../src/components/molecules/NoAttendancePopup/NoAttendancePopup.stories');
   require('../src/components/molecules/OauthProvider/OauthProvider.stories');
   require('../src/components/molecules/SelectTimeEditPopup/SelectTimeEditPopup.stories');
@@ -61,6 +62,7 @@ const stories = [
   '../src/components/molecules/ClassCard/ClassCard.stories',
   '../src/components/molecules/ClassDetails/ClassDetails.stories',
   '../src/components/molecules/DoubleButtonPopup/DoubleButtonPopup.stories',
+  '../src/components/molecules/ImagePopup/ImagePopup.stories',
   '../src/components/molecules/NoAttendancePopup/NoAttendancePopup.stories',
   '../src/components/molecules/OauthProvider/OauthProvider.stories',
   '../src/components/molecules/SelectTimeEditPopup/SelectTimeEditPopup.stories',
