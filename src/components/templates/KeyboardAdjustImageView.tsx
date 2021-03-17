@@ -23,8 +23,8 @@ const smallImage = {
   width: 100,
 };
 const largeImage = {
-  height: Dimensions.get('screen').height * 0.4,
-  width: Dimensions.get('screen').height * 0.44,
+  height: Dimensions.get('window').height * 0.4,
+  width: Dimensions.get('window').height * 0.44,
 };
 
 export interface KeyboardAdjustImageViewPops {

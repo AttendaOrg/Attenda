@@ -10,7 +10,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const SCREEN_WIDTH = Dimensions.get('screen').width;
+const SCREEN_WIDTH = Dimensions.get('window').width;
 const START = -1;
 const END = 1;
 const DURATION = 2000;

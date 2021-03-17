@@ -46,6 +46,7 @@ const ImagePopup: React.FC<ImagePopupPops> = ({
   text = 'Text',
   onCancelClick,
   onDismiss,
+  children,
 }): JSX.Element => {
   return (
     <Dialog visible={visible} onDismiss={onDismiss}>
@@ -64,6 +65,7 @@ const ImagePopup: React.FC<ImagePopupPops> = ({
         </View>
         <Text style={styles.popupTitle}>{title}</Text>
         <Text style={styles.popupText}>{text}</Text>
+        {children}
       </View>
     </Dialog>
   );

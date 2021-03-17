@@ -4,8 +4,8 @@ import Svg, { Circle, G, Path } from 'react-native-svg';
 import { IconsPops } from '../Icons';
 
 const ChooseRoleImageComponent: React.FC<IconsPops> = ({
-  height = Dimensions.get('screen').height * 0.4,
-  width = Dimensions.get('screen').height * 0.44,
+  height = Dimensions.get('window').height * 0.4,
+  width = Dimensions.get('window').height * 0.44,
 }): JSX.Element => {
   return (
     <Svg viewBox="0 0 500 500" height={height} width={width}>

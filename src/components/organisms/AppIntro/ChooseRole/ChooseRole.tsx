@@ -40,8 +40,8 @@ const styles = StyleSheet.create({
   },
   largeImage: {
     marginTop: 30,
-    height: Dimensions.get('screen').height * 0.4,
-    width: Dimensions.get('screen').width,
+    height: Dimensions.get('window').height * 0.4,
+    width: Dimensions.get('window').width,
   },
   footerContainer: {
     flex: 1,
