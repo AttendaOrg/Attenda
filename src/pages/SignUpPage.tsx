@@ -36,22 +36,31 @@ const SignUpPagePage: React.FC<Props> = ({ navigation }): JSX.Element => {
     email: string,
     password: string,
     acceptTerms: boolean,
-  ) => {
-    if (username.length < 3)
+  ): boolean => {
+    let retType = true;
+
+    if (username.length < 3) {
       setUsernameError('Name must contain at least 3 letters.');
-    else setUsernameError('');
+      retType = false;
+    } else setUsernameError('');
 
-    if (isValidEmail(email) !== true)
+    if (isValidEmail(email) !== true) {
       setEmailError('Please enter a valid email.');
-    else if (isValidEmail(email) === true) setEmailError('');
+      retType = false;
+    } else if (isValidEmail(email) === true) setEmailError('');
 
-    if (isStrongPassword(password) !== true)
+    if (isStrongPassword(password) !== true) {
       setPasswordError('Please enter a stronger password.');
-    else if (isStrongPassword(password) === true) setPasswordError('');
+      retType = false;
+    } else if (isStrongPassword(password) === true) setPasswordError('');
 
-    if (acceptTerms === false)
+    if (acceptTerms === false) {
       setAcceptTermsError('Please accept the terms and condition.');
+      retType = false;
+    }
     if (acceptTerms === true) setAcceptTermsError('');
+
+    return retType;
   };
 
   const handleOnSubmit = async (
@@ -61,13 +70,7 @@ const SignUpPagePage: React.FC<Props> = ({ navigation }): JSX.Element => {
     acceptTerms: boolean,
   ) => {
     globalContext.changeSpinnerLoading(true);
-    revalidateError(username, email, password, acceptTerms);
-    if (
-      username !== '' &&
-      email !== '' &&
-      password !== '' &&
-      acceptTerms === true
-    ) {
+    if (revalidateError(username, email, password, acceptTerms)) {
       // TODO: add validation for network related error and firebase error
 
       const [success, error] = await authApi.signUpWithEmailAndPassword(
