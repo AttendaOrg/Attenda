@@ -6,9 +6,10 @@ import { IconsPops } from '../Icons';
 const ResetPasswordImageComponent: React.FC<IconsPops> = ({
   height = Dimensions.get('window').height * 0.4,
   width = Dimensions.get('window').height * 0.44,
+  style = {},
 }): JSX.Element => {
   return (
-    <Svg viewBox="0 0 500 500" height={height} width={width}>
+    <Svg style={style} viewBox="0 0 500 500" height={height} width={width}>
       <Path
         d="M466.89 316.2H303v-94.84h163.89zm-162.89-1h161.89v-92.84H304z"
         fill="#e0e0e0"

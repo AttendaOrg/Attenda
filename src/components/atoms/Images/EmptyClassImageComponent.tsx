@@ -6,9 +6,10 @@ import { IconsPops } from '../Icons';
 const EmptyClassImageComponent: React.FC<IconsPops> = ({
   height = Dimensions.get('window').height * 0.5,
   width = Dimensions.get('window').height * 0.44,
+  style = {},
 }): JSX.Element => {
   return (
-    <Svg viewBox="0 0 500 500" height={height} width={width}>
+    <Svg style={style} viewBox="0 0 500 500" height={height} width={width}>
       <Path
         fill="#e0e0e0"
         d="M0 382.4h500v.25H0zM344.93 391.62h34.4v.25h-34.4zM400.44 390.91h19.36v.25h-19.36zM221.66 391.5h25.68v.25h-25.68zM248.35 395.05h17.54v.25h-17.54zM91.68 388.97h52.99v.25H91.68zM237 337.8H43.91a5.71 5.71 0 01-5.7-5.71V60.66a5.71 5.71 0 015.7-5.66H237a5.71 5.71 0 015.71 5.71v271.38a5.71 5.71 0 01-5.71 5.71zM43.91 55.2a5.46 5.46 0 00-5.45 5.46v271.43a5.46 5.46 0 005.45 5.46H237a5.47 5.47 0 005.46-5.46V60.66A5.47 5.47 0 00237 55.2zM453.31 337.8h-193.1a5.72 5.72 0 01-5.71-5.71V60.66a5.72 5.72 0 015.71-5.66h193.1a5.71 5.71 0 015.69 5.66v271.43a5.71 5.71 0 01-5.69 5.71zM260.21 55.2a5.47 5.47 0 00-5.46 5.46v271.43a5.47 5.47 0 005.46 5.46h193.1a5.47 5.47 0 005.46-5.46V60.66a5.47 5.47 0 00-5.46-5.46z"

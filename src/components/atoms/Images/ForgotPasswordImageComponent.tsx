@@ -6,9 +6,10 @@ import { IconsPops } from '../Icons';
 const ForgotPasswordImageComponent: React.FC<IconsPops> = ({
   height = Dimensions.get('window').height * 0.4,
   width = Dimensions.get('window').height * 0.44,
+  style = {},
 }): JSX.Element => {
   return (
-    <Svg viewBox="0 0 500 500" height={height} width={width}>
+    <Svg style={style} viewBox="0 0 500 500" height={height} width={width}>
       <Ellipse cx={250} cy={341.91} rx={235.59} ry={136.02} fill="#f0f0f0" />
       <Ellipse cx={201.25} cy={398.08} rx={81.24} ry={46.9} fill="#e0e0e0" />
       <Path

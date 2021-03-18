@@ -6,9 +6,10 @@ import { IconsPops } from '../Icons';
 const SignInImageComponent: React.FC<IconsPops> = ({
   height = Dimensions.get('window').height * 0.4,
   width = Dimensions.get('window').height * 0.44,
+  style = {},
 }): JSX.Element => {
   return (
-    <Svg viewBox="0 0 500 500" height={height} width={width}>
+    <Svg style={style} viewBox="0 0 500 500" height={height} width={width}>
       <Ellipse cx={249.05} cy={350.02} rx={235.61} ry={136.03} fill="#f0f0f0" />
       <G fill="#e0e0e0">
         <Path d="M384.36 397.22c-15.45-8.92-15.45-23.38 0-32.3s40.5-8.92 55.95 0 15.45 23.38 0 32.3-40.5 8.92-55.95 0zM70.12 398.46L29.48 375c-2.29-1.32-2.29-3.47 0-4.79l236.39-136.48a9.17 9.17 0 018.29 0l40.65 23.46c2.29 1.32 2.29 3.47 0 4.79L78.42 398.46a9.19 9.19 0 01-8.3 0z" />

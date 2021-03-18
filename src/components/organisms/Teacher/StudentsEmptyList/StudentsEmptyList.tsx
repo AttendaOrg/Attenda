@@ -1,6 +1,6 @@
 import React from 'react';
 import { Dimensions, StyleSheet, View, Button, Text } from 'react-native';
-import EmptyStudenImageComponent from '../../../atoms/Images/EmptyStudenImageComponent';
+import EmptyStudentImageComponent from '../../../atoms/Images/EmptyStudentImageComponent';
 
 const styles = StyleSheet.create({
   container: {
@@ -12,7 +12,9 @@ const styles = StyleSheet.create({
   },
   largeImage: {
     height: Dimensions.get('window').height * 0.4,
-    width: Dimensions.get('window').width,
+    width: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   textContainer: {
     marginTop: 20,
@@ -37,9 +39,7 @@ const StudentsEmptyList: React.FC<StudentsEmptyListPops> = ({
 }): JSX.Element => {
   return (
     <View style={styles.container}>
-      <View style={styles.largeImage}>
-        <EmptyStudenImageComponent />
-      </View>
+      <EmptyStudentImageComponent style={styles.largeImage} />
 
       <View style={styles.textContainer}>
         <Text style={styles.text}>Invite students</Text>

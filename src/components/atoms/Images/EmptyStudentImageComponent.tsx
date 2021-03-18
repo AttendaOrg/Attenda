@@ -3,12 +3,13 @@ import { Dimensions } from 'react-native';
 import Svg, { Circle, G, Path } from 'react-native-svg';
 import { IconsPops } from '../Icons';
 
-const EmptyStudenImageComponent: React.FC<IconsPops> = ({
+const EmptyStudentImageComponent: React.FC<IconsPops> = ({
   height = Dimensions.get('window').height * 0.4,
   width = Dimensions.get('window').height * 0.45,
+  style = {},
 }): JSX.Element => {
   return (
-    <Svg viewBox="0 0 500 500" height={height} width={width}>
+    <Svg style={style} viewBox="0 0 500 500" height={height} width={width}>
       <Path
         d="M97.76 419.94c84.08 43.93 220.4 43.93 304.48 0s84.09-115.14 0-159.07-220.4-43.92-304.49 0-84.08 115.13.01 159.07z"
         fill="#f5f5f5"
@@ -673,4 +674,4 @@ const EmptyStudenImageComponent: React.FC<IconsPops> = ({
   );
 };
 
-export default EmptyStudenImageComponent;
+export default EmptyStudentImageComponent;

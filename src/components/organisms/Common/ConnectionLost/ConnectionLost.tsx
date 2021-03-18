@@ -49,9 +49,7 @@ const ConnectionLost: React.FC<ConnectionLostPops> = ({
 }): JSX.Element => {
   return (
     <View style={styles.container}>
-      <View style={styles.largeImage}>
-        <ConnectionLostImageComponent />
-      </View>
+      <ConnectionLostImageComponent style={styles.largeImage} />
       <Text style={styles.textUp}>Connection Lost</Text>
       <Text style={styles.textDown}>
         You are offline. Check your connection.

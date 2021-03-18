@@ -5,9 +5,10 @@ import { IconsPops } from '../Icons';
 const AttendanceRecordImageComponent: React.FC<IconsPops> = ({
   height = 300,
   width = 350,
+  style = {},
 }): JSX.Element => {
   return (
-    <Svg viewBox="0 0 500 500" height={height} width={width}>
+    <Svg style={style} viewBox="0 0 500 500" height={height} width={width}>
       <Ellipse cx={252.63} cy={356.9} rx={240.08} ry={122.65} fill="#f5f5f5" />
       <G fill="#e0e0e0">
         <Path d="M96.63 340.16c16.45 9.27 16.62 24.58.36 34.21s-42.78 9.9-59.24.64-16.63-24.59-.37-34.21 42.79-9.91 59.25-.64zM461.65 356c17.72 10 17.9 26.47.4 36.83s-46.05 10.66-63.77.69-17.9-26.47-.4-36.83 46.06-10.69 63.77-.69z" />

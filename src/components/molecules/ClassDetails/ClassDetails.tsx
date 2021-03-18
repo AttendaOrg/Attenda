@@ -50,9 +50,7 @@ const ClassDetails: React.FC<ClassDetailsPops> = ({
 }): JSX.Element => {
   return (
     <View style={styles.container}>
-      <View style={styles.image}>
-        <AttendanceRecordImageComponent />
-      </View>
+      <AttendanceRecordImageComponent />
       <Text style={styles.className}>{className}</Text>
       <Text style={styles.section}>{section}</Text>
       {teacherName !== undefined && (

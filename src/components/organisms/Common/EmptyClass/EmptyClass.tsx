@@ -13,7 +13,9 @@ const styles = StyleSheet.create({
   },
   largeImage: {
     height: Dimensions.get('window').height * 0.45,
-    width: Dimensions.get('window').width,
+    width: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   aboveTextContainer: {
     flex: 1,
@@ -57,9 +59,7 @@ const EmptyClass: React.FC<EmptyClassPops> = ({
 
   return (
     <View style={styles.container}>
-      <View style={styles.largeImage}>
-        <EmptyClassImageComponent />
-      </View>
+      <EmptyClassImageComponent style={styles.largeImage} />
 
       <View style={styles.aboveTextContainer}>
         <Text style={styles.text}>No class found</Text>

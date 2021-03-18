@@ -6,9 +6,10 @@ import { IconsPops } from '../Icons';
 const StartAttendanceSessionImageComponent: React.FC<IconsPops> = ({
   height = Dimensions.get('window').height * 0.4,
   width = Dimensions.get('window').width * 0.8,
+  style = {},
 }): JSX.Element => {
   return (
-    <Svg viewBox="0 0 500 500" height={height} width={width}>
+    <Svg style={style} viewBox="0 0 500 500" height={height} width={width}>
       <Ellipse cx={250} cy={353.97} rx={231.53} ry={133.67} fill="#f5f5f5" />
       <G fill="#e0e0e0">
         <Path d="M34.61 337.66l240.71 139a10.34 10.34 0 009.35 0l126.57-73.08c2.59-1.49 2.59-3.91 0-5.4l-240.7-139a10.36 10.36 0 00-9.36 0L34.61 332.26c-2.61 1.49-2.61 3.9 0 5.4z" />

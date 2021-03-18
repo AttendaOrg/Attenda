@@ -6,9 +6,10 @@ import { IconsPops } from '../Icons';
 const ChooseRoleImageComponent: React.FC<IconsPops> = ({
   height = Dimensions.get('window').height * 0.4,
   width = Dimensions.get('window').height * 0.44,
+  style = {},
 }): JSX.Element => {
   return (
-    <Svg viewBox="0 0 500 500" height={height} width={width}>
+    <Svg style={style} viewBox="0 0 500 500" height={height} width={width}>
       <Path
         d="M419.52 247.47c-94.24-54.41-246.52-54.41-340.14 0s-93.13 142.62 1.1 197 246.52 54.4 340.15 0 93.12-142.59-1.11-197z"
         fill="#f5f5f5"

@@ -41,7 +41,9 @@ const styles = StyleSheet.create({
   largeImage: {
     marginTop: 30,
     height: Dimensions.get('window').height * 0.4,
-    width: Dimensions.get('window').width,
+    width: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   footerContainer: {
     flex: 1,
@@ -78,9 +80,7 @@ const ChooseRole: React.FC<ChooseRolePops> = ({
 
   return (
     <View style={styles.container}>
-      <View style={styles.largeImage}>
-        <ChooseRoleImageComponent />
-      </View>
+      <ChooseRoleImageComponent style={styles.largeImage} />
 
       <View style={styles.footerContainer}>
         <Text style={styles.headlineText}>Choose Your Role</Text>
