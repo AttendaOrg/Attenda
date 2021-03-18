@@ -1,4 +1,5 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useLayoutEffect, useState } from 'react';
+import { View } from 'react-native';
 import {
   StackNavigationOptions,
   StackScreenProps,
@@ -15,6 +16,7 @@ import { convertDateFormat, convertTime, matchDate } from '../../util';
 import { teacherApi } from '../../api/TeacherApi';
 import ClassStudentModel from '../../api/TeacherApi/model/ClassStudentModel';
 import GlobalContext from '../../context/GlobalContext';
+import MenuOptionsPopover from '../../components/molecules/MenuOptionsPopover';
 
 type Props = StackScreenProps<RootStackParamList, 'TeacherAttendanceRecord'>;
 export type AttendanceRecordTabProps = 'Sessions' | 'Students';
@@ -26,6 +28,7 @@ export const TeacherAttendanceRecordNavigationOptions: StackNavigationOptions = 
 
 const Tab = createMaterialTopTabNavigator();
 
+//#region AttendanceSessionRecordTab
 export const convertSessionInfoToMarkedDates = (
   sessionInfo: SessionInfoModel[],
 ): MarkedDates => {
@@ -121,6 +124,43 @@ const AttendanceSessionRecordTab: React.FC<Props> = ({ navigation, route }) => {
   );
 };
 
+//#endregion AttendanceSessionRecordTab
+
+//#region AttendanceRecordStudentListTab
+
+enum SortBy {
+  ROLL_NO,
+  NAME,
+}
+
+interface AttendanceRecordStudentListTabProps extends Props {
+  sortBy: SortBy;
+}
+
+const sortByName = (a: StudentListData, b: StudentListData): number =>
+  a.name.localeCompare(b.name);
+
+const sortByPercentage = (a: StudentListData, b: StudentListData): number => {
+  const { rollNo: rollNoA = '' } = a;
+  const { rollNo: rollNoB = '' } = b;
+
+  return rollNoA.localeCompare(rollNoB);
+};
+
+const applySort = (
+  list: StudentListData[],
+  sortBy: SortBy,
+): StudentListData[] => {
+  switch (sortBy) {
+    case SortBy.NAME:
+      return list.sort(sortByName);
+    case SortBy.ROLL_NO:
+      return list.sort(sortByPercentage);
+    default:
+      return list;
+  }
+};
+
 const convertStudentListToStudentListData = (
   model: ClassStudentModel,
 ): StudentListData => ({
@@ -134,9 +174,10 @@ const convertStudentListToStudentListData = (
 // using stack props for getting the navigation autocomplete
 // the route props will give wrong autocomplete
 // preferably use the MaterialTopTabBarProps
-const AttendanceRecordStudentListTab: React.FC<Props> = ({
+const AttendanceRecordStudentListTab: React.FC<AttendanceRecordStudentListTabProps> = ({
   navigation,
   route,
+  sortBy,
 }) => {
   const [studentList, setStudentList] = useState<StudentListData[]>([]);
   const {
@@ -148,9 +189,11 @@ const AttendanceRecordStudentListTab: React.FC<Props> = ({
       const [list] = await teacherApi.getAllStudentList(classId);
 
       if (list !== null)
-        setStudentList(list.map(convertStudentListToStudentListData));
+        setStudentList(
+          applySort(list.map(convertStudentListToStudentListData), sortBy),
+        );
     })();
-  }, [classId]);
+  }, [classId, sortBy]);
 
   return (
     <AttendanceRecordStudentList
@@ -165,10 +208,43 @@ const AttendanceRecordStudentListTab: React.FC<Props> = ({
   );
 };
 
+//#endregion AttendanceRecordStudentListTab
+
 const TeacherAttendanceRecordPage: React.FC<Props> = ({
   route: { params },
+  navigation,
 }): JSX.Element => {
   const { selectedTab } = params;
+  const [sortBy, setSortBy] = useState<SortBy>(SortBy.NAME);
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <View style={{ marginRight: 12 }}>
+          <MenuOptionsPopover
+            options={[
+              {
+                onPress: () => setSortBy(SortBy.NAME),
+                title: 'Sort By Name',
+                selected: sortBy === SortBy.NAME,
+              },
+              {
+                onPress: () => setSortBy(SortBy.ROLL_NO),
+                title: 'Sort By Roll No',
+                selected: sortBy === SortBy.ROLL_NO,
+              },
+            ]}
+            value=""
+          />
+        </View>
+      ),
+    });
+  }, [navigation, sortBy]);
+
+  const StudentBody = (p: Props) => (
+    // eslint-disable-next-line react/jsx-props-no-spreading
+    <AttendanceRecordStudentListTab {...p} sortBy={sortBy} />
+  );
 
   return (
     <Tab.Navigator initialRouteName={selectedTab || 'Sessions'}>
@@ -178,8 +254,8 @@ const TeacherAttendanceRecordPage: React.FC<Props> = ({
         initialParams={params}
       />
       <Tab.Screen
+        component={StudentBody}
         name="Students"
-        component={AttendanceRecordStudentListTab}
         initialParams={params}
       />
     </Tab.Navigator>
