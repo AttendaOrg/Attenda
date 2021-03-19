@@ -3,7 +3,6 @@ import {
   Dimensions,
   StyleSheet,
   View,
-  Image,
   Text,
   TouchableOpacity,
 } from 'react-native';
@@ -41,9 +40,6 @@ const styles = StyleSheet.create({
   },
 });
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const imageSource = require('../../../../../assets/images/connectionLost.jpg');
-
 export interface ConnectionLostPops {
   onRetryClick: () => void;
 }
@@ -53,7 +49,6 @@ const ConnectionLost: React.FC<ConnectionLostPops> = ({
 }): JSX.Element => {
   return (
     <View style={styles.container}>
-      {/* <Image source={imageSource} style={styles.largeImage} /> */}
       <View style={styles.largeImage}>
         <ConnectionLostImageComponent />
       </View>

@@ -3,7 +3,6 @@ import {
   Dimensions,
   StyleSheet,
   View,
-  Image,
   Text,
   TouchableOpacity,
 } from 'react-native';
@@ -34,9 +33,6 @@ const styles = StyleSheet.create({
   },
 });
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const imageSource = require('../../../../../assets/images/exclamation.png');
-
 export interface TurnOnWifiPops {
   /**
    * this method is deprecated
@@ -59,7 +55,6 @@ const TurnOnWifi: React.FC<TurnOnWifiPops> = ({
       <TouchableOpacity onPress={onCloseBtnClick} style={styles.closeIcon}>
         <MaterialIcons size={24} name="close" />
       </TouchableOpacity>
-      {/* <Image source={imageSource} style={styles.largeImage} /> */}
       <View style={styles.largeImage}>
         <TurnOnWifiImageComponent />
       </View>

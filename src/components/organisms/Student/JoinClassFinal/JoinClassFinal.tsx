@@ -30,9 +30,6 @@ const styles = StyleSheet.create({
   },
 });
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const imageSrc = require('../../../../../assets/images/study.png');
-
 export interface JoinClassFinalPops {
   className: string;
   section: string;

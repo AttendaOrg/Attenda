@@ -1,6 +1,6 @@
 import React from 'react';
 import { Platform } from 'react-native';
-import { text, withKnobs } from '@storybook/addon-knobs';
+import { object, withKnobs } from '@storybook/addon-knobs';
 import { storiesOf } from '@storybook/react-native';
 import { action } from '@storybook/addon-actions';
 import CenterView from '../../../atoms/CenterView';
@@ -19,8 +19,10 @@ export default {
 // Default For Web And android Component
 export const Default = (): JSX.Element => (
   <ResetPasswordFromFP
-    newPassword={text('newPassword', '')}
-    confirmPassword={text('confirmPassword', '')}
+    errors={object('errors', {
+      newPasswordError: '',
+      confirmPasswordError: '',
+    })}
     onDone={(newPass, confirmPass) => action('onDone')(newPass, confirmPass)}
   />
 );

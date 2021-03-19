@@ -48,8 +48,6 @@ const styles = StyleSheet.create({
   },
 });
 
-const imageSource = require('../../../../../assets/images/SignUp.png');
-
 interface Errors {
   username: string;
   email: string;

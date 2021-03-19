@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Dimensions } from 'react-native';
-import Svg, { Ellipse, G, Path } from 'react-native-svg';
+import Svg, { G, Path } from 'react-native-svg';
 import { IconsPops } from '../Icons';
 
 const TurnOnWifiImageComponent: React.FC<IconsPops> = ({

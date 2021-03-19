@@ -1,6 +1,5 @@
 import * as React from 'react';
-import { Dimensions } from 'react-native';
-import Svg, { Circle, Ellipse, G, Path, Rect } from 'react-native-svg';
+import Svg, { Ellipse, G, Path } from 'react-native-svg';
 import { IconsPops } from '../Icons';
 
 const AttendanceRecordImageComponent: React.FC<IconsPops> = ({

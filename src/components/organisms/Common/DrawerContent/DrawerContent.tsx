@@ -79,10 +79,6 @@ const DrawerContent: React.FC<DrawerContentPops> = ({
   return (
     <View style={styles.container}>
       <View style={styles.backgroundImageContainer}>
-        {/* <Image
-          source={require('../../../../../assets/images/drawer-back.png')}
-          style={styles.backgroundImage}
-        /> */}
         <View style={styles.backgroundImage}>
           <DrawerBackgroundImageComponent />
         </View>
