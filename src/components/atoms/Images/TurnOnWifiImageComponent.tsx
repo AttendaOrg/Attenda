@@ -4,11 +4,16 @@ import Svg, { G, Path } from 'react-native-svg';
 import { IconsPops } from '../Icons';
 
 const TurnOnWifiImageComponent: React.FC<IconsPops> = ({
-  height = Dimensions.get('screen').height * 0.4,
-  width = Dimensions.get('screen').width * 0.8,
+  height = Dimensions.get('window').height * 0.4,
+  width = Dimensions.get('window').width * 0.8,
 }): JSX.Element => {
   return (
-    <Svg viewBox="0 0 500 500" height={height} width={width}>
+    <Svg
+      style={{ justifyContent: 'center', alignItems: 'center' }}
+      viewBox="0 0 500 500"
+      height={height}
+      width={width}
+    >
       <Path
         d="M120.6 388.68c73 38.15 191.4 38.15 264.41 0s73-100 0-138.13-191.39-38.15-264.41 0-73.01 99.99 0 138.13z"
         fill="#f5f5f5"

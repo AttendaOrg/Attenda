@@ -1,8 +1,8 @@
 import React from 'react';
-import { StyleSheet, Text, View, Dimensions } from 'react-native';
+import { StyleSheet, Text, View, Image, Dimensions } from 'react-native';
 import { Dialog } from 'react-native-paper';
 import AntIcon from 'react-native-vector-icons/AntDesign';
-import SearchingImageComponent from '../../atoms/Images/SearchingImageComponent';
+import { IconsPops } from '../../atoms/Icons';
 
 const styles = StyleSheet.create({
   centeredView: {
@@ -30,22 +30,30 @@ const styles = StyleSheet.create({
   },
 });
 
-export interface NoAttendancePopupPops {
-  onCancelClick: () => void;
+export interface ImagePopupPops {
   visible: boolean;
+  imageComponent: React.FC<IconsPops>;
+  title: string;
+  text: string;
+  onCancelClick: () => void;
   onDismiss: () => void;
 }
 
-const NoAttendancePopup: React.FC<NoAttendancePopupPops> = ({
+const ImagePopup: React.FC<ImagePopupPops> = ({
   visible,
+  imageComponent: SvgImg = () => null,
+  title = 'Title',
+  text = 'Text',
   onCancelClick,
   onDismiss,
+  children,
 }): JSX.Element => {
   return (
     <Dialog visible={visible} onDismiss={onDismiss}>
       <View style={styles.centeredView}>
+        {/* <Image source={imageSource} style={styles.largeImage} /> */}
         <View style={styles.largeImage}>
-          <SearchingImageComponent />
+          <SvgImg />
         </View>
         <View style={styles.icon}>
           <AntIcon
@@ -55,11 +63,12 @@ const NoAttendancePopup: React.FC<NoAttendancePopupPops> = ({
             onPress={onCancelClick}
           />
         </View>
-        <Text style={styles.popupTitle}>Oopss....</Text>
-        <Text style={styles.popupText}>No attendance session is going on</Text>
+        <Text style={styles.popupTitle}>{title}</Text>
+        <Text style={styles.popupText}>{text}</Text>
+        {children}
       </View>
     </Dialog>
   );
 };
 
-export default NoAttendancePopup;
+export default ImagePopup;

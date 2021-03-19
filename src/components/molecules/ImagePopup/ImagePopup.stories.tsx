@@ -1,24 +1,32 @@
 import React from 'react';
 import { Platform } from 'react-native';
-import { withKnobs } from '@storybook/addon-knobs';
+import { boolean, withKnobs } from '@storybook/addon-knobs';
 import { storiesOf } from '@storybook/react-native';
 import { action } from '@storybook/addon-actions';
-import CenterView from '../../../atoms/CenterView';
-import TurnOnWifi from './TurnOnWifi';
+import CenterView from '../../atoms/CenterView';
+import ImagePopup from './ImagePopup';
+import TurnOnWifiImageComponent from '../../atoms/Images/TurnOnWifiImageComponent';
 
-const STORY_NAME = 'Organisms/Student/TurnOnWifi';
+const STORY_NAME = 'Molecules/ImagePopup';
 
 // it will only work with web
 // because react native does not supports the modern api
 export default {
   title: STORY_NAME,
   decorators: [withKnobs],
-  component: TurnOnWifi,
+  component: ImagePopup,
 };
 
 // Default For Web And android Component
 export const Default = (): JSX.Element => (
-  <TurnOnWifi onCloseBtnClick={() => action('onCloseBtnClick')()} />
+  <ImagePopup
+    visible={boolean('visible', true)}
+    imageComponent={TurnOnWifiImageComponent}
+    title="Wifi is off"
+    text="Please turn on wifi."
+    onDismiss={() => action('onDismiss')()}
+    onCancelClick={() => action('onCancelClick')()}
+  />
 );
 
 // if the platform is not web only then render it

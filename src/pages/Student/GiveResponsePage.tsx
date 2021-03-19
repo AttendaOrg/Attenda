@@ -3,7 +3,7 @@ import {
   StackNavigationOptions,
   StackScreenProps,
 } from '@react-navigation/stack';
-import { Button, Dialog } from 'react-native-paper';
+import { Button } from 'react-native-paper';
 import {
   RnAndroidHotspot,
   useWifiHotSpotListScannerListener,
@@ -16,9 +16,10 @@ import GiveResponse, {
 import SimpleCloseNavigationOptions from '../../components/templates/SimpleCloseNavigationOption';
 import { HEADER_AB_TEST_NEW } from '../../util/constant';
 import { SimpleHeaderBackNavigationOptions } from '../../components/templates/SimpleHeaderNavigationOptions';
-import TurnOnWifi from '../../components/organisms/Student/TurnOnWifi';
 import { studentApi } from '../../api/StudentApi';
-import { requestLocationPermission } from '../../util';
+import { requestLocationPermission } from '../../util/permissions';
+import ImagePopup from '../../components/molecules/ImagePopup/ImagePopup';
+import TurnOnWifiImageComponent from '../../components/atoms/Images/TurnOnWifiImageComponent';
 
 type Props = StackScreenProps<RootStackParamList, 'GiveResponse'>;
 
@@ -101,10 +102,16 @@ const GiveResponsePage: React.FC<Props> = ({
   return (
     <>
       <GiveResponse loadingState={giveResponseLoadingState} />
-      <Dialog visible={showTurnOnWifiPopUp} onDismiss={() => null}>
-        <TurnOnWifi onCloseBtnClick={() => null} />
+      <ImagePopup
+        imageComponent={TurnOnWifiImageComponent}
+        text=""
+        title="Turn on your wifi"
+        visible={showTurnOnWifiPopUp}
+        onCancelClick={() => null}
+        onDismiss={() => null}
+      >
         <Button onPress={turnOnWifi}>Turn On Wifi</Button>
-      </Dialog>
+      </ImagePopup>
     </>
   );
 };

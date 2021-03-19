@@ -19,7 +19,9 @@ const styles = StyleSheet.create({
   },
   largeImage: {
     height: Dimensions.get('window').height * 0.4,
-    width: Dimensions.get('window').width,
+    width: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   textContainer: {
     marginTop: 20,
@@ -46,9 +48,8 @@ const UnsuccessfulResponse: React.FC<UnsuccessfulResponsePops> = ({
         <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
       }
     >
-      <View style={styles.largeImage}>
-        <UnsuccessResponseImageComponent />
-      </View>
+      <UnsuccessResponseImageComponent style={styles.largeImage} />
+
       <View style={styles.textContainer}>
         <Text style={styles.text}>Something went wrong</Text>
       </View>

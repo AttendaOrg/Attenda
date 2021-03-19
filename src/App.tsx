@@ -26,9 +26,6 @@ import JoinClassFormPage, {
 import JoinClassFinalPage, {
   JoinClassFinalNavigationOptions,
 } from './pages/Student/JoinClassFinalPage';
-import TurnOnWifiPage, {
-  TurnOnWifiNavigationOptions,
-} from './pages/Student/TurnOnWifiPage';
 import GiveResponsePage, {
   GiveResponseNavigationOptions,
 } from './pages/Student/GiveResponsePage';
@@ -385,11 +382,6 @@ class AuthProvider extends React.PureComponent<Props> {
             />
 
             {/* this route is deprecated using popup instead */}
-            <Stack.Screen
-              name="TurnOnWifi"
-              component={TurnOnWifiPage}
-              options={TurnOnWifiNavigationOptions}
-            />
 
             <Stack.Screen
               name="GiveResponse"
