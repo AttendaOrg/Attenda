@@ -23,10 +23,18 @@ export const TeacherClassListNavigationOptions: OptionsProps = SimpleHeaderNavig
 const transformToStudentListDataProps = (
   cls: TeacherClassModel,
 ): StudentListDataProps => {
-  const { title, section, classId, isLive, classCode, currentSessionId } = cls;
+  const {
+    title,
+    section,
+    classId,
+    isLive,
+    classCode,
+    currentSessionId,
+    totalStudent,
+  } = cls;
 
   return {
-    attendance: '70 students', // TODO: get attendance summery from the class info
+    attendance: `${totalStudent} student`, // TODO: get attendance summery from the class info
     section,
     showShimmer: false,
     backgroundImage: classBack,
@@ -59,17 +67,6 @@ class TeacherClassListPage extends React.PureComponent<Props, State> {
     this.unSub = teacherApi.getClassListener(newData => {
       this.setState({ data: newData, loading: false });
     });
-    // setTimeout(() => {
-    //   // FIXME: delete it
-    //   const { navigation } = this.props;
-
-    //   navigation.push('CurrentAttendanceSession', {
-    //     classId: '63FrBTL7X0L9Xs2R6wJ3',
-    //     sessionId: 'EEvk7wR3bYyOOZBNkYVo',
-    //     showStopDialog: false,
-    //     sessionTime: new Date().toISOString(),
-    //   });
-    // }, 1500);
   }
 
   componentWillUnmount(): void {
