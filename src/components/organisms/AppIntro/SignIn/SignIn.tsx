@@ -31,7 +31,6 @@ const styles = StyleSheet.create({
     // flex: 1,
   },
   forgotPasswordContainer: {
-    flex: 1,
     alignItems: 'flex-end',
     paddingVertical: 8,
     paddingTop: 0,
@@ -88,8 +87,14 @@ const SignIn: React.FC<SignInPops> = ({
           keyboardType="email-address"
           value={email}
           onChangeText={onEmailChange}
-          labelStyle={{ margin: 0 }}
-          errorStyle={{ margin: 0 }}
+          labelStyle={{
+            margin: 0,
+            display: emailError !== '' ? 'flex' : 'none',
+          }}
+          errorStyle={{
+            margin: 0,
+            display: emailError !== '' ? 'flex' : 'none',
+          }}
           errorMessage={emailError}
         />
         <Input
@@ -100,6 +105,14 @@ const SignIn: React.FC<SignInPops> = ({
           secureTextEntry
           value={password}
           onChangeText={onPasswordChange}
+          labelStyle={{
+            margin: 0,
+            display: passwordError !== '' ? 'flex' : 'none',
+          }}
+          errorStyle={{
+            margin: 0,
+            display: passwordError !== '' ? 'flex' : 'none',
+          }}
           errorMessage={passwordError}
         />
       </View>

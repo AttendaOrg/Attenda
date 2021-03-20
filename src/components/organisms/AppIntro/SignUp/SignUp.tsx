@@ -150,8 +150,14 @@ const SignUp: React.FC<SignUpPops> = ({
           placeholder="Username"
           textContentType="givenName"
           keyboardType="name-phone-pad"
-          labelStyle={{ margin: 0 }}
-          errorStyle={{ marginHorizontal: 0 }}
+          labelStyle={{
+            margin: 0,
+            display: usernameError !== '' ? 'flex' : 'none',
+          }}
+          errorStyle={{
+            margin: 0,
+            display: usernameError !== '' ? 'flex' : 'none',
+          }}
           value={username}
           onChangeText={updateUsername}
           errorMessage={usernameError}
@@ -163,8 +169,14 @@ const SignUp: React.FC<SignUpPops> = ({
           placeholder="Email"
           textContentType="emailAddress"
           keyboardType="email-address"
-          labelStyle={{ margin: 0 }}
-          errorStyle={{ marginHorizontal: 0 }}
+          labelStyle={{
+            margin: 0,
+            display: emailError !== '' ? 'flex' : 'none',
+          }}
+          errorStyle={{
+            margin: 0,
+            display: emailError !== '' ? 'flex' : 'none',
+          }}
           value={email}
           onChangeText={updateEmail}
           errorMessage={emailError}
@@ -175,8 +187,14 @@ const SignUp: React.FC<SignUpPops> = ({
           style={styles.inputStyle}
           placeholder="Password"
           textContentType="password"
-          labelStyle={{ margin: 0 }}
-          errorStyle={{ marginHorizontal: 0 }}
+          labelStyle={{
+            margin: 0,
+            display: updatePassword !== '' ? 'flex' : 'none',
+          }}
+          errorStyle={{
+            margin: 0,
+            display: updatePassword !== '' ? 'flex' : 'none',
+          }}
           secureTextEntry
           value={password}
           onChangeText={updatePassword}

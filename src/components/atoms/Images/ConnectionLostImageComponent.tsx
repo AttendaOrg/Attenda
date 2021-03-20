@@ -4,11 +4,12 @@ import Svg, { Ellipse, G, Path } from 'react-native-svg';
 import { IconsPops } from '../Icons';
 
 const ConnectionLostImageComponent: React.FC<IconsPops> = ({
-  height = Dimensions.get('screen').height * 0.4,
-  width = Dimensions.get('screen').width * 0.8,
+  height = Dimensions.get('window').height * 0.4,
+  width = Dimensions.get('window').width * 0.8,
+  style = {},
 }): JSX.Element => {
   return (
-    <Svg viewBox="0 0 500 500" height={height} width={width}>
+    <Svg style={style} viewBox="0 0 500 500" height={height} width={width}>
       <Ellipse cx={249.03} cy={368.25} rx={228.44} ry={118.95} fill="#f5f5f5" />
       <G fill="#e6e6e6">
         <Ellipse cx={395.38} cy={348.61} rx={60.93} ry={35.18} />

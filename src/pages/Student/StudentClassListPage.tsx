@@ -9,9 +9,10 @@ import SimpleHeaderNavigationOptions from '../../components/templates/SimpleHead
 import StudentClassList, {
   StudentListDataProps,
 } from '../../components/organisms/Student/StudentClassList';
-import NoAttendancePopup from '../../components/molecules/NoAttendancePopup';
 import TeacherClassModel from '../../api/TeacherApi/model/TeacherClassModel';
 import { studentApi } from '../../api/StudentApi';
+import ImagePopup from '../../components/molecules/ImagePopup/ImagePopup';
+import SearchingImageComponent from '../../components/atoms/Images/SearchingImageComponent';
 
 type Props = StackScreenProps<RootStackParamList, 'StudentClassList'>;
 type OptionsProps = (props: Props) => StackNavigationOptions;
@@ -145,7 +146,10 @@ const StudentClassListPage: React.FC<Props> = ({ navigation }): JSX.Element => {
           { onPress: unEnroll, title: 'Un-Enroll' },
         ]}
       />
-      <NoAttendancePopup
+      <ImagePopup
+        imageComponent={SearchingImageComponent}
+        title="Oopss...."
+        text="No attendance session is going on"
         visible={showNoSessionStartedPopup}
         onCancelClick={dismissPopup}
         onDismiss={dismissPopup}

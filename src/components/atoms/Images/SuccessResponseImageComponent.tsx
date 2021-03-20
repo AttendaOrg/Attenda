@@ -4,11 +4,12 @@ import Svg, { Ellipse, G, Path } from 'react-native-svg';
 import { IconsPops } from '../Icons';
 
 const SuccessResponseImageComponent: React.FC<IconsPops> = ({
-  height = Dimensions.get('screen').height * 0.4,
-  width = Dimensions.get('screen').height * 0.45,
+  height = Dimensions.get('window').height * 0.4,
+  width = Dimensions.get('window').height * 0.45,
+  style = {},
 }): JSX.Element => {
   return (
-    <Svg viewBox="0 0 500 500" height={height} width={width}>
+    <Svg style={style} viewBox="0 0 500 500" height={height} width={width}>
       <Path
         d="M86.28 447.6c-90.41-52.2-90.41-136.84 0-189s237-52.2 327.44 0 90.41 136.84 0 189-237.02 52.21-327.44 0z"
         fill="#f5f5f5"

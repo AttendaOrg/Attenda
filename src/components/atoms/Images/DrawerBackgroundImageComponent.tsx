@@ -5,9 +5,11 @@ import { IconsPops } from '../Icons';
 const DrawerBackgroundImageComponent: React.FC<IconsPops> = ({
   height = 180,
   width = '100%',
+  style = {},
 }): JSX.Element => {
   return (
     <Svg
+      style={style}
       height={height}
       width={width}
       preserveAspectRatio="none"

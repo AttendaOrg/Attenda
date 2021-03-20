@@ -12,7 +12,9 @@ const styles = StyleSheet.create({
   },
   largeImage: {
     height: Dimensions.get('window').height * 0.4,
-    width: Dimensions.get('window').width,
+    width: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   textContainer: {
     marginTop: 30,
@@ -37,9 +39,7 @@ const SuccessResponse: React.FC<SuccessResponsePops> = ({
 }): JSX.Element => {
   return (
     <View style={styles.container}>
-      <View style={styles.largeImage}>
-        <SuccessResponseImageComponent />
-      </View>
+      <SuccessResponseImageComponent style={styles.largeImage} />
 
       <View style={styles.textContainer}>
         <Text style={styles.text}>Your response is recorded</Text>

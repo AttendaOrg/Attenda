@@ -21,6 +21,7 @@ import ChangeClassCode, {
 } from '../../components/organisms/Teacher/ChangeClassCode';
 import GlobalContext from '../../context/GlobalContext';
 import { RealTimeListenerUnSubscriber } from '../../api/BaseApi';
+import MenuOptionsPopover from '../../components/molecules/MenuOptionsPopover';
 
 type Props = StackScreenProps<RootStackParamList, 'ClassSettings'>;
 
@@ -100,6 +101,8 @@ class ClassSettingsPage extends React.PureComponent<Props, State> {
     // expected () => removeListener(type, callback); but got () => void
     // so we are using remove listener method to clean up the event listener
     navigation.addListener('beforeRemove', this.callback);
+
+    this.updateHeader();
   }
 
   componentWillUnmount(): void {
@@ -254,11 +257,32 @@ class ClassSettingsPage extends React.PureComponent<Props, State> {
 
     navigation.setOptions({
       headerRight: ({ tintColor }) => (
-        <View style={{ display: this.hasUnsavedChanges() ? 'flex' : 'none' }}>
+        <View
+          style={{
+            marginRight: 12,
+            flexDirection: 'row',
+            alignItems: 'center',
+          }}
+        >
           <IconButton
+            style={{ display: this.hasUnsavedChanges() ? 'flex' : 'none' }}
             color={tintColor ?? lightColor}
             icon="check"
             onPress={this.updateClassInfo}
+          />
+          <MenuOptionsPopover
+            style={{}}
+            options={[
+              {
+                onPress: () => null,
+                title: 'Reset Code',
+              },
+              {
+                onPress: () => null,
+                title: 'Delete Class',
+              },
+            ]}
+            value=""
           />
         </View>
       ),
