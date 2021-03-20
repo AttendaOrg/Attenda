@@ -4,6 +4,7 @@ import * as functions from "firebase-functions";
 import * as admin from "firebase-admin";
 export * from "./UpdateStudentCount";
 export * from "./GenerateClassId";
+export * from "./CalculatePercentage";
 
 admin.initializeApp();
 

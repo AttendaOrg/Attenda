@@ -68,7 +68,7 @@ const AttendanceRecordPage: React.FC<Props> = ({ route }): JSX.Element => {
 
       if (joinInfo !== null)
         setMyInfo({
-          percentage: `${joinInfo.totalAttendancePercentage}`,
+          percentage: `${joinInfo.totalAttendancePercentage.toFixed(1)}`,
           rollNo: joinInfo.rollNo,
         });
     })();
