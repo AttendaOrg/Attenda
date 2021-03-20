@@ -17,6 +17,10 @@ const CLASSES_SESSIONS_COLLECTION_NAME = "sessions";
 const CLASSES_SESSIONS_STUDENT_COLLECTION_NAME = "sessions_students";
 
 // #region functions
+
+const parseHrtimeToSeconds = (hrtime: [number, number]): string =>
+  (hrtime[0] + hrtime[1] / 1e9).toFixed(3);
+
 const getTotalSessionCount = async (classId: string): Promise<number> => {
   const totalMatchedSession = await admin
     .firestore()
@@ -48,52 +52,65 @@ const CalculatePercentage = async (
   _snapshot: functions.Change<functions.firestore.QueryDocumentSnapshot>,
   context: functions.EventContext
 ): Promise<void> => {
-  functions.logger.info("CalculatePercentage", { structuredData: true });
-  const d = _snapshot.after.data() as SessionInfoInterface;
-  const info = new SessionInfoModel(d);
+  try {
+    const startTime = process.hrtime();
+    functions.logger.info("CalculatePercentage", { structuredData: true });
+    const d = _snapshot.after.data() as SessionInfoInterface;
+    const info = new SessionInfoModel(d);
 
-  if (info.isLive === true) {
-    functions.logger.info("CalculatePercentage: session is running skip..", {
-      structuredData: true,
-    });
-    return;
+    if (info.isLive === true) {
+      functions.logger.info("CalculatePercentage: session is running skip..", {
+        structuredData: true,
+      });
+      return;
+    }
+
+    const { classId } = info;
+
+    const totalNumOfSession: number = await getTotalSessionCount(classId);
+
+    const joinedStudentCollections = await admin
+      .firestore()
+      .collection(CLASSES_COLLECTION_NAME)
+      .doc(classId)
+      .collection(CLASSES_JOINED_STUDENT_COLLECTION_NAME)
+      .get();
+
+    await Promise.all(
+      joinedStudentCollections.docs
+        .map((e) => e.id)
+        .map(async (studentId) => {
+          const studentAttendanceCount: number = await getAttendedSessionCount(
+            classId,
+            studentId
+          );
+          const totalAttendancePercentage =
+            (studentAttendanceCount * 100) / totalNumOfSession;
+
+          const studentDoc = await admin
+            .firestore()
+            .collection(CLASSES_COLLECTION_NAME)
+            .doc(classId)
+            .collection(CLASSES_JOINED_STUDENT_COLLECTION_NAME)
+            .doc(studentId)
+            .get();
+
+          studentDoc.ref.update({
+            totalAttendancePercentage,
+          });
+        })
+    );
+    const elapsedSeconds = parseHrtimeToSeconds(process.hrtime(startTime));
+    console.log("It takes " + elapsedSeconds + "seconds");
+    functions.logger.info(
+      "CalculatePercentage: It takes " + elapsedSeconds + "seconds",
+      {
+        structuredData: true,
+      }
+    );
+  } catch (e) {
+    console.log(e);
   }
-
-  const { classId } = info;
-
-  const totalNumOfSession: number = await getTotalSessionCount(classId);
-
-  const joinedStudentCollections = await admin
-    .firestore()
-    .collection(CLASSES_COLLECTION_NAME)
-    .doc(classId)
-    .collection(CLASSES_JOINED_STUDENT_COLLECTION_NAME)
-    .get();
-
-  await Promise.all(
-    joinedStudentCollections.docs
-      .map((e) => e.id)
-      .map(async (studentId) => {
-        const studentAttendanceCount: number = await getAttendedSessionCount(
-          classId,
-          studentId
-        );
-        const totalAttendancePercentage =
-          (studentAttendanceCount * 100) / totalNumOfSession;
-
-        const studentDoc = await admin
-          .firestore()
-          .collection(CLASSES_COLLECTION_NAME)
-          .doc(classId)
-          .collection(CLASSES_JOINED_STUDENT_COLLECTION_NAME)
-          .doc(studentId)
-          .get();
-
-        studentDoc.ref.update({
-          totalAttendancePercentage,
-        });
-      })
-  );
 };
 
 export const CalculatePercentageFunction = functions.firestore
