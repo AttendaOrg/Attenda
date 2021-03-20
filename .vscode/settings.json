@@ -7,6 +7,7 @@
         "SSID",
         "Unmount",
         "Wifi",
+        "bcpow",
         "datetimepicker",
         "firestore",
         "noemit",
