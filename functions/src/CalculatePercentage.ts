@@ -99,10 +99,3 @@ const CalculatePercentage = async (
 export const CalculatePercentageFunction = functions.firestore
   .document("/sessions/{sessionId}")
   .onUpdate(CalculatePercentage);
-
-export const CalculatePercentageFunction2 = functions.firestore
-  .document("/sessions/{sessionId}")
-  .onCreate((s, q) => {
-    functions.logger.info("OnCreate", { structuredData: true });
-    console.log(s, q);
-  });
