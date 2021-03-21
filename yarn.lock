@@ -16806,10 +16806,10 @@
     "hash-base" "^3.0.0"
     "inherits" "^2.0.1"
 
-"rn-android-hotspot@npm:hotspot-module-spec@^0.3.7":
-  "integrity" "sha512-PNI94firu9P0qUenU2lBAHHFkVSZv6nI3MEcwtkjqo0UHRX9qFOyb1l1tENXLxWDpP3YZYOdepkESbhRmUAOxA=="
-  "resolved" "http://localhost:4873/hotspot-module-spec/-/hotspot-module-spec-0.3.7.tgz"
-  "version" "0.3.7"
+"rn-android-hotspot@npm:hotspot-module-spec@^0.3.8":
+  "integrity" "sha512-yiHIL20mCxhLR3W3d04FuNsuwvVAmMJ5H3miYeD9Akt5nDYcqNUV13gKeMl2xF4feI/Ok+XHGSMoQZNg5SBC7w=="
+  "resolved" "http://localhost:4873/hotspot-module-spec/-/hotspot-module-spec-0.3.8.tgz"
+  "version" "0.3.8"
 
 "rn-avatar@^1.0.3":
   "integrity" "sha512-NW0FVaT7jkDdh8r9KVEDpwPYj1r26nbr71+JqWdkpyusbFp/2DGBq62siYluElX4UXTPTYxBcJk9+vVJ1lS9XA=="

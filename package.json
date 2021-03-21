@@ -69,7 +69,7 @@
     "react-native-tab-view": "^2.15.2",
     "react-native-vector-icons": "^7.1.0",
     "react-native-web": "~0.13.12",
-    "rn-android-hotspot": "npm:hotspot-module-spec@^0.3.7",
+    "rn-android-hotspot": "npm:hotspot-module-spec@^0.3.8",
     "rn-avatar": "^1.0.3",
     "toggle-switch-react-native": "^2.3.0"
   },

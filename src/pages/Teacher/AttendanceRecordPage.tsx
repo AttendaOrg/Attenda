@@ -4,7 +4,10 @@ import {
   StackNavigationOptions,
   StackScreenProps,
 } from '@react-navigation/stack';
-import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs/';
+import {
+  createMaterialTopTabNavigator,
+  MaterialTopTabBar,
+} from '@react-navigation/material-top-tabs/';
 import { RootStackParamList } from '../../App';
 import AttendanceSessionRecord from '../../components/organisms/Teacher/AttendanceSessionRecord';
 import { SimpleHeaderBackNavigationOptions } from '../../components/templates/SimpleHeaderNavigationOptions';
@@ -210,36 +213,43 @@ const AttendanceRecordStudentListTab: React.FC<AttendanceRecordStudentListTabPro
 
 //#endregion AttendanceRecordStudentListTab
 
+enum Tabs {
+  SESSION = 0,
+  STUDENT = 1,
+}
+
 const TeacherAttendanceRecordPage: React.FC<Props> = ({
   route: { params },
   navigation,
 }): JSX.Element => {
   const { selectedTab } = params;
   const [sortBy, setSortBy] = useState<SortBy>(SortBy.NAME);
+  const [currentActiveTab, setCurrentActiveTab] = useState<Tabs>(Tabs.SESSION);
 
   useLayoutEffect(() => {
     navigation.setOptions({
-      headerRight: () => (
-        <View style={{ marginRight: 12 }}>
-          <MenuOptionsPopover
-            options={[
-              {
-                onPress: () => setSortBy(SortBy.NAME),
-                title: 'Sort By Name',
-                selected: sortBy === SortBy.NAME,
-              },
-              {
-                onPress: () => setSortBy(SortBy.ROLL_NO),
-                title: 'Sort By Roll No',
-                selected: sortBy === SortBy.ROLL_NO,
-              },
-            ]}
-            value=""
-          />
-        </View>
-      ),
+      headerRight: () =>
+        currentActiveTab === Tabs.STUDENT ? (
+          <View style={{ marginRight: 12 }}>
+            <MenuOptionsPopover
+              options={[
+                {
+                  onPress: () => setSortBy(SortBy.NAME),
+                  title: 'Sort By Name',
+                  selected: sortBy === SortBy.NAME,
+                },
+                {
+                  onPress: () => setSortBy(SortBy.ROLL_NO),
+                  title: 'Sort By Roll No',
+                  selected: sortBy === SortBy.ROLL_NO,
+                },
+              ]}
+              value=""
+            />
+          </View>
+        ) : null,
     });
-  }, [navigation, sortBy]);
+  }, [navigation, sortBy, currentActiveTab]);
 
   const StudentBody = (p: Props) => (
     // eslint-disable-next-line react/jsx-props-no-spreading
@@ -247,7 +257,15 @@ const TeacherAttendanceRecordPage: React.FC<Props> = ({
   );
 
   return (
-    <Tab.Navigator initialRouteName={selectedTab || 'Sessions'}>
+    <Tab.Navigator
+      tabBar={({ ...q }) => {
+        setCurrentActiveTab(q.state.index);
+
+        // eslint-disable-next-line react/jsx-props-no-spreading
+        return <MaterialTopTabBar {...q} />;
+      }}
+      initialRouteName={selectedTab || 'Sessions'}
+    >
       <Tab.Screen
         name="Sessions"
         component={AttendanceSessionRecordTab}
