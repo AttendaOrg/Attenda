@@ -19,6 +19,7 @@ import { SimpleHeaderBackNavigationOptions } from '../../components/templates/Si
 import StudentsEmptyList from '../../components/organisms/Teacher/StudentsEmptyList/StudentsEmptyList';
 import { teacherApi } from '../../api/TeacherApi';
 import ClassStudentModel from '../../api/TeacherApi/model/ClassStudentModel';
+import MenuOptionsPopover from '../../components/molecules/MenuOptionsPopover';
 
 type Props = StackScreenProps<RootStackParamList, 'StudentList'>;
 type OptionsProps = (props: Props) => StackNavigationOptions;
@@ -106,10 +107,22 @@ const StudentListPage: React.FC<Props> = ({
               <MaterialIcons name="delete" color={tintColor} size={24} />
             </TouchableOpacity>
           )}
+
+          <MenuOptionsPopover
+            style={{ marginRight: 12 }}
+            options={[
+              {
+                onPress: () => setShowChecked(!showChecked),
+                title: 'Mark for delete',
+                selected: showChecked,
+              },
+            ]}
+            value=""
+          />
         </View>
       ),
     });
-  }, [classId, listItems, navigation]);
+  }, [classId, listItems, navigation, showChecked]);
 
   const dismissDialog = () => {
     setShowDeleteDialog(false);
