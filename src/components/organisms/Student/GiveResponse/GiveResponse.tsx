@@ -37,6 +37,7 @@ const imageSource = require('../../../../../assets/images/giveResponse.png');
 
 export enum GiveResponseLoadingState {
   DEFAULT,
+  TURING_ON_WIFI,
   SEARCHING_TEACHER,
 }
 
@@ -78,6 +79,9 @@ const GiveResponse: React.FC<GiveResponsePops> = ({
           <LoadingText style={styles.infoText}>
             Searching for teacher
           </LoadingText>
+        )}
+        {loadingState === GiveResponseLoadingState.TURING_ON_WIFI && (
+          <LoadingText style={styles.infoText}>Turing On Wifi</LoadingText>
         )}
       </View>
     </View>

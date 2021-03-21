@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
   StackNavigationOptions,
   StackScreenProps,
@@ -23,6 +23,11 @@ import TurnOnWifiImageComponent from '../../components/atoms/Images/TurnOnWifiIm
 
 type Props = StackScreenProps<RootStackParamList, 'GiveResponse'>;
 
+const convertToGiveState = (_isWifiOn: boolean): GiveResponseLoadingState =>
+  _isWifiOn
+    ? GiveResponseLoadingState.SEARCHING_TEACHER
+    : GiveResponseLoadingState.TURING_ON_WIFI;
+
 export const GiveResponseNavigationOptions: StackNavigationOptions = HEADER_AB_TEST_NEW
   ? { ...SimpleHeaderBackNavigationOptions, title: 'Give Present' }
   : SimpleCloseNavigationOptions;
@@ -36,9 +41,6 @@ const GiveResponsePage: React.FC<Props> = ({
     params: { classId, sessionId },
   } = route;
   const [isWifiOn, stopListening] = useWifiStateChangeLister();
-  const [giveResponseLoadingState, setGiveResponseLoadingState] = useState(
-    GiveResponseLoadingState.DEFAULT,
-  );
 
   const [
     wifiHotSpotListItems,
@@ -47,23 +49,37 @@ const GiveResponsePage: React.FC<Props> = ({
     stopHotSpotListener,
   ] = useWifiHotSpotListScannerListener();
 
-  const turnOnWifi = async () => {
-    await RnAndroidHotspot.startWifi();
+  /**
+   * try five time to turn on wifi automatically
+   * @returns
+   */
+  const turnOnWifi = (): number => {
+    let i = 0;
+
+    const id = (setInterval(async () => {
+      i += 1;
+      await RnAndroidHotspot.startWifi();
+
+      if (i >= 6) {
+        clearInterval(id);
+        setShowTurnOnWifiPopUp(true);
+      }
+    }, 500) as unknown) as number;
+
+    return id;
   };
 
   useEffect(() => {
-    setShowTurnOnWifiPopUp(!isWifiOn);
+    if (!isWifiOn) turnOnWifi();
+    if (isWifiOn) setShowTurnOnWifiPopUp(false);
 
-    setGiveResponseLoadingState(
-      isWifiOn
-        ? GiveResponseLoadingState.SEARCHING_TEACHER
-        : GiveResponseLoadingState.DEFAULT,
-    );
-
-    return stopListening;
+    return () => {
+      stopListening();
+    };
   }, [isWifiOn, stopListening]);
 
   useEffect(() => {
+    let id = 0;
     const hasMatch = async () => {
       Promise.all(
         wifiHotSpotListItems.map(async wifi => {
@@ -79,29 +95,42 @@ const GiveResponsePage: React.FC<Props> = ({
           // else navigation.replace('UnsuccessfulResponse');
         }),
       );
+
+      id = (setInterval(() => {
+        rescan();
+      }, 30 * 1000) as unknown) as number;
     };
 
     hasMatch();
 
-    return stopHotSpotListener;
+    return () => {
+      // console.log(`stopHotSpotListener();
+      // clearInterval(id);`);
+      stopHotSpotListener();
+      clearInterval(id);
+    };
   }, [
     classId,
     navigation,
     stopHotSpotListener,
     wifiHotSpotListItems,
     sessionId,
+    rescan,
   ]);
 
-  useEffect(() => {
-    (async () => {
-      await requestLocationPermission();
-      await RnAndroidHotspot.displayLocationSettingsRequest();
-    })();
+  const getNecessaryPermissionForWifi = useCallback(async () => {
+    await requestLocationPermission();
+    await RnAndroidHotspot.displayLocationSettingsRequest();
+    turnOnWifi();
   }, []);
+
+  useEffect(() => {
+    getNecessaryPermissionForWifi();
+  }, [getNecessaryPermissionForWifi]);
 
   return (
     <>
-      <GiveResponse loadingState={giveResponseLoadingState} />
+      <GiveResponse loadingState={convertToGiveState(isWifiOn)} />
       <ImagePopup
         imageComponent={TurnOnWifiImageComponent}
         text=""
