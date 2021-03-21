@@ -37,7 +37,8 @@ export default class AccountInfo implements Partial<AccountInfoProps> {
     if (data.name !== undefined) obj.name = data.name;
     if (data.role !== undefined) obj.role = data.role;
     if (data.joinedClassId !== null) obj.joinedClassId = data.joinedClassId;
-    if (data.profilePicUrl !== null) obj.profilePicUrl = data.profilePicUrl;
+    if (data.profilePicUrl !== undefined)
+      obj.profilePicUrl = data.profilePicUrl;
 
     return obj;
   }

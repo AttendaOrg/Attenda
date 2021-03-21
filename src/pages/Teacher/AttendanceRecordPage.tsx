@@ -223,7 +223,7 @@ const TeacherAttendanceRecordPage: React.FC<Props> = ({
   navigation,
 }): JSX.Element => {
   const { selectedTab } = params;
-  const [sortBy, setSortBy] = useState<SortBy>(SortBy.NAME);
+  const [sortBy, setSortBy] = useState<SortBy>(SortBy.ROLL_NO);
   const [currentActiveTab, setCurrentActiveTab] = useState<Tabs>(Tabs.SESSION);
 
   useLayoutEffect(() => {
