@@ -38,7 +38,9 @@ export const convertTime = (date: Date): string =>
     date.getHours() > 12
       ? padNumber(date.getHours() % 12)
       : padNumber(date.getHours())
-  }:${padNumber(date.getMinutes())} ${isAm(date.getHours()) ? 'AM' : 'PM'}`;
+  }:${padNumber(date.getMinutes())}:${padNumber(date.getSeconds())} ${
+    isAm(date.getHours()) ? 'AM' : 'PM'
+  }`;
 
 /**
  * return the date time is string format
@@ -71,7 +73,8 @@ export const matchDate = (date1: Date, date2: Date): boolean =>
   date1.getMonth() === date2.getMonth() &&
   date1.getDate() === date2.getDate() &&
   date1.getHours() === date2.getHours() &&
-  date1.getMinutes() === date2.getMinutes();
+  date1.getMinutes() === date2.getMinutes() &&
+  date1.getSeconds() === date2.getSeconds();
 
 /**
  * gets the starting date of the month and starting day of the next month
