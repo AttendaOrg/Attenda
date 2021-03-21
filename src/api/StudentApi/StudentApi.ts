@@ -324,6 +324,45 @@ export default class StudentApi extends AuthApi implements StudentApiInterface {
     }
   };
 
+  getEnrolledPercentageListener = (
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+    onDataChange = (_newData: ClassStudentModel[]) => {},
+  ): RealTimeListenerUnSubscriber => {
+    const error = () => console.error('error');
+    let unSubscribeAccInfo = () => console.info('un implemented');
+
+    try {
+      const userId = this.getUserUid();
+
+      if (userId === null) return error;
+
+      const query = firebase
+        .firestore()
+        .collectionGroup(TeacherApi.CLASSES_JOINED_STUDENT_COLLECTION_NAME)
+        .where('studentId', '==', userId);
+
+      unSubscribeAccInfo = query.onSnapshot(async snapshot => {
+        // TODO: find way to optimize the query to only include update or inserted or deleted data
+        const percentageModel: ClassStudentModel[] = snapshot.docs.map(e => {
+          const data = e.data() as ClassStudentModelInterface;
+          const model = new ClassStudentModel(data);
+
+          model.setClassId(e?.ref?.parent?.parent?.id ?? null);
+
+          return model;
+        });
+
+        onDataChange(percentageModel);
+      });
+
+      return unSubscribeAccInfo;
+    } catch (ex) {
+      // console.log(ex);
+
+      return error;
+    }
+  };
+
   getEnrolledClassList = async (
     page: number,
   ): Promise<WithError<TeacherClassModel[]>> => {

@@ -13,6 +13,7 @@ import TeacherClassModel from '../../api/TeacherApi/model/TeacherClassModel';
 import { studentApi } from '../../api/StudentApi';
 import ImagePopup from '../../components/molecules/ImagePopup/ImagePopup';
 import SearchingImageComponent from '../../components/atoms/Images/SearchingImageComponent';
+import ClassStudentModel from '../../api/TeacherApi/model/ClassStudentModel';
 
 type Props = StackScreenProps<RootStackParamList, 'StudentClassList'>;
 type OptionsProps = (props: Props) => StackNavigationOptions;
@@ -24,6 +25,7 @@ export const StudentClassListNavigationOptions: OptionsProps = SimpleHeaderNavig
 
 const transformToStudentListDataProps = (
   cls: TeacherClassModel,
+  percentageModels: ClassStudentModel[],
 ): StudentListDataProps => {
   const {
     title,
@@ -35,10 +37,13 @@ const transformToStudentListDataProps = (
     alreadyGiven,
   } = cls;
 
+  const match = percentageModels.filter(m => m.classId === classId);
+  const percentage = match[0]?.totalAttendancePercentage ?? 0;
+
   return {
     // TODO: get attendance summery from the class info
     // we will do it with a cloud function because it is too intensive calculation
-    attendance: 'Your Attendance: 70%',
+    attendance: `Your Attendance: ${percentage.toFixed(1)}%`,
     section,
     showShimmer: false,
     backgroundImage: classBack,
@@ -69,6 +74,9 @@ const mergeGiven = (
 
 const StudentClassListPage: React.FC<Props> = ({ navigation }): JSX.Element => {
   const [data, setData] = useState<TeacherClassModel[]>([]);
+  const [percentageModels, setPercentageModels] = useState<ClassStudentModel[]>(
+    [],
+  );
   const [sessionIds, setSessionIds] = useState<string[]>([]);
   const [givenPresenceClassIds, setGivenPresenceClassIds] = useState<string[]>(
     [],
@@ -89,6 +97,15 @@ const StudentClassListPage: React.FC<Props> = ({ navigation }): JSX.Element => {
         setSessionIds((ids as unknown) as string[]);
       }
     });
+  }, []);
+
+  useEffect(() => {
+    return studentApi.getEnrolledPercentageListener(
+      async (_percentageModels: ClassStudentModel[]) => {
+        setPercentageModels(_percentageModels);
+        console.log(_percentageModels);
+      },
+    );
   }, []);
 
   // on every session id changes reattach the listener for checking if the student has given present
@@ -129,7 +146,9 @@ const StudentClassListPage: React.FC<Props> = ({ navigation }): JSX.Element => {
   };
 
   const merged = mergeGiven(givenPresenceClassIds, data);
-  const transformedData = merged.map(transformToStudentListDataProps);
+  const transformedData = merged.map(e =>
+    transformToStudentListDataProps(e, percentageModels),
+  );
 
   return (
     <>
