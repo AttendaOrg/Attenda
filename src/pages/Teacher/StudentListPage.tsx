@@ -10,7 +10,6 @@ import {
 } from '@react-navigation/stack';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
-import { Button, Dialog, Paragraph } from 'react-native-paper';
 import { RootStackParamList } from '../../App';
 import StudentList, {
   StudentListData,
@@ -21,6 +20,7 @@ import { teacherApi } from '../../api/TeacherApi';
 import ClassStudentModel from '../../api/TeacherApi/model/ClassStudentModel';
 import MenuOptionsPopover from '../../components/molecules/MenuOptionsPopover';
 import { applyStudentSort, SortBy } from './util/SortStudent';
+import DoubleButtonPopup from '../../components/molecules/DoubleButtonPopup';
 
 type Props = StackScreenProps<RootStackParamList, 'StudentList'>;
 type OptionsProps = (props: Props) => StackNavigationOptions;
@@ -191,20 +191,16 @@ const StudentListPage: React.FC<Props> = ({
           })
         }
       />
-      <Dialog visible={showDeleteDialog} onDismiss={dismissDialog}>
-        <Dialog.Title>Delete Students</Dialog.Title>
-        <Dialog.Content>
-          <Paragraph>
-            Are you sure you want to delete selected students from class ?
-          </Paragraph>
-        </Dialog.Content>
-        <Dialog.Actions>
-          <Button onPress={dismissDialog}>Cancel</Button>
-          <Button onPress={deleteSelectedStudents} color="red">
-            Delete
-          </Button>
-        </Dialog.Actions>
-      </Dialog>
+      <DoubleButtonPopup
+        negativeButtonText="Cancel"
+        positiveButtonText="Delete"
+        onDismiss={dismissDialog}
+        visible={showDeleteDialog}
+        title="Delete Students"
+        text="Are you sure you want to delete selected students from class ?"
+        onNegativeButtonClick={dismissDialog}
+        onPositiveButtonClick={deleteSelectedStudents}
+      />
     </>
   );
 };
