@@ -20,6 +20,7 @@ import StudentsEmptyList from '../../components/organisms/Teacher/StudentsEmptyL
 import { teacherApi } from '../../api/TeacherApi';
 import ClassStudentModel from '../../api/TeacherApi/model/ClassStudentModel';
 import MenuOptionsPopover from '../../components/molecules/MenuOptionsPopover';
+import { applyStudentSort, SortBy } from './util/SortStudent';
 
 type Props = StackScreenProps<RootStackParamList, 'StudentList'>;
 type OptionsProps = (props: Props) => StackNavigationOptions;
@@ -57,6 +58,7 @@ const StudentListPage: React.FC<Props> = ({
   } = route;
   const [showChecked, setShowChecked] = useState(false);
   const [listItems, setListItems] = useState<StudentListData[]>([]);
+  const [sortBy, setSortBy] = useState<SortBy>(SortBy.ROLL_NO);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
   const fetchStudentList = useCallback(async () => {
@@ -107,22 +109,39 @@ const StudentListPage: React.FC<Props> = ({
               <MaterialIcons name="delete" color={tintColor} size={24} />
             </TouchableOpacity>
           )}
+          {listItems.length > 0 && (
+            <MenuOptionsPopover
+              style={{ marginRight: 12 }}
+              options={[
+                {
+                  onPress: () => setSortBy(SortBy.NAME),
+                  title: 'Sort By Name',
+                  selected: sortBy === SortBy.NAME,
+                },
+                {
+                  onPress: () => setSortBy(SortBy.ROLL_NO),
+                  title: 'Sort By Roll No',
+                  selected: sortBy === SortBy.ROLL_NO,
+                },
+                {
+                  onPress: () => {
+                    setShowChecked(!showChecked);
+                    const newListItems = [
+                      ...listItems.map(item => ({ ...item, checked: false })),
+                    ];
 
-          <MenuOptionsPopover
-            style={{ marginRight: 12 }}
-            options={[
-              {
-                onPress: () => setShowChecked(!showChecked),
-                title: 'Mark for delete',
-                selected: showChecked,
-              },
-            ]}
-            value=""
-          />
+                    setListItems(newListItems);
+                  },
+                  title: showChecked ? 'Un Mark' : 'Mark for delete',
+                },
+              ]}
+              value=""
+            />
+          )}
         </View>
       ),
     });
-  }, [classId, listItems, navigation, showChecked]);
+  }, [classId, listItems, navigation, showChecked, sortBy]);
 
   const dismissDialog = () => {
     setShowDeleteDialog(false);
@@ -161,7 +180,7 @@ const StudentListPage: React.FC<Props> = ({
   return (
     <>
       <StudentList
-        studentList={listItems}
+        studentList={applyStudentSort(listItems, sortBy)}
         showChecked={showChecked}
         onChangeShowChecked={setShowChecked}
         onChangeChecked={onChangeChecked}

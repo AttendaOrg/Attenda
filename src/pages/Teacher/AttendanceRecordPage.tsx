@@ -20,6 +20,7 @@ import { teacherApi } from '../../api/TeacherApi';
 import ClassStudentModel from '../../api/TeacherApi/model/ClassStudentModel';
 import GlobalContext from '../../context/GlobalContext';
 import MenuOptionsPopover from '../../components/molecules/MenuOptionsPopover';
+import { SortBy, applyStudentSort } from './util/SortStudent';
 
 type Props = StackScreenProps<RootStackParamList, 'TeacherAttendanceRecord'>;
 export type AttendanceRecordTabProps = 'Sessions' | 'Students';
@@ -131,38 +132,9 @@ const AttendanceSessionRecordTab: React.FC<Props> = ({ navigation, route }) => {
 
 //#region AttendanceRecordStudentListTab
 
-enum SortBy {
-  ROLL_NO,
-  NAME,
-}
-
 interface AttendanceRecordStudentListTabProps extends Props {
   sortBy: SortBy;
 }
-
-const sortByName = (a: StudentListData, b: StudentListData): number =>
-  a.name.localeCompare(b.name);
-
-const sortByPercentage = (a: StudentListData, b: StudentListData): number => {
-  const { rollNo: rollNoA = '' } = a;
-  const { rollNo: rollNoB = '' } = b;
-
-  return rollNoA.localeCompare(rollNoB);
-};
-
-const applySort = (
-  list: StudentListData[],
-  sortBy: SortBy,
-): StudentListData[] => {
-  switch (sortBy) {
-    case SortBy.NAME:
-      return list.sort(sortByName);
-    case SortBy.ROLL_NO:
-      return list.sort(sortByPercentage);
-    default:
-      return list;
-  }
-};
 
 const convertStudentListToStudentListData = (
   model: ClassStudentModel,
@@ -193,7 +165,10 @@ const AttendanceRecordStudentListTab: React.FC<AttendanceRecordStudentListTabPro
 
       if (list !== null)
         setStudentList(
-          applySort(list.map(convertStudentListToStudentListData), sortBy),
+          applyStudentSort(
+            list.map(convertStudentListToStudentListData),
+            sortBy,
+          ),
         );
     })();
   }, [classId, sortBy]);

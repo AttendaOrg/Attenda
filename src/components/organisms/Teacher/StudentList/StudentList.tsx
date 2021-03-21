@@ -38,7 +38,7 @@ const StudentList: React.FC<StudentListPops> = ({
   return (
     <View style={styles.container}>
       <FlatList
-        extraData={showChecked}
+        extraData={{ showChecked, studentList }}
         data={studentList}
         renderItem={data => (
           <StudentListItem
