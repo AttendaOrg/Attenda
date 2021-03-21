@@ -3,10 +3,14 @@ import {
   StackNavigationOptions,
   StackScreenProps,
 } from '@react-navigation/stack';
+import firebase from 'firebase';
+import * as ImagePicker from 'expo-image-picker';
+import * as ImageManipulator from 'expo-image-manipulator';
+import { Alert, ImageSourcePropType, Platform } from 'react-native';
 import { RootStackParamList } from '../../App';
 import MyAccount from '../../components/organisms/Common/MyAccount';
 import { SimpleHeaderBackNavigationOptions } from '../../components/templates/SimpleHeaderNavigationOptions';
-import { authApi } from '../../api/AuthApi';
+import AuthApi, { authApi } from '../../api/AuthApi';
 import SingleButtonPopup from '../../components/molecules/SingleButtonPopup';
 import GlobalContext from '../../context/GlobalContext';
 import AccountInfo from '../../api/model/AccountInfo';
@@ -22,6 +26,7 @@ export const MyAccountNavigationOptions: StackNavigationOptions = {
 
 interface State {
   info: AccountInfo | null;
+  profileImage: ImageSourcePropType | null;
   currName: string;
   nameError: string;
   showPopup: boolean;
@@ -38,6 +43,7 @@ class MyAccountPage extends React.Component<Props, State> {
 
     this.state = {
       info: null,
+      profileImage: null,
       currName: '',
       nameError: '',
       showLogoutError: false,
@@ -71,6 +77,71 @@ class MyAccountPage extends React.Component<Props, State> {
     }
   };
 
+  askImageRollPermission = async (): Promise<void> => {
+    if (Platform.OS !== 'web') {
+      const {
+        status,
+      } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+
+      if (status !== 'granted') {
+        Alert.alert(
+          'Sorry, we need camera roll permissions to make this work!',
+        );
+      }
+    }
+  };
+
+  uploadImage = async (uri: string): Promise<firebase.storage.UploadTask> => {
+    const response = await fetch(uri);
+    const blob = await response.blob();
+
+    // Create a Storage Ref w/ username
+    const storageRef = AuthApi.getProfilePicRef();
+
+    return storageRef.put(blob);
+  };
+
+  setProfilePic = (uri: string): void => {
+    const {
+      state: { info },
+      context,
+    } = this;
+
+    context.changeProfilePic({ uri });
+
+    if (info) info.profilePicUrl = uri;
+    this.setState((prevState: State) => ({
+      ...prevState,
+    }));
+  };
+
+  onEditProfilePictureClick = async (): Promise<void> => {
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 1,
+    });
+
+    if (!result.cancelled) {
+      const image = await ImageManipulator.manipulateAsync(result.uri, [
+        {
+          resize: {
+            height: 600,
+            width: 600,
+          },
+        },
+      ]);
+
+      const imageUri = image.uri;
+
+      this.setProfilePic(imageUri);
+      // Upload file
+      // TODO: show a progress
+      await this.uploadImage(image.uri);
+    }
+  };
+
   loadInfo = async (): Promise<void> => {
     const { context } = this;
 
@@ -85,6 +156,10 @@ class MyAccountPage extends React.Component<Props, State> {
     } else {
       this.setState({ showPopup: true });
     }
+
+    const url = await AuthApi.getProfilePicRef().getDownloadURL();
+
+    this.setProfilePic(url);
   };
 
   onLogOut = async (): Promise<void> => {
@@ -136,6 +211,7 @@ class MyAccountPage extends React.Component<Props, State> {
       onNameChange,
       onNameType,
       revalidateError,
+      onEditProfilePictureClick,
       props: { navigation },
       state: {
         info,
@@ -149,6 +225,7 @@ class MyAccountPage extends React.Component<Props, State> {
     return (
       <>
         <MyAccount
+          profilePicUrl={info?.profilePicUrl ?? undefined}
           onNameType={onNameType}
           errors={{ nameError }}
           name={info?.name ?? ''}
@@ -164,7 +241,7 @@ class MyAccountPage extends React.Component<Props, State> {
             navigation.navigate('SignIn');
           }}
           onLogOutClick={onLogOut}
-          onEditProfilePictureClick={() => null}
+          onEditProfilePictureClick={onEditProfilePictureClick}
         />
         <SingleButtonPopup
           visible={showPopup}

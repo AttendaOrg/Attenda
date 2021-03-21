@@ -5,11 +5,12 @@ import {
 import { DrawerActions } from '@react-navigation/native';
 import Constants from 'expo-constants';
 import firebase from 'firebase';
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Linking } from 'react-native';
 import DrawerContent, {
   DrawerListItems,
 } from '../../components/organisms/Common/DrawerContent';
+import GlobalContext from '../../context/GlobalContext';
 import {
   TERMS_URL,
   PRIVACY_POLICY_URL,
@@ -78,10 +79,13 @@ const DrawerContentPage: React.FC<Props> = ({ navigation }): JSX.Element => {
     setInfo({ email, name: displayName });
   }
 
+  const { settings } = useContext(GlobalContext);
+
   return (
     <DrawerContent
       name={name}
       email={email}
+      avatar={settings.profilePic}
       onListItemCLick={onListItemCLick}
       appVersion={Constants?.manifest?.version ?? ''}
     />
