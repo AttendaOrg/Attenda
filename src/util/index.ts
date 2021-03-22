@@ -33,14 +33,18 @@ export const isAm = (hour: number): boolean => hour < 12;
  * @param date
  * @returns HH:MM (AM/PM)
  */
-export const convertTime = (date: Date): string =>
-  `${
-    date.getHours() > 12
-      ? padNumber(date.getHours() % 12)
-      : padNumber(date.getHours())
-  }:${padNumber(date.getMinutes())}:${padNumber(date.getSeconds())} ${
-    isAm(date.getHours()) ? 'AM' : 'PM'
-  }`;
+export const convertTime = (date: Date): string => {
+  let hours = date.getHours();
+  const minutes = date.getMinutes();
+  const AmOrPm = hours >= 12 ? 'PM' : 'AM';
+
+  hours %= 12;
+  hours = hours || 12; // the hour '0' should be '12'
+
+  const strTime = `${padNumber(hours)}:${padNumber(minutes)} ${AmOrPm}`;
+
+  return strTime;
+};
 
 /**
  * return the date time is string format

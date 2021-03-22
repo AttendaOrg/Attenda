@@ -182,7 +182,7 @@ const StudentClassListPage: React.FC<Props> = ({ navigation }): JSX.Element => {
       <DoubleButtonPopup
         visible={unEnrollId !== null}
         title="Un Enroll"
-        text="Are you sure you want to un-enroll form the class"
+        text="Are you sure you want to un-enroll form this class?"
         positiveButtonText="Un-Enroll"
         negativeButtonText="Cancel"
         onPositiveButtonClick={async () => {

@@ -282,7 +282,7 @@ class MyAccountPage extends React.Component<Props, State> {
 
         <DoubleButtonPopup
           visible={showLogoutPopup}
-          title="Logout?"
+          title="Logout"
           text="Are you sure do you want to logout?"
           negativeButtonText="Cancel"
           positiveButtonText="Logout"
