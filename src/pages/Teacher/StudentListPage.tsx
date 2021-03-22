@@ -172,14 +172,16 @@ const StudentListPage: React.FC<Props> = ({
   };
 
   if (
-    estimateTotalStudent === 0 ||
-    (showLoading === false && listItems.length === 0)
-  )
+    // estimateTotalStudent === 0 || TODO: when the cloud functions run re-enable this check
+    showLoading === false &&
+    listItems.length === 0
+  ) {
     return (
       <StudentsEmptyList
         onInviteClick={() => navigation.push('InviteStudent', { classId })}
       />
     );
+  }
 
   console.log('re render');
 

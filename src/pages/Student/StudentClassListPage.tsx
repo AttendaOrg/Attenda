@@ -15,6 +15,7 @@ import ImagePopup from '../../components/molecules/ImagePopup/ImagePopup';
 import SearchingImageComponent from '../../components/atoms/Images/SearchingImageComponent';
 import ClassStudentModel from '../../api/TeacherApi/model/ClassStudentModel';
 import DoubleButtonPopup from '../../components/molecules/DoubleButtonPopup';
+import { dummyTeacherClassListData } from '../../components/organisms/Teacher/TeacherClassList';
 
 type Props = StackScreenProps<RootStackParamList, 'StudentClassList'>;
 type OptionsProps = (props: Props) => StackNavigationOptions;
@@ -158,12 +159,16 @@ const StudentClassListPage: React.FC<Props> = ({ navigation }): JSX.Element => {
     setUnEnrollId(null);
   };
 
+  const newData: StudentListDataProps[] = loading
+    ? dummyTeacherClassListData
+    : transformedData;
+
   return (
     <>
       <StudentClassList
         showShimmer={loading}
         onFabClick={() => navigation.push('JoinClassForm', {})}
-        data={transformedData}
+        data={newData}
         onClassClick={onClassClick}
         options={[
           {
