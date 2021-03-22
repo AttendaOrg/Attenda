@@ -126,10 +126,16 @@ class TeacherClassListPage extends React.PureComponent<Props, State> {
           },
           {
             title: 'Students',
-            onPress: (classId: string) =>
+            onPress: (classId: string) => {
+              const match = data.filter(e => e.classId === classId);
+
+              const totalStudent = match[0]?.totalStudent ?? 0;
+
               navigation.push('StudentList', {
                 classId,
-              }),
+                totalStudent,
+              });
+            },
           },
           {
             title: 'Settings',

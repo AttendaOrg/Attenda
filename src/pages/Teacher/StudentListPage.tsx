@@ -54,17 +54,20 @@ const StudentListPage: React.FC<Props> = ({
   route,
 }): JSX.Element => {
   const {
-    params: { classId },
+    params: { classId, totalStudent: estimateTotalStudent = 0 },
   } = route;
   const [showChecked, setShowChecked] = useState(false);
+  const [showLoading, setShowLoading] = useState(true);
   const [listItems, setListItems] = useState<StudentListData[]>([]);
   const [sortBy, setSortBy] = useState<SortBy>(SortBy.ROLL_NO);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
   const fetchStudentList = useCallback(async () => {
+    setShowLoading(true);
     const [students] = await teacherApi.getAllStudentList(classId);
     const newItems = (students || []).map(transform);
 
+    setShowLoading(false);
     setListItems(newItems);
   }, [classId]);
 
@@ -168,7 +171,10 @@ const StudentListPage: React.FC<Props> = ({
     updateHeaderActions(newListItems);
   };
 
-  if (listItems.length === 0)
+  if (
+    estimateTotalStudent === 0 ||
+    (showLoading === false && listItems.length === 0)
+  )
     return (
       <StudentsEmptyList
         onInviteClick={() => navigation.push('InviteStudent', { classId })}
@@ -180,6 +186,8 @@ const StudentListPage: React.FC<Props> = ({
   return (
     <>
       <StudentList
+        showShimmer={showLoading}
+        preloadStudentCount={estimateTotalStudent}
         studentList={applyStudentSort(listItems, sortBy)}
         showChecked={showChecked}
         onChangeShowChecked={setShowChecked}
