@@ -14,6 +14,7 @@ import { studentApi } from '../../api/StudentApi';
 import ImagePopup from '../../components/molecules/ImagePopup/ImagePopup';
 import SearchingImageComponent from '../../components/atoms/Images/SearchingImageComponent';
 import ClassStudentModel from '../../api/TeacherApi/model/ClassStudentModel';
+import DoubleButtonPopup from '../../components/molecules/DoubleButtonPopup';
 
 type Props = StackScreenProps<RootStackParamList, 'StudentClassList'>;
 type OptionsProps = (props: Props) => StackNavigationOptions;
@@ -73,6 +74,8 @@ const mergeGiven = (
 };
 
 const StudentClassListPage: React.FC<Props> = ({ navigation }): JSX.Element => {
+  const [loading, setLoading] = useState(true);
+  const [unEnrollId, setUnEnrollId] = useState<string | null>(null);
   const [data, setData] = useState<TeacherClassModel[]>([]);
   const [percentageModels, setPercentageModels] = useState<ClassStudentModel[]>(
     [],
@@ -89,6 +92,7 @@ const StudentClassListPage: React.FC<Props> = ({ navigation }): JSX.Element => {
     return studentApi.getEnrolledClassListListener(async newList => {
       if (newList !== null) {
         setData(newList);
+        setLoading(false);
 
         const ids: (string | null)[] = newList
           .map(e => e.currentSessionId)
@@ -150,9 +154,14 @@ const StudentClassListPage: React.FC<Props> = ({ navigation }): JSX.Element => {
     transformToStudentListDataProps(e, percentageModels),
   );
 
+  const dismissUnEnrollPopup = () => {
+    setUnEnrollId(null);
+  };
+
   return (
     <>
       <StudentClassList
+        showShimmer={loading}
         onFabClick={() => navigation.push('JoinClassForm', {})}
         data={transformedData}
         onClassClick={onClassClick}
@@ -162,8 +171,21 @@ const StudentClassListPage: React.FC<Props> = ({ navigation }): JSX.Element => {
               navigation.push('StudentAttendanceRecord', { classId }),
             title: 'Attendance Record',
           },
-          { onPress: unEnroll, title: 'Un-Enroll' },
+          { onPress: setUnEnrollId, title: 'Un-Enroll' },
         ]}
+      />
+      <DoubleButtonPopup
+        visible={unEnrollId !== null}
+        title="Un Enroll"
+        text="Are you sure you want to un-enroll form the class"
+        positiveButtonText="Un-Enroll"
+        negativeButtonText="Cancel"
+        onPositiveButtonClick={async () => {
+          if (unEnrollId !== null) await unEnroll(unEnrollId);
+          dismissUnEnrollPopup();
+        }}
+        onNegativeButtonClick={dismissUnEnrollPopup}
+        onDismiss={dismissUnEnrollPopup}
       />
       <ImagePopup
         imageComponent={SearchingImageComponent}

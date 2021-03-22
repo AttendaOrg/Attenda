@@ -32,6 +32,7 @@ interface State {
   showPopup: boolean;
   showLogoutError: boolean;
   showUnsavedDiscardPopup: boolean;
+  showLogoutPopup: boolean;
 }
 
 class MyAccountPage extends React.Component<Props, State> {
@@ -49,6 +50,7 @@ class MyAccountPage extends React.Component<Props, State> {
       showLogoutError: false,
       showPopup: false,
       showUnsavedDiscardPopup: false,
+      showLogoutPopup: false,
     };
   }
 
@@ -91,14 +93,14 @@ class MyAccountPage extends React.Component<Props, State> {
     }
   };
 
-  uploadImage = async (uri: string): Promise<firebase.storage.UploadTask> => {
+  uploadImage = async (uri: string): Promise<void> => {
     const response = await fetch(uri);
     const blob = await response.blob();
 
     // Create a Storage Ref w/ username
     const storageRef = AuthApi.getProfilePicRef();
 
-    return storageRef.put(blob);
+    storageRef.put(blob);
   };
 
   setProfilePic = (uri: string): void => {
@@ -157,9 +159,13 @@ class MyAccountPage extends React.Component<Props, State> {
       this.setState({ showPopup: true });
     }
 
-    const url = await AuthApi.getProfilePicRef().getDownloadURL();
+    try {
+      const url = await AuthApi.getProfilePicRef().getDownloadURL();
 
-    this.setProfilePic(url);
+      this.setProfilePic(url);
+    } catch (e) {
+      console.log('Image access error', e);
+    }
   };
 
   onLogOut = async (): Promise<void> => {
@@ -219,6 +225,7 @@ class MyAccountPage extends React.Component<Props, State> {
         nameError,
         showUnsavedDiscardPopup,
         showLogoutError,
+        showLogoutPopup,
       },
     } = this;
 
@@ -240,7 +247,7 @@ class MyAccountPage extends React.Component<Props, State> {
           onPositivePopupClick={() => {
             navigation.navigate('SignIn');
           }}
-          onLogOutClick={onLogOut}
+          onLogOutClick={() => this.setState({ showLogoutPopup: true })}
           onEditProfilePictureClick={onEditProfilePictureClick}
         />
         <SingleButtonPopup
@@ -270,6 +277,24 @@ class MyAccountPage extends React.Component<Props, State> {
               },
               () => navigation.goBack(),
             );
+          }}
+        />
+
+        <DoubleButtonPopup
+          visible={showLogoutPopup}
+          title="Logout?"
+          text="Are you sure do you want to logout?"
+          negativeButtonText="Cancel"
+          positiveButtonText="Logout"
+          onDismiss={() => this.setState({ showLogoutPopup: false })}
+          onNegativeButtonClick={() =>
+            this.setState({ showLogoutPopup: false })
+          }
+          onPositiveButtonClick={async () => {
+            await onLogOut();
+            this.setState({
+              showLogoutPopup: false,
+            });
           }}
         />
       </>

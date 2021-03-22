@@ -75,9 +75,13 @@ class TeacherClassListPage extends React.PureComponent<Props, State> {
       this.setState({ data: newData, loading: false });
     });
 
-    const uri = await AuthApi.getProfilePicRef().getDownloadURL();
+    try {
+      const uri = await AuthApi.getProfilePicRef()?.getDownloadURL();
 
-    context.changeProfilePic({ uri });
+      context.changeProfilePic({ uri });
+    } catch (e) {
+      console.log('Image access error', e);
+    }
   }
 
   componentWillUnmount(): void {
