@@ -36,12 +36,15 @@ export const isAm = (hour: number): boolean => hour < 12;
 export const convertTime = (date: Date): string => {
   let hours = date.getHours();
   const minutes = date.getMinutes();
+  const seconds = date.getSeconds();
   const AmOrPm = hours >= 12 ? 'PM' : 'AM';
 
   hours %= 12;
   hours = hours || 12; // the hour '0' should be '12'
 
-  const strTime = `${padNumber(hours)}:${padNumber(minutes)} ${AmOrPm}`;
+  const strTime = `${padNumber(hours)}:${padNumber(minutes)}:${padNumber(
+    seconds,
+  )} ${AmOrPm}`;
 
   return strTime;
 };

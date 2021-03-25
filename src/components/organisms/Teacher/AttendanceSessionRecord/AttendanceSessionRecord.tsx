@@ -36,6 +36,19 @@ const AttendanceSessionRecord: React.FC<AttendanceSessionRecordPops> = ({
   const mDates = convertData(markedDates);
 
   const onDateClick = (date: DateObject) => {
+    const times = Object.keys(markedDates)
+      .map(dt => markedDates[dt])
+      .map(time => Object.keys(time))
+      .flat();
+
+    if (times.length === 1) {
+      const [[_date, _timeObj]] = Object.entries(markedDates);
+      const [[_time]] = Object.entries(_timeObj);
+
+      onTimeSelect(_date, _time);
+
+      return;
+    }
     const cDate = convertDateFormat(new Date(date.dateString));
 
     setCurrentDate(cDate);
