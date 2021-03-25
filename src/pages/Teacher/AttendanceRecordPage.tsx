@@ -111,7 +111,7 @@ const AttendanceSessionRecordTab: React.FC<Props> = ({ navigation, route }) => {
 
       navigation.push('EditAttendanceSession', {
         sessionId: match.sessionId ?? '',
-        date: new Date(date).toString(),
+        date: new Date(d).toString(),
         classId,
       });
     }
