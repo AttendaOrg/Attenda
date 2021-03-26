@@ -129,6 +129,7 @@ export type RootStackParamList = {
   };
   StudentList: {
     classId: string;
+    totalStudent: number;
   };
   TeacherAttendanceRecord: {
     classId: string;

@@ -6,6 +6,9 @@ import {
   View,
   Image,
   Platform,
+  ImageSourcePropType,
+  ScrollView,
+  InteractionManager,
 } from 'react-native';
 import { AntDesign } from '@expo/vector-icons';
 import { Icon, Input } from 'react-native-elements';
@@ -106,6 +109,7 @@ export interface MyAccountPops {
   errors?: Errors;
   revalidateError?: (_name: string) => boolean;
   onNameType?: (name: string) => void;
+  profilePicUrl?: string;
 }
 
 const MyAccount: React.FC<MyAccountPops> = ({
@@ -122,6 +126,7 @@ const MyAccount: React.FC<MyAccountPops> = ({
   errors,
   revalidateError = () => null,
   onNameType = () => null,
+  profilePicUrl: profileImg = imageSrc,
 }): JSX.Element => {
   const [name, setName] = useState(initialName);
   const [isEditing, setIsEditing] = useState(false);
@@ -141,16 +146,19 @@ const MyAccount: React.FC<MyAccountPops> = ({
     onNameType(_name);
   };
 
+  const profileImgSrc: ImageSourcePropType =
+    typeof profileImg === 'string' ? { uri: profileImg } : profileImg;
+
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container}>
       <View style={styles.blurImageContainer}>
         <Image
           blurRadius={Platform.OS === 'ios' ? 10 : 5}
-          source={imageSrc}
+          source={profileImgSrc}
           style={styles.blurBackground}
         />
         <View style={styles.profileImgContainer}>
-          <Image source={imageSrc} style={styles.profileImg} />
+          <Image source={profileImgSrc} style={styles.profileImg} />
           <TouchableOpacity
             onPress={onEditProfilePictureClick}
             style={styles.iconContainer}
@@ -164,7 +172,7 @@ const MyAccount: React.FC<MyAccountPops> = ({
         <View style={styles.infoValueRow}>
           <Input
             ref={ref}
-            autoFocus
+            autoFocus={false}
             placeholder="Name"
             editable={isEditing}
             style={styles.infoValue}
@@ -184,7 +192,9 @@ const MyAccount: React.FC<MyAccountPops> = ({
 
                     if (computedIsEditing) {
                       // if the editing is true focus the input
-                      ref?.current?.focus();
+                      InteractionManager.runAfterInteractions(() => {
+                        ref.current?.focus();
+                      });
                     } else {
                       // if it is first time trying to change name set remember it
                       // because before first time will will not revalidate the name error on every key press
@@ -249,7 +259,7 @@ const MyAccount: React.FC<MyAccountPops> = ({
         onPositiveButtonClick={onPositivePopupClick}
         onDismiss={onDismissPopup}
       />
-    </View>
+    </ScrollView>
   );
 };
 

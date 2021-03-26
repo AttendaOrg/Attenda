@@ -423,6 +423,15 @@ class AuthApi extends BaseApi implements AuthApiInterface {
       return this.error(BasicErrors.EXCEPTION);
     }
   };
+
+  static getProfilePicRef = (): firebase.storage.Reference => {
+    return firebase
+      .storage()
+      .ref()
+      .child('public')
+      .child('profiles')
+      .child(`${firebase.auth().currentUser?.uid}` ?? '');
+  };
 }
 
 export const authApi = new AuthApi();

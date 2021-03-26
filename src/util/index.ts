@@ -33,12 +33,21 @@ export const isAm = (hour: number): boolean => hour < 12;
  * @param date
  * @returns HH:MM (AM/PM)
  */
-export const convertTime = (date: Date): string =>
-  `${
-    date.getHours() > 12
-      ? padNumber(date.getHours() % 12)
-      : padNumber(date.getHours())
-  }:${padNumber(date.getMinutes())} ${isAm(date.getHours()) ? 'AM' : 'PM'}`;
+export const convertTime = (date: Date): string => {
+  let hours = date.getHours();
+  const minutes = date.getMinutes();
+  const seconds = date.getSeconds();
+  const AmOrPm = hours >= 12 ? 'PM' : 'AM';
+
+  hours %= 12;
+  hours = hours || 12; // the hour '0' should be '12'
+
+  const strTime = `${padNumber(hours)}:${padNumber(minutes)}:${padNumber(
+    seconds,
+  )} ${AmOrPm}`;
+
+  return strTime;
+};
 
 /**
  * return the date time is string format
@@ -71,7 +80,8 @@ export const matchDate = (date1: Date, date2: Date): boolean =>
   date1.getMonth() === date2.getMonth() &&
   date1.getDate() === date2.getDate() &&
   date1.getHours() === date2.getHours() &&
-  date1.getMinutes() === date2.getMinutes();
+  date1.getMinutes() === date2.getMinutes() &&
+  date1.getSeconds() === date2.getSeconds();
 
 /**
  * gets the starting date of the month and starting day of the next month

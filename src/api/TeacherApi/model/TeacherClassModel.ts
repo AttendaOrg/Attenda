@@ -18,6 +18,7 @@ export interface TeacherClassModelProps {
   teacherId: string | null;
   isArchived?: boolean;
   alreadyGiven?: boolean;
+  totalStudent?: number;
 }
 
 export default class TeacherClassModel implements TeacherClassModelProps {
@@ -47,6 +48,8 @@ export default class TeacherClassModel implements TeacherClassModelProps {
 
   alreadyGiven = false;
 
+  totalStudent = 0;
+
   constructor(data: TeacherClassModelProps) {
     this.classCode = data?.classCode ?? '';
     this.description = data?.description ?? '';
@@ -60,6 +63,7 @@ export default class TeacherClassModel implements TeacherClassModelProps {
     this.teacherId = data?.teacherId ?? null;
     this.isArchived = data?.isArchived ?? false;
     this.teacherName = data?.teacherName ?? null;
+    this.totalStudent = data?.totalStudent ?? 0;
   }
 
   setAlreadyGiven = (given: boolean): void => {
@@ -80,6 +84,7 @@ export default class TeacherClassModel implements TeacherClassModelProps {
     teacherId,
     isArchived,
     teacherName,
+    totalStudent,
   }: Partial<TeacherClassModelProps>): Partial<TeacherClassModelProps> => {
     const obj: Partial<TeacherClassModelProps> = {};
 
@@ -95,6 +100,7 @@ export default class TeacherClassModel implements TeacherClassModelProps {
     if (teacherId !== undefined) obj.teacherId = teacherId;
     if (isArchived !== undefined) obj.isArchived = isArchived;
     if (teacherName !== undefined) obj.teacherName = teacherName;
+    if (totalStudent !== undefined) obj.totalStudent = totalStudent;
 
     return obj;
   };
@@ -117,6 +123,7 @@ export default class TeacherClassModel implements TeacherClassModelProps {
       teacherId: this.teacherId,
       isArchived: this.isArchived,
       teacherName: this.teacherName,
+      totalStudent: this.totalStudent,
     };
   };
 }

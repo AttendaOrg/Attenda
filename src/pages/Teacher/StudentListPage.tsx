@@ -10,7 +10,6 @@ import {
 } from '@react-navigation/stack';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
-import { Button, Dialog, Paragraph } from 'react-native-paper';
 import { RootStackParamList } from '../../App';
 import StudentList, {
   StudentListData,
@@ -19,6 +18,9 @@ import { SimpleHeaderBackNavigationOptions } from '../../components/templates/Si
 import StudentsEmptyList from '../../components/organisms/Teacher/StudentsEmptyList/StudentsEmptyList';
 import { teacherApi } from '../../api/TeacherApi';
 import ClassStudentModel from '../../api/TeacherApi/model/ClassStudentModel';
+import MenuOptionsPopover from '../../components/molecules/MenuOptionsPopover';
+import { applyStudentSort, SortBy } from './util/SortStudent';
+import DoubleButtonPopup from '../../components/molecules/DoubleButtonPopup';
 
 type Props = StackScreenProps<RootStackParamList, 'StudentList'>;
 type OptionsProps = (props: Props) => StackNavigationOptions;
@@ -52,16 +54,20 @@ const StudentListPage: React.FC<Props> = ({
   route,
 }): JSX.Element => {
   const {
-    params: { classId },
+    params: { classId, totalStudent: estimateTotalStudent = 0 },
   } = route;
   const [showChecked, setShowChecked] = useState(false);
+  const [showLoading, setShowLoading] = useState(true);
   const [listItems, setListItems] = useState<StudentListData[]>([]);
+  const [sortBy, setSortBy] = useState<SortBy>(SortBy.ROLL_NO);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
   const fetchStudentList = useCallback(async () => {
+    setShowLoading(true);
     const [students] = await teacherApi.getAllStudentList(classId);
     const newItems = (students || []).map(transform);
 
+    setShowLoading(false);
     setListItems(newItems);
   }, [classId]);
 
@@ -106,10 +112,39 @@ const StudentListPage: React.FC<Props> = ({
               <MaterialIcons name="delete" color={tintColor} size={24} />
             </TouchableOpacity>
           )}
+          {listItems.length > 0 && (
+            <MenuOptionsPopover
+              style={{ marginRight: 12 }}
+              options={[
+                {
+                  onPress: () => setSortBy(SortBy.NAME),
+                  title: 'Sort By Name',
+                  selected: sortBy === SortBy.NAME,
+                },
+                {
+                  onPress: () => setSortBy(SortBy.ROLL_NO),
+                  title: 'Sort By Roll No',
+                  selected: sortBy === SortBy.ROLL_NO,
+                },
+                {
+                  onPress: () => {
+                    setShowChecked(!showChecked);
+                    const newListItems = [
+                      ...listItems.map(item => ({ ...item, checked: false })),
+                    ];
+
+                    setListItems(newListItems);
+                  },
+                  title: showChecked ? 'Un Mark' : 'Mark for delete',
+                },
+              ]}
+              value=""
+            />
+          )}
         </View>
       ),
     });
-  }, [classId, listItems, navigation]);
+  }, [classId, listItems, navigation, showChecked, sortBy]);
 
   const dismissDialog = () => {
     setShowDeleteDialog(false);
@@ -136,19 +171,26 @@ const StudentListPage: React.FC<Props> = ({
     updateHeaderActions(newListItems);
   };
 
-  if (listItems.length === 0)
+  if (
+    // estimateTotalStudent === 0 || TODO: when the cloud functions run re-enable this check
+    showLoading === false &&
+    listItems.length === 0
+  ) {
     return (
       <StudentsEmptyList
         onInviteClick={() => navigation.push('InviteStudent', { classId })}
       />
     );
+  }
 
   console.log('re render');
 
   return (
     <>
       <StudentList
-        studentList={listItems}
+        showShimmer={showLoading}
+        preloadStudentCount={estimateTotalStudent}
+        studentList={applyStudentSort(listItems, sortBy)}
         showChecked={showChecked}
         onChangeShowChecked={setShowChecked}
         onChangeChecked={onChangeChecked}
@@ -159,20 +201,16 @@ const StudentListPage: React.FC<Props> = ({
           })
         }
       />
-      <Dialog visible={showDeleteDialog} onDismiss={dismissDialog}>
-        <Dialog.Title>Delete Students</Dialog.Title>
-        <Dialog.Content>
-          <Paragraph>
-            Are you sure you want to delete selected students from class ?
-          </Paragraph>
-        </Dialog.Content>
-        <Dialog.Actions>
-          <Button onPress={dismissDialog}>Cancel</Button>
-          <Button onPress={deleteSelectedStudents} color="red">
-            Delete
-          </Button>
-        </Dialog.Actions>
-      </Dialog>
+      <DoubleButtonPopup
+        negativeButtonText="Cancel"
+        positiveButtonText="Delete"
+        onDismiss={dismissDialog}
+        visible={showDeleteDialog}
+        title="Delete Students"
+        text="Are you sure you want to delete selected students from class ?"
+        onNegativeButtonClick={dismissDialog}
+        onPositiveButtonClick={deleteSelectedStudents}
+      />
     </>
   );
 };

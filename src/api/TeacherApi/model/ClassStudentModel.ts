@@ -7,6 +7,7 @@ export interface ClassStudentModelInterface {
   studentId?: string | null;
   archived?: boolean;
   studentName: string | null;
+  classId?: string | null;
 }
 
 export default class ClassStudentModel implements ClassStudentModelInterface {
@@ -25,6 +26,8 @@ export default class ClassStudentModel implements ClassStudentModelInterface {
   archived = false;
 
   studentName: string | null = null;
+
+  classId: string | null = null;
 
   constructor(data: Partial<ClassStudentModelInterface>) {
     if (typeof data.email === 'string') this.email = data.email;
@@ -71,6 +74,10 @@ export default class ClassStudentModel implements ClassStudentModelInterface {
     this.studentId = id;
   }
 
+  setClassId(id: string | null): void {
+    this.classId = id;
+  }
+
   toJson(): ClassStudentModelInterface {
     const {
       joined,
@@ -92,6 +99,7 @@ export default class ClassStudentModel implements ClassStudentModelInterface {
       studentId,
       archived,
       studentName,
+      ...(this.classId !== null && { classId: this.classId }),
     };
   }
 }

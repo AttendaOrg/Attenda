@@ -189,11 +189,11 @@ const SignUp: React.FC<SignUpPops> = ({
           textContentType="password"
           labelStyle={{
             margin: 0,
-            display: updatePassword !== '' ? 'flex' : 'none',
+            display: passwordError !== '' ? 'flex' : 'none',
           }}
           errorStyle={{
             margin: 0,
-            display: updatePassword !== '' ? 'flex' : 'none',
+            display: passwordError !== '' ? 'flex' : 'none',
           }}
           secureTextEntry
           value={password}

@@ -11,6 +11,8 @@ import TeacherClassModel from '../../api/TeacherApi/model/TeacherClassModel';
 import TeacherClassList, {
   dummyTeacherClassListData,
 } from '../../components/organisms/Teacher/TeacherClassList';
+import AuthApi from '../../api/AuthApi';
+import GlobalContext from '../../context/GlobalContext';
 
 /* eslint-disable-next-line @typescript-eslint/no-var-requires */
 const classBack = require('../../../assets/images/class-back-5.jpg');
@@ -23,10 +25,18 @@ export const TeacherClassListNavigationOptions: OptionsProps = SimpleHeaderNavig
 const transformToStudentListDataProps = (
   cls: TeacherClassModel,
 ): StudentListDataProps => {
-  const { title, section, classId, isLive, classCode, currentSessionId } = cls;
+  const {
+    title,
+    section,
+    classId,
+    isLive,
+    classCode,
+    currentSessionId,
+    totalStudent,
+  } = cls;
 
   return {
-    attendance: '70 students', // TODO: get attendance summery from the class info
+    attendance: `${totalStudent} student`, // TODO: get attendance summery from the class info
     section,
     showShimmer: false,
     backgroundImage: classBack,
@@ -44,6 +54,9 @@ interface State {
 }
 
 class TeacherClassListPage extends React.PureComponent<Props, State> {
+  // eslint-disable-next-line react/static-property-placement
+  context!: React.ContextType<typeof GlobalContext>;
+
   constructor(props: Props) {
     super(props);
 
@@ -54,22 +67,21 @@ class TeacherClassListPage extends React.PureComponent<Props, State> {
   }
 
   async componentDidMount(): Promise<void> {
+    const { context } = this;
+
     this.setState({ loading: true });
 
     this.unSub = teacherApi.getClassListener(newData => {
       this.setState({ data: newData, loading: false });
     });
-    // setTimeout(() => {
-    //   // FIXME: delete it
-    //   const { navigation } = this.props;
 
-    //   navigation.push('CurrentAttendanceSession', {
-    //     classId: '63FrBTL7X0L9Xs2R6wJ3',
-    //     sessionId: 'EEvk7wR3bYyOOZBNkYVo',
-    //     showStopDialog: false,
-    //     sessionTime: new Date().toISOString(),
-    //   });
-    // }, 1500);
+    try {
+      const uri = await AuthApi.getProfilePicRef()?.getDownloadURL();
+
+      context.changeProfilePic({ uri });
+    } catch (e) {
+      console.log('Image access error', e);
+    }
   }
 
   componentWillUnmount(): void {
@@ -118,10 +130,16 @@ class TeacherClassListPage extends React.PureComponent<Props, State> {
           },
           {
             title: 'Students',
-            onPress: (classId: string) =>
+            onPress: (classId: string) => {
+              const match = data.filter(e => e.classId === classId);
+
+              const totalStudent = match[0]?.totalStudent ?? 0;
+
               navigation.push('StudentList', {
                 classId,
-              }),
+                totalStudent,
+              });
+            },
           },
           {
             title: 'Settings',
@@ -134,5 +152,7 @@ class TeacherClassListPage extends React.PureComponent<Props, State> {
     );
   }
 }
+
+TeacherClassListPage.contextType = GlobalContext;
 
 export default TeacherClassListPage;

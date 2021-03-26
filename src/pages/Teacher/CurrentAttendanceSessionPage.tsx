@@ -121,7 +121,10 @@ const CurrentAttendanceSessionPage: React.FC<Props> = ({
           <Button
             mode="contained"
             color="#2196f3"
-            onPress={() => setShowSaveDialog(true)}
+            onPress={() => {
+              setShowSaveDialog(true);
+              navigation.setParams({ showStopDialog: false });
+            }}
           >
             STOP
           </Button>
@@ -150,6 +153,7 @@ const CurrentAttendanceSessionPage: React.FC<Props> = ({
         navigation.dispatch(action);
       } else {
         navigation.setParams({ showStopDialog: true });
+        setShowSaveDialog(false);
       }
     };
 

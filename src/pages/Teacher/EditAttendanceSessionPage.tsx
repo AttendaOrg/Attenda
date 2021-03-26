@@ -1,8 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useState } from 'react';
+import { Text } from 'react-native';
 import {
+  HeaderTitle,
   StackNavigationOptions,
   StackScreenProps,
 } from '@react-navigation/stack';
+import { IconButton } from 'react-native-paper';
 import { RootStackParamList } from '../../App';
 import EditAttendanceSession, {
   SessionStudentListDataProps,
@@ -12,6 +15,8 @@ import { teacherApi } from '../../api/TeacherApi';
 import SessionStudentModel from '../../api/TeacherApi/model/SessionStudentModel';
 import ClassStudentModel from '../../api/TeacherApi/model/ClassStudentModel';
 import { CurrentAttendanceSessionDataProps } from '../../components/organisms/Teacher/CurrentAttendanceSession';
+import { convertDateTime } from '../../util';
+import { lightColor } from '../../util/Colors';
 
 type Props = StackScreenProps<RootStackParamList, 'EditAttendanceSession'>;
 
@@ -59,11 +64,38 @@ const mergeStudentListWithAttendanceInfo = (
   });
 };
 
-const EditAttendanceSessionPage: React.FC<Props> = ({ route }): JSX.Element => {
+const EditAttendanceSessionPage: React.FC<Props> = ({
+  route,
+  navigation,
+}): JSX.Element => {
   const [listItems, setListItems] = useState<SessionStudentListDataProps[]>([]);
   const {
-    params: { classId, sessionId },
+    params: { classId, sessionId, date },
   } = route;
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerStyle: {
+        backgroundColor: lightColor,
+        // borderBottomColor: '#ddd',
+        // borderBottomWidth: 1,
+      },
+      headerTitleStyle: { color: '#000' },
+      headerLeft: () => (
+        <IconButton
+          icon="close"
+          onPress={() => navigation.canGoBack() && navigation.goBack()}
+          color="#000"
+        />
+      ),
+      headerTitle: ({ children, style }) => (
+        <>
+          <HeaderTitle style={style}>{children}</HeaderTitle>
+          <Text>{convertDateTime(new Date(date))}</Text>
+        </>
+      ),
+    });
+  }, [navigation, date]);
 
   useEffect(() => {
     (async () => {

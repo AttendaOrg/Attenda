@@ -583,7 +583,7 @@ export default class TeacherApi extends AuthApi implements TeacherApiInterface {
         isActiveInvite: enabled,
       });
 
-      const doc = await firebase
+      await firebase
         .firestore()
         .collection(TeacherApi.CLASSES_COLLECTION_NAME)
         .doc(classId)
@@ -846,7 +846,7 @@ export default class TeacherApi extends AuthApi implements TeacherApiInterface {
           }),
         );
 
-      const [students] = await this.getAllStudentList(classId);
+      await this.getAllStudentList(classId);
 
       // if (students !== null)
       // QUESTION: do we need to pre-populate session student table ?
@@ -869,16 +869,29 @@ export default class TeacherApi extends AuthApi implements TeacherApiInterface {
         return this.error(BasicErrors.USER_NOT_AUTHENTICATED);
 
       // path to the class
-      const ref = firebase
+      const refToClass = firebase
         .firestore()
         .collection(TeacherApi.CLASSES_COLLECTION_NAME)
         .doc(classId);
 
       // update class info to include the live status and sessionId
-      await ref.update(
+      await refToClass.update(
         TeacherClassModel.Update({
           isLive: false,
           currentSessionId: null,
+        }),
+      );
+
+      // path to current session
+      const refToCurrentSession = firebase
+        .firestore()
+        .collection(TeacherApi.CLASSES_SESSIONS_COLLECTION_NAME)
+        .doc(sessionId);
+
+      // update class info to include the live status and sessionId
+      await refToCurrentSession.update(
+        SessionInfoModel.UpdateData({
+          isLive: false,
         }),
       );
 
