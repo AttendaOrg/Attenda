@@ -428,9 +428,9 @@ class AuthApi extends BaseApi implements AuthApiInterface {
     return firebase
       .storage()
       .ref()
-      .child('profilePics')
-      .child(firebase.auth().currentUser?.uid ?? '')
-      .child('profilePic.png');
+      .child('public')
+      .child('profiles')
+      .child(`${firebase.auth().currentUser?.uid}` ?? '');
   };
 }
 
