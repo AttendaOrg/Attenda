@@ -16,7 +16,8 @@ export const isStrongPassword = (password: string): boolean => {
  * prefix the number with '0' if it is single digit
  * @param num number
  */
-const padNumber = (num: number): string => (num < 10 ? `0${num}` : `${num}`);
+export const padNumber = (num: number): string =>
+  num < 10 ? `0${num}` : `${num}`;
 
 /**
  * return date in string format

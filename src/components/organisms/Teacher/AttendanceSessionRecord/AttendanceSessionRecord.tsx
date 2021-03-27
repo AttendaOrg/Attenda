@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
 import { Calendar, DateObject } from 'react-native-calendars';
 import { Dialog } from 'react-native-paper';
-import { convertDateFormat } from '../../../../util';
+import { convertDateFormat, padNumber } from '../../../../util';
 import { lightColor } from '../../../../util/Colors';
 import ClassDetails from '../../../molecules/ClassDetails';
 import SelectTimeEditPopup from '../../../molecules/SelectTimeEditPopup';
@@ -37,8 +37,13 @@ const AttendanceSessionRecord: React.FC<AttendanceSessionRecordPops> = ({
 
   const onDateClick = (date: DateObject) => {
     const times = Object.keys(markedDates)
+      .filter(
+        dt =>
+          dt === `${date.year}-${padNumber(date.month)}-${padNumber(date.day)}`,
+      )
       .map(dt => markedDates[dt])
       .map(time => Object.keys(time))
+      .filter(dt => dt)
       .flat();
 
     if (times.length === 1) {

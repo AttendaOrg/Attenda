@@ -98,11 +98,43 @@ const AttendanceSessionRecordTab: React.FC<Props> = ({ navigation, route }) => {
 
   const markedDate: MarkedDates = convertSessionInfoToMarkedDates(reports);
   const onTimeSelect = (date: string, time: string): void => {
-    const d = new Date(`${date} ${time}`);
+    // TODO: find a better way to pass the selected time
+    const [_y, _m, _d] = date.split('-');
+    const [_hur, _min, _secWithAmPm] = time.split(':');
+    const [_sec, _amPm] = _secWithAmPm.split(' ');
+    const d = new Date();
+    const hour =
+      _amPm === 'PM' ? parseInt(_hur, 10) + 12 : parseInt(_hur, 10) - 12;
 
+    // console.log(`_amPm-> ${_amPm}`);
+
+    d.setFullYear(parseInt(_y, 10));
+    d.setMonth(parseInt(_m, 10) - 1);
+    d.setDate(parseInt(_d, 10));
+    d.setHours(hour);
+    d.setMinutes(parseInt(_min, 10));
+    d.setSeconds(parseInt(_sec, 10));
+
+    // console.log(
+    //   `sessionDate-> ${convertDateTime(sessionDate)}, d -> ${convertDateTime(
+    //     d,
+    //   )}  matchDate -> ${matchDate(sessionDate, d)}`,
+    // );
     const report = reports.filter(({ sessionDate }) =>
       matchDate(sessionDate, d),
     );
+
+    // console.log(
+    //   d,
+    //   `date -> ${date} time -> ${time} dateTime ${convertTime(
+    //     d,
+    //   )} report-> (${report})`,
+    // );
+
+    // Alert.alert(
+    //   `date -> ${date} time -> ${time}`,
+    //   `report-> (${JSON.stringify(report)})`,
+    // );
 
     // BUG: there can be more than two session in same time more specifically in minutes
     // so fix it
