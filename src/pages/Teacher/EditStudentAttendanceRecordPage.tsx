@@ -32,13 +32,16 @@ export const convertSessionStudentModelToMarkedDates = (
   const markedData: MarkedDates = {};
 
   data.forEach(info => {
-    const { sessionTime, present } = info;
+    const { sessionTime, present, sessionId } = info;
     const date = convertDateFormat(sessionTime);
     const time = convertTime(sessionTime);
 
     if (Object.keys(markedData).includes(date)) {
-      markedData[date] = { ...markedData[date], [time]: present };
-    } else markedData[date] = { [time]: present };
+      markedData[date] = {
+        ...markedData[date],
+        [time]: { active: present, sessionId },
+      };
+    } else markedData[date] = { [time]: { active: present, sessionId } };
   });
 
   return markedData;
@@ -68,28 +71,14 @@ const EditStudentAttendanceRecordPage: React.FC<Props> = ({
     if (info !== null) setReports(info);
   }, [classId, currentMonth, studentId]);
 
-  const onChangeAttendance = async (
-    date: string,
-    time: string,
-    status: boolean,
-  ) => {
-    const d = new Date(`${date} ${time}`);
-
-    const report = reports.filter(({ sessionTime }) =>
-      matchDate(sessionTime, d),
+  const onChangeAttendance = async (sessionId: string, status: boolean) => {
+    await teacherApi.editStudentAttendanceReport(
+      classId,
+      sessionId,
+      studentId,
+      status,
     );
-
-    if (report.length === 1) {
-      const [match] = report;
-
-      await teacherApi.editStudentAttendanceReport(
-        classId,
-        match.sessionId,
-        studentId,
-        status,
-      );
-      fetchData();
-    }
+    fetchData();
   };
 
   useEffect(() => {

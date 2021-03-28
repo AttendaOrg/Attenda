@@ -1,5 +1,6 @@
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { MarkTime } from '../../organisms/Student/AttendanceRecord';
 
 const styles = StyleSheet.create({
   container: {},
@@ -30,8 +31,8 @@ const styles = StyleSheet.create({
 
 export interface SelectTimeEditPopupProps {
   date: string;
-  selectedDateTimes: string[];
-  onSelectTime: (date: string, time: string) => void;
+  selectedDateTimes: MarkTime[];
+  onSelectTime: (sessionId: string) => void;
 }
 
 const SelectTimeEditPopup: React.FC<SelectTimeEditPopupProps> = ({
@@ -40,13 +41,16 @@ const SelectTimeEditPopup: React.FC<SelectTimeEditPopupProps> = ({
   selectedDateTimes,
 }): JSX.Element => {
   const body = selectedDateTimes.map(selectedTime => {
+    const [{ sessionId }] = Object.values(selectedTime);
+    const [time] = Object.keys(selectedTime);
+
     return (
       <TouchableOpacity
-        key={selectedTime}
-        onPress={() => onSelectTime(date, selectedTime)}
+        key={sessionId}
+        onPress={() => onSelectTime(sessionId)}
         style={styles.row}
       >
-        <Text style={styles.timeText}>{selectedTime}</Text>
+        <Text style={styles.timeText}>{time}</Text>
       </TouchableOpacity>
     );
   });

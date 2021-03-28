@@ -2,7 +2,11 @@ import React, { useState } from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
 import { Calendar, DateObject } from 'react-native-calendars';
 import { Dialog } from 'react-native-paper';
-import { convertDateFormat, padNumber } from '../../../../util';
+import {
+  convertDateFormat,
+  convertMarkedDateToTimes,
+  padNumber,
+} from '../../../../util';
 import { lightColor } from '../../../../util/Colors';
 import ClassDetails from '../../../molecules/ClassDetails';
 import SelectTimeEditPopup from '../../../molecules/SelectTimeEditPopup';
@@ -21,7 +25,7 @@ export interface AttendanceSessionRecordPops {
   section: string;
   markedDates: MarkedDates;
   onMonthChange: (date: Date) => void;
-  onTimeSelect: (date: string, time: string) => void;
+  onTimeSelect: (sessionId: string) => void;
 }
 
 const AttendanceSessionRecord: React.FC<AttendanceSessionRecordPops> = ({
@@ -47,10 +51,10 @@ const AttendanceSessionRecord: React.FC<AttendanceSessionRecordPops> = ({
       .flat();
 
     if (times.length === 1) {
-      const [[_date, _timeObj]] = Object.entries(markedDates);
-      const [[_time]] = Object.entries(_timeObj);
+      const [[, _timeObj]] = Object.entries(markedDates);
+      const [{ sessionId }] = Object.values(_timeObj);
 
-      onTimeSelect(_date, _time);
+      onTimeSelect(sessionId);
 
       return;
     }
@@ -74,10 +78,10 @@ const AttendanceSessionRecord: React.FC<AttendanceSessionRecordPops> = ({
       <Dialog visible={popupVisible} onDismiss={() => setPopupVisible(false)}>
         <SelectTimeEditPopup
           date={currentDate}
-          selectedDateTimes={Object.keys(markedDates[currentDate] ?? {})}
-          onSelectTime={(date, time) => {
+          selectedDateTimes={convertMarkedDateToTimes(markedDates, currentDate)}
+          onSelectTime={classId => {
             setPopupVisible(false);
-            onTimeSelect(date, time);
+            onTimeSelect(classId);
             setCurrentDate('');
             // dismiss the popup
           }}

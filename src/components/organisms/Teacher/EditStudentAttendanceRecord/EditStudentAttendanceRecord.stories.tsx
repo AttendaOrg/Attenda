@@ -21,19 +21,19 @@ export default {
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const imageSrc = require('../../../../../assets/images/user.jpg');
 
+export const defaultMarkedDates: MarkedDates = {
+  '2020-12-12': {
+    '03:50 AM': { active: false, sessionId: '45bt09385464' },
+    '10:50 AM': { active: true, sessionId: 'dr45y785496b' },
+  },
+  '2020-12-11': {
+    '03:50 AM': { active: true, sessionId: 'dr4554g35y78' },
+    '10:50 AM': { active: true, sessionId: 'dr45yy567678' },
+  },
+};
+
 // Default For Web And android Component
 export const Default = (): JSX.Element => {
-  const markedDates = {
-    '2020-12-12': {
-      '03:50 AM': false,
-      '10:50 AM': true,
-    },
-    '2020-12-11': {
-      '03:50 AM': true,
-      '10:50 AM': true,
-    },
-  };
-
   return (
     <EditStudentAttendanceRecord
       userInfo={object('userInfo', {
@@ -43,12 +43,12 @@ export const Default = (): JSX.Element => {
         rollNo: 'IITE1557454',
         userImage: imageSrc,
       })}
-      onChangeAttendance={async (date, time, status) =>
-        action('onChangeAttendance')(date, time, status)
+      onChangeAttendance={async (sessionId, status) =>
+        action('onChangeAttendance')(sessionId, status)
       }
       onMonthChange={date => action('onMonthChange')(date)}
       percentage={text('percentage', '95%')}
-      markedDates={object('markedDates', markedDates)}
+      markedDates={object('markedDates', defaultMarkedDates)}
     />
   );
 };
@@ -62,27 +62,14 @@ const WorkingPrototype = (): JSX.Element => {
     userImage: imageSrc,
   });
 
-  const [markedDates, setMarkedDates] = useState<MarkedDates>({
-    '2020-12-12': {
-      '03:50 AM': false,
-      '10:50 AM': true,
-    },
-    '2020-12-11': {
-      '03:50 AM': true,
-      '10:50 AM': true,
-    },
-  });
+  const [markedDates, setMarkedDates] = useState<MarkedDates>(
+    defaultMarkedDates,
+  );
 
-  const onChangeAttendance = async (
-    date: string,
-    time: string,
-    status: boolean,
-  ) => {
-    const newMarkedDate = { ...markedDates };
-
-    newMarkedDate[date][time] = status;
-
-    setMarkedDates(newMarkedDate);
+  const onChangeAttendance = async (sessionId: string, status: boolean) => {
+    // TODO: find a way to change attendance
+    action('onChangeAttendance')(sessionId, status);
+    setMarkedDates(markedDates);
   };
 
   return (

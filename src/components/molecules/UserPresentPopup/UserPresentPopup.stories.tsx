@@ -20,8 +20,8 @@ export const Default = (): JSX.Element => (
   <UserPresentPopup
     date={text('date', '2020-12-12')}
     selectedDates={object('selectedDates', {
-      '03:50 AM': false,
-      '10:50 AM': true,
+      '03:50 AM': { active: false, sessionId: '' },
+      '10:50 AM': { active: false, sessionId: '' },
     })}
   />
 );

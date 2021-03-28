@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { StyleSheet, TouchableOpacity, View, Text } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { lightColor } from '../../../util/Colors';
+import { MarkTime } from '../../organisms/Student/AttendanceRecord';
 
 const styles = StyleSheet.create({
   container: {},
@@ -30,14 +31,10 @@ const styles = StyleSheet.create({
   },
 });
 
-interface SelectedDate {
-  [date: string]: boolean;
-}
-
 export interface UserPresentEditPopupProps {
   date: string;
-  selectedDates: SelectedDate;
-  onChangeAttendance: (date: string, time: string, status: boolean) => void;
+  selectedDates: MarkTime[];
+  onChangeAttendance: (sessionId: string, status: boolean) => void;
 }
 
 const UserPresentEditPopup: React.FC<UserPresentEditPopupProps> = ({
@@ -45,20 +42,24 @@ const UserPresentEditPopup: React.FC<UserPresentEditPopupProps> = ({
   selectedDates,
   onChangeAttendance = () => null,
 }): JSX.Element => {
-  const [editing, setEditing] = useState<string | null>(null);
+  const [editingSessionId, setEditingSessionId] = useState<string | null>(null);
+
+  const selectedTime = selectedDates
+    .filter(e => Object.values(e)[0].sessionId === editingSessionId)
+    .map(e => Object.keys(e)[0])[0];
 
   // if the editing value is null that means the use did not chose any time
   const title =
-    editing !== null ? (
+    editingSessionId !== null ? (
       <View style={[styles.header]}>
         <TouchableOpacity
           style={styles.btnBack}
-          onPress={() => setEditing(null)}
+          onPress={() => setEditingSessionId(null)}
         >
           <MaterialIcons name="arrow-back" size={18} color={lightColor} />
         </TouchableOpacity>
         <Text style={styles.headerColor}>
-          Change Present ({date} {editing})
+          Change Present ({date} {selectedTime})
         </Text>
       </View>
     ) : (
@@ -69,17 +70,17 @@ const UserPresentEditPopup: React.FC<UserPresentEditPopupProps> = ({
 
   // if the editing value is null that means the use did not chose any time
   const body =
-    editing !== null ? (
+    editingSessionId !== null ? (
       <View>
         <TouchableOpacity
-          onPress={() => onChangeAttendance(date, editing, true)}
+          onPress={() => onChangeAttendance(editingSessionId, true)}
         >
           <View style={[styles.row, styles.center]}>
             <Text style={{ color: 'green' }}>Present</Text>
           </View>
         </TouchableOpacity>
         <TouchableOpacity
-          onPress={() => onChangeAttendance(date, editing, false)}
+          onPress={() => onChangeAttendance(editingSessionId, false)}
         >
           <View style={[styles.row, styles.center]}>
             <Text style={{ color: 'red' }}>Absent</Text>
@@ -87,14 +88,17 @@ const UserPresentEditPopup: React.FC<UserPresentEditPopupProps> = ({
         </TouchableOpacity>
       </View>
     ) : (
-      Object.entries(selectedDates).map(selectedDate => {
-        const [sDate, present] = selectedDate;
+      selectedDates.map(selectedDate => {
+        const [time, { active, sessionId }] = Object.entries(selectedDate)[0];
 
         return (
-          <TouchableOpacity key={sDate} onPress={() => setEditing(sDate)}>
+          <TouchableOpacity
+            key={time}
+            onPress={() => setEditingSessionId(sessionId)}
+          >
             <View style={styles.row}>
-              <Text>{sDate}</Text>
-              {present ? (
+              <Text>{time}</Text>
+              {active ? (
                 <MaterialIcons name="check" color="green" size={18} />
               ) : (
                 <MaterialIcons name="cancel" color="red" size={18} />

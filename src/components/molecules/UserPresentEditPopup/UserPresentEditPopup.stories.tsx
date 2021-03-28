@@ -5,6 +5,7 @@ import { storiesOf } from '@storybook/react-native';
 import { action } from '@storybook/addon-actions';
 import CenterView from '../../atoms/CenterView';
 import UserPresentEditPopup from './UserPresentEditPopup';
+import { MarkTime } from '../../organisms/Student/AttendanceRecord';
 
 const STORY_NAME = 'Molecules/UserPresentEditPopup';
 
@@ -16,16 +17,18 @@ export default {
   component: UserPresentEditPopup,
 };
 
+const selectedDates: MarkTime[] = [
+  { '03:02 AM': { active: true, sessionId: '984gh89' } },
+  { '12:02 PM': { active: false, sessionId: '984gh89' } },
+];
+
 // Default For Web And android Component
 export const Default = (): JSX.Element => (
   <UserPresentEditPopup
     date={text('date', '2020-12-12')}
-    selectedDates={object('selectedDates', {
-      '03:50 AM': false,
-      '10:50 AM': true,
-    })}
-    onChangeAttendance={(date, time, status) =>
-      action('changeAttendance')(date, time, status)
+    selectedDates={object('selectedDates', selectedDates)}
+    onChangeAttendance={(sessionId, status) =>
+      action('changeAttendance')(sessionId, status)
     }
   />
 );

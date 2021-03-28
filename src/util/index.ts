@@ -1,3 +1,8 @@
+import {
+  MarkedDates,
+  MarkTime,
+} from '../components/organisms/Student/AttendanceRecord';
+
 export const isValidEmail = (email: string): boolean => {
   const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
@@ -152,3 +157,11 @@ export const convertEnumToStr = <T>(e: unknown, val: T): string => {
 
   return 'unknown';
 };
+
+export const convertMarkedDateToTimes = (
+  markedDates: MarkedDates,
+  currentDate: string,
+): MarkTime[] =>
+  Object.entries(markedDates[currentDate] ?? []).map(([key, val]) => ({
+    [key]: val,
+  }));

@@ -1,10 +1,11 @@
 import React from 'react';
 import { Platform } from 'react-native';
-import { array, text, withKnobs } from '@storybook/addon-knobs';
+import { object, text, withKnobs } from '@storybook/addon-knobs';
 import { storiesOf } from '@storybook/react-native';
 import { action } from '@storybook/addon-actions';
 import CenterView from '../../atoms/CenterView';
 import SelectTimeEditPopup from './SelectTimeEditPopup';
+import { MarkTime } from '../../organisms/Student/AttendanceRecord';
 
 const STORY_NAME = 'Molecules/SelectTimeEditPopup';
 
@@ -16,12 +17,16 @@ export default {
   component: SelectTimeEditPopup,
 };
 
+const selectedDateTimes: MarkTime[] = [
+  { '03:50 AM': { active: true, sessionId: 'asmd' } },
+];
+
 // Default For Web And android Component
 export const Default = (): JSX.Element => (
   <SelectTimeEditPopup
     date={text('date', '2020-12-12')}
-    selectedDateTimes={array('selectedDates', ['03:50 AM', '10:50 AM'])}
-    onSelectTime={(date, time) => action('changeAttendance')(date, time)}
+    selectedDateTimes={object<MarkTime[]>('selectedDates', selectedDateTimes)}
+    onSelectTime={sessionId => action('changeAttendance')(sessionId)}
   />
 );
 

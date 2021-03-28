@@ -1,6 +1,7 @@
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
+import { MarkTime } from '../../organisms/Student/AttendanceRecord';
 
 const styles = StyleSheet.create({
   container: {},
@@ -16,13 +17,9 @@ const styles = StyleSheet.create({
   },
 });
 
-interface SelectedDate {
-  [date: string]: boolean;
-}
-
 export interface UserPresentPops {
   date: string;
-  selectedDates: SelectedDate;
+  selectedDates: MarkTime;
 }
 
 const UserPresent: React.FC<UserPresentPops> = ({
@@ -41,7 +38,7 @@ const UserPresent: React.FC<UserPresentPops> = ({
           <TouchableOpacity key={sDate}>
             <View style={styles.row}>
               <Text>{sDate}</Text>
-              {present ? (
+              {present.active ? (
                 <MaterialIcons name="check" color="green" size={18} />
               ) : (
                 <MaterialIcons name="cancel" color="red" size={18} />
