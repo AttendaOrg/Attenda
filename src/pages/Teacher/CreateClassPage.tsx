@@ -35,6 +35,7 @@ const CreateClassPage: React.FC<Props> = ({ navigation }): JSX.Element => {
     if (error === null && classId !== null)
       navigation.replace('StudentList', {
         classId,
+        totalStudent: 0,
       });
   };
 

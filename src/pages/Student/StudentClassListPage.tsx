@@ -8,6 +8,7 @@ import { RootStackParamList } from '../../App';
 import SimpleHeaderNavigationOptions from '../../components/templates/SimpleHeaderNavigationOptions';
 import StudentClassList, {
   StudentListDataProps,
+  dummyStudentClassListData,
 } from '../../components/organisms/Student/StudentClassList';
 import TeacherClassModel from '../../api/TeacherApi/model/TeacherClassModel';
 import { studentApi } from '../../api/StudentApi';
@@ -15,7 +16,7 @@ import ImagePopup from '../../components/molecules/ImagePopup/ImagePopup';
 import SearchingImageComponent from '../../components/atoms/Images/SearchingImageComponent';
 import ClassStudentModel from '../../api/TeacherApi/model/ClassStudentModel';
 import DoubleButtonPopup from '../../components/molecules/DoubleButtonPopup';
-import { dummyTeacherClassListData } from '../../components/organisms/Teacher/TeacherClassList';
+import { StudentClassAction } from '../../components/molecules/ClassCard/StudentClassCard';
 
 type Props = StackScreenProps<RootStackParamList, 'StudentClassList'>;
 type OptionsProps = (props: Props) => StackNavigationOptions;
@@ -45,13 +46,13 @@ const transformToStudentListDataProps = (
   return {
     // TODO: get attendance summery from the class info
     // we will do it with a cloud function because it is too intensive calculation
-    attendance: `Your Attendance: ${percentage.toFixed(1)}%`,
+    attendance: percentage,
     section,
     showShimmer: false,
     backgroundImage: classBack,
     className: title,
-    key: classId ?? '',
-    teacherName: `by: ${teacherName}`,
+    classId: classId ?? '',
+    teacherName: teacherName ?? '',
     isSessionLive: isLive,
     currentSessionId,
     alreadyGiven,
@@ -124,11 +125,43 @@ const StudentClassListPage: React.FC<Props> = ({ navigation }): JSX.Element => {
 
   const dismissPopup = () => setShowNoSessionStartedPopup(false);
 
-  const onClassClick = (
-    classId: string,
-    currentSessionId: string | null,
-    alreadyGiven: boolean,
-  ) => {
+  const unEnroll = async (classId: string) => {
+    await studentApi.leaveClass(classId);
+  };
+
+  const merged = mergeGiven(givenPresenceClassIds, data);
+  const transformedData = merged.map(e =>
+    transformToStudentListDataProps(e, percentageModels),
+  );
+
+  const dismissUnEnrollPopup = () => {
+    setUnEnrollId(null);
+  };
+
+  const onAction = (
+    action: StudentClassAction,
+    info: StudentListDataProps,
+  ): void => {
+    const { classId } = info;
+
+    if (classId === null) return;
+
+    switch (action) {
+      case StudentClassAction.ATTENDANCE_RECORD:
+        navigation.push('StudentAttendanceRecord', { classId });
+        break;
+      case StudentClassAction.UN_ENROLL:
+        setUnEnrollId(classId);
+        break;
+
+      default:
+        break;
+    }
+  };
+
+  const onClassClick = (classInfo: StudentListDataProps) => {
+    const { alreadyGiven, currentSessionId, classId } = classInfo;
+
     const matched = data
       // get the matching class
       .filter(e => e.classId === classId)
@@ -146,21 +179,8 @@ const StudentClassListPage: React.FC<Props> = ({ navigation }): JSX.Element => {
     if (currentSessionId === null) setShowNoSessionStartedPopup(true);
   };
 
-  const unEnroll = async (classId: string) => {
-    await studentApi.leaveClass(classId);
-  };
-
-  const merged = mergeGiven(givenPresenceClassIds, data);
-  const transformedData = merged.map(e =>
-    transformToStudentListDataProps(e, percentageModels),
-  );
-
-  const dismissUnEnrollPopup = () => {
-    setUnEnrollId(null);
-  };
-
   const newData: StudentListDataProps[] = loading
-    ? dummyTeacherClassListData
+    ? dummyStudentClassListData
     : transformedData;
 
   return (
@@ -169,15 +189,8 @@ const StudentClassListPage: React.FC<Props> = ({ navigation }): JSX.Element => {
         showShimmer={loading}
         onFabClick={() => navigation.push('JoinClassForm', {})}
         data={newData}
+        onAction={onAction}
         onClassClick={onClassClick}
-        options={[
-          {
-            onPress: classId =>
-              navigation.push('StudentAttendanceRecord', { classId }),
-            title: 'Attendance Record',
-          },
-          { onPress: setUnEnrollId, title: 'Un-Enroll' },
-        ]}
       />
       <DoubleButtonPopup
         visible={unEnrollId !== null}

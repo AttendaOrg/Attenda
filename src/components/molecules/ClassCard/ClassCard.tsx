@@ -56,7 +56,7 @@ export interface ClassCardPops {
   className: string;
   section: string;
   teacherName: string;
-  attendance: string;
+  attendance: number;
   isSessionLive?: boolean;
   backgroundImage: ImageSourcePropType;
   showShimmer?: boolean;

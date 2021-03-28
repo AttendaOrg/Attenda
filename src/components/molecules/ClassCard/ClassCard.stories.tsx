@@ -51,7 +51,7 @@ export const Default = (): JSX.Element => (
       className={text('ClassName', 'Class Name')}
       section={text('section', 'Section')}
       teacherName={text('teacherName', 'Teacher Name')}
-      attendance={text('attendance', 'Your Attendance: 92%')}
+      attendance={number('attendance', 92)}
       isSessionLive={boolean('isSessionLive', true)}
       onCardClick={() => action('onCardClick')()}
       onMoreIconClick={() => action('onMoreIconClick')()}

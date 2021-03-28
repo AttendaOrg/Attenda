@@ -131,7 +131,7 @@ const MyAccount: React.FC<MyAccountPops> = ({
   const [name, setName] = useState(initialName);
   const [isEditing, setIsEditing] = useState(false);
   const [hasFormTrySubmitted, setHasFormTrySubmitted] = useState(false);
-  const ref = useRef<Input>(null);
+  const ref = useRef<any>(null);
 
   // react to the prop name change
   useEffect(() => {
@@ -171,6 +171,8 @@ const MyAccount: React.FC<MyAccountPops> = ({
       <View style={styles.infoContainer}>
         <View style={styles.infoValueRow}>
           <Input
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             ref={ref}
             autoFocus={false}
             placeholder="Name"

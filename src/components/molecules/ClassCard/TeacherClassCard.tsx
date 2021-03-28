@@ -33,8 +33,9 @@ export const classCardStyles = StyleSheet.create({
     flexDirection: 'row',
   },
   textInfoContainer: {
+    flex: 1,
     paddingLeft: 16,
-    marginRight: 66,
+    marginRight: 34,
   },
   className: {
     fontSize: 14,

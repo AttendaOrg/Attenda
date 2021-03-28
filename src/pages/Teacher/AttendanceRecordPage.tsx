@@ -103,8 +103,7 @@ const AttendanceSessionRecordTab: React.FC<Props> = ({ navigation, route }) => {
     const [_hur, _min, _secWithAmPm] = time.split(':');
     const [_sec, _amPm] = _secWithAmPm.split(' ');
     const d = new Date();
-    const hour =
-      _amPm === 'PM' ? parseInt(_hur, 10) + 12 : parseInt(_hur, 10) - 12;
+    const hour = _amPm === 'PM' ? parseInt(_hur, 10) + 12 : parseInt(_hur, 10);
 
     // console.log(`_amPm-> ${_amPm}`);
 
