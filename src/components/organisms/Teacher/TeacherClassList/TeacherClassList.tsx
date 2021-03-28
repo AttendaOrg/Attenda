@@ -2,8 +2,12 @@ import React from 'react';
 import { FlatList, StyleSheet, View } from 'react-native';
 import { FAB } from 'react-native-paper';
 import { UserRole } from '../../../../api';
-import ClassCard from '../../../molecules/ClassCard';
+import TeacherClassModel from '../../../../api/TeacherApi/model/TeacherClassModel';
 import { ClassCardPops } from '../../../molecules/ClassCard/ClassCard';
+import {
+  TeacherClassAction,
+  TeacherClassCard,
+} from '../../../molecules/ClassCard/TeacherClassCard';
 import { MenuOptionsPopoverDataProps } from '../../../molecules/MenuOptionsPopover';
 import EmptyClass from '../../Common/EmptyClass';
 
@@ -11,6 +15,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 8,
+    backgroundColor: '#fff',
   },
   separator: {
     height: 8,
@@ -28,20 +33,10 @@ export interface StudentListDataProps extends ClassCardPops {
 }
 
 export interface TeacherClassListPops {
-  data: StudentListDataProps[];
+  data: TeacherClassModel[];
   onFabClick: () => void;
-  onClassClick: (
-    classId: string,
-    name: string,
-    section: string,
-    isLive: boolean,
-    currentSessionId: string | null,
-  ) => void;
-  /**
-   * @deprecated this function is deprecated
-   * @use options props
-   */
-  onMoreIconClick?: () => void;
+  onClassClick: (classInfo: TeacherClassModel) => void;
+  onAction: (action: TeacherClassAction, classInfo: TeacherClassModel) => void;
   options?: MenuOptionsPopoverDataProps[];
   showShimmer?: boolean;
 }
@@ -50,9 +45,8 @@ const TeacherClassList: React.FC<TeacherClassListPops> = ({
   data = [],
   onFabClick,
   onClassClick,
-  onMoreIconClick = () => null,
-  options = [],
   showShimmer = false,
+  onAction = () => null,
 }): JSX.Element => {
   if (data.length === 0)
     return <EmptyClass onFabClick={onFabClick} userRole={UserRole.TEACHER} />;
@@ -62,28 +56,19 @@ const TeacherClassList: React.FC<TeacherClassListPops> = ({
       <FlatList
         data={data}
         ItemSeparatorComponent={() => <View style={styles.separator} />}
+        keyExtractor={(info, index) => info.classId ?? `class-${index}`}
         renderItem={({ item }) => (
-          <ClassCard
+          <TeacherClassCard
+            data={{
+              title: item.title,
+              section: item.section,
+              classCode: item.classCode,
+              totalStudent: item.totalStudent,
+              isLive: item.isLive ?? false,
+            }}
+            onAction={action => onAction(action, item)}
             showShimmer={showShimmer}
-            className={item.className}
-            section={item.section}
-            teacherName={item.teacherName}
-            attendance={item.attendance}
-            isSessionLive={item.isSessionLive}
-            currentSessionId={item.currentSessionId}
-            classId={item.key}
-            onCardClick={() =>
-              onClassClick(
-                item.key,
-                item.className,
-                item.section,
-                item.isSessionLive ?? false,
-                item.currentSessionId,
-              )
-            }
-            options={options}
-            onMoreIconClick={onMoreIconClick}
-            backgroundImage={item.backgroundImage}
+            onPress={() => onClassClick(item)}
           />
         )}
       />

@@ -1,12 +1,21 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 import React from 'react';
 import { Platform } from 'react-native';
-import { boolean, text, withKnobs, select } from '@storybook/addon-knobs';
+import {
+  boolean,
+  text,
+  withKnobs,
+  select,
+  number,
+} from '@storybook/addon-knobs';
 import { storiesOf } from '@storybook/react-native';
 import { action } from '@storybook/addon-actions';
 import { MenuProvider } from 'react-native-popup-menu';
 import CenterView from '../../atoms/CenterView';
 import ClassCard from './ClassCard';
+import { convertEnumToStr } from '../../../util';
+import { TeacherClassAction, TeacherClassCard } from './TeacherClassCard';
+import StudentClassCard, { StudentClassAction } from './StudentClassCard';
 
 const classBack1 = require('../../../../assets/images/class-back-1.jpg');
 const classBack2 = require('../../../../assets/images/class-back-2.jpg');
@@ -58,6 +67,43 @@ export const Default = (): JSX.Element => (
   </MenuProvider>
 );
 
+export const TeacherClassCardStory = (): JSX.Element => (
+  <TeacherClassCard
+    data={{
+      title: text('title', 'Class Name'),
+      section: text('section', 'Section'),
+      classCode: text('classCode', 'H2A63SN4E'),
+      totalStudent: number('totalStudent', 10),
+      isLive: boolean('isLive', true),
+    }}
+    onPress={() => action('onPress')()}
+    onAction={a =>
+      action('onAction')(
+        convertEnumToStr<TeacherClassAction>(TeacherClassAction, a),
+      )
+    }
+  />
+);
+
+export const StudentClassCardStory = (): JSX.Element => (
+  <StudentClassCard
+    data={{
+      title: text('title', 'Class Name'),
+      section: text('section', 'Section'),
+      teacherName: text('teacherName', 'teacherName'),
+      totalAttendancePercentage: number('totalAttendancePercentage', 10),
+      isLive: boolean('isLive', true),
+      alreadyGiven: boolean('alreadyGiven', true),
+    }}
+    onPress={() => action('onPress')()}
+    onAction={a =>
+      action('onAction')(
+        convertEnumToStr<StudentClassAction>(StudentClassAction, a),
+      )
+    }
+  />
+);
+
 // if the platform is not web only then render it
 // otherwise it will render 2 story in web storybook
 // it is the storybook legacy api react-native does not support modern api
@@ -68,5 +114,7 @@ if (Platform.OS !== 'web') {
       <CenterView onlySafeView>{getStory()}</CenterView>
     ))
     .addDecorator(withKnobs)
-    .add('Default', Default);
+    .add('Default', Default)
+    .add('TeacherClassCardStory', TeacherClassCardStory)
+    .add('StudentClassCardStory', StudentClassCardStory);
 }

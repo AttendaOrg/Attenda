@@ -6,8 +6,8 @@ import {
   TouchableOpacity,
   View,
   TextInput,
+  ImageSourcePropType,
 } from 'react-native';
-import { ImageSource } from 'react-native-vector-icons/Icon';
 import { MaterialIcons } from '@expo/vector-icons';
 import { lightColor } from '../../../util/Colors';
 
@@ -42,7 +42,7 @@ const styles = StyleSheet.create({
 const imageSrc = require('../../../../assets/images/user.jpg');
 
 export interface UserInfoPops {
-  userImage: ImageSource;
+  userImage: ImageSourcePropType;
   name: string;
   rollNo: string;
   onRollChange: (newRollNo: string) => Promise<void>;

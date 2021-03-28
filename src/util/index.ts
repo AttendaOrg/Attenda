@@ -137,3 +137,18 @@ export const throttle = <T>(
     }
   };
 };
+
+export const convertEnumToStr = <T>(e: unknown, val: T): string => {
+  // on compile typescript enum converts to a json object.
+  // which have the following structure
+  // { [key1]: value1, [value1]:key1 }
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
+  if (e[val] !== undefined) {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    return e[val];
+  }
+
+  return 'unknown';
+};
