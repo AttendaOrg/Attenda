@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Input } from 'react-native-elements';
-import { Button } from 'react-native-paper';
+import { Button, IconButton } from 'react-native-paper';
 import { inputContainerStyle } from '../../../../util/Styles';
 import ResetPasswordImageComponent from '../../../atoms/Images/ResetPasswordImageComponent';
+import PasswordShowSwitcher from '../../../atoms/PasswordShowSwitcher/PasswordShowSwitcher';
 import KeyboardAdjustImageView from '../../../templates/KeyboardAdjustImageView';
 
 const styles = StyleSheet.create({
@@ -53,6 +54,7 @@ const ChangePassword: React.FC<ChangePasswordPops> = ({
   const [newPass, setNewPass] = useState('');
   const [confirmPass, setConfirmPass] = useState('');
   const [hasFromTrySubmitted, setHasFromTrySubmitted] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const {
     confirmPasswordError = '',
@@ -100,7 +102,19 @@ const ChangePassword: React.FC<ChangePasswordPops> = ({
         errorStyle={{ margin: 0 }}
         onChangeText={updateCurrentPassword}
         errorMessage={currentPasswordError}
-        secureTextEntry
+        textContentType={showPassword ? 'none' : 'password'}
+        secureTextEntry={!showPassword}
+        rightIconContainerStyle={{
+          marginHorizontal: 0,
+          marginVertical: 0,
+          margin: 0,
+        }}
+        rightIcon={
+          <PasswordShowSwitcher
+            show={showPassword}
+            onChange={() => setShowPassword(!showPassword)}
+          />
+        }
       />
       <Input
         placeholder="New Password"
@@ -108,7 +122,19 @@ const ChangePassword: React.FC<ChangePasswordPops> = ({
         style={styles.inputStyle}
         onChangeText={updateNewPassword}
         errorMessage={newPasswordError}
-        secureTextEntry
+        textContentType={showPassword ? 'none' : 'password'}
+        secureTextEntry={!showPassword}
+        rightIconContainerStyle={{
+          marginHorizontal: 0,
+          marginVertical: 0,
+          margin: 0,
+        }}
+        rightIcon={
+          <PasswordShowSwitcher
+            show={showPassword}
+            onChange={() => setShowPassword(!showPassword)}
+          />
+        }
       />
       <Input
         placeholder="Confirm Password"
@@ -116,7 +142,14 @@ const ChangePassword: React.FC<ChangePasswordPops> = ({
         style={styles.inputStyle}
         onChangeText={updateConfirmPassword}
         errorMessage={confirmPasswordError}
-        secureTextEntry
+        textContentType={showPassword ? 'none' : 'password'}
+        secureTextEntry={!showPassword}
+        rightIcon={() => (
+          <IconButton
+            icon={showPassword ? 'eye' : 'eye-off'}
+            onPress={() => setShowPassword(!showPassword)}
+          />
+        )}
       />
       <View style={styles.buttonContainer}>
         <Button

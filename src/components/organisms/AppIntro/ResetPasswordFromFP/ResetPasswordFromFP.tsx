@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Input } from 'react-native-elements';
-import { Button } from 'react-native-paper';
+import { Button, IconButton } from 'react-native-paper';
 import { inputContainerStyle } from '../../../../util/Styles';
 import ResetPasswordImageComponent from '../../../atoms/Images/ResetPasswordImageComponent';
 import KeyboardAdjustImageView from '../../../templates/KeyboardAdjustImageView';
@@ -43,7 +43,7 @@ const ResetPasswordFromFP: React.FC<ResetPasswordFromFPPops> = ({
   const [newPass, setNewPass] = useState('');
   const [confirmPass, setConfirmPass] = useState('');
   const [hasFromTrySubmitted, setHasFromTrySubmitted] = useState(false);
-
+  const [showPassword, setShowPassword] = useState(false);
   const { confirmPasswordError = '', newPasswordError = '' } = errors;
 
   const tryRevalidatingError = ({
@@ -77,7 +77,14 @@ const ResetPasswordFromFP: React.FC<ResetPasswordFromFPPops> = ({
         style={styles.inputStyle}
         onChangeText={updateNewPassword}
         errorMessage={newPasswordError}
-        secureTextEntry
+        textContentType={showPassword ? 'none' : 'password'}
+        secureTextEntry={!showPassword}
+        rightIcon={() => (
+          <IconButton
+            icon={showPassword ? 'eye' : 'eye-off'}
+            onPress={() => setShowPassword(!showPassword)}
+          />
+        )}
       />
       <Input
         placeholder="Confirm Password"
@@ -85,7 +92,14 @@ const ResetPasswordFromFP: React.FC<ResetPasswordFromFPPops> = ({
         style={styles.inputStyle}
         onChangeText={updateConfirmPassword}
         errorMessage={confirmPasswordError}
-        secureTextEntry
+        textContentType={showPassword ? 'none' : 'password'}
+        secureTextEntry={!showPassword}
+        rightIcon={() => (
+          <IconButton
+            icon={showPassword ? 'eye' : 'eye-off'}
+            onPress={() => setShowPassword(!showPassword)}
+          />
+        )}
       />
       <View style={styles.buttonContainer}>
         <Button

@@ -5,6 +5,7 @@ import { CheckBox, Input } from 'react-native-elements';
 import { primaryColor } from '../../../../util/Colors';
 import { inputContainerStyle } from '../../../../util/Styles';
 import SignUpImageComponent from '../../../atoms/Images/SignUpImageComponent';
+import PasswordShowSwitcher from '../../../atoms/PasswordShowSwitcher/PasswordShowSwitcher';
 import KeyboardAdjustImageView from '../../../templates/KeyboardAdjustImageView';
 
 const styles = StyleSheet.create({
@@ -83,6 +84,7 @@ const SignUp: React.FC<SignUpPops> = ({
 }): JSX.Element => {
   const [hasFromTrySubmitted, setHasFromTrySubmitted] = useState(false);
   const [acceptTerms, setChecked] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -134,9 +136,6 @@ const SignUp: React.FC<SignUpPops> = ({
 
   return (
     <View style={styles.container}>
-      {/* <View style={{ marginTop: 30 }}> */}
-      {/* <KeyboardAdjustImageView imageSource={imageSource} /> */}
-      {/* </View> */}
       <KeyboardAdjustImageView svgImg={SignUpImageComponent} />
 
       <View style={styles.signUpContainer}>
@@ -186,7 +185,6 @@ const SignUp: React.FC<SignUpPops> = ({
           containerStyle={inputContainerStyle}
           style={styles.inputStyle}
           placeholder="Password"
-          textContentType="password"
           labelStyle={{
             margin: 0,
             display: passwordError !== '' ? 'flex' : 'none',
@@ -195,7 +193,19 @@ const SignUp: React.FC<SignUpPops> = ({
             margin: 0,
             display: passwordError !== '' ? 'flex' : 'none',
           }}
-          secureTextEntry
+          textContentType={showPassword ? 'none' : 'password'}
+          secureTextEntry={!showPassword}
+          rightIcon={
+            <PasswordShowSwitcher
+              show={showPassword}
+              onChange={() => setShowPassword(!showPassword)}
+            />
+          }
+          rightIconContainerStyle={{
+            marginHorizontal: 0,
+            marginVertical: 0,
+            margin: 0,
+          }}
           value={password}
           onChangeText={updatePassword}
           errorMessage={passwordError}
