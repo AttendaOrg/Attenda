@@ -28,6 +28,10 @@ const styles = StyleSheet.create({
     marginTop: 15,
     width: '50%',
   },
+  danger: {
+    color: 'red',
+    marginTop: 4,
+  },
 });
 
 export interface JoinClassFinalPops {
@@ -35,6 +39,7 @@ export interface JoinClassFinalPops {
   section: string;
   teacher: string;
   onDone: () => void;
+  disableJoin: boolean;
 }
 
 const JoinClassFinal: React.FC<JoinClassFinalPops> = ({
@@ -42,6 +47,7 @@ const JoinClassFinal: React.FC<JoinClassFinalPops> = ({
   section,
   teacher,
   onDone,
+  disableJoin = false,
 }): JSX.Element => {
   return (
     <View style={styles.container}>
@@ -49,8 +55,13 @@ const JoinClassFinal: React.FC<JoinClassFinalPops> = ({
       <Text style={styles.classNameText}>{className}</Text>
       <Text style={styles.sectionText}>{section}</Text>
       <Text style={styles.teacherNameText}>By: {teacher}</Text>
+      {disableJoin && (
+        <Text style={styles.danger}>
+          This class does not have active invite
+        </Text>
+      )}
       <View style={styles.btnContainer}>
-        <Button title="Join" onPress={onDone} />
+        <Button disabled={disableJoin} title="Join" onPress={onDone} />
       </View>
     </View>
   );
