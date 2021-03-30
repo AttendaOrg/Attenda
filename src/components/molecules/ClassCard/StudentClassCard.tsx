@@ -43,7 +43,6 @@ const StudentClassCard: React.FC<StudentClassCardProps> = ({
         <Text numberOfLines={1} style={!data.isLive && classCardStyles.txt}>
           {data.section}
         </Text>
-
         {isOpened && (
           <>
             <Text style={classCardStyles.txt}>By: {data.teacherName}</Text>
@@ -52,14 +51,21 @@ const StudentClassCard: React.FC<StudentClassCardProps> = ({
             </Text>
           </>
         )}
-
         {data.isLive && <View style={{ height: 8 }} />}
-        <Text style={[classCardStyles.liveText, classCardStyles.txt]}>
-          {data.isLive &&
-            (data.alreadyGiven
+        {data.isLive && (
+          <Text
+            style={[
+              data.alreadyGiven
+                ? classCardStyles.attendanceGiven
+                : classCardStyles.liveText,
+              classCardStyles.txt,
+            ]}
+          >
+            {data.alreadyGiven
               ? 'You have already responded'
-              : 'Attendance session is live')}
-        </Text>
+              : 'Attendance session is live'}
+          </Text>
+        )}
       </View>
     ),
     [

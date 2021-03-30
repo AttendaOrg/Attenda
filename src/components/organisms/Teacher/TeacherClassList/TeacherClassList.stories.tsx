@@ -34,6 +34,18 @@ export const Default = (): JSX.Element => (
   />
 );
 
+// Default For Web And android Component
+export const WithData = (): JSX.Element => (
+  <TeacherClassList
+    onClassClick={classId => action('onClassClick')(classId)}
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    data={dummyTeacherClassListData}
+    onAction={(a, i) => action('onAction')(a, i)}
+    onFabClick={() => action('onFabClick')()}
+  />
+);
+
 // if the platform is not web only then render it
 // otherwise it will render 2 story in web storybook
 // it is the storybook legacy api react-native does not support modern api
@@ -44,5 +56,6 @@ if (Platform.OS !== 'web') {
       <CenterView noPadding>{getStory()}</CenterView>
     ))
     .addDecorator(withKnobs)
-    .add('Default', Default);
+    .add('Default', Default)
+    .add('WithData', WithData);
 }

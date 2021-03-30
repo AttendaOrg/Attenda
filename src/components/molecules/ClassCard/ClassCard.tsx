@@ -6,6 +6,7 @@ import {
   View,
   TouchableOpacity,
   ImageSourcePropType,
+  ImageURISource,
 } from 'react-native';
 import Shimmer from '../../atoms/Shimmer/Shimmer';
 import MenuOptionsPopover, {
@@ -62,6 +63,7 @@ export interface ClassCardPops {
   showShimmer?: boolean;
   currentSessionId: string | null;
   alreadyGiven?: boolean;
+  classIcon?: string | ImageURISource | null;
 }
 
 interface Props extends ClassCardPops {

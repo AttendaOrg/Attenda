@@ -38,6 +38,7 @@ const transformToStudentListDataProps = (
     currentSessionId,
     teacherName,
     alreadyGiven,
+    classIcon,
   } = cls;
 
   const match = percentageModels.filter(m => m.classId === classId);
@@ -56,6 +57,7 @@ const transformToStudentListDataProps = (
     isSessionLive: isLive,
     currentSessionId,
     alreadyGiven,
+    classIcon,
   };
 };
 

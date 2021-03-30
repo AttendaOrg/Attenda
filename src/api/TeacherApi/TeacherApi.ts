@@ -24,6 +24,9 @@ import ClassStudentModel, {
 } from './model/ClassStudentModel';
 import { hashMacId } from '../util/hash';
 import { getMonthRange } from '../../util';
+import ClassCardIconModel, {
+  ClassCardIconProps,
+} from './model/ClassCardIconModel';
 
 interface TeacherApiInterface {
   //#region class
@@ -221,6 +224,8 @@ interface TeacherApiInterface {
 // noinspection JSUnusedLocalSymbols
 export default class TeacherApi extends AuthApi implements TeacherApiInterface {
   static readonly CLASSES_COLLECTION_NAME = 'classes';
+
+  static readonly CLASS_CARD_ICONS_COLLECTION_NAME = 'class_card_icons';
 
   static readonly CLASSES_INVITE_STUDENT_COLLECTION_NAME = 'invite_students';
 
@@ -467,6 +472,35 @@ export default class TeacherApi extends AuthApi implements TeacherApiInterface {
       await ref.update(
         TeacherClassModel.Update({
           classCode: newClassCode,
+        }),
+      );
+
+      return this.success(true);
+    } catch (ex) {
+      return this.error(BasicErrors.EXCEPTION);
+    }
+  };
+
+  updateClassIcon = async (
+    classId: string,
+    classIcon: string,
+  ): Promise<WithError<boolean>> => {
+    try {
+      const userId = this.getUserUid();
+
+      if (userId === null)
+        return this.error(BasicErrors.USER_NOT_AUTHENTICATED);
+
+      // path to the class
+      const ref = firebase
+        .firestore()
+        .collection(TeacherApi.CLASSES_COLLECTION_NAME)
+        .doc(classId);
+
+      // update class info with new class code
+      await ref.update(
+        TeacherClassModel.Update({
+          classIcon,
         }),
       );
 
@@ -1303,6 +1337,51 @@ export default class TeacherApi extends AuthApi implements TeacherApiInterface {
     }
   };
   //#endregion attendance_report
+
+  createClassCardIcons = async (
+    name: string,
+    iconData: string,
+    category: string,
+  ): Promise<WithError<boolean>> => {
+    try {
+      const icon = new ClassCardIconModel({
+        name,
+        iconData,
+        category,
+      });
+
+      await firebase
+        .firestore()
+        .collection(TeacherApi.CLASS_CARD_ICONS_COLLECTION_NAME)
+        .add(icon.toJson());
+
+      return this.success(true);
+    } catch (error) {
+      console.log(error);
+
+      return this.error(BasicErrors.EXCEPTION);
+    }
+  };
+
+  getAllClassCardIcons = async (): Promise<WithError<ClassCardIconModel[]>> => {
+    try {
+      const { docs } = await await firebase
+        .firestore()
+        .collection(TeacherApi.CLASS_CARD_ICONS_COLLECTION_NAME)
+        .get();
+
+      return this.success(
+        docs.map(
+          d =>
+            new ClassCardIconModel((d.data() as unknown) as ClassCardIconProps),
+        ),
+      );
+    } catch (error) {
+      console.log(error);
+
+      return this.error(BasicErrors.EXCEPTION);
+    }
+  };
 }
 
 export const teacherApi = new TeacherApi();

@@ -1,3 +1,6 @@
+/* eslint-disable no-bitwise */
+/* eslint-disable no-cond-assign */
+/* eslint-disable no-plusplus */
 import {
   MarkedDates,
   MarkTime,
@@ -165,3 +168,55 @@ export const convertMarkedDateToTimes = (
   Object.entries(markedDates[currentDate] ?? []).map(([key, val]) => ({
     [key]: val,
   }));
+
+const b64ch =
+  'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=';
+const b64chs = b64ch.split('');
+
+/**
+ * Binary to ASCII (encode data to Base64)
+ * @param {String} bin
+ * @returns {String}
+ */
+export const base64Encode = (bin: string): string => {
+  // console.log('polyfilled');
+  let u32;
+  let c0;
+  let c1;
+  let c2;
+  let asc = '';
+  const pad = bin.length % 3;
+
+  for (let i = 0; i < bin.length; ) {
+    if (
+      (c0 = bin.charCodeAt(i++)) > 255 ||
+      (c1 = bin.charCodeAt(i++)) > 255 ||
+      (c2 = bin.charCodeAt(i++)) > 255
+    )
+      throw new TypeError('invalid character found');
+    u32 = (c0 << 16) | (c1 << 8) | c2;
+    asc +=
+      b64chs[(u32 >> 18) & 63] +
+      b64chs[(u32 >> 12) & 63] +
+      b64chs[(u32 >> 6) & 63] +
+      b64chs[u32 & 63];
+  }
+
+  return pad ? asc.slice(0, pad - 3) + '==='.substring(pad) : asc;
+};
+
+export const hashCode = (str: string): number => {
+  let hash = 0;
+
+  if (str.length === 0) {
+    return hash;
+  }
+  for (let i = 0; i < str.length; i++) {
+    const char = str.charCodeAt(i);
+
+    hash = (hash << 5) - hash + char;
+    hash &= hash; // Convert to 32bit integer
+  }
+
+  return hash;
+};

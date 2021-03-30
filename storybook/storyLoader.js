@@ -7,6 +7,7 @@ function loadStories() {
   require('../src/components/atoms/ColoredCircle/ColoredCircle.stories');
   require('../src/components/atoms/DividerText/DividerText.stories');
   require('../src/components/atoms/Icons/Icons.stories');
+  require('../src/components/atoms/IconSelectBtn/IconSelectBtn.stories');
   require('../src/components/atoms/Shimmer/Shimmer.stories');
   require('../src/components/molecules/ClassCard/ClassCard.stories');
   require('../src/components/molecules/ClassDetails/ClassDetails.stories');
@@ -42,6 +43,7 @@ function loadStories() {
   require('../src/components/organisms/Teacher/AttendanceRecordStudentList/AttendanceRecordStudentList.stories');
   require('../src/components/organisms/Teacher/AttendanceSessionRecord/AttendanceSessionRecord.stories');
   require('../src/components/organisms/Teacher/ChangeClassCode/ChangeClassCode.stories');
+  require('../src/components/organisms/Teacher/ChooseClassIcon/ChooseClassIcon.stories');
   require('../src/components/organisms/Teacher/ClassSettings/ClassSettings.stories');
   require('../src/components/organisms/Teacher/CreateClass/CreateClass.stories');
   require('../src/components/organisms/Teacher/CurrentAttendanceSession/CurrentAttendanceSession.stories');
@@ -58,6 +60,7 @@ const stories = [
   '../src/components/atoms/ColoredCircle/ColoredCircle.stories',
   '../src/components/atoms/DividerText/DividerText.stories',
   '../src/components/atoms/Icons/Icons.stories',
+  '../src/components/atoms/IconSelectBtn/IconSelectBtn.stories',
   '../src/components/atoms/Shimmer/Shimmer.stories',
   '../src/components/molecules/ClassCard/ClassCard.stories',
   '../src/components/molecules/ClassDetails/ClassDetails.stories',
@@ -93,6 +96,7 @@ const stories = [
   '../src/components/organisms/Teacher/AttendanceRecordStudentList/AttendanceRecordStudentList.stories',
   '../src/components/organisms/Teacher/AttendanceSessionRecord/AttendanceSessionRecord.stories',
   '../src/components/organisms/Teacher/ChangeClassCode/ChangeClassCode.stories',
+  '../src/components/organisms/Teacher/ChooseClassIcon/ChooseClassIcon.stories',
   '../src/components/organisms/Teacher/ClassSettings/ClassSettings.stories',
   '../src/components/organisms/Teacher/CreateClass/CreateClass.stories',
   '../src/components/organisms/Teacher/CurrentAttendanceSession/CurrentAttendanceSession.stories',

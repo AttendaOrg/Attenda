@@ -274,8 +274,11 @@ class ClassSettingsPage extends React.PureComponent<Props, State> {
             style={{}}
             options={[
               {
-                onPress: () => null,
-                title: 'Reset Code',
+                onPress: () =>
+                  navigation.push('ChooseClassIcon', {
+                    classId: this.getClassId(),
+                  }),
+                title: 'Change Icon',
               },
               {
                 onPress: () => null,

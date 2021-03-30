@@ -1,13 +1,13 @@
 import React, { useMemo, useState } from 'react';
 import {
-  Image,
   Text,
   View,
   TouchableOpacity,
   StyleSheet,
-  ImageSourcePropType,
+  ImageURISource,
 } from 'react-native';
 import { IconButton } from 'react-native-paper';
+import IconSelectBtn from '../../atoms/IconSelectBtn/IconSelectBtn';
 import Shimmer from '../../atoms/Shimmer/Shimmer';
 import ClassCardActionBtn from './ClassCardActionBtn';
 
@@ -63,13 +63,16 @@ export const classCardStyles = StyleSheet.create({
     color: 'green',
     fontWeight: 'bold',
   },
+  hide: {
+    display: 'none',
+  },
 });
 
 export interface CommonClassCardData {
   title: string;
   section: string;
   isLive: boolean;
-  classIcon?: ImageSourcePropType;
+  classIcon?: string | ImageURISource | null;
 }
 
 export enum TeacherClassAction {
@@ -88,6 +91,7 @@ export interface TeacherClassCardProps {
   data: TeacherClassCardData;
   onAction: (action: TeacherClassAction) => void;
   onPress: () => void;
+  hideActions?: boolean;
   showShimmer?: boolean;
 }
 
@@ -96,6 +100,7 @@ export const TeacherClassCard: React.FC<TeacherClassCardProps> = ({
   onAction = () => null,
   onPress = () => null,
   showShimmer = false,
+  hideActions = false,
 }) => {
   const [isOpened, setIsOpened] = useState(false);
 
@@ -179,21 +184,25 @@ export const TeacherClassCard: React.FC<TeacherClassCardProps> = ({
       <View
         style={[classCardStyles.container, isOpened && { paddingBottom: 10 }]}
       >
-        <IconButton
-          size={28}
-          icon={isOpened ? 'chevron-down' : 'chevron-left'}
-          style={classCardStyles.icon}
-          onPress={() => setIsOpened(!isOpened)}
-        />
+        {!hideActions && (
+          <IconButton
+            size={28}
+            icon={isOpened ? 'chevron-down' : 'chevron-left'}
+            style={classCardStyles.icon}
+            onPress={() => setIsOpened(!isOpened)}
+          />
+        )}
+
         <View style={classCardStyles.infoContainer}>
-          <Image
-            // eslint-disable-next-line global-require
-            source={data.classIcon ?? require('../../../../assets/icon.png')}
-            style={{ height: 50, width: 50 }}
+          <IconSelectBtn
+            plainIcon
+            source={data.classIcon}
+            onChange={() => null}
+            selected={false}
           />
           {body}
         </View>
-        {isOpened && actionBody}
+        {isOpened && hideActions === false && actionBody}
       </View>
     </TouchableOpacity>
   );

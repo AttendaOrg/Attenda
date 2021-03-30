@@ -7,7 +7,6 @@ import {
   UIManager,
   Platform,
 } from 'react-native';
-import { isSmallDevice } from '.';
 import useKeyBoardOpenStatus from '../../util/hooks/KeyBoardOpenStatus';
 import { CustomLayoutLinearConfig } from '../../util/Styles';
 import { IconsPops } from '../atoms/Icons';
@@ -39,6 +38,9 @@ export interface KeyboardAdjustImageViewPops {
   svgImg: React.FC<IconsPops>;
   heightSensitive?: boolean;
 }
+
+export const isSmallDevice = (): boolean =>
+  Dimensions.get('screen').height <= 700;
 
 const KeyboardAdjustImageView: React.FC<KeyboardAdjustImageViewPops> = ({
   // NOTE: remove this default for check errors

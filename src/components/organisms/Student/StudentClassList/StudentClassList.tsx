@@ -64,6 +64,7 @@ const StudentClassList: React.FC<StudentClassListPops> = ({
               teacherName: item.teacherName,
               totalAttendancePercentage: item.attendance,
               isLive: item.isSessionLive ?? false,
+              classIcon: item.classIcon,
             }}
             onAction={action => onAction(action, item)}
             showShimmer={showShimmer}

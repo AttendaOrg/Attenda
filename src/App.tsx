@@ -87,6 +87,9 @@ import DebugSettingsPage, {
 import EditDebugSettingsPage, {
   EditDebugSettingsNavigationOptions,
 } from './pages/Commons/EditDebugSettingsPage';
+import ChooseClassIconPage, {
+  ChooseClassIconNavigationOptions,
+} from './pages/Teacher/ChooseClassIconPage';
 
 export type TeacherClassListNavigationProps = {
   withDismiss?: boolean;
@@ -155,6 +158,9 @@ export type RootStackParamList = {
     sessionTime: string;
   };
   CreateClass: undefined;
+  ChooseClassIcon: {
+    classId: string;
+  };
   // drawer
   MyAccount: undefined;
   ChangePassword: undefined;
@@ -360,6 +366,11 @@ class AuthProvider extends React.PureComponent<Props> {
               name="CreateClass"
               component={CreateClassPage}
               options={CreateClassNavigationOptions}
+            />
+            <Stack.Screen
+              name="ChooseClassIcon"
+              component={ChooseClassIconPage}
+              options={ChooseClassIconNavigationOptions}
             />
           </>
           {/* student */}

@@ -16,7 +16,6 @@ import PasswordShowSwitcher from '../../../atoms/PasswordShowSwitcher/PasswordSh
 import OauthProvider, {
   OauthProviderProps,
 } from '../../../molecules/OauthProvider/OauthProvider';
-import { isSmallDevice } from '../../../templates';
 import KeyboardAdjustImageView from '../../../templates/KeyboardAdjustImageView';
 
 const styles = StyleSheet.create({
