@@ -91,11 +91,9 @@ const SignIn: React.FC<SignInPops> = ({
           onChangeText={onEmailChange}
           labelStyle={{
             margin: 0,
-            display: emailError !== '' ? 'flex' : 'none',
           }}
           errorStyle={{
             margin: 0,
-            display: emailError !== '' ? 'flex' : 'none',
           }}
           errorMessage={emailError}
         />
@@ -109,11 +107,9 @@ const SignIn: React.FC<SignInPops> = ({
           onChangeText={onPasswordChange}
           labelStyle={{
             margin: 0,
-            display: passwordError !== '' ? 'flex' : 'none',
           }}
           errorStyle={{
             margin: 0,
-            display: passwordError !== '' ? 'flex' : 'none',
           }}
           errorMessage={passwordError}
           rightIcon={
