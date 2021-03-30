@@ -15,7 +15,7 @@ import AttendanceRecordStudentList from '../../components/organisms/Teacher/Atte
 import { StudentListData } from '../../components/organisms/Teacher/StudentList';
 import { MarkedDates } from '../../components/organisms/Student/AttendanceRecord';
 import SessionInfoModel from '../../api/TeacherApi/model/SessionInfoModel';
-import { convertDateFormat, convertTime, matchDate } from '../../util';
+import { convertDateFormat, convertTime } from '../../util';
 import { teacherApi } from '../../api/TeacherApi';
 import ClassStudentModel from '../../api/TeacherApi/model/ClassStudentModel';
 import GlobalContext from '../../context/GlobalContext';

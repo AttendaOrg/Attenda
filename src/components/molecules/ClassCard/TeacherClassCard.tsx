@@ -23,7 +23,6 @@ export const classCardStyles = StyleSheet.create({
     elevation: 0,
     borderRadius: 8,
     padding: 16,
-    paddingBottom: 10,
   },
   icon: {
     position: 'absolute',
@@ -39,6 +38,7 @@ export const classCardStyles = StyleSheet.create({
     flex: 1,
     paddingLeft: 16,
     marginRight: 34,
+    justifyContent: 'center',
   },
   className: {
     fontSize: 16,
@@ -108,7 +108,9 @@ export const TeacherClassCard: React.FC<TeacherClassCardProps> = ({
         >
           {data.title}
         </Text>
-        <Text style={classCardStyles.txt}>{data.section}</Text>
+        <Text numberOfLines={1} style={!data.isLive && classCardStyles.txt}>
+          {data.section}
+        </Text>
         {isOpened && (
           <>
             <Text style={classCardStyles.txt}>Code: {data.classCode}</Text>
@@ -117,10 +119,14 @@ export const TeacherClassCard: React.FC<TeacherClassCardProps> = ({
             </Text>
           </>
         )}
-        {data.isLive && <View style={{ height: 8 }} />}
-        <Text style={[classCardStyles.liveText, classCardStyles.txt]}>
-          {data.isLive && 'Attendance session is live'}
-        </Text>
+        {data.isLive && (
+          <>
+            <View style={{ height: 8 }} />
+            <Text style={[classCardStyles.liveText, classCardStyles.txt]}>
+              Attendance session is live
+            </Text>
+          </>
+        )}
       </View>
     ),
     [
@@ -170,7 +176,9 @@ export const TeacherClassCard: React.FC<TeacherClassCardProps> = ({
       onPress={onPress}
       onLongPress={() => setIsOpened(!isOpened)}
     >
-      <View style={classCardStyles.container}>
+      <View
+        style={[classCardStyles.container, isOpened && { paddingBottom: 10 }]}
+      >
         <IconButton
           size={28}
           icon={isOpened ? 'chevron-down' : 'chevron-left'}

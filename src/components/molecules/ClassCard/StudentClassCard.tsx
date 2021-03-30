@@ -40,7 +40,9 @@ const StudentClassCard: React.FC<StudentClassCardProps> = ({
         >
           {data.title}
         </Text>
-        <Text style={classCardStyles.txt}>{data.section}</Text>
+        <Text numberOfLines={1} style={!data.isLive && classCardStyles.txt}>
+          {data.section}
+        </Text>
 
         {isOpened && (
           <>
@@ -97,7 +99,9 @@ const StudentClassCard: React.FC<StudentClassCardProps> = ({
       onPress={onPress}
       onLongPress={() => setIsOpened(!isOpened)}
     >
-      <View style={classCardStyles.container}>
+      <View
+        style={[classCardStyles.container, isOpened && { paddingBottom: 10 }]}
+      >
         <IconButton
           size={28}
           icon={isOpened ? 'chevron-down' : 'chevron-left'}

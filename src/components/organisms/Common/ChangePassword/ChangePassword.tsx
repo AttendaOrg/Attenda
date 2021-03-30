@@ -145,11 +145,16 @@ const ChangePassword: React.FC<ChangePasswordPops> = ({
         textContentType={showPassword ? 'none' : 'password'}
         secureTextEntry={!showPassword}
         rightIcon={() => (
-          <IconButton
-            icon={showPassword ? 'eye' : 'eye-off'}
-            onPress={() => setShowPassword(!showPassword)}
+          <PasswordShowSwitcher
+            show={showPassword}
+            onChange={() => setShowPassword(!showPassword)}
           />
         )}
+        rightIconContainerStyle={{
+          marginHorizontal: 0,
+          marginVertical: 0,
+          margin: 0,
+        }}
       />
       <View style={styles.buttonContainer}>
         <Button

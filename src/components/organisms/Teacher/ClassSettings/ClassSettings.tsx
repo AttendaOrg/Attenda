@@ -7,7 +7,8 @@ import {
   Switch,
   Platform,
 } from 'react-native';
-import { Input, Icon } from 'react-native-elements';
+import { Input } from 'react-native-elements';
+import { IconButton } from 'react-native-paper';
 // import { ScrollView } from 'react-native-gesture-handler';
 import { inputContainerStyle } from '../../../../util/Styles';
 
@@ -30,6 +31,7 @@ const styles = StyleSheet.create({
     // flex: 1,
     flexDirection: 'row',
     justifyContent: 'space-between',
+    alignItems: 'center',
     marginVertical: 5,
     marginEnd: 8,
   },
@@ -154,18 +156,20 @@ const ClassSettings: React.FC<ClassSettingsPops> = ({
           </Text>
         </View>
 
-        <Icon
-          name="edit"
-          type="material"
+        <IconButton
+          icon="pencil"
           color="#2196F3"
+          style={{ margin: 0 }}
           onPress={onEditClassCodeClick}
+          disabled={!isShareOptionEnabled}
         />
         <View style={{ width: 8 }} />
-        <Icon
-          name={shareIconName}
-          type="material"
+        <IconButton
+          icon={shareIconName}
           color="#2196F3"
+          style={{ margin: 0 }}
           onPress={onCodeShare}
+          disabled={!isShareOptionEnabled}
         />
       </View>
 
@@ -176,11 +180,12 @@ const ClassSettings: React.FC<ClassSettingsPops> = ({
             {link}
           </Text>
         </View>
-        <Icon
-          name={shareIconName}
-          type="material"
+        <IconButton
+          icon={shareIconName}
           color="#2196F3"
+          style={{ margin: 0 }}
           onPress={onLinkShare}
+          disabled={!isShareOptionEnabled}
         />
       </View>
     </ScrollView>

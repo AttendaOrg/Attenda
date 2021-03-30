@@ -15,6 +15,7 @@ const PasswordShowSwitcher: React.FC<Props> = ({
       style={{ margin: 0 }}
       icon={show ? 'eye' : 'eye-off'}
       onPress={onChange}
+      color="#6b6b6b"
     />
   );
 };
