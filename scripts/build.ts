@@ -7,7 +7,7 @@ import TeacherApi, { teacherApi } from '../src/api/TeacherApi';
 import { deleteCollections, initAdminSdkForTest } from '../src/api/util';
 import { base64Encode } from '../src/util';
 
-initAdminSdkForTest();
+initAdminSdkForTest(process.env.NODE_ENV === 'testing');
 
 const base64EncodeSvg = (data: string): string =>
   `data:image/svg+xml;base64,${base64Encode(data)}`;

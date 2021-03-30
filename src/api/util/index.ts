@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
+/* eslint-disable global-require */
 import * as admin from 'firebase-admin';
 import firebase from 'firebase';
 
@@ -58,13 +60,21 @@ export const deleteAllUser = async (): Promise<number> => {
   return newUsers.length;
 };
 
-export const initAdminSdkForTest = (): void => {
-  process.env.FIREBASE_AUTH_EMULATOR_HOST = 'localhost:9099';
-  process.env.FIRESTORE_EMULATOR_HOST = 'localhost:8080';
+export const initAdminSdkForTest = (dev = true): void => {
+  if (dev) {
+    process.env.FIREBASE_AUTH_EMULATOR_HOST = 'localhost:9099';
+    process.env.FIRESTORE_EMULATOR_HOST = 'localhost:8080';
+    admin.initializeApp({
+      projectId: 'attenda-6c9ad',
+    });
+  } else {
+    const serviceAccount = require('../../../google.json');
 
-  admin.initializeApp({
-    projectId: 'attenda-6c9ad',
-  });
+    admin.initializeApp({
+      credential: admin.credential.cert(serviceAccount),
+      databaseURL: 'https://attenda-6c9ad-default-rtdb.firebaseio.com',
+    });
+  }
 };
 
 export default {};

@@ -1,6 +1,7 @@
 import React, { useMemo, useState } from 'react';
-import { Image, Text, View, TouchableOpacity } from 'react-native';
+import { Text, View, TouchableOpacity } from 'react-native';
 import { IconButton } from 'react-native-paper';
+import IconSelectBtn from '../../atoms/IconSelectBtn/IconSelectBtn';
 import Shimmer from '../../atoms/Shimmer/Shimmer';
 import ClassCardActionBtn from './ClassCardActionBtn';
 import { classCardStyles, CommonClassCardData } from './TeacherClassCard';
@@ -115,10 +116,11 @@ const StudentClassCard: React.FC<StudentClassCardProps> = ({
           onPress={() => setIsOpened(!isOpened)}
         />
         <View style={classCardStyles.infoContainer}>
-          <Image
-            // eslint-disable-next-line global-require
-            source={data.classIcon ?? require('../../../../assets/icon.png')}
-            style={{ height: 50, width: 50 }}
+          <IconSelectBtn
+            plainIcon
+            source={data.classIcon}
+            onChange={() => null}
+            selected={false}
           />
           {body}
         </View>

@@ -35,7 +35,7 @@ const JoinClassFinalPage: React.FC<Props> = ({
     params: { classCode, rollNo },
   } = route;
   const globalContext = useContext(GlobalContext);
-  const [accInfo, setAccInfo] = useState<TeacherClassModel>(null);
+  const [accInfo, setAccInfo] = useState<TeacherClassModel | null>(null);
 
   useEffect(() => {
     (async () => {
@@ -51,7 +51,7 @@ const JoinClassFinalPage: React.FC<Props> = ({
   }, []);
 
   const joinClass = async () => {
-    const { classId } = accInfo;
+    const classId = accInfo?.classId ?? null;
 
     if (classId !== null && classId !== '') {
       globalContext.changeSpinnerLoading(true);
@@ -68,7 +68,7 @@ const JoinClassFinalPage: React.FC<Props> = ({
       section={accInfo?.section ?? ''}
       teacher={accInfo?.teacherName ?? ''}
       onDone={joinClass}
-      disableJoin={!accInfo?.isActiveInvite ?? true}
+      disableJoin={!(accInfo?.isActiveInvite ?? true)}
     />
   );
 };
