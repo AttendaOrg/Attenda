@@ -80,7 +80,9 @@ const ChooseRole: React.FC<ChooseRolePops> = ({
 
   return (
     <View style={styles.container}>
-      <ChooseRoleImageComponent style={styles.largeImage} />
+      <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+        <ChooseRoleImageComponent style={styles.largeImage} />
+      </View>
 
       <View style={styles.footerContainer}>
         <Text style={styles.headlineText}>Choose Your Role</Text>

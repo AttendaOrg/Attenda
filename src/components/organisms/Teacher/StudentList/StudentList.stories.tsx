@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Platform } from 'react-native';
-import { boolean, withKnobs } from '@storybook/addon-knobs';
+import { boolean, number, withKnobs } from '@storybook/addon-knobs';
 import { storiesOf } from '@storybook/react-native';
 import { action } from '@storybook/addon-actions';
 import CenterView from '../../../atoms/CenterView';
@@ -34,6 +34,8 @@ const globalListItems: StudentListData[] = [
 // Default For Web And android Component
 export const Default = (): JSX.Element => (
   <StudentList
+    showShimmer={boolean('showShimmer', false)}
+    preloadStudentCount={number('preloadStudentCount', 0)}
     studentList={globalListItems}
     showChecked={boolean('showChecked', false)}
     onChangeShowChecked={active => action('onChangeShowChecked')(active)}

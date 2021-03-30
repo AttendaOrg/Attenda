@@ -71,7 +71,16 @@ const TeacherClassList: React.FC<TeacherClassListPops> = ({
             onPress={() => onClassClick(item)}
           />
         )}
+        ListFooterComponent={
+          <View
+            style={{
+              height: 95,
+              width: '100%',
+            }}
+          />
+        }
       />
+
       <FAB style={styles.fab} icon="plus" color="#fff" onPress={onFabClick} />
     </View>
   );

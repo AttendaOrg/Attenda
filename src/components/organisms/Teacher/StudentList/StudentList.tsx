@@ -44,7 +44,7 @@ const StudentList: React.FC<StudentListPops> = ({
     return (
       <View style={styles.container}>
         <FlatList
-          data={new Array(preloadStudentCount)
+          data={new Array(preloadStudentCount || 5)
             .fill(preloadStudentCount)
             .map((_, i) => ({
               key: `shimmer-${i}`,
