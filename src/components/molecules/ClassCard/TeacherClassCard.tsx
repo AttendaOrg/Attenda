@@ -7,8 +7,9 @@ import {
   StyleSheet,
   ImageSourcePropType,
 } from 'react-native';
-import { IconButton, Button } from 'react-native-paper';
+import { IconButton } from 'react-native-paper';
 import Shimmer from '../../atoms/Shimmer/Shimmer';
+import ClassCardActionBtn from './ClassCardActionBtn';
 
 export const classCardStyles = StyleSheet.create({
   container: {
@@ -22,6 +23,7 @@ export const classCardStyles = StyleSheet.create({
     elevation: 0,
     borderRadius: 8,
     padding: 16,
+    paddingBottom: 10,
   },
   icon: {
     position: 'absolute',
@@ -31,6 +33,7 @@ export const classCardStyles = StyleSheet.create({
   },
   infoContainer: {
     flexDirection: 'row',
+    alignItems: 'center',
   },
   textInfoContainer: {
     flex: 1,
@@ -38,8 +41,11 @@ export const classCardStyles = StyleSheet.create({
     marginRight: 34,
   },
   className: {
-    fontSize: 14,
+    fontSize: 16,
     fontWeight: 'bold',
+  },
+  txt: {
+    paddingBottom: 4,
   },
   divider: {
     borderTopColor: '#ddd',
@@ -84,6 +90,7 @@ export interface TeacherClassCardProps {
   onPress: () => void;
   showShimmer?: boolean;
 }
+
 export const TeacherClassCard: React.FC<TeacherClassCardProps> = ({
   data,
   onAction = () => null,
@@ -95,54 +102,62 @@ export const TeacherClassCard: React.FC<TeacherClassCardProps> = ({
   const body = useMemo<JSX.Element>(
     () => (
       <View style={classCardStyles.textInfoContainer}>
-        <Text style={classCardStyles.className}>{data.title}</Text>
-        <Text>{data.section}</Text>
-        <Text>Code: {data.classCode}</Text>
-        <Text>{data.totalStudent ?? 0} Students</Text>
-        <Text style={classCardStyles.liveText}>
+        <Text
+          numberOfLines={1}
+          style={[classCardStyles.className, classCardStyles.txt]}
+        >
+          {data.title}
+        </Text>
+        <Text style={classCardStyles.txt}>{data.section}</Text>
+        {isOpened && (
+          <>
+            <Text style={classCardStyles.txt}>Code: {data.classCode}</Text>
+            <Text style={classCardStyles.txt}>
+              {data.totalStudent ?? 0} Students
+            </Text>
+          </>
+        )}
+        {data.isLive && <View style={{ height: 8 }} />}
+        <Text style={[classCardStyles.liveText, classCardStyles.txt]}>
           {data.isLive && 'Attendance session is live'}
         </Text>
       </View>
     ),
-    [data.classCode, data.isLive, data.section, data.title, data.totalStudent],
+    [
+      isOpened,
+      data.title,
+      data.isLive,
+      data.section,
+      data.classCode,
+      data.totalStudent,
+    ],
   );
 
   const actionBody = useMemo<JSX.Element>(
     () => (
       <>
         <View style={classCardStyles.divider} />
-        <Button
-          contentStyle={classCardStyles.btnStyle}
-          mode="text"
+        <ClassCardActionBtn
           onPress={() => onAction(TeacherClassAction.ATTENDANCE_RECORD)}
-          uppercase={false}
         >
           Attendance Record
-        </Button>
-        <Button
-          contentStyle={classCardStyles.btnStyle}
-          mode="text"
+        </ClassCardActionBtn>
+
+        <ClassCardActionBtn
           onPress={() => onAction(TeacherClassAction.STUDENTS)}
-          uppercase={false}
         >
           Students
-        </Button>
-        <Button
-          contentStyle={classCardStyles.btnStyle}
-          mode="text"
+        </ClassCardActionBtn>
+        <ClassCardActionBtn
           onPress={() => onAction(TeacherClassAction.SETTINGS)}
-          uppercase={false}
         >
           Settings
-        </Button>
-        <Button
-          contentStyle={classCardStyles.btnStyle}
-          mode="text"
+        </ClassCardActionBtn>
+        <ClassCardActionBtn
           onPress={() => onAction(TeacherClassAction.SHARE_INVITE_LINK)}
-          uppercase={false}
         >
           Share invite link
-        </Button>
+        </ClassCardActionBtn>
       </>
     ),
     [onAction],
@@ -152,14 +167,13 @@ export const TeacherClassCard: React.FC<TeacherClassCardProps> = ({
     <Shimmer width="100%" height={98} />
   ) : (
     <TouchableOpacity
-      delayLongPress={0}
       onPress={onPress}
       onLongPress={() => setIsOpened(!isOpened)}
     >
       <View style={classCardStyles.container}>
         <IconButton
           size={28}
-          icon={isOpened ? 'chevron-down' : 'chevron-right'}
+          icon={isOpened ? 'chevron-down' : 'chevron-left'}
           style={classCardStyles.icon}
           onPress={() => setIsOpened(!isOpened)}
         />

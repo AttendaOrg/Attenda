@@ -1,7 +1,8 @@
 import React, { useMemo, useState } from 'react';
 import { Image, Text, View, TouchableOpacity } from 'react-native';
-import { IconButton, Button } from 'react-native-paper';
+import { IconButton } from 'react-native-paper';
 import Shimmer from '../../atoms/Shimmer/Shimmer';
+import ClassCardActionBtn from './ClassCardActionBtn';
 import { classCardStyles, CommonClassCardData } from './TeacherClassCard';
 
 export enum StudentClassAction {
@@ -33,16 +34,25 @@ const StudentClassCard: React.FC<StudentClassCardProps> = ({
   const body = useMemo<JSX.Element>(
     () => (
       <View style={classCardStyles.textInfoContainer}>
-        <Text style={classCardStyles.className}>{data.title}</Text>
-        <Text>{data.section}</Text>
-        <Text>By: {data.teacherName}</Text>
-        <Text>Your Attendance: {data.totalAttendancePercentage}%</Text>
         <Text
-          style={[
-            classCardStyles.liveText,
-            data.alreadyGiven && classCardStyles.attendanceGiven,
-          ]}
+          numberOfLines={1}
+          style={[classCardStyles.className, classCardStyles.txt]}
         >
+          {data.title}
+        </Text>
+        <Text style={classCardStyles.txt}>{data.section}</Text>
+
+        {isOpened && (
+          <>
+            <Text style={classCardStyles.txt}>By: {data.teacherName}</Text>
+            <Text style={classCardStyles.txt}>
+              Your Attendance: {data.totalAttendancePercentage}%
+            </Text>
+          </>
+        )}
+
+        {data.isLive && <View style={{ height: 8 }} />}
+        <Text style={[classCardStyles.liveText, classCardStyles.txt]}>
           {data.isLive &&
             (data.alreadyGiven
               ? 'You have already responded'
@@ -51,12 +61,13 @@ const StudentClassCard: React.FC<StudentClassCardProps> = ({
       </View>
     ),
     [
+      isOpened,
       data.title,
+      data.isLive,
       data.section,
       data.teacherName,
-      data.totalAttendancePercentage,
-      data.isLive,
       data.alreadyGiven,
+      data.totalAttendancePercentage,
     ],
   );
 
@@ -64,22 +75,16 @@ const StudentClassCard: React.FC<StudentClassCardProps> = ({
     () => (
       <>
         <View style={classCardStyles.divider} />
-        <Button
-          contentStyle={classCardStyles.btnStyle}
-          mode="text"
+        <ClassCardActionBtn
           onPress={() => onAction(StudentClassAction.ATTENDANCE_RECORD)}
-          uppercase={false}
         >
           Attendance Record
-        </Button>
-        <Button
-          contentStyle={classCardStyles.btnStyle}
-          mode="text"
+        </ClassCardActionBtn>
+        <ClassCardActionBtn
           onPress={() => onAction(StudentClassAction.UN_ENROLL)}
-          uppercase={false}
         >
           Un Enroll
-        </Button>
+        </ClassCardActionBtn>
       </>
     ),
     [onAction],
@@ -95,7 +100,7 @@ const StudentClassCard: React.FC<StudentClassCardProps> = ({
       <View style={classCardStyles.container}>
         <IconButton
           size={28}
-          icon={isOpened ? 'chevron-down' : 'chevron-right'}
+          icon={isOpened ? 'chevron-down' : 'chevron-left'}
           style={classCardStyles.icon}
           onPress={() => setIsOpened(!isOpened)}
         />
