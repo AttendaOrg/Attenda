@@ -192,26 +192,32 @@ const AttendanceRecordStudentListTab: React.FC<AttendanceRecordStudentListTabPro
   sortBy,
 }) => {
   const [studentList, setStudentList] = useState<StudentListData[]>([]);
+  const [showLoading, setShowLoading] = useState(false);
   const {
     params: { classId },
   } = route;
 
   useEffect(() => {
     (async () => {
+      setShowLoading(true);
       const [list] = await teacherApi.getAllStudentList(classId);
 
-      if (list !== null)
+      if (list !== null) {
         setStudentList(
           applyStudentSort(
             list.map(convertStudentListToStudentListData),
             sortBy,
           ),
         );
+      }
+
+      setShowLoading(false);
     })();
   }, [classId, sortBy]);
 
   return (
     <AttendanceRecordStudentList
+      showShimmer={showLoading}
       studentList={studentList}
       onProfileClick={(studentId: string) =>
         navigation.push('EditStudentAttendanceRecord', {
