@@ -32,7 +32,10 @@ const CreateClass: React.FC<CreateClassPops> = ({ onDone }): JSX.Element => {
 
   return (
     <View style={styles.container}>
-      <KeyboardAdjustImageView svgImg={CreateClassImageComponent} />
+      <KeyboardAdjustImageView
+        heightSensitive
+        svgImg={CreateClassImageComponent}
+      />
       <View>
         <Input
           value={title}

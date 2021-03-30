@@ -1,6 +1,13 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 import React, { useState } from 'react';
-import { Button, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import {
+  Button,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import { Input } from 'react-native-elements';
 import { inputContainerStyle } from '../../../../util/Styles';
 import DividerText from '../../../atoms/DividerText/DividerText';
@@ -9,6 +16,7 @@ import PasswordShowSwitcher from '../../../atoms/PasswordShowSwitcher/PasswordSh
 import OauthProvider, {
   OauthProviderProps,
 } from '../../../molecules/OauthProvider/OauthProvider';
+import { isSmallDevice } from '../../../templates';
 import KeyboardAdjustImageView from '../../../templates/KeyboardAdjustImageView';
 
 const styles = StyleSheet.create({
@@ -72,9 +80,7 @@ const SignIn: React.FC<SignInPops> = ({
 
   return (
     <View style={styles.container}>
-      {/* <View style={{ marginTop: 20 }}> */}
-      <KeyboardAdjustImageView svgImg={SignInImageComponent} />
-      {/* </View> */}
+      <KeyboardAdjustImageView svgImg={SignInImageComponent} heightSensitive />
 
       <View style={styles.signInContainer}>
         <Text style={styles.signInText}>Sign In</Text>
@@ -156,6 +162,7 @@ const SignIn: React.FC<SignInPops> = ({
           </Text>
         </TouchableOpacity>
       </View>
+      <View style={{ height: 10 }} />
     </View>
   );
 };

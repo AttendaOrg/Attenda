@@ -136,7 +136,7 @@ const SignUp: React.FC<SignUpPops> = ({
 
   return (
     <View style={styles.container}>
-      <KeyboardAdjustImageView svgImg={SignUpImageComponent} />
+      <KeyboardAdjustImageView svgImg={SignUpImageComponent} heightSensitive />
 
       <View style={styles.signUpContainer}>
         <Text style={styles.signUpText}>Sign Up</Text>
