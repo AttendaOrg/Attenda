@@ -436,12 +436,27 @@ export default class StudentApi extends AuthApi implements StudentApiInterface {
       .where('studentId', '==', userId)
       .where('sessionId', '==', sessionId)
       .where('classId', '==', classId)
-      .where('present', '==', true)
       .get();
 
-    if (queryPresentGiven.docs.length === 0) {
-      // there is no attendance record for the session insert an record
-      // or don't do anything because the student doesn't have the permission to update the field
+    // because we are adding default user on every class start
+    if (queryPresentGiven.docs.length === 1) {
+      // we found a document
+      const [userData] = queryPresentGiven.docs;
+      const q = (userData.data() as unknown) as SessionStudentInterface;
+      const studentUser = new SessionStudentModel(q);
+
+      if (studentUser.present === false) {
+        await userData.ref.update(
+          SessionStudentModel.Update({
+            present: true,
+          }),
+        );
+      } else {
+        return this.error(BasicErrors.ALREADY_PRESENT_GIVEN);
+      }
+    } else {
+      // for some reason there is no document
+      // just add a document
       await firebase
         .firestore()
         .collection(TeacherApi.CLASSES_SESSIONS_STUDENT_COLLECTION_NAME)
@@ -457,9 +472,29 @@ export default class StudentApi extends AuthApi implements StudentApiInterface {
             studentName: displayName,
           }).toJson(),
         );
-    } else {
-      return this.error(BasicErrors.ALREADY_PRESENT_GIVEN);
     }
+
+    // if (queryPresentGiven.docs.length === 0) {
+    //   // there is no attendance record for the session insert an record
+    //   // or don't do anything because the student doesn't have the permission to update the field
+    //   await firebase
+    //     .firestore()
+    //     .collection(TeacherApi.CLASSES_SESSIONS_STUDENT_COLLECTION_NAME)
+    //     .add(
+    //       new SessionStudentModel({
+    //         whom: UserRole.STUDENT,
+    //         studentId: userId,
+    //         sessionTime: new Date(),
+    //         present: true,
+    //         lastUpdateTime: new Date(),
+    //         sessionId,
+    //         classId,
+    //         studentName: displayName,
+    //       }).toJson(),
+    //     );
+    // } else {
+    //   return this.error(BasicErrors.ALREADY_PRESENT_GIVEN);
+    // }
 
     return this.success(true);
     // throw new Error('Method not implemented.');

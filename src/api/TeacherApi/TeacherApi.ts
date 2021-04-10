@@ -880,7 +880,28 @@ export default class TeacherApi extends AuthApi implements TeacherApiInterface {
           }),
         );
 
-      await this.getAllStudentList(classId);
+      const batch = firebase.firestore().batch();
+      const [students] = await this.getAllStudentList(classId);
+
+      students?.forEach(student => {
+        const ref = firebase
+          .firestore()
+          .collection(TeacherApi.CLASSES_SESSIONS_STUDENT_COLLECTION_NAME)
+          .doc();
+
+        const data = new SessionStudentModel({
+          classId,
+          sessionId,
+          studentId: student.studentId ?? '',
+          studentName: student.studentName,
+          whom: UserRole.TEACHER,
+          present: false,
+        }).toJson();
+
+        batch.set(ref, data);
+      });
+
+      await batch.commit();
 
       // if (students !== null)
       // QUESTION: do we need to pre-populate session student table ?
