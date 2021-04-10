@@ -115,6 +115,50 @@ class AuthApi extends BaseApi implements AuthApiInterface {
     return firebase.auth().currentUser?.uid ?? null;
   };
 
+  getGooglePhotoUrl = (): string | null => {
+    let photoUrl: string | null = null;
+
+    firebase.auth().currentUser?.providerData.forEach(data => {
+      if (typeof data?.photoURL === 'string') photoUrl = data?.photoURL;
+    });
+
+    return photoUrl;
+  };
+
+  getFbPhotoUrl = (accessToken: string): string | null => {
+    let photoUrl: string | null = null;
+
+    firebase.auth().currentUser?.providerData.forEach(data => {
+      if (typeof data?.photoURL === 'string')
+        photoUrl = `${data?.photoURL}?access_token=${accessToken}&type=large`;
+    });
+
+    return photoUrl;
+  };
+
+  uploadImageToStorage = (url: string | null): void => {
+    if (typeof url === 'string') {
+      const f = AuthApi.getProfilePicRef();
+
+      console.log(url);
+
+      if (typeof url === 'string') {
+        fetch(url)
+          .then(res => res.blob())
+          .then(blob => {
+            console.log('[*] uploading file');
+
+            f.put(blob);
+          })
+          .then(() => {
+            console.log('[*] done');
+          });
+      }
+    } else {
+      console.log('invalid url');
+    }
+  };
+
   getUserDisplayName = (): string | null => {
     return firebase.auth().currentUser?.displayName ?? null;
   };

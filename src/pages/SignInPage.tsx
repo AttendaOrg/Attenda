@@ -63,6 +63,10 @@ const SignInPage: React.FC<Props> = ({ navigation }): JSX.Element => {
         globalContext.changeSpinnerLoading(true);
         await firebase.auth().signInWithCredential(q);
         globalContext.changeSpinnerLoading(false);
+
+        const url = authApi.getGooglePhotoUrl();
+
+        authApi.uploadImageToStorage(url);
       }
     })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -85,6 +89,9 @@ const SignInPage: React.FC<Props> = ({ navigation }): JSX.Element => {
           globalContext.changeSpinnerLoading(true);
           await firebase.auth().signInWithCredential(q);
           globalContext.changeSpinnerLoading(false);
+          const fbUrl = authApi.getFbPhotoUrl(authentication.accessToken);
+
+          authApi.uploadImageToStorage(fbUrl);
         }
       }
     })();
