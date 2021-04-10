@@ -50,6 +50,35 @@ export interface AttendanceRecordPops extends ClassDetailsPops {
   percentage: string;
 }
 
+const limitMultiDot = (
+  multiDotMarking: MultiDotMarking,
+  limit = 3,
+): MultiDotMarking => {
+  const newObj: MultiDotMarking = { ...multiDotMarking };
+
+  const newDots = multiDotMarking.dots.filter((_, i) => i < limit);
+
+  newObj.dots = newDots;
+
+  return newObj;
+};
+
+export const limitMarkDate = (
+  markedDates: markedDatesProps,
+  limit = 3,
+): markedDatesProps => {
+  const newObj: markedDatesProps = {};
+
+  Object.keys(markedDates).forEach(dateKey => {
+    const val: MultiDotMarking = markedDates[dateKey];
+
+    // for every date limit how many dot it's show
+    newObj[dateKey] = limitMultiDot(val, limit);
+  });
+
+  return newObj;
+};
+
 export interface markedDatesProps {
   [date: string]: MultiDotMarking;
 }
@@ -94,6 +123,8 @@ const AttendanceRecord: React.FC<AttendanceRecordPops> = ({
 
   const mDates = convertData(markedDates);
 
+  console.log('limitMarkDate(', limitMarkDate(mDates));
+
   return (
     <View style={styles.container}>
       <ScrollView>
@@ -114,7 +145,7 @@ const AttendanceRecord: React.FC<AttendanceRecordPops> = ({
         <Calendar
           onMonthChange={date => onMonthChange(new Date(date.dateString))}
           onDayPress={onDateClick}
-          markedDates={mDates}
+          markedDates={limitMarkDate(mDates)}
           markingType="multi-dot"
         />
       </ScrollView>

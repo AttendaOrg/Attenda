@@ -10,6 +10,7 @@ import {
   absentDot,
   presentDot,
   markedDatesProps,
+  limitMarkDate,
 } from '../../Student/AttendanceRecord';
 
 const styles = StyleSheet.create({
@@ -101,7 +102,7 @@ const EditStudentAttendanceRecord: React.FC<EditStudentAttendanceRecordPops> = (
         <Calendar
           onMonthChange={date => onMonthChange(new Date(date.dateString))}
           onDayPress={onDateClick}
-          markedDates={mDates}
+          markedDates={limitMarkDate(mDates)}
           markingType="multi-dot"
         />
       </ScrollView>

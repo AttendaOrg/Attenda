@@ -12,6 +12,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 16,
+    paddingTop: 26,
     backgroundColor: '#fff',
   },
   signUpContainer: {
@@ -38,6 +39,10 @@ const styles = StyleSheet.create({
   },
   goBackContainer: {
     justifyContent: 'flex-end',
+    padding: 10,
+    marginTop: 8,
+    textAlign: 'center',
+    alignItems: 'center',
     flex: 1,
   },
   linkText: {
@@ -237,14 +242,7 @@ const SignUp: React.FC<SignUpPops> = ({
       </View>
       <View style={styles.goBackContainer}>
         <TouchableOpacity onPress={onSignInClick}>
-          <Text
-            style={{
-              margin: 10,
-              textAlign: 'center',
-            }}
-          >
-            Already have account? Sign in
-          </Text>
+          <Text>Already have account? Sign in</Text>
         </TouchableOpacity>
       </View>
     </View>

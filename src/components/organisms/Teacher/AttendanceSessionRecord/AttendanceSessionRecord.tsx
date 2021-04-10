@@ -10,7 +10,7 @@ import {
 import { lightColor } from '../../../../util/Colors';
 import ClassDetails from '../../../molecules/ClassDetails';
 import SelectTimeEditPopup from '../../../molecules/SelectTimeEditPopup';
-import { MarkedDates } from '../../Student/AttendanceRecord';
+import { limitMarkDate, MarkedDates } from '../../Student/AttendanceRecord';
 import { convertData } from '../EditStudentAttendanceRecord';
 
 const styles = StyleSheet.create({
@@ -71,7 +71,7 @@ const AttendanceSessionRecord: React.FC<AttendanceSessionRecordPops> = ({
         <Calendar
           onMonthChange={date => onMonthChange(new Date(date.dateString))}
           onDayPress={onDateClick}
-          markedDates={mDates}
+          markedDates={limitMarkDate(mDates)}
           markingType="multi-dot"
         />
       </ScrollView>
