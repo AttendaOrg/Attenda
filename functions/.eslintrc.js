@@ -21,7 +21,7 @@ module.exports = {
   ],
   plugins: ["@typescript-eslint", "import", "prettier"],
   rules: {
-    quotes: ["error", "double"],
-
+    "quotes": ["error", "double"],
+    "object-curly-spacing": ["waring"],
   },
 };
