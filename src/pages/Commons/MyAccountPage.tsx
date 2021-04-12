@@ -93,16 +93,6 @@ class MyAccountPage extends React.Component<Props, State> {
     }
   };
 
-  uploadImage = async (uri: string): Promise<void> => {
-    const response = await fetch(uri);
-    const blob = await response.blob();
-
-    // Create a Storage Ref w/ username
-    const storageRef = AuthApi.getProfilePicRef();
-
-    storageRef.put(blob);
-  };
-
   setProfilePic = (uri: string): void => {
     const {
       state: { info },
@@ -140,7 +130,7 @@ class MyAccountPage extends React.Component<Props, State> {
       this.setProfilePic(imageUri);
       // Upload file
       // TODO: show a progress
-      await this.uploadImage(image.uri);
+      await AuthApi.uploadProfileImage(image.uri);
     }
   };
 
@@ -160,7 +150,7 @@ class MyAccountPage extends React.Component<Props, State> {
     }
 
     try {
-      const url = await AuthApi.getProfilePicRef().getDownloadURL();
+      const url = authApi.getMyProfilePic();
 
       this.setProfilePic(url);
     } catch (e) {
@@ -173,6 +163,7 @@ class MyAccountPage extends React.Component<Props, State> {
     const { context } = this;
 
     context.changeSpinnerLoading(true);
+    context.changeProfilePic();
     await authApi.logOut();
   };
 

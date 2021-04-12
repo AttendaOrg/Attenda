@@ -181,6 +181,7 @@ const convertStudentListToStudentListData = (
   name: model.studentName ?? '',
   rollNo: model.rollNo,
   percentage: `${model.totalAttendancePercentage.toFixed(1) ?? ''} %`,
+  profilePicUrl: model.profilePicUrl ?? undefined,
 });
 
 // using stack props for getting the navigation autocomplete

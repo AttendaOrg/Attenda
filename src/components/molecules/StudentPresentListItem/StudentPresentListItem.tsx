@@ -48,7 +48,7 @@ const StudentPresentListItem: React.FC<StudentPresentListItemPops> = ({
 }): JSX.Element => {
   const userProfileImage =
     avatar !== undefined ? (
-      <Image source={avatar} />
+      <Image source={avatar} style={{ borderRadius: 100 }} />
     ) : (
       <MaterialIcons name="account-circle" size={34} />
     );

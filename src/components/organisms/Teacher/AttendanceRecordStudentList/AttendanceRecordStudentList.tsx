@@ -46,6 +46,7 @@ const AttendanceRecordStudentList: React.FC<AttendanceRecordStudentListPops> = (
         data={studentList}
         renderItem={data => (
           <StudentListItem
+            avatar={{ height: 34, width: 34, uri: data.item.profilePicUrl }}
             onProfileClick={() => onProfileClick(data.item.key)}
             name={data.item.name}
             rollNo={data.item.rollNo}

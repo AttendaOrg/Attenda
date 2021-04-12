@@ -106,7 +106,7 @@ const EditStudentAttendanceRecordPage: React.FC<Props> = ({
         name: studentInfo?.studentName ?? '', // get the name form api
         onRollChange, // TODO: update roll no
         rollNo: studentInfo?.rollNo ?? '',
-        userImage: imageSrc, // TODO: get the profile pic from api
+        userImage: studentInfo?.profilePicUrl ?? imageSrc, // TODO: get the profile pic from api
       }}
       percentage={`${studentInfo?.totalAttendancePercentage.toFixed(1) ?? 0} %`}
       markedDates={convertSessionStudentModelToMarkedDates(reports)}

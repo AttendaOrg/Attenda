@@ -52,7 +52,7 @@ const StudentListItem: React.FC<StudentListPops> = ({
 }): JSX.Element => {
   const userProfileImage =
     avatar !== undefined ? (
-      <Image source={avatar} />
+      <Image style={{ borderRadius: 100 }} source={avatar} />
     ) : (
       <MaterialIcons name="account-circle" size={34} />
     );

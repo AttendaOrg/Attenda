@@ -351,6 +351,7 @@ class AuthApi extends BaseApi implements AuthApiInterface {
 
       const email = firebase.auth().currentUser?.email ?? '';
       const name = firebase.auth().currentUser?.displayName ?? '';
+      const profilePicUrl = firebase.auth().currentUser?.photoURL ?? '';
 
       const doc = await firebase
         .firestore()
@@ -365,7 +366,12 @@ class AuthApi extends BaseApi implements AuthApiInterface {
 
       const accountInfoData = (doc.data() as unknown) as AccountInfoProps;
 
-      const info = new AccountInfo({ ...accountInfoData, email, name });
+      const info = new AccountInfo({
+        ...accountInfoData,
+        email,
+        name,
+        profilePicUrl,
+      });
 
       return this.success(info);
       // console.log('no login user');
@@ -468,13 +474,35 @@ class AuthApi extends BaseApi implements AuthApiInterface {
     }
   };
 
-  static getProfilePicRef = (): firebase.storage.Reference => {
+  static getProfilePicRef = (userId?: string): firebase.storage.Reference => {
     return firebase
       .storage()
       .ref()
       .child('public')
       .child('profiles')
-      .child(`${firebase.auth().currentUser?.uid}` ?? '');
+      .child(`${userId ?? firebase.auth().currentUser?.uid}` ?? '');
+  };
+
+  static uploadProfileImage = async (uri: string): Promise<void> => {
+    const response = await fetch(uri);
+    const blob = await response.blob();
+
+    // Create a Storage Ref w/ username
+    const storageRef = AuthApi.getProfilePicRef();
+
+    const task = storageRef.put(blob);
+
+    task.then(async e => {
+      const photoURL = await e.ref.getDownloadURL();
+
+      await firebase.auth().currentUser?.updateProfile({
+        photoURL,
+      });
+    });
+  };
+
+  getMyProfilePic = (): string => {
+    return firebase.auth().currentUser?.photoURL ?? '';
   };
 }
 

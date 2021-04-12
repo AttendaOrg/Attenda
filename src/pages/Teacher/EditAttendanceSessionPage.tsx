@@ -33,6 +33,7 @@ const transformClassStudentModelToDataProps = (
   name: data.studentName ?? '',
   present,
   rollNo: data.rollNo, // TODO: do we really need roll no
+  profilePicUrl: data.profilePicUrl ?? undefined,
 });
 
 const findSessionByStudentId = (

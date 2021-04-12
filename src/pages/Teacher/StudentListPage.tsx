@@ -37,13 +37,14 @@ export const StudentListNavigationOptions: OptionsProps = () => ({
 });
 
 const transform = (data: ClassStudentModel): StudentListData => {
-  const { studentId = '', rollNo, studentName } = data;
+  const { studentId = '', rollNo, studentName, profilePicUrl } = data;
 
   return {
     checked: false,
     key: studentId ?? '',
     name: studentName ?? '',
     rollNo,
+    profilePicUrl: profilePicUrl ?? undefined,
     // if we pass percentage it will not show the select
     // percentage: `${totalAttendancePercentage} %`,
   };

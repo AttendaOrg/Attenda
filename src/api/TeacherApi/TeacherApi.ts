@@ -896,6 +896,7 @@ export default class TeacherApi extends AuthApi implements TeacherApiInterface {
           studentName: student.studentName,
           whom: UserRole.TEACHER,
           present: false,
+          profilePicUrl: student.profilePicUrl,
         }).toJson();
 
         batch.set(ref, data);
@@ -1102,6 +1103,7 @@ export default class TeacherApi extends AuthApi implements TeacherApiInterface {
             studentId,
             studentName,
             present: false,
+            profilePicUrl: student.profilePicUrl,
           });
         });
 
@@ -1200,7 +1202,7 @@ export default class TeacherApi extends AuthApi implements TeacherApiInterface {
         .get();
 
       if (result.docs.length === 0) {
-        const studentName = await this.getStudentName(classId, studentId);
+        const [studentInfo] = await this.getStudentInfo(classId, studentId);
 
         // if there is no entry add an entry
         await firebase
@@ -1211,9 +1213,10 @@ export default class TeacherApi extends AuthApi implements TeacherApiInterface {
               classId,
               sessionId,
               studentId,
-              studentName,
+              studentName: studentInfo?.studentName ?? '',
               whom: UserRole.TEACHER,
               present: true,
+              profilePicUrl: studentInfo?.profilePicUrl,
             }).toJson(),
           );
       }

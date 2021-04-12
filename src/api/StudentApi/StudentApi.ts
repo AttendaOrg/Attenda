@@ -183,6 +183,7 @@ export default class StudentApi extends AuthApi implements StudentApiInterface {
     try {
       const userId = this.getUserUid();
       const displayName = this.getUserDisplayName();
+      const profilePicUrl = this.getMyProfilePic();
 
       if (userId === null)
         return this.error(BasicErrors.USER_NOT_AUTHENTICATED);
@@ -211,6 +212,7 @@ export default class StudentApi extends AuthApi implements StudentApiInterface {
         studentId: userId,
         totalAttendancePercentage: 0,
         studentName: displayName,
+        profilePicUrl,
       });
 
       await firebase

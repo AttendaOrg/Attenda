@@ -16,6 +16,7 @@ export interface SessionStudentListDataProps {
   name: string;
   rollNo: string;
   present: boolean;
+  profilePicUrl?: string;
 }
 
 export interface EditAttendanceSessionPops {
@@ -34,6 +35,7 @@ const EditAttendanceSession: React.FC<EditAttendanceSessionPops> = ({
         renderItem={({ item }) => {
           return (
             <StudentPresentListItem
+              avatar={{ uri: item.profilePicUrl, height: 34, width: 34 }}
               name={item.name}
               rollNo={item.rollNo}
               present={item.present}

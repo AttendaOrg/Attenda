@@ -5,8 +5,8 @@ const DEFAULT_HOST: string =
   process.env.NODE_ENV === 'testing'
     ? 'localhost'
     : process.env.REACT_NATIVE_FIREBASE_EMULATOR_HOST ?? 'localhost';
-const defaultUseEmulator =
-  process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'testing';
+const defaultUseEmulator = false;
+// process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'testing';
 
 export interface BaseApiOptions {
   /**

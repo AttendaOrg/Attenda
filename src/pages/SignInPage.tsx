@@ -12,7 +12,7 @@ import firebase from 'firebase';
 import { RootStackParamList } from '../App';
 import SignIn from '../components/organisms/AppIntro/SignIn';
 import { NoHeaderNavigationOptions } from '../components/templates/SimpleCloseNavigationOption';
-import { authApi } from '../api/AuthApi';
+import AuthApi, { authApi } from '../api/AuthApi';
 import { BasicErrors } from '../api/BaseApi';
 import SingleButtonPopup from '../components/molecules/SingleButtonPopup';
 import GlobalContext, { GlobalContextType } from '../context/GlobalContext';
@@ -66,7 +66,7 @@ const SignInPage: React.FC<Props> = ({ navigation }): JSX.Element => {
 
         const url = authApi.getGooglePhotoUrl();
 
-        authApi.uploadImageToStorage(url);
+        if (typeof url === 'string') AuthApi.uploadProfileImage(url);
       }
     })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -91,7 +91,7 @@ const SignInPage: React.FC<Props> = ({ navigation }): JSX.Element => {
           globalContext.changeSpinnerLoading(false);
           const fbUrl = authApi.getFbPhotoUrl(authentication.accessToken);
 
-          authApi.uploadImageToStorage(fbUrl);
+          if (typeof fbUrl === 'string') AuthApi.uploadProfileImage(fbUrl);
         }
       }
     })();
