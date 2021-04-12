@@ -1,4 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
+import { ImageSourcePropType } from 'react-native';
 import {
   StackNavigationOptions,
   StackScreenProps,
@@ -9,7 +10,7 @@ import { SimpleHeaderBackNavigationOptions } from '../../components/templates/Si
 import { teacherApi } from '../../api/TeacherApi';
 import SessionStudentModel from '../../api/TeacherApi/model/SessionStudentModel';
 import { MarkedDates } from '../../components/organisms/Student/AttendanceRecord';
-import { convertDateFormat, convertTime, matchDate } from '../../util';
+import { convertDateFormat, convertTime } from '../../util';
 import ClassStudentModel from '../../api/TeacherApi/model/ClassStudentModel';
 import GlobalContext from '../../context/GlobalContext';
 
@@ -100,13 +101,19 @@ const EditStudentAttendanceRecordPage: React.FC<Props> = ({
     await teacherApi.changeStudentRollNo(classId, studentId, newRollNo);
   };
 
+  const userImage: ImageSourcePropType =
+    studentInfo?.profilePicUrl !== undefined ||
+    studentInfo?.profilePicUrl !== null
+      ? { uri: studentInfo?.profilePicUrl }
+      : imageSrc;
+
   return (
     <EditStudentAttendanceRecord
       userInfo={{
         name: studentInfo?.studentName ?? '', // get the name form api
         onRollChange, // TODO: update roll no
         rollNo: studentInfo?.rollNo ?? '',
-        userImage: studentInfo?.profilePicUrl ?? imageSrc, // TODO: get the profile pic from api
+        userImage,
       }}
       percentage={`${studentInfo?.totalAttendancePercentage.toFixed(1) ?? 0} %`}
       markedDates={convertSessionStudentModelToMarkedDates(reports)}
