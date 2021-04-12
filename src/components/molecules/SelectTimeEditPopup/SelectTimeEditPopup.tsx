@@ -1,5 +1,11 @@
 import React from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import {
+  FlatList,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import { MarkTime } from '../../organisms/Student/AttendanceRecord';
 
 const styles = StyleSheet.create({
@@ -28,7 +34,6 @@ const styles = StyleSheet.create({
   },
   listContainer: {
     maxHeight: 200,
-    overflow: 'scroll',
   },
 });
 
@@ -63,7 +68,25 @@ const SelectTimeEditPopup: React.FC<SelectTimeEditPopupProps> = ({
       <View style={[styles.header]}>
         <Text style={styles.headerColor}>Select A Time ({date})</Text>
       </View>
-      <View style={styles.listContainer}>{body}</View>
+      <FlatList
+        style={styles.listContainer}
+        data={selectedDateTimes}
+        keyExtractor={e => Object.values(e)[0].sessionId}
+        renderItem={selectedTime => {
+          const [{ sessionId }] = Object.values(selectedTime.item);
+          const [time] = Object.keys(selectedTime.item);
+
+          return (
+            <TouchableOpacity
+              key={sessionId}
+              onPress={() => onSelectTime(sessionId)}
+              style={styles.row}
+            >
+              <Text style={styles.timeText}>{time}</Text>
+            </TouchableOpacity>
+          );
+        }}
+      />
     </View>
   );
 };

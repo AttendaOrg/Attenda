@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { Calendar, DateObject, MultiDotMarking } from 'react-native-calendars';
 import { Dialog } from 'react-native-paper';
-import { convertDateFormat } from '../../../../util';
+import { convertDate, convertDateFormat } from '../../../../util';
 import ClassDetails, {
   ClassDetailsPops,
 } from '../../../molecules/ClassDetails';
@@ -93,7 +93,7 @@ const convertData = (markedDates: MarkedDates = {}): MarkedDatesProps => {
       times.active
         ? // for some reason present key is duplicating
           { ...presentDot, key: `present-${markDateKey}-${Math.random()}` }
-        : absentDot,
+        : { ...absentDot, key: `absent-${markDateKey}-${Math.random()}` },
     );
 
     newDates[markDateKey] = { dots };
@@ -151,7 +151,7 @@ const AttendanceRecord: React.FC<AttendanceRecordPops> = ({
       </ScrollView>
       <Dialog visible={visible} onDismiss={() => setVisible(false)}>
         <UserPresent
-          date="2020-12-12"
+          date={convertDate(new Date(currentDate))}
           selectedDates={markedDates[currentDate] ?? {}}
         />
       </Dialog>

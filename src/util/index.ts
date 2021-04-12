@@ -33,7 +33,9 @@ export const padNumber = (num: number): string =>
  * @returns DD/MM/YYY
  */
 export const convertDate = (date: Date): string =>
-  `${padNumber(date.getDate())}/${date.getMonth() + 1}/${date.getFullYear()}`;
+  `${padNumber(date.getDate())}/${padNumber(
+    date.getMonth() + 1,
+  )}/${date.getFullYear()}`;
 
 export const isAm = (hour: number): boolean => hour < 12;
 

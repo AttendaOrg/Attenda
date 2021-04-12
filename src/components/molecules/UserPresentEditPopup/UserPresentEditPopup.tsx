@@ -1,5 +1,11 @@
 import React, { useState } from 'react';
-import { StyleSheet, TouchableOpacity, View, Text } from 'react-native';
+import {
+  StyleSheet,
+  TouchableOpacity,
+  View,
+  Text,
+  FlatList,
+} from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { lightColor } from '../../../util/Colors';
 import { MarkTime } from '../../organisms/Student/AttendanceRecord';
@@ -33,7 +39,6 @@ const styles = StyleSheet.create({
   },
   bodyContainer: {
     maxHeight: 200,
-    overflow: 'scroll',
   },
 });
 
@@ -94,31 +99,38 @@ const UserPresentEditPopup: React.FC<UserPresentEditPopupProps> = ({
         </TouchableOpacity>
       </View>
     ) : (
-      selectedDates.map(selectedDate => {
-        const [time, { active, sessionId }] = Object.entries(selectedDate)[0];
+      <FlatList
+        style={styles.bodyContainer}
+        data={selectedDates}
+        keyExtractor={e => Object.values(e)[0].sessionId}
+        renderItem={selectedDate => {
+          const [time, { active, sessionId }] = Object.entries(
+            selectedDate.item,
+          )[0];
 
-        return (
-          <TouchableOpacity
-            key={time}
-            onPress={() => setEditingSessionId(sessionId)}
-          >
-            <View style={styles.row}>
-              <Text>{time}</Text>
-              {active ? (
-                <MaterialIcons name="check" color="green" size={18} />
-              ) : (
-                <MaterialIcons name="cancel" color="red" size={18} />
-              )}
-            </View>
-          </TouchableOpacity>
-        );
-      })
+          return (
+            <TouchableOpacity
+              key={time}
+              onPress={() => setEditingSessionId(sessionId)}
+            >
+              <View style={styles.row}>
+                <Text>{time}</Text>
+                {active ? (
+                  <MaterialIcons name="check" color="green" size={18} />
+                ) : (
+                  <MaterialIcons name="cancel" color="red" size={18} />
+                )}
+              </View>
+            </TouchableOpacity>
+          );
+        }}
+      />
     );
 
   return (
     <View style={styles.container}>
       {title}
-      <View style={styles.bodyContainer}>{body}</View>
+      {body}
     </View>
   );
 };

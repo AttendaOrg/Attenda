@@ -1,5 +1,11 @@
 import React from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import {
+  FlatList,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { MarkTime } from '../../organisms/Student/AttendanceRecord';
 
@@ -19,7 +25,6 @@ const styles = StyleSheet.create({
   },
   bodyContainer: {
     maxHeight: 200,
-    overflow: 'scroll',
   },
 });
 
@@ -36,15 +41,18 @@ const UserPresent: React.FC<UserPresentPops> = ({
     <View style={styles.container}>
       <View
         style={[
-          { backgroundColor: '#985EFF', justifyContent: 'center', flex: 1 },
+          { backgroundColor: '#985EFF', justifyContent: 'center' },
           styles.row,
         ]}
       >
         <Text style={styles.headerColor}>Attendance Record ({date})</Text>
       </View>
-      <View style={styles.bodyContainer}>
-        {Object.entries(selectedDates).map(selectedDate => {
-          const [sDate, present] = selectedDate;
+      <FlatList
+        style={styles.bodyContainer}
+        data={Object.entries(selectedDates)}
+        keyExtractor={e => e[0]}
+        renderItem={selectedDate => {
+          const [sDate, present] = selectedDate.item;
 
           return (
             <TouchableOpacity key={sDate}>
@@ -58,8 +66,8 @@ const UserPresent: React.FC<UserPresentPops> = ({
               </View>
             </TouchableOpacity>
           );
-        })}
-      </View>
+        }}
+      />
     </View>
   );
 };
