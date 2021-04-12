@@ -9,7 +9,10 @@ import EditStudentAttendanceRecord from '../../components/organisms/Teacher/Edit
 import { SimpleHeaderBackNavigationOptions } from '../../components/templates/SimpleHeaderNavigationOptions';
 import { teacherApi } from '../../api/TeacherApi';
 import SessionStudentModel from '../../api/TeacherApi/model/SessionStudentModel';
-import { MarkedDates } from '../../components/organisms/Student/AttendanceRecord';
+import {
+  MarkedDates,
+  MarkTime,
+} from '../../components/organisms/Student/AttendanceRecord';
 import { convertDateFormat, convertTime } from '../../util';
 import ClassStudentModel from '../../api/TeacherApi/model/ClassStudentModel';
 import GlobalContext from '../../context/GlobalContext';
@@ -46,6 +49,26 @@ export const convertSessionStudentModelToMarkedDates = (
   });
 
   return markedData;
+};
+
+const limitMarkTime = (markedDates: MarkTime, limit = 3): MarkTime => {
+  const newMarkTime: MarkTime = {};
+
+  Object.keys(markedDates).forEach((time, i) => {
+    if (i < limit) newMarkTime[time] = markedDates[time];
+  });
+
+  return newMarkTime;
+};
+
+const limitMarkedDate = (markedDates: MarkedDates): MarkedDates => {
+  const newMarkedDates: MarkedDates = {};
+
+  Object.keys(markedDates).forEach(date => {
+    newMarkedDates[date] = limitMarkTime(markedDates[date]);
+  });
+
+  return newMarkedDates;
 };
 
 const EditStudentAttendanceRecordPage: React.FC<Props> = ({
@@ -116,7 +139,9 @@ const EditStudentAttendanceRecordPage: React.FC<Props> = ({
         userImage,
       }}
       percentage={`${studentInfo?.totalAttendancePercentage.toFixed(1) ?? 0} %`}
-      markedDates={convertSessionStudentModelToMarkedDates(reports)}
+      markedDates={limitMarkedDate(
+        convertSessionStudentModelToMarkedDates(reports),
+      )}
       onMonthChange={setCurrentMonth}
       onChangeAttendance={onChangeAttendance}
     />

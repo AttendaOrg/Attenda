@@ -22,12 +22,18 @@ const styles = StyleSheet.create({
   },
   headerColor: {
     color: '#ffffff',
+    textAlign: 'center',
+    flex: 1,
   },
   center: {
     justifyContent: 'center',
   },
   btnBack: {
     marginRight: 8,
+  },
+  bodyContainer: {
+    maxHeight: 200,
+    overflow: 'scroll',
   },
 });
 
@@ -63,7 +69,7 @@ const UserPresentEditPopup: React.FC<UserPresentEditPopupProps> = ({
         </Text>
       </View>
     ) : (
-      <View style={[styles.header]}>
+      <View style={[styles.header, styles.center]}>
         <Text style={styles.headerColor}>Select A Time ({date})</Text>
       </View>
     );
@@ -112,7 +118,7 @@ const UserPresentEditPopup: React.FC<UserPresentEditPopupProps> = ({
   return (
     <View style={styles.container}>
       {title}
-      {body}
+      <View style={styles.bodyContainer}>{body}</View>
     </View>
   );
 };

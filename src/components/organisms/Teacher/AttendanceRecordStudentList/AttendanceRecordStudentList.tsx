@@ -44,16 +44,29 @@ const AttendanceRecordStudentList: React.FC<AttendanceRecordStudentListPops> = (
     <View style={styles.container}>
       <FlatList
         data={studentList}
-        renderItem={data => (
-          <StudentListItem
-            avatar={{ height: 34, width: 34, uri: data.item.profilePicUrl }}
-            onProfileClick={() => onProfileClick(data.item.key)}
-            name={data.item.name}
-            rollNo={data.item.rollNo}
-            checked={data.item.checked}
-            percentage={data.item.percentage}
-          />
-        )}
+        renderItem={data => {
+          const isInvalidPic =
+            data.item.profilePicUrl === undefined ||
+            data.item.profilePicUrl === null ||
+            data.item.profilePicUrl === '';
+
+          console.log(`isValidPic ${isInvalidPic}`, data.item);
+
+          return (
+            <StudentListItem
+              avatar={
+                isInvalidPic
+                  ? undefined
+                  : { height: 34, width: 34, uri: data.item.profilePicUrl }
+              }
+              onProfileClick={() => onProfileClick(data.item.key)}
+              name={data.item.name}
+              rollNo={data.item.rollNo}
+              checked={data.item.checked}
+              percentage={data.item.percentage}
+            />
+          );
+        }}
       />
     </View>
   );

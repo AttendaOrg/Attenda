@@ -7,13 +7,12 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
     backgroundColor: '#985EFF',
-    justifyContent: 'flex-start',
+    justifyContent: 'center',
     padding: 7,
-    paddingHorizontal: 12,
   },
   row: {
     padding: 7,
-    paddingHorizontal: 12,
+    paddingHorizontal: 18,
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
@@ -26,6 +25,10 @@ const styles = StyleSheet.create({
   },
   timeText: {
     textAlign: 'center',
+  },
+  listContainer: {
+    maxHeight: 200,
+    overflow: 'scroll',
   },
 });
 
@@ -60,7 +63,7 @@ const SelectTimeEditPopup: React.FC<SelectTimeEditPopupProps> = ({
       <View style={[styles.header]}>
         <Text style={styles.headerColor}>Select A Time ({date})</Text>
       </View>
-      {body}
+      <View style={styles.listContainer}>{body}</View>
     </View>
   );
 };

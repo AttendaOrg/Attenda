@@ -33,9 +33,18 @@ const EditAttendanceSession: React.FC<EditAttendanceSessionPops> = ({
       <FlatList
         data={studentList}
         renderItem={({ item }) => {
+          const isInvalidPic =
+            item.profilePicUrl === undefined ||
+            item.profilePicUrl === null ||
+            item.profilePicUrl === '';
+
           return (
             <StudentPresentListItem
-              avatar={{ uri: item.profilePicUrl, height: 34, width: 34 }}
+              avatar={
+                isInvalidPic
+                  ? undefined
+                  : { height: 34, width: 34, uri: item.profilePicUrl }
+              }
               name={item.name}
               rollNo={item.rollNo}
               present={item.present}

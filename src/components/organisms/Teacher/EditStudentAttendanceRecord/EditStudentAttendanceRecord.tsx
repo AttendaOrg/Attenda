@@ -9,7 +9,7 @@ import {
   MarkedDates,
   absentDot,
   presentDot,
-  markedDatesProps,
+  MarkedDatesProps,
   limitMarkDate,
 } from '../../Student/AttendanceRecord';
 
@@ -36,8 +36,8 @@ const styles = StyleSheet.create({
 
 export const convertData = (
   markedDates: MarkedDates = {},
-): markedDatesProps => {
-  const newDates: markedDatesProps = {};
+): MarkedDatesProps => {
+  const newDates: MarkedDatesProps = {};
 
   Object.keys(markedDates).forEach(markDateKey => {
     const markDate = markedDates[markDateKey];

@@ -149,12 +149,17 @@ const MyAccount: React.FC<MyAccountPops> = ({
   const profileImgSrc: ImageSourcePropType =
     typeof profileImg === 'string' ? { uri: profileImg } : profileImg;
 
+  const isInvalidPic =
+    (profileImgSrc as any)?.uri === undefined ||
+    (profileImgSrc as any)?.uri === null ||
+    (profileImgSrc as any)?.uri === '';
+
   return (
     <ScrollView style={styles.container}>
       <View style={styles.blurImageContainer}>
         <Image
           blurRadius={Platform.OS === 'ios' ? 10 : 5}
-          source={profileImgSrc}
+          source={isInvalidPic ? imageSrc : profileImgSrc}
           style={styles.blurBackground}
         />
         <View style={styles.profileImgContainer}>

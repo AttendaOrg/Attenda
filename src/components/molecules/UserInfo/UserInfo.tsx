@@ -81,9 +81,17 @@ const UserInfo: React.FC<UserInfoPops> = ({
     setRollNo(rollNo);
   }, [rollNo]);
 
+  const isInvalidPic =
+    userImage.uri === undefined ||
+    userImage.uri === null ||
+    userImage.uri === '';
+
   return (
     <View style={styles.container}>
-      <Image source={userImage} style={styles.image} />
+      <Image
+        source={isInvalidPic ? imageSrc : userImage}
+        style={styles.image}
+      />
       <Text style={styles.name}>{name}</Text>
       <View style={styles.editRollContainer}>
         <Text>Roll No:</Text>

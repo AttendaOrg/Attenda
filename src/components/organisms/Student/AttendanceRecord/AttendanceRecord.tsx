@@ -50,7 +50,7 @@ export interface AttendanceRecordPops extends ClassDetailsPops {
   percentage: string;
 }
 
-const limitMultiDot = (
+export const limitMultiDot = (
   multiDotMarking: MultiDotMarking,
   limit = 3,
 ): MultiDotMarking => {
@@ -64,10 +64,10 @@ const limitMultiDot = (
 };
 
 export const limitMarkDate = (
-  markedDates: markedDatesProps,
+  markedDates: MarkedDatesProps,
   limit = 3,
-): markedDatesProps => {
-  const newObj: markedDatesProps = {};
+): MarkedDatesProps => {
+  const newObj: MarkedDatesProps = {};
 
   Object.keys(markedDates).forEach(dateKey => {
     const val: MultiDotMarking = markedDates[dateKey];
@@ -79,12 +79,12 @@ export const limitMarkDate = (
   return newObj;
 };
 
-export interface markedDatesProps {
+export interface MarkedDatesProps {
   [date: string]: MultiDotMarking;
 }
 
-const convertData = (markedDates: MarkedDates = {}): markedDatesProps => {
-  const newDates: markedDatesProps = {};
+const convertData = (markedDates: MarkedDates = {}): MarkedDatesProps => {
+  const newDates: MarkedDatesProps = {};
 
   Object.keys(markedDates).forEach(markDateKey => {
     const markDate = markedDates[markDateKey];
