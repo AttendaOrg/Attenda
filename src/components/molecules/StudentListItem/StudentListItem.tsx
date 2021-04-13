@@ -50,12 +50,21 @@ const StudentListItem: React.FC<StudentListPops> = ({
   onProfileClick,
   percentage,
 }): JSX.Element => {
-  const userProfileImage =
-    avatar !== undefined ? (
-      <Image style={{ borderRadius: 100 }} source={avatar} />
-    ) : (
-      <MaterialIcons name="account-circle" size={34} />
-    );
+  const isInvalidPic =
+    avatar === undefined ||
+    avatar === null ||
+    avatar === '' ||
+    (avatar as any).uri === undefined ||
+    (avatar as any).uri === null ||
+    (avatar as any).uri === '';
+  const userProfileImage = !isInvalidPic ? (
+    <Image
+      style={{ borderRadius: 100 }}
+      source={avatar as ImageSourcePropType}
+    />
+  ) : (
+    <MaterialIcons name="account-circle" size={34} color="#afafaf" />
+  );
 
   const checkboxContainer = showChecked ? (
     <IconButton

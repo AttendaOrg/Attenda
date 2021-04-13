@@ -50,7 +50,7 @@ const StudentPresentListItem: React.FC<StudentPresentListItemPops> = ({
     avatar !== undefined ? (
       <Image source={avatar} style={{ borderRadius: 100 }} />
     ) : (
-      <MaterialIcons name="account-circle" size={34} />
+      <MaterialIcons name="account-circle" size={34} color="#afafaf" />
     );
 
   const rightSide = (
