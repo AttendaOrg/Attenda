@@ -1,5 +1,5 @@
 export enum ClassCardIconCategory {
-  GENERAL = 'General',
+  GENERAL = "General",
 }
 
 export interface ClassCardIconProps {
@@ -19,13 +19,13 @@ export default class ClassCardIconModel implements Partial<ClassCardIconProps> {
   category: string;
 
   constructor(data: Partial<ClassCardIconProps> = {}) {
-    this.name = data.name ?? '';
-    this.iconData = data.iconData ?? '';
+    this.name = data.name ?? "";
+    this.iconData = data.iconData ?? "";
     this.category = data.category ?? ClassCardIconCategory.GENERAL;
   }
 
   static Update(
-    data: Partial<ClassCardIconProps>,
+    data: Partial<ClassCardIconProps>
   ): Partial<ClassCardIconProps> {
     const obj: Partial<ClassCardIconProps> = {};
 
@@ -39,8 +39,8 @@ export default class ClassCardIconModel implements Partial<ClassCardIconProps> {
   toJson(): Partial<ClassCardIconProps> {
     const obj: Partial<ClassCardIconProps> = {};
 
-    if (this.iconData !== '') obj.iconData = this.iconData;
-    if (this.name !== '') obj.name = this.name;
+    if (this.iconData !== "") obj.iconData = this.iconData;
+    if (this.name !== "") obj.name = this.name;
     if (this.category !== null) obj.category = this.category;
 
     return obj;
