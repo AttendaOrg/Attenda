@@ -382,7 +382,7 @@ class AuthApi extends BaseApi implements AuthApiInterface {
   };
 
   updateAccountInfo = async (
-    accountInfo: AccountInfo,
+    accountInfo: Partial<AccountInfoProps>,
   ): Promise<WithError<boolean>> => {
     try {
       const userId = this.getUserUid();
@@ -395,7 +395,7 @@ class AuthApi extends BaseApi implements AuthApiInterface {
         .firestore()
         .collection(AuthApi.AUTH_ROOT_COLLECTION_NAME)
         .doc(userId)
-        .update(accountInfo.toJson());
+        .update(accountInfo);
 
       if (accountInfo.name !== currName) {
         console.info('NOTICE: using database for the name');
@@ -483,7 +483,7 @@ class AuthApi extends BaseApi implements AuthApiInterface {
       .child(`${userId ?? firebase.auth().currentUser?.uid}` ?? '');
   };
 
-  static uploadProfileImage = async (uri: string): Promise<void> => {
+  uploadProfileImage = async (uri: string): Promise<void> => {
     const response = await fetch(uri);
     const blob = await response.blob();
 
@@ -498,6 +498,12 @@ class AuthApi extends BaseApi implements AuthApiInterface {
       await firebase.auth().currentUser?.updateProfile({
         photoURL,
       });
+
+      await this.updateAccountInfo(
+        AccountInfo.Update({
+          profilePicUrl: photoURL,
+        }),
+      );
     });
   };
 

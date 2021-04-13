@@ -1,4 +1,8 @@
-import { UserRole } from '..';
+export enum UserRole {
+  UNKNOWN = "unknown",
+  STUDENT = "student",
+  TEACHER = "teacher",
+}
 
 export interface AccountInfoProps {
   name: string;
@@ -23,8 +27,8 @@ export default class AccountInfo implements Partial<AccountInfoProps> {
   profilePicUrl: string | null = null;
 
   constructor(data: Partial<AccountInfoProps> = {}) {
-    this.name = data.name ?? '';
-    this.email = data.email ?? '';
+    this.name = data.name ?? "";
+    this.email = data.email ?? "";
     this.role = data.role ?? UserRole.UNKNOWN;
     this.joinedClassId = data.joinedClassId ?? null;
     this.profilePicUrl = data.profilePicUrl ?? null;
@@ -47,8 +51,8 @@ export default class AccountInfo implements Partial<AccountInfoProps> {
   toJson(): Partial<AccountInfoProps> {
     const obj: Partial<AccountInfoProps> = {};
 
-    if (this.email !== '') obj.email = this.email;
-    if (this.name !== '') obj.name = this.name;
+    if (this.email !== "") obj.email = this.email;
+    if (this.name !== "") obj.name = this.name;
     if (this.role !== UserRole.UNKNOWN) obj.role = this.role;
     if (this.joinedClassId !== null) obj.joinedClassId = this.joinedClassId;
     if (this.profilePicUrl !== null) obj.profilePicUrl = this.profilePicUrl;

@@ -66,7 +66,7 @@ const SignInPage: React.FC<Props> = ({ navigation }): JSX.Element => {
 
         const url = authApi.getGooglePhotoUrl();
 
-        if (typeof url === 'string') AuthApi.uploadProfileImage(url);
+        if (typeof url === 'string') authApi.uploadProfileImage(url);
       }
     })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -91,7 +91,7 @@ const SignInPage: React.FC<Props> = ({ navigation }): JSX.Element => {
           globalContext.changeSpinnerLoading(false);
           const fbUrl = authApi.getFbPhotoUrl(authentication.accessToken);
 
-          if (typeof fbUrl === 'string') AuthApi.uploadProfileImage(fbUrl);
+          if (typeof fbUrl === 'string') authApi.uploadProfileImage(fbUrl);
         }
       }
     })();
