@@ -4,7 +4,9 @@ import {
   StackScreenProps,
 } from '@react-navigation/stack';
 import { RootStackParamList } from '../../App';
-import JoinClassFinal from '../../components/organisms/Student/JoinClassFinal';
+import JoinClassFinal, {
+  JoinClassFinalNoClassFound,
+} from '../../components/organisms/Student/JoinClassFinal';
 import SimpleCloseNavigationOptions from '../../components/templates/SimpleCloseNavigationOption';
 import { HEADER_AB_TEST_NEW } from '../../util/constant';
 import { SimpleHeaderBackNavigationOptions } from '../../components/templates/SimpleHeaderNavigationOptions';
@@ -36,6 +38,7 @@ const JoinClassFinalPage: React.FC<Props> = ({
   } = route;
   const globalContext = useContext(GlobalContext);
   const [accInfo, setAccInfo] = useState<TeacherClassModel | null>(null);
+  const [showNoClassFound, setShowNoClassFound] = useState(false);
 
   useEffect(() => {
     (async () => {
@@ -43,6 +46,8 @@ const JoinClassFinalPage: React.FC<Props> = ({
 
       const [info] = await teacherApi.getClassInfoByCode(classCode);
       const [success] = await studentApi.validateClassJoin(classCode, rollNo); // TODO: handle error if there validate join class is failed
+
+      if (success === false || success === null) setShowNoClassFound(true);
 
       if (info !== null) setAccInfo(info);
       globalContext.changeSpinnerLoading(false);
@@ -61,6 +66,16 @@ const JoinClassFinalPage: React.FC<Props> = ({
     }
     // TODO: handle error if the classId is not found
   };
+
+  if (showNoClassFound)
+    return (
+      <JoinClassFinalNoClassFound
+        classCode={classCode}
+        goBack={() => {
+          if (navigation.canGoBack()) navigation.goBack();
+        }}
+      />
+    );
 
   return (
     <JoinClassFinal

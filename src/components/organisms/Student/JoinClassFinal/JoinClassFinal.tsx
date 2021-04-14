@@ -42,6 +42,28 @@ export interface JoinClassFinalPops {
   disableJoin: boolean;
 }
 
+interface JoinClassFinalNoClassFoundProps {
+  goBack: () => void;
+  classCode: string;
+}
+
+export const JoinClassFinalNoClassFound: React.FC<JoinClassFinalNoClassFoundProps> = ({
+  classCode,
+  goBack,
+}) => {
+  return (
+    <View style={styles.container}>
+      <KeyboardAdjustImageView svgImg={JoinClassImageComponent} />
+      <Text style={styles.danger}>
+        There is no class with the class code {`"${classCode}"`}
+      </Text>
+      <View style={styles.btnContainer}>
+        <Button title="Back" onPress={goBack} />
+      </View>
+    </View>
+  );
+};
+
 const JoinClassFinal: React.FC<JoinClassFinalPops> = ({
   className,
   section,
@@ -54,7 +76,9 @@ const JoinClassFinal: React.FC<JoinClassFinalPops> = ({
       <KeyboardAdjustImageView svgImg={JoinClassImageComponent} />
       <Text style={styles.classNameText}>{className}</Text>
       <Text style={styles.sectionText}>{section}</Text>
-      <Text style={styles.teacherNameText}>By: {teacher}</Text>
+      <Text style={styles.teacherNameText}>
+        {teacher.length !== 0 && `By:${teacher}`}
+      </Text>
       {disableJoin && (
         <Text style={styles.danger}>
           This class does not have active invite
