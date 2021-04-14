@@ -47,7 +47,7 @@ const JoinClassFinalPage: React.FC<Props> = ({
       const [info] = await teacherApi.getClassInfoByCode(classCode);
       const [success] = await studentApi.validateClassJoin(classCode, rollNo); // TODO: handle error if there validate join class is failed
 
-      if (success === false || success === null) setShowNoClassFound(true);
+      if (info === null) setShowNoClassFound(true);
 
       if (info !== null) setAccInfo(info);
       globalContext.changeSpinnerLoading(false);
