@@ -51,26 +51,6 @@ export const convertSessionStudentModelToMarkedDates = (
   return markedData;
 };
 
-const limitMarkTime = (markedDates: MarkTime, limit = 3): MarkTime => {
-  const newMarkTime: MarkTime = {};
-
-  Object.keys(markedDates).forEach((time, i) => {
-    if (i < limit) newMarkTime[time] = markedDates[time];
-  });
-
-  return newMarkTime;
-};
-
-const limitMarkedDate = (markedDates: MarkedDates): MarkedDates => {
-  const newMarkedDates: MarkedDates = {};
-
-  Object.keys(markedDates).forEach(date => {
-    newMarkedDates[date] = limitMarkTime(markedDates[date]);
-  });
-
-  return newMarkedDates;
-};
-
 const EditStudentAttendanceRecordPage: React.FC<Props> = ({
   route,
 }): JSX.Element => {
@@ -139,9 +119,7 @@ const EditStudentAttendanceRecordPage: React.FC<Props> = ({
         userImage,
       }}
       percentage={`${studentInfo?.totalAttendancePercentage.toFixed(1) ?? 0} %`}
-      markedDates={limitMarkedDate(
-        convertSessionStudentModelToMarkedDates(reports),
-      )}
+      markedDates={convertSessionStudentModelToMarkedDates(reports)}
       onMonthChange={setCurrentMonth}
       onChangeAttendance={onChangeAttendance}
     />

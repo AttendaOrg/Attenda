@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import {
   StackNavigationOptions,
   StackScreenProps,
@@ -17,6 +17,8 @@ import SearchingImageComponent from '../../components/atoms/Images/SearchingImag
 import ClassStudentModel from '../../api/TeacherApi/model/ClassStudentModel';
 import DoubleButtonPopup from '../../components/molecules/DoubleButtonPopup';
 import { StudentClassAction } from '../../components/molecules/ClassCard/StudentClassCard';
+import { authApi } from '../../api/AuthApi';
+import GlobalContext from '../../context/GlobalContext';
 
 type Props = StackScreenProps<RootStackParamList, 'StudentClassList'>;
 type OptionsProps = (props: Props) => StackNavigationOptions;
@@ -81,6 +83,7 @@ const StudentClassListPage: React.FC<Props> = ({
   navigation,
   route,
 }): JSX.Element => {
+  const context = useContext(GlobalContext);
   const [loading, setLoading] = useState(true);
   const [unEnrollId, setUnEnrollId] = useState<string | null>(null);
   const [data, setData] = useState<TeacherClassModel[]>([]);
@@ -111,12 +114,21 @@ const StudentClassListPage: React.FC<Props> = ({
   }, []);
 
   useEffect(() => {
+    try {
+      const uri = authApi.getMyProfilePic();
+
+      context.changeProfilePic({ uri });
+    } catch (e) {
+      console.log('Image access error', e);
+    }
+
     return studentApi.getEnrolledPercentageListener(
       async (_percentageModels: ClassStudentModel[]) => {
         setPercentageModels(_percentageModels);
         console.log(_percentageModels);
       },
     );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // on every session id changes reattach the listener for checking if the student has given present

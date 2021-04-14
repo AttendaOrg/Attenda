@@ -11,7 +11,7 @@ import TeacherClassModel from '../../api/TeacherApi/model/TeacherClassModel';
 import TeacherClassList, {
   dummyTeacherClassListData,
 } from '../../components/organisms/Teacher/TeacherClassList';
-import AuthApi from '../../api/AuthApi';
+import AuthApi, { authApi } from '../../api/AuthApi';
 import GlobalContext from '../../context/GlobalContext';
 import { TeacherClassAction } from '../../components/molecules/ClassCard/TeacherClassCard';
 
@@ -64,7 +64,7 @@ class TeacherClassListPage extends React.PureComponent<Props, State> {
     };
   }
 
-  async componentDidMount(): Promise<void> {
+  componentDidMount(): void {
     const { context } = this;
 
     this.setState({ loading: true });
@@ -74,7 +74,7 @@ class TeacherClassListPage extends React.PureComponent<Props, State> {
     });
 
     try {
-      const uri = await AuthApi.getProfilePicRef()?.getDownloadURL();
+      const uri = authApi.getMyProfilePic();
 
       context.changeProfilePic({ uri });
     } catch (e) {
