@@ -547,7 +547,8 @@ export default class TeacherApi extends AuthApi implements TeacherApiInterface {
       const query = firebase
         .firestore()
         .collection(TeacherApi.CLASSES_COLLECTION_NAME)
-        .where('teacherId', '==', userId);
+        .where('teacherId', '==', userId)
+        .orderBy('title');
 
       const unSubscribe = query.onSnapshot(snapshot => {
         // TODO: find way to optimize the query to only include update or inserted or deleted data
@@ -586,14 +587,16 @@ export default class TeacherApi extends AuthApi implements TeacherApiInterface {
 
       const classes = await query.get();
 
-      const allClass = classes.docs.map(
-        classModel =>
-          new TeacherClassModel({
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            ...(classModel.data() as any),
-            classId: classModel.id,
-          }),
-      );
+      const allClass = classes.docs
+        .map(
+          classModel =>
+            new TeacherClassModel({
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              ...(classModel.data() as any),
+              classId: classModel.id,
+            }),
+        )
+        .sort((a, b) => a.title.localeCompare(b.title));
 
       return this.success(allClass);
     } catch (ex) {
@@ -1033,8 +1036,10 @@ export default class TeacherApi extends AuthApi implements TeacherApiInterface {
         .where('teacherId', '==', userId)
         .where('sessionDate', '>=', startDayOfTheMonth)
         .where('sessionDate', '<', nextMonthStartDay)
-        .orderBy('sessionDate')
+        .orderBy('sessionDate', 'desc')
         .get();
+
+      console.log(result.docs);
 
       const sessionInfos: SessionInfoModel[] = result.docs.map(doc => {
         const data: firebase.firestore.DocumentData = doc.data();
@@ -1053,6 +1058,8 @@ export default class TeacherApi extends AuthApi implements TeacherApiInterface {
 
       return this.success(sessionInfos);
     } catch (e) {
+      console.log(e);
+
       return this.error(BasicErrors.EXCEPTION);
     }
   };
@@ -1137,6 +1144,7 @@ export default class TeacherApi extends AuthApi implements TeacherApiInterface {
         .collection(TeacherApi.CLASSES_SESSIONS_STUDENT_COLLECTION_NAME)
         .where('classId', '==', classId)
         .where('studentId', '==', studentId)
+        .orderBy('sessionTime', 'desc')
         .get();
 
       const sessions: SessionStudentModel[] = currentSessionDocs.docs.map(
@@ -1159,6 +1167,8 @@ export default class TeacherApi extends AuthApi implements TeacherApiInterface {
 
       return this.success(sessions);
     } catch (ex) {
+      console.log(ex);
+
       return this.error(BasicErrors.EXCEPTION);
     }
   };

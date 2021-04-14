@@ -85,8 +85,10 @@ export const CalculatePercentageFun = async (
             classId,
             studentId
           );
-          const totalAttendancePercentage =
-            (studentAttendanceCount * 100) / totalNumOfSession;
+          const totalAttendancePercentage = (
+            (studentAttendanceCount * 100) /
+            totalNumOfSession
+          ).toFixed(2);
 
           const studentDoc = await admin
             .firestore()

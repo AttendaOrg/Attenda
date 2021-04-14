@@ -304,14 +304,16 @@ export default class StudentApi extends AuthApi implements StudentApiInterface {
           // BUG: potential bug maybe clear out the listener ?
           query2.onSnapshot(snapshot2 => {
             const { docs } = snapshot2;
-            const newClasses = docs.map(
-              classModel =>
-                new TeacherClassModel({
-                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                  ...(classModel.data() as any),
-                  classId: classModel.id,
-                }),
-            );
+            const newClasses = docs
+              .map(
+                classModel =>
+                  new TeacherClassModel({
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                    ...(classModel.data() as any),
+                    classId: classModel.id,
+                  }),
+              )
+              .sort((a, b) => a.title.localeCompare(b.title));
 
             onDataChange(newClasses);
           });
