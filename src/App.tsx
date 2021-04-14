@@ -199,6 +199,9 @@ class AuthProvider extends React.PureComponent<Props> {
 
         context.changeSpinnerLoading(false);
 
+        if (typeof user?.photoURL === 'string')
+          context.changeProfilePic({ uri: user?.photoURL });
+
         //#region navigation
         // TODO: handle back from chose role page
         // if user role is UNKNOWN and user is not signed in
