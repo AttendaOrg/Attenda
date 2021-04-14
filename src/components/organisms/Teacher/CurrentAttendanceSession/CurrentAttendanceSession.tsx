@@ -24,6 +24,7 @@ export interface CurrentAttendanceSessionDataProps {
   name: string;
   rollNo: string;
   present: boolean;
+  avatar: string;
 }
 
 export interface CurrentAttendanceSessionPops {
@@ -54,6 +55,7 @@ const CurrentAttendanceSession: React.FC<CurrentAttendanceSessionPops> = ({
         data={studentList}
         renderItem={({ item }) => (
           <StudentPresentListItem
+            avatar={{ uri: item.avatar }}
             name={item.name}
             rollNo={item.rollNo}
             present={item.present}

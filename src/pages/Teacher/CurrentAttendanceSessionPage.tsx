@@ -32,13 +32,14 @@ const transformToDataProps = (
   studentModel: ClassStudentModel,
   present = false,
 ): CurrentAttendanceSessionDataProps => {
-  const { rollNo, studentId, studentName } = studentModel;
+  const { rollNo, studentId, studentName, profilePicUrl } = studentModel;
 
   return {
     key: studentId ?? '',
     name: studentName ?? '',
     present,
     rollNo,
+    avatar: profilePicUrl ?? '',
   };
 };
 
