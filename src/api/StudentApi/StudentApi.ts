@@ -554,7 +554,7 @@ export default class StudentApi extends AuthApi implements StudentApiInterface {
         .where('studentId', '==', userId)
         .where('sessionTime', '>=', startDayOfTheMonth)
         .where('sessionTime', '<', nextMonthStartDay)
-        .orderBy('sessionTime')
+        .orderBy('sessionTime', 'desc')
         .get();
 
       const sessions: SessionStudentModel[] = currentSessionDocs.docs.map(
