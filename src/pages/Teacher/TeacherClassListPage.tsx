@@ -115,6 +115,7 @@ class TeacherClassListPage extends React.PureComponent<Props, State> {
         navigation.push('TeacherAttendanceRecord', {
           classId,
           selectedTab: 'Sessions',
+          totalStudentCount: totalStudent,
         });
         break;
       case TeacherClassAction.STUDENTS:

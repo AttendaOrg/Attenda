@@ -137,11 +137,13 @@ export type RootStackParamList = {
   TeacherAttendanceRecord: {
     classId: string;
     selectedTab: AttendanceRecordTabProps;
+    totalStudentCount: number;
   };
   EditAttendanceSession: {
     sessionId: string;
     date: string;
     classId: string;
+    totalStudentCount: number;
   };
   ClassSettings: {
     classId: string;

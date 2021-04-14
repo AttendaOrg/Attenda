@@ -69,9 +69,11 @@ const EditAttendanceSessionPage: React.FC<Props> = ({
   route,
   navigation,
 }): JSX.Element => {
-  const [listItems, setListItems] = useState<SessionStudentListDataProps[]>([]);
+  const [listItems, setListItems] = useState<
+    SessionStudentListDataProps[] | null
+  >(null);
   const {
-    params: { classId, sessionId, date },
+    params: { classId, sessionId, date, totalStudentCount },
   } = route;
 
   useLayoutEffect(() => {
@@ -143,7 +145,9 @@ const EditAttendanceSessionPage: React.FC<Props> = ({
 
   return (
     <EditAttendanceSession
-      studentList={listItems}
+      showShimmer={listItems === null}
+      totalStudentCount={totalStudentCount}
+      studentList={listItems ?? []}
       onPresentChange={onPresentChange}
     />
   );

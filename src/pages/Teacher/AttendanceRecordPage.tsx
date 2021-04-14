@@ -21,6 +21,7 @@ import ClassStudentModel from '../../api/TeacherApi/model/ClassStudentModel';
 import GlobalContext from '../../context/GlobalContext';
 import MenuOptionsPopover from '../../components/molecules/MenuOptionsPopover';
 import { SortBy, applyStudentSort } from './util/SortStudent';
+import StudentsEmptyList from '../../components/organisms/Teacher/StudentsEmptyList/StudentsEmptyList';
 
 type Props = StackScreenProps<RootStackParamList, 'TeacherAttendanceRecord'>;
 export type AttendanceRecordTabProps = 'Sessions' | 'Students';
@@ -65,7 +66,11 @@ export const convertSessionInfoToMarkedDates = (
 // preferably use the MaterialTopTabBarProps
 const AttendanceSessionRecordTab: React.FC<Props> = ({ navigation, route }) => {
   const [reports, setReports] = useState<SessionInfoModel[]>([]);
-  const [info, setInfo] = useState({ className: '', section: '' });
+  const [info, setInfo] = useState({
+    className: '',
+    section: '',
+    totalStudentCount: 0,
+  });
   const [month, setMonth] = useState(new Date());
   const globalContext = useContext(GlobalContext);
   const {
@@ -94,6 +99,7 @@ const AttendanceSessionRecordTab: React.FC<Props> = ({ navigation, route }) => {
         setInfo({
           className: classInfo.title,
           section: classInfo.section,
+          totalStudentCount: classInfo.totalStudent,
         });
       }
       globalContext.changeSpinnerLoading(false);
@@ -150,6 +156,7 @@ const AttendanceSessionRecordTab: React.FC<Props> = ({ navigation, route }) => {
         sessionId: sessionId ?? '',
         date: match.sessionDate.toString(),
         classId,
+        totalStudentCount: info.totalStudentCount,
       });
     }
   };
@@ -195,7 +202,7 @@ const AttendanceRecordStudentListTab: React.FC<AttendanceRecordStudentListTabPro
   const [studentList, setStudentList] = useState<StudentListData[]>([]);
   const [showLoading, setShowLoading] = useState(false);
   const {
-    params: { classId },
+    params: { classId, totalStudentCount },
   } = route;
 
   useEffect(() => {
@@ -216,9 +223,17 @@ const AttendanceRecordStudentListTab: React.FC<AttendanceRecordStudentListTabPro
     })();
   }, [classId, sortBy]);
 
+  if (totalStudentCount === 0)
+    return (
+      <StudentsEmptyList
+        onInviteClick={() => navigation.push('InviteStudent', { classId })}
+      />
+    );
+
   return (
     <AttendanceRecordStudentList
       showShimmer={showLoading}
+      totalStudentCount={totalStudentCount}
       studentList={studentList}
       onProfileClick={(studentId: string) =>
         navigation.push('EditStudentAttendanceRecord', {

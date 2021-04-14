@@ -17,18 +17,20 @@ export interface AttendanceRecordStudentListPops {
   studentList?: StudentListData[];
   onProfileClick?: (studentId: string) => void;
   showShimmer: boolean;
+  totalStudentCount: number;
 }
 
 const AttendanceRecordStudentList: React.FC<AttendanceRecordStudentListPops> = ({
   studentList = [],
   onProfileClick = () => null,
   showShimmer = false,
+  totalStudentCount,
 }): JSX.Element => {
   if (showShimmer)
     return (
       <View style={styles.container}>
         <FlatList
-          data={new Array(5).fill(5).map((_, i) => ({
+          data={new Array(totalStudentCount).fill(1).map((_, i) => ({
             key: `shimmer-${i}`,
           }))}
           renderItem={() => (

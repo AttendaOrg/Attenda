@@ -1,6 +1,6 @@
 import React from 'react';
 import { Platform } from 'react-native';
-import { boolean, withKnobs } from '@storybook/addon-knobs';
+import { boolean, number, withKnobs } from '@storybook/addon-knobs';
 import { storiesOf } from '@storybook/react-native';
 import CenterView from '../../../atoms/CenterView';
 import AttendanceRecordStudentList from './AttendanceRecordStudentList';
@@ -36,6 +36,7 @@ const globalListItems: StudentListData[] = [
 // Default For Web And android Component
 export const Default = (): JSX.Element => (
   <AttendanceRecordStudentList
+    totalStudentCount={number('totalStudentCount', 10)}
     showShimmer={boolean('showShimmer', false)}
     studentList={globalListItems}
   />

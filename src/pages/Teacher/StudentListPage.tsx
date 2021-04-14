@@ -173,9 +173,8 @@ const StudentListPage: React.FC<Props> = ({
   };
 
   if (
-    // estimateTotalStudent === 0 || TODO: when the cloud functions run re-enable this check
-    showLoading === false &&
-    listItems.length === 0
+    estimateTotalStudent === 0 || //  TODO: when the cloud functions run re-enable this check
+    (showLoading === false && listItems.length === 0)
   ) {
     return (
       <StudentsEmptyList

@@ -77,7 +77,10 @@ const mergeGiven = (
   });
 };
 
-const StudentClassListPage: React.FC<Props> = ({ navigation }): JSX.Element => {
+const StudentClassListPage: React.FC<Props> = ({
+  navigation,
+  route,
+}): JSX.Element => {
   const [loading, setLoading] = useState(true);
   const [unEnrollId, setUnEnrollId] = useState<string | null>(null);
   const [data, setData] = useState<TeacherClassModel[]>([]);
