@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { lightColor } from '../../../util/Colors';
+import ProfileImage from '../ProfileImage/ProfileImage';
 
 const styles = StyleSheet.create({
   container: {
@@ -81,17 +82,9 @@ const UserInfo: React.FC<UserInfoPops> = ({
     setRollNo(rollNo);
   }, [rollNo]);
 
-  const isInvalidPic =
-    userImage.uri === undefined ||
-    userImage.uri === null ||
-    userImage.uri === '';
-
   return (
     <View style={styles.container}>
-      <Image
-        source={isInvalidPic ? imageSrc : userImage}
-        style={styles.image}
-      />
+      <ProfileImage avatar={userImage} height={styles.image.height} />
       <Text style={styles.name}>{name}</Text>
       <View style={styles.editRollContainer}>
         <Text>Roll No:</Text>

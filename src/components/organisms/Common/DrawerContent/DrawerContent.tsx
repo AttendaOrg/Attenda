@@ -11,6 +11,7 @@ import {
 import { Divider, List } from 'react-native-paper';
 import { lightColor } from '../../../../util/Colors';
 import DrawerBackgroundImageComponent from '../../../atoms/Images/DrawerBackgroundImageComponent';
+import ProfileImage from '../../../molecules/ProfileImage/ProfileImage';
 
 const styles = StyleSheet.create({
   container: {

@@ -9,6 +9,7 @@ import {
 import { MaterialIcons } from '@expo/vector-icons';
 import { IconButton, TouchableRipple } from 'react-native-paper';
 import { primaryColor } from '../../../util/Colors';
+import ProfileImage from '../ProfileImage/ProfileImage';
 
 const styles = StyleSheet.create({
   container: {
@@ -46,13 +47,6 @@ const StudentPresentListItem: React.FC<StudentPresentListItemPops> = ({
   present,
   onPresentChange = () => null,
 }): JSX.Element => {
-  const userProfileImage =
-    avatar !== undefined ? (
-      <Image source={avatar} style={{ borderRadius: 100 }} />
-    ) : (
-      <MaterialIcons name="account-circle" size={34} color="#afafaf" />
-    );
-
   const rightSide = (
     <View style={styles.actionContainer}>
       <Text>{present ? 'Present' : 'Absent'}</Text>
@@ -80,7 +74,7 @@ const StudentPresentListItem: React.FC<StudentPresentListItemPops> = ({
     >
       <View style={styles.container}>
         <View style={styles.containMain}>
-          {userProfileImage}
+          <ProfileImage avatar={avatar} />
           <View style={styles.textContain}>
             <Text>{name}</Text>
             <Text>Roll No: {rollNo}</Text>

@@ -14,6 +14,7 @@ function loadStories() {
   require('../src/components/molecules/DoubleButtonPopup/DoubleButtonPopup.stories');
   require('../src/components/molecules/ImagePopup/ImagePopup.stories');
   require('../src/components/molecules/OauthProvider/OauthProvider.stories');
+  require('../src/components/molecules/ProfileImage/ProfileImage.stories');
   require('../src/components/molecules/SelectTimeEditPopup/SelectTimeEditPopup.stories');
   require('../src/components/molecules/SingleButtonPopup/SingleButtonPopup.stories');
   require('../src/components/molecules/SpinnerLoader/SpinnerLoader.stories');
@@ -67,6 +68,7 @@ const stories = [
   '../src/components/molecules/DoubleButtonPopup/DoubleButtonPopup.stories',
   '../src/components/molecules/ImagePopup/ImagePopup.stories',
   '../src/components/molecules/OauthProvider/OauthProvider.stories',
+  '../src/components/molecules/ProfileImage/ProfileImage.stories',
   '../src/components/molecules/SelectTimeEditPopup/SelectTimeEditPopup.stories',
   '../src/components/molecules/SingleButtonPopup/SingleButtonPopup.stories',
   '../src/components/molecules/SpinnerLoader/SpinnerLoader.stories',

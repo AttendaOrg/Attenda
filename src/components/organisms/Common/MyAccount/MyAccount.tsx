@@ -14,6 +14,7 @@ import { AntDesign } from '@expo/vector-icons';
 import { Icon, Input } from 'react-native-elements';
 import DoubleButtonPopup from '../../../molecules/DoubleButtonPopup';
 import { inputContainerStyle } from '../../../../util/Styles';
+import ProfileImage from '../../../molecules/ProfileImage/ProfileImage';
 
 const styles = StyleSheet.create({
   container: {
@@ -163,7 +164,7 @@ const MyAccount: React.FC<MyAccountPops> = ({
           style={styles.blurBackground}
         />
         <View style={styles.profileImgContainer}>
-          <Image source={profileImgSrc} style={styles.profileImg} />
+          <ProfileImage avatar={profileImgSrc} height={200} />
           <TouchableOpacity
             onPress={onEditProfilePictureClick}
             style={styles.iconContainer}
