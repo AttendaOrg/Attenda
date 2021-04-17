@@ -1,5 +1,6 @@
 import firebase from 'firebase';
 import { UserRole } from '.';
+import { analyticsApi, AnalyticsApiDocs } from './analytics';
 import BaseApi, { BasicErrors, WithError } from './BaseApi';
 import AccountInfo, { AccountInfoProps } from './model/AccountInfo';
 
@@ -246,10 +247,20 @@ class AuthApi extends BaseApi implements AuthApiInterface {
 
       const user = await path.get();
 
+      analyticsApi.sendSingle(
+        `AuthApi.setUserRole - ${AnalyticsApiDocs.USER_ROLE_READ}`,
+      );
+
       // checks if the path exist
       if (user.exists) {
+        analyticsApi.sendSingle(
+          `AuthApi.setUserRole - ${AnalyticsApiDocs.USER_ROLE_UPDATE}`,
+        );
         await path.update(updateInfo.toJson());
       } else {
+        analyticsApi.sendSingle(
+          `AuthApi.setUserRole - ${AnalyticsApiDocs.USER_ROLE_WRITE}`,
+        );
         // if the path does not exist create a new path
         await path.set(updateInfo.toJson());
       }
@@ -275,6 +286,9 @@ class AuthApi extends BaseApi implements AuthApiInterface {
         .get();
       const data = doc.data();
 
+      analyticsApi.sendSingle(
+        `AuthApi.getUserRole - ${AnalyticsApiDocs.USER_ROLE_READ}`,
+      );
       // path not found the data was not initialized
       // return UNKNOWN ?
       if (!data) return this.success(UserRole.UNKNOWN);
@@ -360,6 +374,10 @@ class AuthApi extends BaseApi implements AuthApiInterface {
         .get();
       const data = doc.data();
 
+      analyticsApi.sendSingle(
+        `AuthApi.getAccountInfo - ${AnalyticsApiDocs.ACC_INFO_READ}`,
+      );
+
       // path not found the data was not initialized
       // return UNKNOWN ?
       if (!data) return this.error(BasicErrors.EXCEPTION);
@@ -396,6 +414,10 @@ class AuthApi extends BaseApi implements AuthApiInterface {
         .collection(AuthApi.AUTH_ROOT_COLLECTION_NAME)
         .doc(userId)
         .update(accountInfo);
+
+      analyticsApi.sendSingle(
+        `AuthApi.updateAccountInfo - ${AnalyticsApiDocs.ACC_INFO_UPDATE}`,
+      );
 
       if (accountInfo.name !== currName) {
         console.info('NOTICE: using database for the name');
@@ -438,6 +460,10 @@ class AuthApi extends BaseApi implements AuthApiInterface {
         .collection(AuthApi.AUTH_ROOT_COLLECTION_NAME)
         .doc(userId)
         .set(accountInfo.toJson());
+
+      analyticsApi.sendSingle(
+        `AuthApi.createAccountInfo - ${AnalyticsApiDocs.ACC_INFO_WRITE}`,
+      );
 
       return this.success(true);
     } catch (e) {

@@ -121,6 +121,7 @@ const StudentClassListPage: React.FC<Props> = ({
     } catch (e) {
       console.log('Image access error', e);
     }
+    context.changeSpinnerLoading(false);
 
     return studentApi.getEnrolledPercentageListener(
       async (_percentageModels: ClassStudentModel[]) => {

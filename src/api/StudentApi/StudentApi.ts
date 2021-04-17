@@ -23,6 +23,7 @@ import ClassStudentModel, {
 } from '../TeacherApi/model/ClassStudentModel';
 import { hashMacId } from '../util/hash';
 import { getMonthRange } from '../../util';
+import { analyticsApi, AnalyticsApiDocs } from '../analytics';
 
 interface StudentApiInterface {
   /**
@@ -121,6 +122,9 @@ export default class StudentApi extends AuthApi implements StudentApiInterface {
 
       const data = await doc.get();
 
+      analyticsApi.sendSingle(
+        `StudentApi.validateClassJoin - ${AnalyticsApiDocs.CLASS_READ}`,
+      );
       // console.log(data.docs.map(e => e.data()));
 
       return this.success(data.docs.length > 0);
@@ -144,6 +148,10 @@ export default class StudentApi extends AuthApi implements StudentApiInterface {
 
       const data = (doc.data() as unknown) as AccountInfoProps;
       const accInfo = new AccountInfo(data);
+
+      analyticsApi.sendSingle(
+        `StudentApi.getAllJoinedClassId - ${AnalyticsApiDocs.ACC_INFO_READ}`,
+      );
 
       return this.success(accInfo.joinedClassId ?? []);
     } catch (e) {
@@ -169,6 +177,10 @@ export default class StudentApi extends AuthApi implements StudentApiInterface {
         .get();
       const data = (doc.data() as unknown) as ClassStudentModelInterface;
       const classStudentModel = new ClassStudentModel(data);
+
+      analyticsApi.sendSingle(
+        `StudentApi.getJoinedClassInfo - ${AnalyticsApiDocs.JOINED_STUDENTS_READ}`,
+      );
 
       return this.success(classStudentModel);
     } catch (error) {
@@ -203,6 +215,10 @@ export default class StudentApi extends AuthApi implements StudentApiInterface {
           }),
         );
 
+      analyticsApi.sendSingle(
+        `StudentApi.joinClass - ${AnalyticsApiDocs.ACC_INFO_UPDATE}`,
+      );
+
       // add the student to teacher class
 
       const studentInfo = new ClassStudentModel({
@@ -222,6 +238,10 @@ export default class StudentApi extends AuthApi implements StudentApiInterface {
         .collection(TeacherApi.CLASSES_JOINED_STUDENT_COLLECTION_NAME)
         .doc(studentInfo.studentId ?? '')
         .set(studentInfo.toJson());
+
+      analyticsApi.sendSingle(
+        `StudentApi.joinClass - ${AnalyticsApiDocs.JOINED_STUDENTS_WRITE}`,
+      );
 
       return this.success(true);
     } catch (e) {
@@ -250,6 +270,10 @@ export default class StudentApi extends AuthApi implements StudentApiInterface {
             joinedClassId: chunkUpdate,
           }),
         );
+
+      analyticsApi.sendSingle(
+        `StudentApi.leaveClass - ${AnalyticsApiDocs.ACC_INFO_UPDATE}`,
+      );
 
       // QUESTION: what more should we do if a student leaves a class ?
       // delete there data, notify the teacher?
@@ -283,6 +307,9 @@ export default class StudentApi extends AuthApi implements StudentApiInterface {
         const accInfo = new AccountInfo((data as unknown) as AccountInfoProps);
 
         console.log(accInfo.joinedClassId);
+        analyticsApi.sendSingle(
+          `StudentApi.getEnrolledClassListListener - ${AnalyticsApiDocs.ACC_INFO_READ}`,
+        );
 
         // it the student hasn't enrolled in any class don't execute
         // the query because firebase in query expect a not empty array
@@ -314,6 +341,11 @@ export default class StudentApi extends AuthApi implements StudentApiInterface {
                   }),
               )
               .sort((a, b) => a.title.localeCompare(b.title));
+
+            analyticsApi.sendMultiple(
+              `StudentApi.getEnrolledClassListListener - ${AnalyticsApiDocs.CLASS_READ}`,
+              docs.length,
+            );
 
             onDataChange(newClasses);
           });
@@ -356,6 +388,11 @@ export default class StudentApi extends AuthApi implements StudentApiInterface {
           return model;
         });
 
+        analyticsApi.sendMultiple(
+          `StudentApi.getEnrolledPercentageListener - ${AnalyticsApiDocs.JOINED_STUDENTS_READ}`,
+          percentageModel.length,
+        );
+
         onDataChange(percentageModel);
       });
 
@@ -391,6 +428,11 @@ export default class StudentApi extends AuthApi implements StudentApiInterface {
         }),
     );
 
+    analyticsApi.sendMultiple(
+      `StudentApi.getEnrolledClassList - ${AnalyticsApiDocs.CLASS_READ}`,
+      data.length,
+    );
+
     return this.success(data);
     // throw new Error('Method not implemented.');
   };
@@ -412,6 +454,10 @@ export default class StudentApi extends AuthApi implements StudentApiInterface {
       .doc(classId)
       .get();
 
+    analyticsApi.sendSingle(
+      `StudentApi.giveResponse - ${AnalyticsApiDocs.CLASS_READ}`,
+    );
+
     const teacherClass = new TeacherClassModel(
       (teacherClassData?.data() as unknown) as TeacherClassModelProps,
     );
@@ -424,6 +470,10 @@ export default class StudentApi extends AuthApi implements StudentApiInterface {
       .collection(TeacherApi.CLASSES_SESSIONS_COLLECTION_NAME)
       .doc(currentSessionId ?? '')
       .get();
+
+    analyticsApi.sendSingle(
+      `StudentApi.giveResponse - ${AnalyticsApiDocs.CLASS_SESSION_READ}`,
+    );
 
     const sessionInfo = new SessionInfoModel(
       (currentSessionDoc.data() as unknown) as SessionInfoInterface,
@@ -442,6 +492,10 @@ export default class StudentApi extends AuthApi implements StudentApiInterface {
       .where('classId', '==', classId)
       .get();
 
+    analyticsApi.sendSingle(
+      `StudentApi.giveResponse - ${AnalyticsApiDocs.CLASS_SESSION_STUDENTS_READ}`,
+    );
+
     // because we are adding default user on every class start
     if (queryPresentGiven.docs.length === 1) {
       // we found a document
@@ -454,6 +508,10 @@ export default class StudentApi extends AuthApi implements StudentApiInterface {
           SessionStudentModel.Update({
             present: true,
           }),
+        );
+
+        analyticsApi.sendSingle(
+          `StudentApi.giveResponse - ${AnalyticsApiDocs.CLASS_SESSION_STUDENTS_UPDATE}`,
         );
       } else {
         return this.error(BasicErrors.ALREADY_PRESENT_GIVEN);
@@ -476,6 +534,10 @@ export default class StudentApi extends AuthApi implements StudentApiInterface {
             studentName: displayName,
           }).toJson(),
         );
+
+      analyticsApi.sendSingle(
+        `StudentApi.giveResponse - ${AnalyticsApiDocs.CLASS_SESSION_STUDENTS_WRITE}`,
+      );
     }
 
     // if (queryPresentGiven.docs.length === 0) {
@@ -528,6 +590,11 @@ export default class StudentApi extends AuthApi implements StudentApiInterface {
           )
           .map(e => e.classId);
 
+        analyticsApi.sendMultiple(
+          `StudentApi.getPresentClassId - ${AnalyticsApiDocs.CLASS_SESSION_STUDENTS_READ}`,
+          data.length,
+        );
+
         cb(data);
       });
 
@@ -566,6 +633,11 @@ export default class StudentApi extends AuthApi implements StudentApiInterface {
             sessionTime: data.sessionTime.toDate(),
           });
         },
+      );
+
+      analyticsApi.sendMultiple(
+        `StudentApi.getAttendanceReport - ${AnalyticsApiDocs.CLASS_SESSION_STUDENTS_READ}`,
+        sessions.length,
       );
 
       return this.success(sessions);

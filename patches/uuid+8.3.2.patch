@@ -1,7 +1,7 @@
-diff --git a/node_modules/@storybook/addon-actions/node_modules/uuid/dist/rng-browser.js b/node_modules/@storybook/addon-actions/node_modules/uuid/dist/rng-browser.js
+diff --git a/node_modules/uuid/dist/rng-browser.js b/node_modules/uuid/dist/rng-browser.js
 index 91faeae..a074941 100644
---- a/node_modules/@storybook/addon-actions/node_modules/uuid/dist/rng-browser.js
-+++ b/node_modules/@storybook/addon-actions/node_modules/uuid/dist/rng-browser.js
+--- a/node_modules/uuid/dist/rng-browser.js
++++ b/node_modules/uuid/dist/rng-browser.js
 @@ -18,7 +18,12 @@ function rng() {
      getRandomValues = typeof crypto !== 'undefined' && crypto.getRandomValues && crypto.getRandomValues.bind(crypto) || typeof msCrypto !== 'undefined' && typeof msCrypto.getRandomValues === 'function' && msCrypto.getRandomValues.bind(msCrypto);
  

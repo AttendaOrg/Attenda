@@ -90,6 +90,7 @@ import EditDebugSettingsPage, {
 import ChooseClassIconPage, {
   ChooseClassIconNavigationOptions,
 } from './pages/Teacher/ChooseClassIconPage';
+import { analyticsApi, AnalyticsApiDocs } from './api/analytics';
 
 export type TeacherClassListNavigationProps = {
   withDismiss?: boolean;
@@ -186,6 +187,8 @@ class AuthProvider extends React.PureComponent<Props> {
     const {
       props: { navigation },
     } = this;
+
+    console.log(analyticsApi);
 
     this.unsubscribe = firebase
       .auth()

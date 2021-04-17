@@ -10,6 +10,7 @@
         "bcpow",
         "datetimepicker",
         "firestore",
+        "localstorage",
         "noemit",
         "prestorybook",
         "rnstl",
