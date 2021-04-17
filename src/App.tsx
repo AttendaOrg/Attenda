@@ -1,4 +1,5 @@
 import React from 'react';
+import { Alert } from 'react-native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { CommonActions, NavigationContainer } from '@react-navigation/native';
 import { MenuProvider } from 'react-native-popup-menu';
@@ -183,12 +184,16 @@ class AuthProvider extends React.PureComponent<Props> {
 
   unsubscribe: firebase.Unsubscribe | null = null;
 
-  componentDidMount() {
+  async componentDidMount() {
     const {
       props: { navigation },
     } = this;
 
-    console.log(analyticsApi);
+    // TODO: remove this in production
+    // wake up the heroku instance
+    const success = await analyticsApi.sendPing();
+
+    if (!success) Alert.alert("Couldn't start the heroku instance");
 
     this.unsubscribe = firebase
       .auth()

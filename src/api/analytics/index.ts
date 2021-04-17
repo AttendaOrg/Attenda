@@ -65,29 +65,38 @@ export default class AnalyticsApi {
   private isLocked = false;
 
   constructor() {
-    if (typeof localStorage === 'undefined' || localStorage === null) {
-      const { LocalStorage } = require('node-localstorage');
+    let uId = '';
+    const randomUid = uuid();
 
-      localStorage = new LocalStorage('./scratch');
-    }
+    // if (typeof module !== 'undefined' && typeof module.exports === 'object') {
+    //   const { LocalStorage } = require('node-localstorage');
 
-    const uId = localStorage.getItem(AnalyticsApi.USER_ID_STORE_NAME);
+    //   localStorage = new LocalStorage('./scratch');
+    //   const localUId = localStorage.getItem(AnalyticsApi.USER_ID_STORE_NAME);
 
+    //   if (typeof localUId !== 'string') uId = randomUid;
+    //   else uId = localUId;
+
+    //   localStorage.setItem(AnalyticsApi.USER_ID_STORE_NAME, randomUid);
+    // } else {
+    const AsyncStorage = require('@react-native-async-storage/async-storage')
+      .default;
+
+    const localUId = AsyncStorage.getItem(AnalyticsApi.USER_ID_STORE_NAME);
+
+    if (typeof localUId !== 'string') uId = randomUid;
+    else uId = localUId;
+
+    AsyncStorage.setItem(AnalyticsApi.USER_ID_STORE_NAME, randomUid);
+    // }
+
+    this.userId = uId;
     this.sessionId = uuid();
 
-    if (typeof uId !== 'string') {
-      const randomUid = uuid();
-
-      localStorage.setItem(AnalyticsApi.USER_ID_STORE_NAME, randomUid);
-      this.userId = randomUid;
-    } else {
-      this.userId = uId;
-    }
-
-    this.sendPing();
+    // this.sendPing();
   }
 
-  private sendPing = async (): Promise<void> => {
+  sendPing = async (): Promise<boolean> => {
     this.isLocked = true;
     try {
       const resp = await axios.get(`${ANALYTICS_ROOT_URL}/api/hi`);
@@ -96,9 +105,13 @@ export default class AnalyticsApi {
 
       this.isLocked = false;
       this.startLoop();
+
+      return true;
     } catch (e) {
       console.log(e);
     }
+
+    return false;
   };
 
   private startLoop = async (): Promise<void> => {
