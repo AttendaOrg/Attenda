@@ -90,6 +90,10 @@ export const CalculatePercentageFun = async (
             totalNumOfSession
           ).toFixed(2);
 
+          console.log(
+            `CalculatePercentage:(${studentId}) totalAttendancePercentage(${totalAttendancePercentage}) = (${studentAttendanceCount} * 100) / ${totalNumOfSession};`
+          );
+
           const studentDoc = await admin
             .firestore()
             .collection(CLASSES_COLLECTION_NAME)
@@ -134,6 +138,10 @@ export const CalculateSingleStudentPercentageFun = async (
     );
     const totalAttendancePercentage =
       (studentAttendanceCount * 100) / totalNumOfSession;
+
+    console.log(
+      `CalculateSingleStudentPercentage: totalAttendancePercentage(${totalAttendancePercentage}) = (${studentAttendanceCount} * 100) / ${totalNumOfSession};`
+    );
 
     const studentDoc = await admin
       .firestore()
