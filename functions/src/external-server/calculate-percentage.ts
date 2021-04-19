@@ -10,6 +10,8 @@ const calculatePercentage = async (
   snapshot: FirebaseFirestore.QuerySnapshot<FirebaseFirestore.DocumentData>
 ): Promise<void> => {
   if (!firstTimeCalculatePercentage) {
+    console.log("calculatePercentage: ");
+
     snapshot.docChanges().map(async (e) => {
       if (e.type === "modified") {
         CalculatePercentageFun(e.doc.data());
@@ -23,6 +25,7 @@ const calculateSingleStudentPercentage = async (
   snapshot: FirebaseFirestore.QuerySnapshot<FirebaseFirestore.DocumentData>
 ): Promise<void> => {
   if (!firstTimeCalculateSingleStudentPercentage) {
+    console.log("firstTimeCalculateSingleStudentPercentage: ");
     snapshot.docChanges().map(async (e) => {
       if (e.type === "modified") {
         CalculateSingleStudentPercentageFun(e.doc.data());
