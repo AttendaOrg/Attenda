@@ -3,18 +3,27 @@ import {
   StackNavigationOptions,
   StackScreenProps,
 } from '@react-navigation/stack';
+import * as WebBrowser from 'expo-web-browser';
+import * as Google from 'expo-auth-session/providers/google';
+import * as Facebook from 'expo-auth-session/providers/facebook';
+
+import { ResponseType } from 'expo-auth-session';
+import firebase from 'firebase';
 import { RootStackParamList } from '../App';
 import SignIn from '../components/organisms/AppIntro/SignIn';
 import { NoHeaderNavigationOptions } from '../components/templates/SimpleCloseNavigationOption';
-import { authApi } from '../api/AuthApi';
+import AuthApi, { authApi } from '../api/AuthApi';
 import { BasicErrors } from '../api/BaseApi';
 import SingleButtonPopup from '../components/molecules/SingleButtonPopup';
 import GlobalContext, { GlobalContextType } from '../context/GlobalContext';
 import { isValidEmail } from '../util';
+import { FB_APP_ID, GOOGLE_GUID } from '../util/constant';
 
 type Props = StackScreenProps<RootStackParamList, 'SignIn'>;
 
 export const SignInPageNavigationOptions: StackNavigationOptions = NoHeaderNavigationOptions;
+
+WebBrowser.maybeCompleteAuthSession();
 
 const SignInPage: React.FC<Props> = ({ navigation }): JSX.Element => {
   const [email, setEmail] = useState('');
@@ -25,6 +34,69 @@ const SignInPage: React.FC<Props> = ({ navigation }): JSX.Element => {
   const [passwordError, setPasswordError] = useState('');
   const [tryFormSubmit, setTryFormSubmit] = useState(false);
   const globalContext = useContext(GlobalContext) as GlobalContextType;
+  const [, response, promptGoogleSignInAsync] = Google.useAuthRequest({
+    expoClientId: `${GOOGLE_GUID}.apps.googleusercontent.com`,
+    iosClientId: `${GOOGLE_GUID}.apps.googleusercontent.com`,
+    androidClientId: `${GOOGLE_GUID}.apps.googleusercontent.com`,
+    webClientId: `${GOOGLE_GUID}.apps.googleusercontent.com`,
+  });
+
+  const [
+    request,
+    fbResponse,
+    promptFacebookSignInAsync,
+  ] = Facebook.useAuthRequest({
+    clientId: `${FB_APP_ID}`,
+    responseType: ResponseType.Token,
+  });
+
+  React.useEffect(() => {
+    (async () => {
+      if (response?.type === 'success') {
+        const { authentication } = response;
+
+        const q = firebase.auth.GoogleAuthProvider.credential(
+          authentication?.idToken ?? null,
+          authentication?.accessToken,
+        );
+
+        globalContext.changeSpinnerLoading(true);
+        await firebase.auth().signInWithCredential(q);
+        globalContext.changeSpinnerLoading(false);
+
+        const url = authApi.getGooglePhotoUrl();
+
+        if (typeof url === 'string') authApi.uploadProfileImage(url);
+      }
+    })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [response]);
+
+  React.useEffect(() => {
+    (async () => {
+      if (fbResponse?.type === 'success') {
+        const { authentication } = fbResponse;
+
+        if (
+          authentication !== null &&
+          (authentication.accessToken !== null ||
+            authentication.accessToken !== undefined)
+        ) {
+          const q = firebase.auth.FacebookAuthProvider.credential(
+            authentication.accessToken,
+          );
+
+          globalContext.changeSpinnerLoading(true);
+          await firebase.auth().signInWithCredential(q);
+          globalContext.changeSpinnerLoading(false);
+          const fbUrl = authApi.getFbPhotoUrl(authentication.accessToken);
+
+          if (typeof fbUrl === 'string') authApi.uploadProfileImage(fbUrl);
+        }
+      }
+    })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [fbResponse]);
 
   // #region error validation logic
 
@@ -127,8 +199,8 @@ const SignInPage: React.FC<Props> = ({ navigation }): JSX.Element => {
           navigation.push('SignUp');
         }}
         onSignInClick={loginUser}
-        onGoogleClick={() => null}
-        onFaceBookClick={() => null}
+        onGoogleClick={() => promptGoogleSignInAsync()}
+        onFaceBookClick={() => promptFacebookSignInAsync()}
         onTwitterClick={() => null}
         errors={{ emailError, passwordError }}
       />

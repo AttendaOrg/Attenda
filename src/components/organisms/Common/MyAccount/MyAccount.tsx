@@ -14,6 +14,7 @@ import { AntDesign } from '@expo/vector-icons';
 import { Icon, Input } from 'react-native-elements';
 import DoubleButtonPopup from '../../../molecules/DoubleButtonPopup';
 import { inputContainerStyle } from '../../../../util/Styles';
+import ProfileImage from '../../../molecules/ProfileImage/ProfileImage';
 
 const styles = StyleSheet.create({
   container: {
@@ -131,7 +132,7 @@ const MyAccount: React.FC<MyAccountPops> = ({
   const [name, setName] = useState(initialName);
   const [isEditing, setIsEditing] = useState(false);
   const [hasFormTrySubmitted, setHasFormTrySubmitted] = useState(false);
-  const ref = useRef<Input>(null);
+  const ref = useRef<any>(null);
 
   // react to the prop name change
   useEffect(() => {
@@ -149,16 +150,21 @@ const MyAccount: React.FC<MyAccountPops> = ({
   const profileImgSrc: ImageSourcePropType =
     typeof profileImg === 'string' ? { uri: profileImg } : profileImg;
 
+  const isInvalidPic =
+    (profileImgSrc as any)?.uri === undefined ||
+    (profileImgSrc as any)?.uri === null ||
+    (profileImgSrc as any)?.uri === '';
+
   return (
     <ScrollView style={styles.container}>
       <View style={styles.blurImageContainer}>
         <Image
           blurRadius={Platform.OS === 'ios' ? 10 : 5}
-          source={profileImgSrc}
+          source={isInvalidPic ? imageSrc : profileImgSrc}
           style={styles.blurBackground}
         />
         <View style={styles.profileImgContainer}>
-          <Image source={profileImgSrc} style={styles.profileImg} />
+          <ProfileImage avatar={profileImgSrc} height={200} />
           <TouchableOpacity
             onPress={onEditProfilePictureClick}
             style={styles.iconContainer}
@@ -171,6 +177,8 @@ const MyAccount: React.FC<MyAccountPops> = ({
       <View style={styles.infoContainer}>
         <View style={styles.infoValueRow}>
           <Input
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             ref={ref}
             autoFocus={false}
             placeholder="Name"

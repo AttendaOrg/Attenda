@@ -1,10 +1,18 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
-import React from 'react';
-import { Button, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import React, { useState } from 'react';
+import {
+  Button,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import { Input } from 'react-native-elements';
 import { inputContainerStyle } from '../../../../util/Styles';
 import DividerText from '../../../atoms/DividerText/DividerText';
 import SignInImageComponent from '../../../atoms/Images/SignInImageComponent';
+import PasswordShowSwitcher from '../../../atoms/PasswordShowSwitcher/PasswordShowSwitcher';
 import OauthProvider, {
   OauthProviderProps,
 } from '../../../molecules/OauthProvider/OauthProvider';
@@ -67,12 +75,11 @@ const SignIn: React.FC<SignInPops> = ({
   errors = { emailError: '', passwordError: '' },
 }): JSX.Element => {
   const { emailError, passwordError } = errors;
+  const [showPassword, setShowPassword] = useState(false);
 
   return (
     <View style={styles.container}>
-      {/* <View style={{ marginTop: 20 }}> */}
-      <KeyboardAdjustImageView svgImg={SignInImageComponent} />
-      {/* </View> */}
+      <KeyboardAdjustImageView svgImg={SignInImageComponent} heightSensitive />
 
       <View style={styles.signInContainer}>
         <Text style={styles.signInText}>Sign In</Text>
@@ -89,11 +96,9 @@ const SignIn: React.FC<SignInPops> = ({
           onChangeText={onEmailChange}
           labelStyle={{
             margin: 0,
-            display: emailError !== '' ? 'flex' : 'none',
           }}
           errorStyle={{
             margin: 0,
-            display: emailError !== '' ? 'flex' : 'none',
           }}
           errorMessage={emailError}
         />
@@ -101,19 +106,28 @@ const SignIn: React.FC<SignInPops> = ({
           containerStyle={inputContainerStyle}
           style={styles.inputStyle}
           placeholder="Password"
-          textContentType="password"
-          secureTextEntry
+          textContentType={showPassword ? 'none' : 'password'}
+          secureTextEntry={!showPassword}
           value={password}
           onChangeText={onPasswordChange}
           labelStyle={{
             margin: 0,
-            display: passwordError !== '' ? 'flex' : 'none',
           }}
           errorStyle={{
             margin: 0,
-            display: passwordError !== '' ? 'flex' : 'none',
           }}
           errorMessage={passwordError}
+          rightIcon={
+            <PasswordShowSwitcher
+              show={showPassword}
+              onChange={() => setShowPassword(!showPassword)}
+            />
+          }
+          rightIconContainerStyle={{
+            marginHorizontal: 0,
+            marginVertical: 0,
+            margin: 0,
+          }}
         />
       </View>
 
@@ -147,6 +161,7 @@ const SignIn: React.FC<SignInPops> = ({
           </Text>
         </TouchableOpacity>
       </View>
+      <View style={{ height: 10 }} />
     </View>
   );
 };

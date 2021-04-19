@@ -5,12 +5,14 @@ import { CheckBox, Input } from 'react-native-elements';
 import { primaryColor } from '../../../../util/Colors';
 import { inputContainerStyle } from '../../../../util/Styles';
 import SignUpImageComponent from '../../../atoms/Images/SignUpImageComponent';
+import PasswordShowSwitcher from '../../../atoms/PasswordShowSwitcher/PasswordShowSwitcher';
 import KeyboardAdjustImageView from '../../../templates/KeyboardAdjustImageView';
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 16,
+    paddingTop: 26,
     backgroundColor: '#fff',
   },
   signUpContainer: {
@@ -37,6 +39,10 @@ const styles = StyleSheet.create({
   },
   goBackContainer: {
     justifyContent: 'flex-end',
+    padding: 10,
+    marginTop: 8,
+    textAlign: 'center',
+    alignItems: 'center',
     flex: 1,
   },
   linkText: {
@@ -83,6 +89,7 @@ const SignUp: React.FC<SignUpPops> = ({
 }): JSX.Element => {
   const [hasFromTrySubmitted, setHasFromTrySubmitted] = useState(false);
   const [acceptTerms, setChecked] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -134,10 +141,7 @@ const SignUp: React.FC<SignUpPops> = ({
 
   return (
     <View style={styles.container}>
-      {/* <View style={{ marginTop: 30 }}> */}
-      {/* <KeyboardAdjustImageView imageSource={imageSource} /> */}
-      {/* </View> */}
-      <KeyboardAdjustImageView svgImg={SignUpImageComponent} />
+      <KeyboardAdjustImageView svgImg={SignUpImageComponent} heightSensitive />
 
       <View style={styles.signUpContainer}>
         <Text style={styles.signUpText}>Sign Up</Text>
@@ -152,11 +156,9 @@ const SignUp: React.FC<SignUpPops> = ({
           keyboardType="name-phone-pad"
           labelStyle={{
             margin: 0,
-            display: usernameError !== '' ? 'flex' : 'none',
           }}
           errorStyle={{
             margin: 0,
-            display: usernameError !== '' ? 'flex' : 'none',
           }}
           value={username}
           onChangeText={updateUsername}
@@ -171,11 +173,9 @@ const SignUp: React.FC<SignUpPops> = ({
           keyboardType="email-address"
           labelStyle={{
             margin: 0,
-            display: emailError !== '' ? 'flex' : 'none',
           }}
           errorStyle={{
             margin: 0,
-            display: emailError !== '' ? 'flex' : 'none',
           }}
           value={email}
           onChangeText={updateEmail}
@@ -186,16 +186,25 @@ const SignUp: React.FC<SignUpPops> = ({
           containerStyle={inputContainerStyle}
           style={styles.inputStyle}
           placeholder="Password"
-          textContentType="password"
           labelStyle={{
             margin: 0,
-            display: passwordError !== '' ? 'flex' : 'none',
           }}
           errorStyle={{
             margin: 0,
-            display: passwordError !== '' ? 'flex' : 'none',
           }}
-          secureTextEntry
+          textContentType={showPassword ? 'none' : 'password'}
+          secureTextEntry={!showPassword}
+          rightIcon={
+            <PasswordShowSwitcher
+              show={showPassword}
+              onChange={() => setShowPassword(!showPassword)}
+            />
+          }
+          rightIconContainerStyle={{
+            marginHorizontal: 0,
+            marginVertical: 0,
+            margin: 0,
+          }}
           value={password}
           onChangeText={updatePassword}
           errorMessage={passwordError}
@@ -233,14 +242,7 @@ const SignUp: React.FC<SignUpPops> = ({
       </View>
       <View style={styles.goBackContainer}>
         <TouchableOpacity onPress={onSignInClick}>
-          <Text
-            style={{
-              margin: 10,
-              textAlign: 'center',
-            }}
-          >
-            Already have account? Sign in
-          </Text>
+          <Text>Already have account? Sign in</Text>
         </TouchableOpacity>
       </View>
     </View>

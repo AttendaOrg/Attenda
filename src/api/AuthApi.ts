@@ -1,5 +1,6 @@
 import firebase from 'firebase';
 import { UserRole } from '.';
+import { analyticsApi, AnalyticsApiDocs } from './analytics';
 import BaseApi, { BasicErrors, WithError } from './BaseApi';
 import AccountInfo, { AccountInfoProps } from './model/AccountInfo';
 
@@ -115,6 +116,50 @@ class AuthApi extends BaseApi implements AuthApiInterface {
     return firebase.auth().currentUser?.uid ?? null;
   };
 
+  getGooglePhotoUrl = (): string | null => {
+    let photoUrl: string | null = null;
+
+    firebase.auth().currentUser?.providerData.forEach(data => {
+      if (typeof data?.photoURL === 'string') photoUrl = data?.photoURL;
+    });
+
+    return photoUrl;
+  };
+
+  getFbPhotoUrl = (accessToken: string): string | null => {
+    let photoUrl: string | null = null;
+
+    firebase.auth().currentUser?.providerData.forEach(data => {
+      if (typeof data?.photoURL === 'string')
+        photoUrl = `${data?.photoURL}?access_token=${accessToken}&type=large`;
+    });
+
+    return photoUrl;
+  };
+
+  uploadImageToStorage = (url: string | null): void => {
+    if (typeof url === 'string') {
+      const f = AuthApi.getProfilePicRef();
+
+      console.log(url);
+
+      if (typeof url === 'string') {
+        fetch(url)
+          .then(res => res.blob())
+          .then(blob => {
+            console.log('[*] uploading file');
+
+            f.put(blob);
+          })
+          .then(() => {
+            console.log('[*] done');
+          });
+      }
+    } else {
+      console.log('invalid url');
+    }
+  };
+
   getUserDisplayName = (): string | null => {
     return firebase.auth().currentUser?.displayName ?? null;
   };
@@ -202,10 +247,20 @@ class AuthApi extends BaseApi implements AuthApiInterface {
 
       const user = await path.get();
 
+      analyticsApi.sendSingle(
+        `AuthApi.setUserRole - ${AnalyticsApiDocs.USER_ROLE_READ}`,
+      );
+
       // checks if the path exist
       if (user.exists) {
+        analyticsApi.sendSingle(
+          `AuthApi.setUserRole - ${AnalyticsApiDocs.USER_ROLE_UPDATE}`,
+        );
         await path.update(updateInfo.toJson());
       } else {
+        analyticsApi.sendSingle(
+          `AuthApi.setUserRole - ${AnalyticsApiDocs.USER_ROLE_WRITE}`,
+        );
         // if the path does not exist create a new path
         await path.set(updateInfo.toJson());
       }
@@ -231,6 +286,9 @@ class AuthApi extends BaseApi implements AuthApiInterface {
         .get();
       const data = doc.data();
 
+      analyticsApi.sendSingle(
+        `AuthApi.getUserRole - ${AnalyticsApiDocs.USER_ROLE_READ}`,
+      );
       // path not found the data was not initialized
       // return UNKNOWN ?
       if (!data) return this.success(UserRole.UNKNOWN);
@@ -307,6 +365,7 @@ class AuthApi extends BaseApi implements AuthApiInterface {
 
       const email = firebase.auth().currentUser?.email ?? '';
       const name = firebase.auth().currentUser?.displayName ?? '';
+      const profilePicUrl = firebase.auth().currentUser?.photoURL ?? '';
 
       const doc = await firebase
         .firestore()
@@ -315,13 +374,22 @@ class AuthApi extends BaseApi implements AuthApiInterface {
         .get();
       const data = doc.data();
 
+      analyticsApi.sendSingle(
+        `AuthApi.getAccountInfo - ${AnalyticsApiDocs.ACC_INFO_READ}`,
+      );
+
       // path not found the data was not initialized
       // return UNKNOWN ?
       if (!data) return this.error(BasicErrors.EXCEPTION);
 
       const accountInfoData = (doc.data() as unknown) as AccountInfoProps;
 
-      const info = new AccountInfo({ ...accountInfoData, email, name });
+      const info = new AccountInfo({
+        ...accountInfoData,
+        email,
+        name,
+        profilePicUrl,
+      });
 
       return this.success(info);
       // console.log('no login user');
@@ -332,7 +400,7 @@ class AuthApi extends BaseApi implements AuthApiInterface {
   };
 
   updateAccountInfo = async (
-    accountInfo: AccountInfo,
+    accountInfo: Partial<AccountInfoProps>,
   ): Promise<WithError<boolean>> => {
     try {
       const userId = this.getUserUid();
@@ -345,7 +413,11 @@ class AuthApi extends BaseApi implements AuthApiInterface {
         .firestore()
         .collection(AuthApi.AUTH_ROOT_COLLECTION_NAME)
         .doc(userId)
-        .update(accountInfo.toJson());
+        .update(accountInfo);
+
+      analyticsApi.sendSingle(
+        `AuthApi.updateAccountInfo - ${AnalyticsApiDocs.ACC_INFO_UPDATE}`,
+      );
 
       if (accountInfo.name !== currName) {
         console.info('NOTICE: using database for the name');
@@ -389,6 +461,10 @@ class AuthApi extends BaseApi implements AuthApiInterface {
         .doc(userId)
         .set(accountInfo.toJson());
 
+      analyticsApi.sendSingle(
+        `AuthApi.createAccountInfo - ${AnalyticsApiDocs.ACC_INFO_WRITE}`,
+      );
+
       return this.success(true);
     } catch (e) {
       return this.error(BasicErrors.EXCEPTION);
@@ -424,13 +500,41 @@ class AuthApi extends BaseApi implements AuthApiInterface {
     }
   };
 
-  static getProfilePicRef = (): firebase.storage.Reference => {
+  static getProfilePicRef = (userId?: string): firebase.storage.Reference => {
     return firebase
       .storage()
       .ref()
       .child('public')
       .child('profiles')
-      .child(`${firebase.auth().currentUser?.uid}` ?? '');
+      .child(`${userId ?? firebase.auth().currentUser?.uid}` ?? '');
+  };
+
+  uploadProfileImage = async (uri: string): Promise<void> => {
+    const response = await fetch(uri);
+    const blob = await response.blob();
+
+    // Create a Storage Ref w/ username
+    const storageRef = AuthApi.getProfilePicRef();
+
+    const task = storageRef.put(blob);
+
+    task.then(async e => {
+      const photoURL = await e.ref.getDownloadURL();
+
+      await firebase.auth().currentUser?.updateProfile({
+        photoURL,
+      });
+
+      await this.updateAccountInfo(
+        AccountInfo.Update({
+          profilePicUrl: photoURL,
+        }),
+      );
+    });
+  };
+
+  getMyProfilePic = (): string => {
+    return firebase.auth().currentUser?.photoURL ?? '';
   };
 }
 

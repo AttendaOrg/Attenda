@@ -1,4 +1,6 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
+
+import TeacherClassModel from '../../../../api/TeacherApi/model/TeacherClassModel';
 import { StudentListDataProps } from '../../Student/StudentClassList';
 
 const classBack1 = require('../../../../../assets/images/class-back-1.jpg');
@@ -7,55 +9,83 @@ const classBack3 = require('../../../../../assets/images/class-back-3.jpg');
 const classBack4 = require('../../../../../assets/images/class-back-4.jpg');
 const classBack5 = require('../../../../../assets/images/class-back-5.jpg');
 
-export const dummyTeacherClassListData: StudentListDataProps[] = [
+export const dummyTeacherClassListData: TeacherClassModel[] = [
+  new TeacherClassModel({
+    title: 'Class Name',
+    section: 'Section',
+    teacherId: 'asd',
+  }),
+  new TeacherClassModel({
+    title: 'Class Name',
+    section: 'Section',
+    teacherId: 'asd',
+  }),
+  new TeacherClassModel({
+    title: 'Class Name',
+    section: 'Section',
+    teacherId: 'asd',
+  }),
+  new TeacherClassModel({
+    title: 'Class Name',
+    section: 'Section',
+    teacherId: 'asd',
+  }),
+  new TeacherClassModel({
+    title: 'Class Name',
+    section: 'Section',
+    teacherId: 'asd',
+  }),
+];
+
+export const dummyStudentListData: StudentListDataProps[] = [
   {
-    attendance: '92 Students',
+    attendance: 92,
     backgroundImage: classBack1,
     className: 'Class Name',
     section: 'Section',
     teacherName: 'Class Code: SD4584558',
     isSessionLive: true,
-    key: 'key1',
+    classId: 'key1',
     currentSessionId: null,
   },
   {
-    attendance: '99 Students',
+    attendance: 99,
     backgroundImage: classBack2,
     className: 'Class Name',
     section: 'Section',
     teacherName: 'Class Code: SD4584558',
     isSessionLive: false,
-    key: 'key2',
+    classId: 'key2',
     currentSessionId: null,
   },
   {
-    attendance: '99 Students',
+    attendance: 99,
     backgroundImage: classBack3,
     className: 'Class Name',
     section: 'Section',
     teacherName: 'Class Code: SD4584558',
     isSessionLive: false,
-    key: 'key3',
+    classId: 'key3',
     currentSessionId: null,
   },
   {
-    attendance: '99 Students',
+    attendance: 99,
     backgroundImage: classBack4,
     className: 'Class Name',
     section: 'Section',
     teacherName: 'Class Code: SD4584558',
     isSessionLive: false,
-    key: 'key4',
+    classId: 'key4',
     currentSessionId: null,
   },
   {
-    attendance: '99 Students',
+    attendance: 99,
     backgroundImage: classBack5,
     className: 'Class Name',
     section: 'Section',
     teacherName: 'Class Code: SD4584558',
     isSessionLive: false,
-    key: 'key5',
+    classId: 'key5',
     currentSessionId: null,
   },
 ];

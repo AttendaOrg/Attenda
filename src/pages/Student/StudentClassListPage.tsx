@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import {
   StackNavigationOptions,
   StackScreenProps,
@@ -8,6 +8,7 @@ import { RootStackParamList } from '../../App';
 import SimpleHeaderNavigationOptions from '../../components/templates/SimpleHeaderNavigationOptions';
 import StudentClassList, {
   StudentListDataProps,
+  dummyStudentClassListData,
 } from '../../components/organisms/Student/StudentClassList';
 import TeacherClassModel from '../../api/TeacherApi/model/TeacherClassModel';
 import { studentApi } from '../../api/StudentApi';
@@ -15,7 +16,9 @@ import ImagePopup from '../../components/molecules/ImagePopup/ImagePopup';
 import SearchingImageComponent from '../../components/atoms/Images/SearchingImageComponent';
 import ClassStudentModel from '../../api/TeacherApi/model/ClassStudentModel';
 import DoubleButtonPopup from '../../components/molecules/DoubleButtonPopup';
-import { dummyTeacherClassListData } from '../../components/organisms/Teacher/TeacherClassList';
+import { StudentClassAction } from '../../components/molecules/ClassCard/StudentClassCard';
+import { authApi } from '../../api/AuthApi';
+import GlobalContext from '../../context/GlobalContext';
 
 type Props = StackScreenProps<RootStackParamList, 'StudentClassList'>;
 type OptionsProps = (props: Props) => StackNavigationOptions;
@@ -37,6 +40,7 @@ const transformToStudentListDataProps = (
     currentSessionId,
     teacherName,
     alreadyGiven,
+    classIcon,
   } = cls;
 
   const match = percentageModels.filter(m => m.classId === classId);
@@ -45,16 +49,17 @@ const transformToStudentListDataProps = (
   return {
     // TODO: get attendance summery from the class info
     // we will do it with a cloud function because it is too intensive calculation
-    attendance: `Your Attendance: ${percentage.toFixed(1)}%`,
+    attendance: percentage,
     section,
     showShimmer: false,
     backgroundImage: classBack,
     className: title,
-    key: classId ?? '',
-    teacherName: `by: ${teacherName}`,
+    classId: classId ?? '',
+    teacherName: teacherName ?? '',
     isSessionLive: isLive,
     currentSessionId,
     alreadyGiven,
+    classIcon,
   };
 };
 
@@ -74,7 +79,11 @@ const mergeGiven = (
   });
 };
 
-const StudentClassListPage: React.FC<Props> = ({ navigation }): JSX.Element => {
+const StudentClassListPage: React.FC<Props> = ({
+  navigation,
+  route,
+}): JSX.Element => {
+  const context = useContext(GlobalContext);
   const [loading, setLoading] = useState(true);
   const [unEnrollId, setUnEnrollId] = useState<string | null>(null);
   const [data, setData] = useState<TeacherClassModel[]>([]);
@@ -105,12 +114,22 @@ const StudentClassListPage: React.FC<Props> = ({ navigation }): JSX.Element => {
   }, []);
 
   useEffect(() => {
+    try {
+      const uri = authApi.getMyProfilePic();
+
+      context.changeProfilePic({ uri });
+    } catch (e) {
+      console.log('Image access error', e);
+    }
+    context.changeSpinnerLoading(false);
+
     return studentApi.getEnrolledPercentageListener(
       async (_percentageModels: ClassStudentModel[]) => {
         setPercentageModels(_percentageModels);
         console.log(_percentageModels);
       },
     );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // on every session id changes reattach the listener for checking if the student has given present
@@ -124,11 +143,43 @@ const StudentClassListPage: React.FC<Props> = ({ navigation }): JSX.Element => {
 
   const dismissPopup = () => setShowNoSessionStartedPopup(false);
 
-  const onClassClick = (
-    classId: string,
-    currentSessionId: string | null,
-    alreadyGiven: boolean,
-  ) => {
+  const unEnroll = async (classId: string) => {
+    await studentApi.leaveClass(classId);
+  };
+
+  const merged = mergeGiven(givenPresenceClassIds, data);
+  const transformedData = merged.map(e =>
+    transformToStudentListDataProps(e, percentageModels),
+  );
+
+  const dismissUnEnrollPopup = () => {
+    setUnEnrollId(null);
+  };
+
+  const onAction = (
+    action: StudentClassAction,
+    info: StudentListDataProps,
+  ): void => {
+    const { classId } = info;
+
+    if (classId === null) return;
+
+    switch (action) {
+      case StudentClassAction.ATTENDANCE_RECORD:
+        navigation.push('StudentAttendanceRecord', { classId });
+        break;
+      case StudentClassAction.UN_ENROLL:
+        setUnEnrollId(classId);
+        break;
+
+      default:
+        break;
+    }
+  };
+
+  const onClassClick = (classInfo: StudentListDataProps) => {
+    const { alreadyGiven, currentSessionId, classId } = classInfo;
+
     const matched = data
       // get the matching class
       .filter(e => e.classId === classId)
@@ -146,21 +197,8 @@ const StudentClassListPage: React.FC<Props> = ({ navigation }): JSX.Element => {
     if (currentSessionId === null) setShowNoSessionStartedPopup(true);
   };
 
-  const unEnroll = async (classId: string) => {
-    await studentApi.leaveClass(classId);
-  };
-
-  const merged = mergeGiven(givenPresenceClassIds, data);
-  const transformedData = merged.map(e =>
-    transformToStudentListDataProps(e, percentageModels),
-  );
-
-  const dismissUnEnrollPopup = () => {
-    setUnEnrollId(null);
-  };
-
   const newData: StudentListDataProps[] = loading
-    ? dummyTeacherClassListData
+    ? dummyStudentClassListData
     : transformedData;
 
   return (
@@ -169,15 +207,8 @@ const StudentClassListPage: React.FC<Props> = ({ navigation }): JSX.Element => {
         showShimmer={loading}
         onFabClick={() => navigation.push('JoinClassForm', {})}
         data={newData}
+        onAction={onAction}
         onClassClick={onClassClick}
-        options={[
-          {
-            onPress: classId =>
-              navigation.push('StudentAttendanceRecord', { classId }),
-            title: 'Attendance Record',
-          },
-          { onPress: setUnEnrollId, title: 'Un-Enroll' },
-        ]}
       />
       <DoubleButtonPopup
         visible={unEnrollId !== null}

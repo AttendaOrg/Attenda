@@ -1,11 +1,12 @@
 import React from 'react';
 import { FlatList, StyleSheet, View } from 'react-native';
 import { FAB } from 'react-native-paper';
-import ClassCard from '../../../molecules/ClassCard';
 import { ClassCardPops } from '../../../molecules/ClassCard/ClassCard';
 import EmptyClass from '../../Common/EmptyClass';
-import { MenuOptionsPopoverDataProps } from '../../../molecules/MenuOptionsPopover';
 import { UserRole } from '../../../../api';
+import StudentClassCard, {
+  StudentClassAction,
+} from '../../../molecules/ClassCard/StudentClassCard';
 
 const styles = StyleSheet.create({
   container: {
@@ -24,23 +25,17 @@ const styles = StyleSheet.create({
 });
 
 export interface StudentListDataProps extends ClassCardPops {
-  key: string;
+  classId: string;
 }
 
 export interface StudentClassListPops {
   data: StudentListDataProps[];
   onFabClick: () => void;
-  onClassClick: (
-    classId: string,
-    sessionId: string | null,
-    alreadyGiven: boolean,
+  onClassClick: (classInfo: StudentListDataProps) => void;
+  onAction: (
+    action: StudentClassAction,
+    classInfo: StudentListDataProps,
   ) => void;
-  /**
-   * @deprecated this function is deprecated
-   * @use options props
-   */
-  onMoreIconClick?: () => void;
-  options?: MenuOptionsPopoverDataProps[];
   showShimmer?: boolean;
 }
 
@@ -48,9 +43,8 @@ const StudentClassList: React.FC<StudentClassListPops> = ({
   data = [],
   onFabClick,
   onClassClick,
-  onMoreIconClick = () => null,
-  options = [],
   showShimmer = false,
+  onAction = () => null,
 }): JSX.Element => {
   if (data.length === 0)
     return <EmptyClass onFabClick={onFabClick} userRole={UserRole.STUDENT} />;
@@ -60,29 +54,31 @@ const StudentClassList: React.FC<StudentClassListPops> = ({
       <FlatList
         data={data}
         ItemSeparatorComponent={() => <View style={styles.separator} />}
+        keyExtractor={(info, index) => info.classId ?? `class-${index}`}
         renderItem={({ item }) => (
-          <ClassCard
-            alreadyGiven={item.alreadyGiven}
+          <StudentClassCard
+            data={{
+              title: item.className,
+              section: item.section,
+              alreadyGiven: item.alreadyGiven ?? false,
+              teacherName: item.teacherName,
+              totalAttendancePercentage: item.attendance,
+              isLive: item.isSessionLive ?? false,
+              classIcon: item.classIcon,
+            }}
+            onAction={action => onAction(action, item)}
             showShimmer={showShimmer}
-            className={item.className}
-            section={item.section}
-            teacherName={item.teacherName}
-            attendance={item.attendance}
-            isSessionLive={item.isSessionLive}
-            classId={item.key}
-            currentSessionId={item.currentSessionId}
-            onCardClick={() =>
-              onClassClick(
-                item.key,
-                item.currentSessionId,
-                item.alreadyGiven ?? false,
-              )
-            }
-            options={options}
-            onMoreIconClick={onMoreIconClick}
-            backgroundImage={item.backgroundImage}
+            onPress={() => onClassClick(item)}
           />
         )}
+        ListFooterComponent={
+          <View
+            style={{
+              height: 95,
+              width: '100%',
+            }}
+          />
+        }
       />
       <FAB style={styles.fab} icon="plus" color="#fff" onPress={onFabClick} />
     </View>

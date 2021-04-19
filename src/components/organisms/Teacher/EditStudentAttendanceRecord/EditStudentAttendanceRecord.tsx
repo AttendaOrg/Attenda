@@ -2,14 +2,15 @@ import React, { useState } from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { Calendar, DateObject } from 'react-native-calendars';
 import { Dialog } from 'react-native-paper';
-import { convertDateFormat } from '../../../../util';
+import { convertDateFormat, convertMarkedDateToTimes } from '../../../../util';
 import UserInfo, { UserInfoPops } from '../../../molecules/UserInfo';
 import UserPresentEditPopup from '../../../molecules/UserPresentEditPopup';
 import {
   MarkedDates,
   absentDot,
   presentDot,
-  markedDatesProps,
+  MarkedDatesProps,
+  limitMarkDate,
 } from '../../Student/AttendanceRecord';
 
 const styles = StyleSheet.create({
@@ -35,14 +36,14 @@ const styles = StyleSheet.create({
 
 export const convertData = (
   markedDates: MarkedDates = {},
-): markedDatesProps => {
-  const newDates: markedDatesProps = {};
+): MarkedDatesProps => {
+  const newDates: MarkedDatesProps = {};
 
   Object.keys(markedDates).forEach(markDateKey => {
     const markDate = markedDates[markDateKey];
 
     const dots = Object.values(markDate).map(active =>
-      active
+      active.active
         ? // for some reason present key is duplicating
           { ...presentDot, key: `present-${markDateKey}-${Math.random()}` }
         : { ...absentDot, key: `absent-${markDateKey}-${Math.random()}` },
@@ -58,11 +59,7 @@ export interface EditStudentAttendanceRecordPops {
   markedDates: MarkedDates;
   onMonthChange: (date: Date) => void;
   percentage: string;
-  onChangeAttendance: (
-    date: string,
-    time: string,
-    status: boolean,
-  ) => Promise<void>;
+  onChangeAttendance: (sessionId: string, status: boolean) => Promise<void>;
   userInfo: UserInfoPops;
 }
 
@@ -105,16 +102,16 @@ const EditStudentAttendanceRecord: React.FC<EditStudentAttendanceRecordPops> = (
         <Calendar
           onMonthChange={date => onMonthChange(new Date(date.dateString))}
           onDayPress={onDateClick}
-          markedDates={mDates}
+          markedDates={limitMarkDate(mDates)}
           markingType="multi-dot"
         />
       </ScrollView>
       <Dialog visible={popupVisible} onDismiss={() => setPopupVisible(false)}>
         <UserPresentEditPopup
           date={currentDate}
-          selectedDates={markedDates[currentDate] ?? {}}
-          onChangeAttendance={async (date, time, status) => {
-            await onChangeAttendance(date, time, status);
+          selectedDates={convertMarkedDateToTimes(markedDates, currentDate)}
+          onChangeAttendance={async (sessionId, status) => {
+            await onChangeAttendance(sessionId, status);
             setCurrentDate('');
             // dismiss the popup
             setPopupVisible(false);

@@ -106,7 +106,11 @@ class BaseApi {
       // if the env is testing we do not need the persistence
       if (process.env.NODE_ENV !== 'testing') {
         if (options.persistence ?? BaseApi.defaultOptions.persistence) {
-          firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL);
+          if (process.env.PRESIST !== 'none') {
+            firebase
+              .auth()
+              .setPersistence(firebase.auth.Auth.Persistence.LOCAL);
+          }
         }
         // for some reason firestore is not respecting useEmulator in public ip
         // `firebase.firestore().useEmulator` works fine in node environment

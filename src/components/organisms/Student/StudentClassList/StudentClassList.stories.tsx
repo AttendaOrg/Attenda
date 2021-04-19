@@ -4,9 +4,11 @@ import { Platform } from 'react-native';
 import { select, withKnobs } from '@storybook/addon-knobs';
 import { storiesOf } from '@storybook/react-native';
 import { action } from '@storybook/addon-actions';
-import { MenuProvider } from 'react-native-popup-menu';
 import CenterView from '../../../atoms/CenterView';
 import StudentClassList, { StudentListDataProps } from './StudentClassList';
+import { dummyStudentClassListData } from '.';
+import { convertEnumToStr } from '../../../../util';
+import { StudentClassAction } from '../../../molecules/ClassCard/StudentClassCard';
 
 const STORY_NAME = 'Organisms/Student/StudentClassList';
 
@@ -18,86 +20,25 @@ export default {
   component: StudentClassList,
 };
 
-const classBack1 = require('../../../../../assets/images/class-back-1.jpg');
-const classBack2 = require('../../../../../assets/images/class-back-2.jpg');
-const classBack3 = require('../../../../../assets/images/class-back-3.jpg');
-const classBack4 = require('../../../../../assets/images/class-back-4.jpg');
-const classBack5 = require('../../../../../assets/images/class-back-5.jpg');
-
-export const dummyStudentClassListData: StudentListDataProps[] = [
-  {
-    attendance: 'Your Attendance: 92%',
-    backgroundImage: classBack1,
-    className: 'Class Name',
-    section: 'Section',
-    teacherName: 'Teacher Name',
-    isSessionLive: true,
-    key: 'key1',
-    currentSessionId: null,
-  },
-  {
-    attendance: 'Your Attendance: 99%',
-    backgroundImage: classBack2,
-    className: 'Class Name',
-    section: 'Section',
-    teacherName: 'Teacher Name',
-    isSessionLive: false,
-    key: 'key2',
-    currentSessionId: null,
-  },
-  {
-    attendance: 'Your Attendance: 99%',
-    backgroundImage: classBack3,
-    className: 'Class Name',
-    section: 'Section',
-    teacherName: 'Teacher Name',
-    isSessionLive: false,
-    key: 'key3',
-    currentSessionId: null,
-  },
-  {
-    attendance: 'Your Attendance: 99%',
-    backgroundImage: classBack4,
-    className: 'Class Name',
-    section: 'Section',
-    teacherName: 'Teacher Name',
-    isSessionLive: false,
-    key: 'key4',
-    currentSessionId: null,
-  },
-  {
-    attendance: 'Your Attendance: 99%',
-    backgroundImage: classBack5,
-    className: 'Class Name',
-    section: 'Section',
-    teacherName: 'Teacher Name',
-    isSessionLive: false,
-    key: 'key5',
-    currentSessionId: null,
-  },
-];
-
 // Default For Web And android Component
 export const Default = (): JSX.Element => (
-  <MenuProvider>
-    <StudentClassList
-      onClassClick={classId => action('onClassClick')(classId)}
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      data={select<StudentListDataProps[]>(
-        'data',
-        { 'No Data': [], 'With Data': dummyStudentClassListData },
-        [],
-      )}
-      onFabClick={() => action('onFabClick')()}
-      options={[
-        {
-          title: 'Title 1',
-          onPress: () => action('Options click'),
-        },
-      ]}
-    />
-  </MenuProvider>
+  <StudentClassList
+    onClassClick={classId => action('onClassClick')(classId)}
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    data={select<StudentListDataProps[]>(
+      'data',
+      { 'No Data': [], 'With Data': dummyStudentClassListData },
+      [],
+    )}
+    onFabClick={() => action('onFabClick')()}
+    onAction={(act, info) =>
+      action('onAction')(
+        convertEnumToStr<StudentClassAction>(StudentClassAction, act),
+        info,
+      )
+    }
+  />
 );
 
 // if the platform is not web only then render it
@@ -116,6 +57,12 @@ if (Platform.OS !== 'web') {
         onClassClick={classId => action('onClassClick')(classId)}
         data={[]}
         onFabClick={() => action('onFabClick')()}
+        onAction={(act, info) =>
+          action('onAction')(
+            convertEnumToStr<StudentClassAction>(StudentClassAction, act),
+            info,
+          )
+        }
       />
     ))
     .add('With Data', () => (
@@ -123,6 +70,12 @@ if (Platform.OS !== 'web') {
         onClassClick={classId => action('onClassClick')(classId)}
         data={dummyStudentClassListData}
         onFabClick={() => action('onFabClick')()}
+        onAction={(act, info) =>
+          action('onAction')(
+            convertEnumToStr<StudentClassAction>(StudentClassAction, act),
+            info,
+          )
+        }
       />
     ));
 }

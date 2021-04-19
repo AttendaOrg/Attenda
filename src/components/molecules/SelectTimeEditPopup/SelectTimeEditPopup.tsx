@@ -1,18 +1,24 @@
 import React from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import {
+  FlatList,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+import { MarkTime } from '../../organisms/Student/AttendanceRecord';
 
 const styles = StyleSheet.create({
   container: {},
   header: {
     flexDirection: 'row',
     backgroundColor: '#985EFF',
-    justifyContent: 'flex-start',
+    justifyContent: 'center',
     padding: 7,
-    paddingHorizontal: 12,
   },
   row: {
     padding: 7,
-    paddingHorizontal: 12,
+    paddingHorizontal: 18,
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
@@ -26,12 +32,15 @@ const styles = StyleSheet.create({
   timeText: {
     textAlign: 'center',
   },
+  listContainer: {
+    maxHeight: 200,
+  },
 });
 
 export interface SelectTimeEditPopupProps {
   date: string;
-  selectedDateTimes: string[];
-  onSelectTime: (date: string, time: string) => void;
+  selectedDateTimes: MarkTime[];
+  onSelectTime: (sessionId: string) => void;
 }
 
 const SelectTimeEditPopup: React.FC<SelectTimeEditPopupProps> = ({
@@ -40,13 +49,16 @@ const SelectTimeEditPopup: React.FC<SelectTimeEditPopupProps> = ({
   selectedDateTimes,
 }): JSX.Element => {
   const body = selectedDateTimes.map(selectedTime => {
+    const [{ sessionId }] = Object.values(selectedTime);
+    const [time] = Object.keys(selectedTime);
+
     return (
       <TouchableOpacity
-        key={selectedTime}
-        onPress={() => onSelectTime(date, selectedTime)}
+        key={sessionId}
+        onPress={() => onSelectTime(sessionId)}
         style={styles.row}
       >
-        <Text style={styles.timeText}>{selectedTime}</Text>
+        <Text style={styles.timeText}>{time}</Text>
       </TouchableOpacity>
     );
   });
@@ -56,7 +68,25 @@ const SelectTimeEditPopup: React.FC<SelectTimeEditPopupProps> = ({
       <View style={[styles.header]}>
         <Text style={styles.headerColor}>Select A Time ({date})</Text>
       </View>
-      {body}
+      <FlatList
+        style={styles.listContainer}
+        data={selectedDateTimes}
+        keyExtractor={e => Object.values(e)[0].sessionId}
+        renderItem={selectedTime => {
+          const [{ sessionId }] = Object.values(selectedTime.item);
+          const [time] = Object.keys(selectedTime.item);
+
+          return (
+            <TouchableOpacity
+              key={sessionId}
+              onPress={() => onSelectTime(sessionId)}
+              style={styles.row}
+            >
+              <Text style={styles.timeText}>{time}</Text>
+            </TouchableOpacity>
+          );
+        }}
+      />
     </View>
   );
 };

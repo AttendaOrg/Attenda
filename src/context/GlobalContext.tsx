@@ -9,14 +9,16 @@ export interface IGlobalContext {
 export type GlobalContextType = {
   settings: IGlobalContext;
   changeSpinnerLoading: (loading: boolean) => void;
-  changeProfilePic: (profilePic: ImageSourcePropType) => void;
+  changeProfilePic: (profilePic?: ImageSourcePropType) => void;
 };
+
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const defaultProfilePic = require('../../assets/images/user.jpg');
 
 const defaultGlobalSettings: GlobalContextType = {
   settings: {
     isSpinnerLoading: false,
-    // eslint-disable-next-line global-require
-    profilePic: require('../../assets/images/user.jpg'),
+    profilePic: defaultProfilePic,
   },
   changeSpinnerLoading: () => {
     throw new Error('method not implemented');
@@ -44,11 +46,11 @@ export const GlobalContextProvider: React.FC = ({ children }) => {
     });
   };
 
-  const changeProfilePic = (profilePic: ImageSourcePropType) => {
+  const changeProfilePic = (profilePic?: ImageSourcePropType) => {
     // console.log(`called -> changeSpinnerLoading( ${loading} )`);
     setSettings({
       isSpinnerLoading: settings.isSpinnerLoading,
-      profilePic,
+      profilePic: profilePic ?? defaultProfilePic,
     });
   };
 

@@ -3,50 +3,48 @@ import {
   StackNavigationOptions,
   StackScreenProps,
 } from '@react-navigation/stack';
+import { Clipboard, Share } from 'react-native';
 import { RootStackParamList } from '../../App';
-import { StudentListDataProps } from '../../components/organisms/Student/StudentClassList';
 import SimpleHeaderNavigationOptions from '../../components/templates/SimpleHeaderNavigationOptions';
 import { teacherApi } from '../../api/TeacherApi';
 import TeacherClassModel from '../../api/TeacherApi/model/TeacherClassModel';
 import TeacherClassList, {
   dummyTeacherClassListData,
 } from '../../components/organisms/Teacher/TeacherClassList';
-import AuthApi from '../../api/AuthApi';
+import AuthApi, { authApi } from '../../api/AuthApi';
 import GlobalContext from '../../context/GlobalContext';
-
-/* eslint-disable-next-line @typescript-eslint/no-var-requires */
-const classBack = require('../../../assets/images/class-back-5.jpg');
+import { TeacherClassAction } from '../../components/molecules/ClassCard/TeacherClassCard';
 
 type Props = StackScreenProps<RootStackParamList, 'TeacherClassList'>;
 type OptionsProps = (props: Props) => StackNavigationOptions;
 
 export const TeacherClassListNavigationOptions: OptionsProps = SimpleHeaderNavigationOptions;
 
-const transformToStudentListDataProps = (
-  cls: TeacherClassModel,
-): StudentListDataProps => {
-  const {
-    title,
-    section,
-    classId,
-    isLive,
-    classCode,
-    currentSessionId,
-    totalStudent,
-  } = cls;
+// const transformToStudentListDataProps = (
+//   cls: TeacherClassModel,
+// ): StudentListDataProps => {
+//   const {
+//     title,
+//     section,
+//     classId,
+//     isLive,
+//     classCode,
+//     currentSessionId,
+//     totalStudent,
+//   } = cls;
 
-  return {
-    attendance: `${totalStudent} student`, // TODO: get attendance summery from the class info
-    section,
-    showShimmer: false,
-    backgroundImage: classBack,
-    className: title,
-    key: classId ?? '',
-    teacherName: `Class Code: ${classCode}`,
-    isSessionLive: isLive,
-    currentSessionId,
-  };
-};
+//   return {
+//     attendance: `${totalStudent} student`, // TODO: get attendance summery from the class info
+//     section,
+//     showShimmer: false,
+//     backgroundImage: classBack,
+//     className: title,
+//     key: classId ?? '',
+//     teacherName: `Class Code: ${classCode}`,
+//     isSessionLive: isLive,
+//     currentSessionId,
+//   };
+// };
 
 interface State {
   data: TeacherClassModel[];
@@ -66,7 +64,7 @@ class TeacherClassListPage extends React.PureComponent<Props, State> {
     };
   }
 
-  async componentDidMount(): Promise<void> {
+  componentDidMount(): void {
     const { context } = this;
 
     this.setState({ loading: true });
@@ -76,7 +74,7 @@ class TeacherClassListPage extends React.PureComponent<Props, State> {
     });
 
     try {
-      const uri = await AuthApi.getProfilePicRef()?.getDownloadURL();
+      const uri = authApi.getMyProfilePic();
 
       context.changeProfilePic({ uri });
     } catch (e) {
@@ -92,62 +90,90 @@ class TeacherClassListPage extends React.PureComponent<Props, State> {
     console.log('not implemented');
   };
 
-  render(): JSX.Element {
-    const { data, loading } = this.state;
+  onLinkShare = async (url: string): Promise<void> => {
+    try {
+      // TODO: generate valid link
+      await Share.share({
+        message: url,
+        url,
+        title: 'Invite Code Link',
+      });
+    } catch (error) {
+      //   console.log(error);
+      Clipboard.setString(url);
+    }
+  };
+
+  onAction = (action: TeacherClassAction, info: TeacherClassModel): void => {
     const { navigation } = this.props;
-    const newData: StudentListDataProps[] = loading
+    const { classId, totalStudent, inviteLink } = info;
+
+    if (classId === null) return;
+
+    switch (action) {
+      case TeacherClassAction.ATTENDANCE_RECORD:
+        navigation.push('TeacherAttendanceRecord', {
+          classId,
+          selectedTab: 'Sessions',
+          totalStudentCount: totalStudent,
+        });
+        break;
+      case TeacherClassAction.STUDENTS:
+        navigation.push('StudentList', {
+          classId,
+          totalStudent,
+        });
+        break;
+      case TeacherClassAction.SETTINGS:
+        navigation.push('ClassSettings', { classId });
+        break;
+      case TeacherClassAction.SHARE_INVITE_LINK:
+        this.onLinkShare(inviteLink);
+        break;
+      default:
+        break;
+    }
+  };
+
+  onClassClick = (classInfo: TeacherClassModel): void => {
+    const { navigation } = this.props;
+    const { isLive, currentSessionId, classId, title, section } = classInfo;
+
+    if (classId !== null) {
+      if (isLive && currentSessionId !== null)
+        navigation.push('CurrentAttendanceSession', {
+          classId,
+          sessionId: currentSessionId,
+          sessionTime: new Date().toISOString(),
+          showStopDialog: false,
+        });
+      else
+        navigation.push('StartAttendanceSession', {
+          classId,
+          title,
+          section,
+        });
+    }
+  };
+
+  render(): JSX.Element {
+    const {
+      onAction,
+      onClassClick,
+      props: { navigation },
+      state: { data, loading },
+    } = this;
+    const withLoadingData: TeacherClassModel[] = loading
       ? dummyTeacherClassListData
-      : data.map(transformToStudentListDataProps);
+      : data;
 
     return (
       <TeacherClassList
+        data={withLoadingData}
+        onAction={onAction}
         showShimmer={loading}
+        onClassClick={onClassClick}
         onFabClick={() => navigation.push('CreateClass')}
-        data={newData}
-        onClassClick={(classId, title, section, isLive, sessionId) => {
-          if (isLive && sessionId !== null)
-            navigation.push('CurrentAttendanceSession', {
-              classId,
-              sessionId,
-              sessionTime: new Date().toISOString(),
-              showStopDialog: false,
-            });
-          else
-            navigation.push('StartAttendanceSession', {
-              classId,
-              title,
-              section,
-            });
-        }}
-        options={[
-          {
-            title: 'Attendance Record',
-            onPress: (classId: string) =>
-              navigation.push('TeacherAttendanceRecord', {
-                classId,
-                selectedTab: 'Sessions',
-              }),
-          },
-          {
-            title: 'Students',
-            onPress: (classId: string) => {
-              const match = data.filter(e => e.classId === classId);
-
-              const totalStudent = match[0]?.totalStudent ?? 0;
-
-              navigation.push('StudentList', {
-                classId,
-                totalStudent,
-              });
-            },
-          },
-          {
-            title: 'Settings',
-            onPress: (classId: string) =>
-              navigation.push('ClassSettings', { classId }),
-          },
-          { title: 'Share invitation link', onPress: () => null },
-        ]}
       />
     );
   }

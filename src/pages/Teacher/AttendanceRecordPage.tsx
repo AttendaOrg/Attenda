@@ -15,12 +15,13 @@ import AttendanceRecordStudentList from '../../components/organisms/Teacher/Atte
 import { StudentListData } from '../../components/organisms/Teacher/StudentList';
 import { MarkedDates } from '../../components/organisms/Student/AttendanceRecord';
 import SessionInfoModel from '../../api/TeacherApi/model/SessionInfoModel';
-import { convertDateFormat, convertTime, matchDate } from '../../util';
+import { convertDateFormat, convertTime } from '../../util';
 import { teacherApi } from '../../api/TeacherApi';
 import ClassStudentModel from '../../api/TeacherApi/model/ClassStudentModel';
 import GlobalContext from '../../context/GlobalContext';
 import MenuOptionsPopover from '../../components/molecules/MenuOptionsPopover';
 import { SortBy, applyStudentSort } from './util/SortStudent';
+import StudentsEmptyList from '../../components/organisms/Teacher/StudentsEmptyList/StudentsEmptyList';
 
 type Props = StackScreenProps<RootStackParamList, 'TeacherAttendanceRecord'>;
 export type AttendanceRecordTabProps = 'Sessions' | 'Students';
@@ -39,7 +40,7 @@ export const convertSessionInfoToMarkedDates = (
   const markedData: MarkedDates = {};
 
   sessionInfo.forEach(info => {
-    const { sessionDate } = info;
+    const { sessionDate, sessionId } = info;
     const date = convertDateFormat(sessionDate);
     const time = convertTime(sessionDate);
 
@@ -47,8 +48,14 @@ export const convertSessionInfoToMarkedDates = (
       // BUG: there can be more than two session in same time more specifically in minutes
       // NOTE: i am explicitly not setting it to a dynamic value because if the value is false
       // the indicator will turn into red which is not the behavior we want.
-      markedData[date] = { ...markedData[date], [time]: true };
-    } else markedData[date] = { [time]: true };
+      markedData[date] = {
+        ...markedData[date],
+        [time]: { active: true, sessionId: sessionId ?? '' },
+      };
+    } else
+      markedData[date] = {
+        [time]: { active: true, sessionId: sessionId ?? '' },
+      };
   });
 
   return markedData;
@@ -59,7 +66,11 @@ export const convertSessionInfoToMarkedDates = (
 // preferably use the MaterialTopTabBarProps
 const AttendanceSessionRecordTab: React.FC<Props> = ({ navigation, route }) => {
   const [reports, setReports] = useState<SessionInfoModel[]>([]);
-  const [info, setInfo] = useState({ className: '', section: '' });
+  const [info, setInfo] = useState({
+    className: '',
+    section: '',
+    totalStudentCount: 0,
+  });
   const [month, setMonth] = useState(new Date());
   const globalContext = useContext(GlobalContext);
   const {
@@ -88,6 +99,7 @@ const AttendanceSessionRecordTab: React.FC<Props> = ({ navigation, route }) => {
         setInfo({
           className: classInfo.title,
           section: classInfo.section,
+          totalStudentCount: classInfo.totalStudent,
         });
       }
       globalContext.changeSpinnerLoading(false);
@@ -97,22 +109,54 @@ const AttendanceSessionRecordTab: React.FC<Props> = ({ navigation, route }) => {
   }, [classId]);
 
   const markedDate: MarkedDates = convertSessionInfoToMarkedDates(reports);
-  const onTimeSelect = (date: string, time: string): void => {
-    const d = new Date(`${date} ${time}`);
+  const onTimeSelect = (sessionId: string): void => {
+    // // TODO: find a better way to pass the selected time
+    // const [_y, _m, _d] = date.split('-');
+    // const [_hur, _min, _secWithAmPm] = time.split(':');
+    // const [_sec, _amPm] = _secWithAmPm.split(' ');
+    // const d = new Date();
+    // const hour = _amPm === 'PM' ? parseInt(_hur, 10) + 12 : parseInt(_hur, 10);
 
-    const report = reports.filter(({ sessionDate }) =>
-      matchDate(sessionDate, d),
+    // // console.log(`_amPm-> ${_amPm}`);
+
+    // d.setFullYear(parseInt(_y, 10));
+    // d.setMonth(parseInt(_m, 10) - 1);
+    // d.setDate(parseInt(_d, 10));
+    // d.setHours(hour);
+    // d.setMinutes(parseInt(_min, 10));
+    // d.setSeconds(parseInt(_sec, 10));
+
+    // // console.log(
+    // //   `sessionDate-> ${convertDateTime(sessionDate)}, d -> ${convertDateTime(
+    // //     d,
+    // //   )}  matchDate -> ${matchDate(sessionDate, d)}`,
+    // // );
+    const report = reports.filter(
+      ({ sessionId: _sessionId }) => sessionId === _sessionId,
     );
 
-    // BUG: there can be more than two session in same time more specifically in minutes
-    // so fix it
+    // // console.log(
+    // //   d,
+    // //   `date -> ${date} time -> ${time} dateTime ${convertTime(
+    // //     d,
+    // //   )} report-> (${report})`,
+    // // );
+
+    // // Alert.alert(
+    // //   `date -> ${date} time -> ${time}`,
+    // //   `report-> (${JSON.stringify(report)})`,
+    // // );
+
+    // // BUG: there can be more than two session in same time more specifically in minutes
+    // // so fix it
     if (report.length > 0) {
       const [match] = report;
 
       navigation.push('EditAttendanceSession', {
-        sessionId: match.sessionId ?? '',
-        date: new Date(d).toString(),
+        sessionId: sessionId ?? '',
+        date: match.sessionDate.toString(),
         classId,
+        totalStudentCount: info.totalStudentCount,
       });
     }
   };
@@ -144,6 +188,7 @@ const convertStudentListToStudentListData = (
   name: model.studentName ?? '',
   rollNo: model.rollNo,
   percentage: `${model.totalAttendancePercentage.toFixed(1) ?? ''} %`,
+  profilePicUrl: model.profilePicUrl ?? undefined,
 });
 
 // using stack props for getting the navigation autocomplete
@@ -155,26 +200,40 @@ const AttendanceRecordStudentListTab: React.FC<AttendanceRecordStudentListTabPro
   sortBy,
 }) => {
   const [studentList, setStudentList] = useState<StudentListData[]>([]);
+  const [showLoading, setShowLoading] = useState(false);
   const {
-    params: { classId },
+    params: { classId, totalStudentCount },
   } = route;
 
   useEffect(() => {
     (async () => {
+      setShowLoading(true);
       const [list] = await teacherApi.getAllStudentList(classId);
 
-      if (list !== null)
+      if (list !== null) {
         setStudentList(
           applyStudentSort(
             list.map(convertStudentListToStudentListData),
             sortBy,
           ),
         );
+      }
+
+      setShowLoading(false);
     })();
   }, [classId, sortBy]);
 
+  if (totalStudentCount === 0)
+    return (
+      <StudentsEmptyList
+        onInviteClick={() => navigation.push('InviteStudent', { classId })}
+      />
+    );
+
   return (
     <AttendanceRecordStudentList
+      showShimmer={showLoading}
+      totalStudentCount={totalStudentCount}
       studentList={studentList}
       onProfileClick={(studentId: string) =>
         navigation.push('EditStudentAttendanceRecord', {

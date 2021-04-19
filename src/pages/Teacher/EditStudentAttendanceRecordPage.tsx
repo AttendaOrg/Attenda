@@ -1,4 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
+import { ImageSourcePropType } from 'react-native';
 import {
   StackNavigationOptions,
   StackScreenProps,
@@ -8,8 +9,11 @@ import EditStudentAttendanceRecord from '../../components/organisms/Teacher/Edit
 import { SimpleHeaderBackNavigationOptions } from '../../components/templates/SimpleHeaderNavigationOptions';
 import { teacherApi } from '../../api/TeacherApi';
 import SessionStudentModel from '../../api/TeacherApi/model/SessionStudentModel';
-import { MarkedDates } from '../../components/organisms/Student/AttendanceRecord';
-import { convertDateFormat, convertTime, matchDate } from '../../util';
+import {
+  MarkedDates,
+  MarkTime,
+} from '../../components/organisms/Student/AttendanceRecord';
+import { convertDateFormat, convertTime } from '../../util';
 import ClassStudentModel from '../../api/TeacherApi/model/ClassStudentModel';
 import GlobalContext from '../../context/GlobalContext';
 
@@ -32,13 +36,16 @@ export const convertSessionStudentModelToMarkedDates = (
   const markedData: MarkedDates = {};
 
   data.forEach(info => {
-    const { sessionTime, present } = info;
+    const { sessionTime, present, sessionId } = info;
     const date = convertDateFormat(sessionTime);
     const time = convertTime(sessionTime);
 
     if (Object.keys(markedData).includes(date)) {
-      markedData[date] = { ...markedData[date], [time]: present };
-    } else markedData[date] = { [time]: present };
+      markedData[date] = {
+        ...markedData[date],
+        [time]: { active: present, sessionId },
+      };
+    } else markedData[date] = { [time]: { active: present, sessionId } };
   });
 
   return markedData;
@@ -68,28 +75,14 @@ const EditStudentAttendanceRecordPage: React.FC<Props> = ({
     if (info !== null) setReports(info);
   }, [classId, currentMonth, studentId]);
 
-  const onChangeAttendance = async (
-    date: string,
-    time: string,
-    status: boolean,
-  ) => {
-    const d = new Date(`${date} ${time}`);
-
-    const report = reports.filter(({ sessionTime }) =>
-      matchDate(sessionTime, d),
+  const onChangeAttendance = async (sessionId: string, status: boolean) => {
+    await teacherApi.editStudentAttendanceReport(
+      classId,
+      sessionId,
+      studentId,
+      status,
     );
-
-    if (report.length === 1) {
-      const [match] = report;
-
-      await teacherApi.editStudentAttendanceReport(
-        classId,
-        match.sessionId,
-        studentId,
-        status,
-      );
-      fetchData();
-    }
+    fetchData();
   };
 
   useEffect(() => {
@@ -111,13 +104,19 @@ const EditStudentAttendanceRecordPage: React.FC<Props> = ({
     await teacherApi.changeStudentRollNo(classId, studentId, newRollNo);
   };
 
+  const userImage: ImageSourcePropType =
+    studentInfo?.profilePicUrl !== undefined ||
+    studentInfo?.profilePicUrl !== null
+      ? { uri: studentInfo?.profilePicUrl }
+      : imageSrc;
+
   return (
     <EditStudentAttendanceRecord
       userInfo={{
         name: studentInfo?.studentName ?? '', // get the name form api
         onRollChange, // TODO: update roll no
         rollNo: studentInfo?.rollNo ?? '',
-        userImage: imageSrc, // TODO: get the profile pic from api
+        userImage,
       }}
       percentage={`${studentInfo?.totalAttendancePercentage.toFixed(1) ?? 0} %`}
       markedDates={convertSessionStudentModelToMarkedDates(reports)}

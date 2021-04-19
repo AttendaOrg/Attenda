@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { Calendar, DateObject, MultiDotMarking } from 'react-native-calendars';
 import { Dialog } from 'react-native-paper';
-import { convertDateFormat } from '../../../../util';
+import { convertDate, convertDateFormat } from '../../../../util';
 import ClassDetails, {
   ClassDetailsPops,
 } from '../../../molecules/ClassDetails';
@@ -33,12 +33,15 @@ const styles = StyleSheet.create({
 export const presentDot = { key: 'present', color: 'green' };
 export const absentDot = { key: 'absent', color: 'red' };
 
-interface MarkDate {
-  [key: string]: boolean;
+export interface MarkTime {
+  [time: string]: {
+    active: boolean;
+    sessionId: string;
+  };
 }
 
 export interface MarkedDates {
-  [date: string]: MarkDate;
+  [date: string]: MarkTime;
 }
 
 export interface AttendanceRecordPops extends ClassDetailsPops {
@@ -47,21 +50,50 @@ export interface AttendanceRecordPops extends ClassDetailsPops {
   percentage: string;
 }
 
-export interface markedDatesProps {
+export const limitMultiDot = (
+  multiDotMarking: MultiDotMarking,
+  limit = 3,
+): MultiDotMarking => {
+  const newObj: MultiDotMarking = { ...multiDotMarking };
+
+  const newDots = multiDotMarking.dots.filter((_, i) => i < limit);
+
+  newObj.dots = newDots;
+
+  return newObj;
+};
+
+export const limitMarkDate = (
+  markedDates: MarkedDatesProps,
+  limit = 3,
+): MarkedDatesProps => {
+  const newObj: MarkedDatesProps = {};
+
+  Object.keys(markedDates).forEach(dateKey => {
+    const val: MultiDotMarking = markedDates[dateKey];
+
+    // for every date limit how many dot it's show
+    newObj[dateKey] = limitMultiDot(val, limit);
+  });
+
+  return newObj;
+};
+
+export interface MarkedDatesProps {
   [date: string]: MultiDotMarking;
 }
 
-const convertData = (markedDates: MarkedDates = {}): markedDatesProps => {
-  const newDates: markedDatesProps = {};
+const convertData = (markedDates: MarkedDates = {}): MarkedDatesProps => {
+  const newDates: MarkedDatesProps = {};
 
   Object.keys(markedDates).forEach(markDateKey => {
     const markDate = markedDates[markDateKey];
 
-    const dots = Object.values(markDate).map(active =>
-      active
+    const dots = Object.values(markDate).map(times =>
+      times.active
         ? // for some reason present key is duplicating
           { ...presentDot, key: `present-${markDateKey}-${Math.random()}` }
-        : absentDot,
+        : { ...absentDot, key: `absent-${markDateKey}-${Math.random()}` },
     );
 
     newDates[markDateKey] = { dots };
@@ -91,6 +123,8 @@ const AttendanceRecord: React.FC<AttendanceRecordPops> = ({
 
   const mDates = convertData(markedDates);
 
+  console.log('limitMarkDate(', limitMarkDate(mDates));
+
   return (
     <View style={styles.container}>
       <ScrollView>
@@ -111,13 +145,13 @@ const AttendanceRecord: React.FC<AttendanceRecordPops> = ({
         <Calendar
           onMonthChange={date => onMonthChange(new Date(date.dateString))}
           onDayPress={onDateClick}
-          markedDates={mDates}
+          markedDates={limitMarkDate(mDates)}
           markingType="multi-dot"
         />
       </ScrollView>
       <Dialog visible={visible} onDismiss={() => setVisible(false)}>
         <UserPresent
-          date="2020-12-12"
+          date={convertDate(new Date(currentDate))}
           selectedDates={markedDates[currentDate] ?? {}}
         />
       </Dialog>

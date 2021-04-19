@@ -9,6 +9,7 @@ export interface SessionStudentInterface {
   sessionTime?: Date;
   lastUpdateTime?: Date;
   studentName: string | null;
+  profilePicUrl?: string | null;
 }
 
 export default class SessionStudentModel implements SessionStudentInterface {
@@ -26,7 +27,9 @@ export default class SessionStudentModel implements SessionStudentInterface {
 
   sessionId: string;
 
-  studentName: string | null;
+  studentName: string | null = null;
+
+  profilePicUrl: string | null = null;
 
   constructor(data: SessionStudentInterface) {
     const {
@@ -38,12 +41,15 @@ export default class SessionStudentModel implements SessionStudentInterface {
       classId,
       sessionId,
       studentName,
+      profilePicUrl,
     } = data;
 
     if (lastUpdateTime !== undefined) this.lastUpdateTime = lastUpdateTime;
     if (sessionTime !== undefined) this.sessionTime = sessionTime;
     if (whom !== undefined) this.whom = whom;
     if (present !== undefined) this.present = present;
+    if (profilePicUrl !== undefined) this.profilePicUrl = profilePicUrl;
+
     this.studentId = studentId;
     this.classId = classId;
     this.sessionId = sessionId;
@@ -63,6 +69,7 @@ export default class SessionStudentModel implements SessionStudentInterface {
       sessionId,
       classId,
       studentName,
+      profilePicUrl,
     } = data;
     const obj: Partial<SessionStudentInterface> = {};
 
@@ -74,6 +81,7 @@ export default class SessionStudentModel implements SessionStudentInterface {
     if (sessionId !== undefined) obj.sessionId = sessionId;
     if (classId !== undefined) obj.classId = classId;
     if (studentName !== undefined) obj.studentName = studentName;
+    if (profilePicUrl !== undefined) obj.profilePicUrl = profilePicUrl;
 
     return obj;
   }
@@ -96,6 +104,7 @@ export default class SessionStudentModel implements SessionStudentInterface {
       sessionId,
       classId,
       studentName,
+      profilePicUrl,
     } = this;
 
     return {
@@ -107,6 +116,7 @@ export default class SessionStudentModel implements SessionStudentInterface {
       classId,
       sessionId,
       studentName,
+      profilePicUrl,
     };
   }
 }

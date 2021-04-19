@@ -3,14 +3,13 @@ import {
   StackNavigationOptions,
   StackScreenProps,
 } from '@react-navigation/stack';
-import firebase from 'firebase';
 import * as ImagePicker from 'expo-image-picker';
 import * as ImageManipulator from 'expo-image-manipulator';
 import { Alert, ImageSourcePropType, Platform } from 'react-native';
 import { RootStackParamList } from '../../App';
 import MyAccount from '../../components/organisms/Common/MyAccount';
 import { SimpleHeaderBackNavigationOptions } from '../../components/templates/SimpleHeaderNavigationOptions';
-import AuthApi, { authApi } from '../../api/AuthApi';
+import { authApi } from '../../api/AuthApi';
 import SingleButtonPopup from '../../components/molecules/SingleButtonPopup';
 import GlobalContext from '../../context/GlobalContext';
 import AccountInfo from '../../api/model/AccountInfo';
@@ -93,16 +92,6 @@ class MyAccountPage extends React.Component<Props, State> {
     }
   };
 
-  uploadImage = async (uri: string): Promise<void> => {
-    const response = await fetch(uri);
-    const blob = await response.blob();
-
-    // Create a Storage Ref w/ username
-    const storageRef = AuthApi.getProfilePicRef();
-
-    storageRef.put(blob);
-  };
-
   setProfilePic = (uri: string): void => {
     const {
       state: { info },
@@ -140,7 +129,7 @@ class MyAccountPage extends React.Component<Props, State> {
       this.setProfilePic(imageUri);
       // Upload file
       // TODO: show a progress
-      await this.uploadImage(image.uri);
+      await authApi.uploadProfileImage(image.uri);
     }
   };
 
@@ -160,7 +149,7 @@ class MyAccountPage extends React.Component<Props, State> {
     }
 
     try {
-      const url = await AuthApi.getProfilePicRef().getDownloadURL();
+      const url = authApi.getMyProfilePic();
 
       this.setProfilePic(url);
     } catch (e) {
@@ -173,6 +162,7 @@ class MyAccountPage extends React.Component<Props, State> {
     const { context } = this;
 
     context.changeSpinnerLoading(true);
+    context.changeProfilePic();
     await authApi.logOut();
   };
 

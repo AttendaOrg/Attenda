@@ -19,6 +19,7 @@ export interface StudentListData {
   percentage?: string;
   // TODO: make it studentId fot good reference
   key: string;
+  profilePicUrl?: string;
 }
 
 export interface StudentListPops {
@@ -44,7 +45,7 @@ const StudentList: React.FC<StudentListPops> = ({
     return (
       <View style={styles.container}>
         <FlatList
-          data={new Array(preloadStudentCount)
+          data={new Array(preloadStudentCount || 5)
             .fill(preloadStudentCount)
             .map((_, i) => ({
               key: `shimmer-${i}`,
@@ -65,6 +66,7 @@ const StudentList: React.FC<StudentListPops> = ({
         data={studentList}
         renderItem={data => (
           <StudentListItem
+            avatar={{ uri: data.item.profilePicUrl, height: 34, width: 34 }}
             onLogPress={() => {
               onChangeShowChecked(true);
               onChangeChecked(data.item.rollNo, !data.item.checked);

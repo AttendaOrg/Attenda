@@ -90,6 +90,10 @@ const CalculatePercentage = async (
           const totalAttendancePercentage =
             (studentAttendanceCount * 100) / totalNumOfSession;
 
+          console.log(
+            `CalculatePercentage:(${studentId}) totalAttendancePercentage(${totalAttendancePercentage}) = (${studentAttendanceCount} * 100) / ${totalNumOfSession};`
+          );
+
           const studentDoc = await admin
             .firestore()
             .collection(CLASSES_COLLECTION_NAME)
@@ -122,9 +126,7 @@ const CalculateSingleStudentPercentage = async (
 ): Promise<void> => {
   try {
     const startTime = process.hrtime();
-    functions.logger.info("CalculateSingleStudentPercentage", {
-      structuredData: true,
-    });
+    functions.logger.info(`CalculateSingleStudentPercentage`);
     const d = _snapshot.after.data() as SessionStudentInterface;
     const info = new SessionStudentModel(d);
 
@@ -138,6 +140,10 @@ const CalculateSingleStudentPercentage = async (
     );
     const totalAttendancePercentage =
       (studentAttendanceCount * 100) / totalNumOfSession;
+
+    console.log(
+      `CalculateSingleStudentPercentage: totalAttendancePercentage(${totalAttendancePercentage}) = (${studentAttendanceCount} * 100) / ${totalNumOfSession};`
+    );
 
     const studentDoc = await admin
       .firestore()

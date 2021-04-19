@@ -1,7 +1,14 @@
 import React, { useState } from 'react';
-import { StyleSheet, TouchableOpacity, View, Text } from 'react-native';
+import {
+  StyleSheet,
+  TouchableOpacity,
+  View,
+  Text,
+  FlatList,
+} from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { lightColor } from '../../../util/Colors';
+import { MarkTime } from '../../organisms/Student/AttendanceRecord';
 
 const styles = StyleSheet.create({
   container: {},
@@ -21,6 +28,8 @@ const styles = StyleSheet.create({
   },
   headerColor: {
     color: '#ffffff',
+    textAlign: 'center',
+    flex: 1,
   },
   center: {
     justifyContent: 'center',
@@ -28,16 +37,15 @@ const styles = StyleSheet.create({
   btnBack: {
     marginRight: 8,
   },
+  bodyContainer: {
+    maxHeight: 200,
+  },
 });
-
-interface SelectedDate {
-  [date: string]: boolean;
-}
 
 export interface UserPresentEditPopupProps {
   date: string;
-  selectedDates: SelectedDate;
-  onChangeAttendance: (date: string, time: string, status: boolean) => void;
+  selectedDates: MarkTime[];
+  onChangeAttendance: (sessionId: string, status: boolean) => void;
 }
 
 const UserPresentEditPopup: React.FC<UserPresentEditPopupProps> = ({
@@ -45,41 +53,45 @@ const UserPresentEditPopup: React.FC<UserPresentEditPopupProps> = ({
   selectedDates,
   onChangeAttendance = () => null,
 }): JSX.Element => {
-  const [editing, setEditing] = useState<string | null>(null);
+  const [editingSessionId, setEditingSessionId] = useState<string | null>(null);
+
+  const selectedTime = selectedDates
+    .filter(e => Object.values(e)[0].sessionId === editingSessionId)
+    .map(e => Object.keys(e)[0])[0];
 
   // if the editing value is null that means the use did not chose any time
   const title =
-    editing !== null ? (
+    editingSessionId !== null ? (
       <View style={[styles.header]}>
         <TouchableOpacity
           style={styles.btnBack}
-          onPress={() => setEditing(null)}
+          onPress={() => setEditingSessionId(null)}
         >
           <MaterialIcons name="arrow-back" size={18} color={lightColor} />
         </TouchableOpacity>
         <Text style={styles.headerColor}>
-          Change Present ({date} {editing})
+          Change Present ({date} {selectedTime})
         </Text>
       </View>
     ) : (
-      <View style={[styles.header]}>
+      <View style={[styles.header, styles.center]}>
         <Text style={styles.headerColor}>Select A Time ({date})</Text>
       </View>
     );
 
   // if the editing value is null that means the use did not chose any time
   const body =
-    editing !== null ? (
+    editingSessionId !== null ? (
       <View>
         <TouchableOpacity
-          onPress={() => onChangeAttendance(date, editing, true)}
+          onPress={() => onChangeAttendance(editingSessionId, true)}
         >
           <View style={[styles.row, styles.center]}>
             <Text style={{ color: 'green' }}>Present</Text>
           </View>
         </TouchableOpacity>
         <TouchableOpacity
-          onPress={() => onChangeAttendance(date, editing, false)}
+          onPress={() => onChangeAttendance(editingSessionId, false)}
         >
           <View style={[styles.row, styles.center]}>
             <Text style={{ color: 'red' }}>Absent</Text>
@@ -87,22 +99,32 @@ const UserPresentEditPopup: React.FC<UserPresentEditPopupProps> = ({
         </TouchableOpacity>
       </View>
     ) : (
-      Object.entries(selectedDates).map(selectedDate => {
-        const [sDate, present] = selectedDate;
+      <FlatList
+        style={styles.bodyContainer}
+        data={selectedDates}
+        keyExtractor={e => Object.values(e)[0].sessionId}
+        renderItem={selectedDate => {
+          const [time, { active, sessionId }] = Object.entries(
+            selectedDate.item,
+          )[0];
 
-        return (
-          <TouchableOpacity key={sDate} onPress={() => setEditing(sDate)}>
-            <View style={styles.row}>
-              <Text>{sDate}</Text>
-              {present ? (
-                <MaterialIcons name="check" color="green" size={18} />
-              ) : (
-                <MaterialIcons name="cancel" color="red" size={18} />
-              )}
-            </View>
-          </TouchableOpacity>
-        );
-      })
+          return (
+            <TouchableOpacity
+              key={time}
+              onPress={() => setEditingSessionId(sessionId)}
+            >
+              <View style={styles.row}>
+                <Text>{time}</Text>
+                {active ? (
+                  <MaterialIcons name="check" color="green" size={18} />
+                ) : (
+                  <MaterialIcons name="cancel" color="red" size={18} />
+                )}
+              </View>
+            </TouchableOpacity>
+          );
+        }}
+      />
     );
 
   return (

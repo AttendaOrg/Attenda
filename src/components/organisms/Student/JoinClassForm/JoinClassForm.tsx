@@ -56,7 +56,10 @@ const JoinClassForm: React.FC<JoinClassFormPops> = ({
 
   return (
     <View style={styles.container}>
-      <KeyboardAdjustImageView svgImg={JoinClassImageComponent} />
+      <KeyboardAdjustImageView
+        heightSensitive
+        svgImg={JoinClassImageComponent}
+      />
       {!joinCode && (
         <Input
           placeholder="Class Code"

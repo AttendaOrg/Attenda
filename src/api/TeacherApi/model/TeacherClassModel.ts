@@ -19,6 +19,7 @@ export interface TeacherClassModelProps {
   isArchived?: boolean;
   alreadyGiven?: boolean;
   totalStudent?: number;
+  classIcon?: string | null;
 }
 
 export default class TeacherClassModel implements TeacherClassModelProps {
@@ -44,6 +45,8 @@ export default class TeacherClassModel implements TeacherClassModelProps {
 
   teacherName: string | null;
 
+  classIcon: string | null = null;
+
   isArchived = false;
 
   alreadyGiven = false;
@@ -61,6 +64,7 @@ export default class TeacherClassModel implements TeacherClassModelProps {
     this.currentSessionId = data?.currentSessionId ?? null;
     this.classId = data?.classId ?? null;
     this.teacherId = data?.teacherId ?? null;
+    this.classIcon = data?.classIcon ?? null;
     this.isArchived = data?.isArchived ?? false;
     this.teacherName = data?.teacherName ?? null;
     this.totalStudent = data?.totalStudent ?? 0;
@@ -85,6 +89,7 @@ export default class TeacherClassModel implements TeacherClassModelProps {
     isArchived,
     teacherName,
     totalStudent,
+    classIcon,
   }: Partial<TeacherClassModelProps>): Partial<TeacherClassModelProps> => {
     const obj: Partial<TeacherClassModelProps> = {};
 
@@ -101,6 +106,7 @@ export default class TeacherClassModel implements TeacherClassModelProps {
     if (isArchived !== undefined) obj.isArchived = isArchived;
     if (teacherName !== undefined) obj.teacherName = teacherName;
     if (totalStudent !== undefined) obj.totalStudent = totalStudent;
+    if (classIcon !== undefined) obj.classIcon = classIcon;
 
     return obj;
   };
@@ -124,6 +130,7 @@ export default class TeacherClassModel implements TeacherClassModelProps {
       isArchived: this.isArchived,
       teacherName: this.teacherName,
       totalStudent: this.totalStudent,
+      classIcon: this.classIcon,
     };
   };
 }

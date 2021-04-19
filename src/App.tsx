@@ -1,4 +1,5 @@
 import React from 'react';
+import { Alert } from 'react-native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { CommonActions, NavigationContainer } from '@react-navigation/native';
 import { MenuProvider } from 'react-native-popup-menu';
@@ -87,6 +88,10 @@ import DebugSettingsPage, {
 import EditDebugSettingsPage, {
   EditDebugSettingsNavigationOptions,
 } from './pages/Commons/EditDebugSettingsPage';
+import ChooseClassIconPage, {
+  ChooseClassIconNavigationOptions,
+} from './pages/Teacher/ChooseClassIconPage';
+import { analyticsApi, AnalyticsApiDocs } from './api/analytics';
 
 export type TeacherClassListNavigationProps = {
   withDismiss?: boolean;
@@ -134,11 +139,13 @@ export type RootStackParamList = {
   TeacherAttendanceRecord: {
     classId: string;
     selectedTab: AttendanceRecordTabProps;
+    totalStudentCount: number;
   };
   EditAttendanceSession: {
     sessionId: string;
     date: string;
     classId: string;
+    totalStudentCount: number;
   };
   ClassSettings: {
     classId: string;
@@ -155,6 +162,9 @@ export type RootStackParamList = {
     sessionTime: string;
   };
   CreateClass: undefined;
+  ChooseClassIcon: {
+    classId: string;
+  };
   // drawer
   MyAccount: undefined;
   ChangePassword: undefined;
@@ -174,10 +184,16 @@ class AuthProvider extends React.PureComponent<Props> {
 
   unsubscribe: firebase.Unsubscribe | null = null;
 
-  componentDidMount() {
+  async componentDidMount() {
     const {
       props: { navigation },
     } = this;
+
+    // TODO: remove this in production
+    // wake up the heroku instance
+    const success = await analyticsApi.sendPing();
+
+    if (!success) Alert.alert("Couldn't start the heroku instance");
 
     this.unsubscribe = firebase
       .auth()
@@ -360,6 +376,11 @@ class AuthProvider extends React.PureComponent<Props> {
               name="CreateClass"
               component={CreateClassPage}
               options={CreateClassNavigationOptions}
+            />
+            <Stack.Screen
+              name="ChooseClassIcon"
+              component={ChooseClassIconPage}
+              options={ChooseClassIconNavigationOptions}
             />
           </>
           {/* student */}

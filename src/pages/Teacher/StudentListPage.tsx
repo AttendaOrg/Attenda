@@ -37,13 +37,14 @@ export const StudentListNavigationOptions: OptionsProps = () => ({
 });
 
 const transform = (data: ClassStudentModel): StudentListData => {
-  const { studentId = '', rollNo, studentName } = data;
+  const { studentId = '', rollNo, studentName, profilePicUrl } = data;
 
   return {
     checked: false,
     key: studentId ?? '',
     name: studentName ?? '',
     rollNo,
+    profilePicUrl: profilePicUrl ?? undefined,
     // if we pass percentage it will not show the select
     // percentage: `${totalAttendancePercentage} %`,
   };
@@ -172,9 +173,8 @@ const StudentListPage: React.FC<Props> = ({
   };
 
   if (
-    // estimateTotalStudent === 0 || TODO: when the cloud functions run re-enable this check
-    showLoading === false &&
-    listItems.length === 0
+    estimateTotalStudent === 0 || //  TODO: when the cloud functions run re-enable this check
+    (showLoading === false && listItems.length === 0)
   ) {
     return (
       <StudentsEmptyList

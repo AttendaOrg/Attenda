@@ -13,12 +13,10 @@ web-build/
 .DS_Store
 .eslintcache
 
-# 
+#
 *debug.log
 
 coverage
-
-
 
 # Created by https://www.toptal.com/developers/gitignore/api/webstorm+all
 # Edit at https://www.toptal.com/developers/gitignore?templates=webstorm+all
@@ -114,5 +112,5 @@ modules.xml
 
 # End of https://www.toptal.com/developers/gitignore/api/webstorm+all
 
-
 .env
+google.json

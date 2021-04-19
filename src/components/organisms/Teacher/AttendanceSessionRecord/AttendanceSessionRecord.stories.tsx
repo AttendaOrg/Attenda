@@ -20,12 +20,12 @@ export default {
 export const Default = (): JSX.Element => {
   const markedDates = {
     '2020-12-12': {
-      '03:50 AM': false,
-      '10:50 AM': true,
+      '03:50 AM': { active: false, sessionId: 'f498hf4849hf48' },
+      '10:50 AM': { active: true, sessionId: 'f498hf489hf48' },
     },
     '2020-12-11': {
-      '03:50 AM': true,
-      '10:50 AM': true,
+      '03:50 AM': { active: true, sessionId: 'f498hf489h48' },
+      '10:50 AM': { active: true, sessionId: 'f498hf489haf48' },
     },
   };
 
@@ -36,7 +36,7 @@ export const Default = (): JSX.Element => {
         'Computer science data structures and algorithms',
       )}
       section={text('section', 'CED/COE')}
-      onTimeSelect={(date, time) => action('onTimeSelect')(date, time)}
+      onTimeSelect={sessionId => action('onTimeSelect')(sessionId)}
       onMonthChange={date => action('onMonthChange')(date)}
       markedDates={object('markedDates', markedDates)}
     />

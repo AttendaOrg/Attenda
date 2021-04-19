@@ -1,5 +1,13 @@
 import React, { useState } from 'react';
-import { Dimensions, StyleSheet, View, Animated, Easing } from 'react-native';
+import {
+  Dimensions,
+  StyleSheet,
+  View,
+  Animated,
+  Easing,
+  StyleProp,
+  ViewStyle,
+} from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 
 const styles = StyleSheet.create({
@@ -37,19 +45,23 @@ const linear = ANIMATION.interpolate({
 
 runAnimation();
 
-const Shimmer = ({
-  width,
-  height,
-}: {
+interface ShimmerProps {
   width: number | string;
   height: number | string;
+  style?: StyleProp<ViewStyle>;
+}
+
+const Shimmer: React.FC<ShimmerProps> = ({
+  width,
+  height,
+  style = {},
 }): JSX.Element => {
   const [positionX, setPositionX] = useState<null | number>(null);
   let viewRef: View | null = null;
 
   return (
     <View
-      style={[styles.shimmer, { width, height }]}
+      style={[styles.shimmer, { width, height }, style]}
       ref={ref => {
         viewRef = ref;
       }}

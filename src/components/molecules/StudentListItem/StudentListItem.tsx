@@ -9,6 +9,7 @@ import {
 import { MaterialIcons } from '@expo/vector-icons';
 import { IconButton, TouchableRipple } from 'react-native-paper';
 import { primaryColor } from '../../../util/Colors';
+import ProfileImage from '../ProfileImage/ProfileImage';
 
 const styles = StyleSheet.create({
   container: {
@@ -50,13 +51,6 @@ const StudentListItem: React.FC<StudentListPops> = ({
   onProfileClick,
   percentage,
 }): JSX.Element => {
-  const userProfileImage =
-    avatar !== undefined ? (
-      <Image source={avatar} />
-    ) : (
-      <MaterialIcons name="account-circle" size={34} />
-    );
-
   const checkboxContainer = showChecked ? (
     <IconButton
       icon={() => (
@@ -85,7 +79,7 @@ const StudentListItem: React.FC<StudentListPops> = ({
     >
       <View style={styles.container}>
         <View style={styles.containMain}>
-          {userProfileImage}
+          <ProfileImage avatar={avatar} />
           <View style={styles.textContain}>
             <Text>{name}</Text>
             <Text>Roll No: {rollNo}</Text>

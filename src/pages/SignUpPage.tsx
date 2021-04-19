@@ -12,16 +12,11 @@ import SingleButtonPopup from '../components/molecules/SingleButtonPopup';
 import { authApi } from '../api/AuthApi';
 import GlobalContext from '../context/GlobalContext';
 import { isStrongPassword, isValidEmail } from '../util';
+import { BasicErrors } from '../api/BaseApi';
 
 type Props = StackScreenProps<RootStackParamList, 'SignUp'>;
 
 export const SignUpPageNavigationOptions: StackNavigationOptions = SimpleCloseNavigationOptions;
-// HEADER_AB_TEST_NEW
-//   ? { ...SimpleHeaderBackNavigationOptions, title: 'Create An Account' }
-//   : SimpleCloseNavigationOptions;
-// {
-//   headerShown: false,
-// };
 
 const SignUpPagePage: React.FC<Props> = ({ navigation }): JSX.Element => {
   const [showConfirmEmailPopup, setShowConfirmEmailPopup] = useState(false);
@@ -78,6 +73,13 @@ const SignUpPagePage: React.FC<Props> = ({ navigation }): JSX.Element => {
         password,
         username,
       );
+
+      if (error === BasicErrors.AUTH_EMAIL_ALREADY_IN_USE) {
+        setEmailError('Email address is already in used');
+      }
+      if (error === BasicErrors.INVALID_EMAIL) {
+        setEmailError('Invalid email address');
+      }
 
       // if success is true dismiss the popup
       // the rest will be done by the onAuthListener

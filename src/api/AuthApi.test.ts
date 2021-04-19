@@ -150,7 +150,7 @@ test('check if update account and get account info works', async () => {
     name: 'updated name',
   });
 
-  await authApi.updateAccountInfo(acc);
+  await authApi.updateAccountInfo(acc.toJson());
   const [user] = await authApi.getAccountInfo();
 
   expect(user?.name).toBe('updated name');

@@ -30,12 +30,12 @@ export const Default = (): JSX.Element => (
     percentage={text('percentage', '95%')}
     markedDates={object('markedDates', {
       '2020-12-12': {
-        '03:50 AM': false,
-        '10:50 AM': true,
+        '03:50 AM': { active: false, sessionId: 'g67fg243g7' },
+        '10:50 AM': { active: true, sessionId: 'f35gh04093' },
       },
       '2020-12-11': {
-        '03:50 AM': true,
-        '10:50 AM': true,
+        '03:50 AM': { active: true, sessionId: 'f834hf843' },
+        '10:50 AM': { active: true, sessionId: 'f94f03h4' },
       },
     })}
   />

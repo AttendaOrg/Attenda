@@ -8,6 +8,7 @@ export interface ClassStudentModelInterface {
   archived?: boolean;
   studentName: string | null;
   classId?: string | null;
+  profilePicUrl?: string | null;
 }
 
 export default class ClassStudentModel implements ClassStudentModelInterface {
@@ -29,6 +30,8 @@ export default class ClassStudentModel implements ClassStudentModelInterface {
 
   classId: string | null = null;
 
+  profilePicUrl: string | null = null;
+
   constructor(data: Partial<ClassStudentModelInterface>) {
     if (typeof data.email === 'string') this.email = data.email;
     if (typeof data.rollNo === 'string') this.rollNo = data.rollNo;
@@ -40,6 +43,8 @@ export default class ClassStudentModel implements ClassStudentModelInterface {
     if (typeof data.archived === 'boolean') this.archived = data.archived;
     if (typeof data.studentName === 'string')
       this.studentName = data.studentName;
+    if (typeof data.profilePicUrl === 'string')
+      this.profilePicUrl = data.profilePicUrl;
   }
 
   static Update(
@@ -55,6 +60,7 @@ export default class ClassStudentModel implements ClassStudentModelInterface {
       studentId,
       archived,
       studentName,
+      profilePicUrl,
     } = data;
 
     if (typeof email === 'string') obj.email = email;
@@ -66,6 +72,8 @@ export default class ClassStudentModel implements ClassStudentModelInterface {
     if (typeof data.studentId === 'string') obj.studentId = studentId;
     if (typeof data.archived === 'boolean') obj.archived = archived;
     if (typeof data.studentName === 'string') obj.studentName = studentName;
+    if (typeof data.profilePicUrl === 'string')
+      obj.profilePicUrl = profilePicUrl;
 
     return obj;
   }
@@ -88,6 +96,7 @@ export default class ClassStudentModel implements ClassStudentModelInterface {
       studentId,
       archived,
       studentName,
+      profilePicUrl,
     } = this;
 
     return {
@@ -99,6 +108,7 @@ export default class ClassStudentModel implements ClassStudentModelInterface {
       studentId,
       archived,
       studentName,
+      profilePicUrl,
       ...(this.classId !== null && { classId: this.classId }),
     };
   }

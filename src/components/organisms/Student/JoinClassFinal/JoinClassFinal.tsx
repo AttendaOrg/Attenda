@@ -28,6 +28,10 @@ const styles = StyleSheet.create({
     marginTop: 15,
     width: '50%',
   },
+  danger: {
+    color: 'red',
+    marginTop: 4,
+  },
 });
 
 export interface JoinClassFinalPops {
@@ -35,22 +39,53 @@ export interface JoinClassFinalPops {
   section: string;
   teacher: string;
   onDone: () => void;
+  disableJoin: boolean;
 }
+
+interface JoinClassFinalNoClassFoundProps {
+  goBack: () => void;
+  classCode: string;
+}
+
+export const JoinClassFinalNoClassFound: React.FC<JoinClassFinalNoClassFoundProps> = ({
+  classCode,
+  goBack,
+}) => {
+  return (
+    <View style={styles.container}>
+      <KeyboardAdjustImageView svgImg={JoinClassImageComponent} />
+      <Text style={styles.danger}>
+        There is no class with the class code {`"${classCode}"`}
+      </Text>
+      <View style={styles.btnContainer}>
+        <Button title="Back" onPress={goBack} />
+      </View>
+    </View>
+  );
+};
 
 const JoinClassFinal: React.FC<JoinClassFinalPops> = ({
   className,
   section,
   teacher,
   onDone,
+  disableJoin = false,
 }): JSX.Element => {
   return (
     <View style={styles.container}>
       <KeyboardAdjustImageView svgImg={JoinClassImageComponent} />
       <Text style={styles.classNameText}>{className}</Text>
       <Text style={styles.sectionText}>{section}</Text>
-      <Text style={styles.teacherNameText}>By: {teacher}</Text>
+      <Text style={styles.teacherNameText}>
+        {teacher.length !== 0 && `By:${teacher}`}
+      </Text>
+      {disableJoin && (
+        <Text style={styles.danger}>
+          This class does not have active invite
+        </Text>
+      )}
       <View style={styles.btnContainer}>
-        <Button title="Join" onPress={onDone} />
+        <Button disabled={disableJoin} title="Join" onPress={onDone} />
       </View>
     </View>
   );
