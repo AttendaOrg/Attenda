@@ -2,6 +2,7 @@
 /* eslint-disable global-require */
 import { v4 as uuid } from 'uuid';
 import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const ENV_URL = process.env.REACT_NATIVE_ANALYTICS_ROOT_URL;
 const ENV_PROD_URL =
@@ -65,33 +66,19 @@ export default class AnalyticsApi {
   private isLocked = false;
 
   constructor() {
-    let uId = '';
     const randomUid = uuid();
 
-    // if (typeof module !== 'undefined' && typeof module.exports === 'object') {
-    //   const { LocalStorage } = require('node-localstorage');
-
-    //   localStorage = new LocalStorage('./scratch');
-    //   const localUId = localStorage.getItem(AnalyticsApi.USER_ID_STORE_NAME);
-
-    //   if (typeof localUId !== 'string') uId = randomUid;
-    //   else uId = localUId;
-
-    //   localStorage.setItem(AnalyticsApi.USER_ID_STORE_NAME, randomUid);
-    // } else {
-    const AsyncStorage = require('@react-native-async-storage/async-storage')
-      .default;
-
-    const localUId = AsyncStorage.getItem(AnalyticsApi.USER_ID_STORE_NAME);
-
-    if (typeof localUId !== 'string') uId = randomUid;
-    else uId = localUId;
-
-    AsyncStorage.setItem(AnalyticsApi.USER_ID_STORE_NAME, randomUid);
-    // }
-
-    this.userId = uId;
     this.sessionId = uuid();
+    this.userId = randomUid;
+    (async () => {
+      const localUId: string | null = await AsyncStorage.getItem(
+        AnalyticsApi.USER_ID_STORE_NAME,
+      );
+
+      if (typeof localUId === 'string') this.userId = localUId;
+      else
+        await AsyncStorage.setItem(AnalyticsApi.USER_ID_STORE_NAME, randomUid);
+    })();
 
     // this.sendPing();
   }
