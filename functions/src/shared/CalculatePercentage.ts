@@ -85,10 +85,8 @@ export const CalculatePercentageFun = async (
             classId,
             studentId
           );
-          const totalAttendancePercentage = (
-            (studentAttendanceCount * 100) /
-            totalNumOfSession
-          ).toFixed(2);
+          const totalAttendancePercentage =
+            (studentAttendanceCount * 100) / totalNumOfSession;
 
           console.log(
             `CalculatePercentage:(${studentId}) totalAttendancePercentage(${totalAttendancePercentage}) = (${studentAttendanceCount} * 100) / ${totalNumOfSession};`
@@ -101,6 +99,10 @@ export const CalculatePercentageFun = async (
             .collection(CLASSES_JOINED_STUDENT_COLLECTION_NAME)
             .doc(studentId)
             .get();
+
+          console.log(
+            `totalAttendancePercentage -> ${totalAttendancePercentage}`
+          );
 
           studentDoc.ref.update({
             totalAttendancePercentage,
@@ -150,6 +152,8 @@ export const CalculateSingleStudentPercentageFun = async (
       .collection(CLASSES_JOINED_STUDENT_COLLECTION_NAME)
       .doc(studentId)
       .get();
+
+    console.log(`totalAttendancePercentage -> ${totalAttendancePercentage}`);
 
     studentDoc.ref.update({
       totalAttendancePercentage,
