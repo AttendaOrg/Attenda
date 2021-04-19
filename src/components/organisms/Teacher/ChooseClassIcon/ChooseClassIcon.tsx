@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { StyleSheet, View, ScrollView } from 'react-native';
+import { StyleSheet, View } from 'react-native';
+import { FlatGrid } from 'react-native-super-grid';
 import { TeacherClassCard } from '../../../molecules/ClassCard/TeacherClassCard';
 import IconSelectBtn from '../../../atoms/IconSelectBtn/IconSelectBtn';
 import ClassCardIconModel from '../../../../api/TeacherApi/model/ClassCardIconModel';
@@ -34,27 +35,21 @@ const ChooseClassIcon: React.FC<ChooseClassIconPops> = ({
         onAction={() => null}
         onPress={() => null}
       />
-      <ScrollView>
-        <View
-          style={{
-            flexDirection: 'row',
-            flexWrap: 'wrap',
-            marginTop: 16,
-          }}
-        >
-          {icons.map(icon => (
-            <IconSelectBtn
-              key={icon.iconData}
-              selected={hashCode(icon.iconData) === selected}
-              source={{ uri: icon.iconData }}
-              onChange={() => {
-                onChange(icon);
-                setSelected(hashCode(icon.iconData));
-              }}
-            />
-          ))}
-        </View>
-      </ScrollView>
+      <FlatGrid
+        itemDimension={80}
+        data={icons}
+        renderItem={({ item }) => (
+          <IconSelectBtn
+            key={item.iconData}
+            selected={hashCode(item.iconData) === selected}
+            source={{ uri: item.iconData }}
+            onChange={() => {
+              onChange(item);
+              setSelected(hashCode(item.iconData));
+            }}
+          />
+        )}
+      />
     </View>
   );
 };
