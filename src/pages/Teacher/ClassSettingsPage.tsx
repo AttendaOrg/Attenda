@@ -160,11 +160,27 @@ class ClassSettingsPage extends React.PureComponent<Props, State> {
       },
     } = this.props;
 
-    await teacherApi.updateClass(
-      classId,
-      TeacherClassModel.Update({ title, section, description, isActiveInvite }),
-    );
-    this.updateHeader();
+    if (title.length > 0) {
+      this.setState(prevState => ({
+        ...prevState,
+        error: { ...prevState.error, title: '' },
+      }));
+      await teacherApi.updateClass(
+        classId,
+        TeacherClassModel.Update({
+          title,
+          section,
+          description,
+          isActiveInvite,
+        }),
+      );
+      this.updateHeader();
+    } else {
+      this.setState(prevState => ({
+        ...prevState,
+        error: { ...prevState.error, title: "Title field shouldn't be empty" },
+      }));
+    }
   };
 
   attachUpdateClassInfo = (): RealTimeListenerUnSubscriber => {
