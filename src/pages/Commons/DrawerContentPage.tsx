@@ -2,11 +2,12 @@ import {
   DrawerContentComponentProps,
   DrawerContentOptions,
 } from '@react-navigation/drawer';
+import { useNetInfo } from '@react-native-community/netinfo';
 import { DrawerActions } from '@react-navigation/native';
 import Constants from 'expo-constants';
 import firebase from 'firebase';
 import React, { useContext, useEffect, useState } from 'react';
-import { Linking } from 'react-native';
+import { Linking, View, Text } from 'react-native';
 import DrawerContent, {
   DrawerListItems,
 } from '../../components/organisms/Common/DrawerContent';
@@ -81,14 +82,21 @@ const DrawerContentPage: React.FC<Props> = ({ navigation }): JSX.Element => {
 
   const { settings } = useContext(GlobalContext);
 
+  const netInfo = useNetInfo;
+
   return (
-    <DrawerContent
-      name={name}
-      email={email}
-      avatar={settings.profilePic}
-      onListItemCLick={onListItemCLick}
-      appVersion={Constants?.manifest?.version ?? ''}
-    />
+    <>
+      <DrawerContent
+        name={name}
+        email={email}
+        avatar={settings.profilePic}
+        onListItemCLick={onListItemCLick}
+        appVersion={Constants?.manifest?.version ?? ''}
+      />
+      <View style={{ position: 'absolute' }}>
+        <Text>Hi:{JSON.stringify(netInfo)}</Text>
+      </View>
+    </>
   );
 };
 

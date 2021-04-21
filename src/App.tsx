@@ -91,7 +91,8 @@ import EditDebugSettingsPage, {
 import ChooseClassIconPage, {
   ChooseClassIconNavigationOptions,
 } from './pages/Teacher/ChooseClassIconPage';
-import { analyticsApi, AnalyticsApiDocs } from './api/analytics';
+import { analyticsApi } from './api/analytics';
+import NetworkChangeListener from './pages/Commons/NetworkChangeListener';
 
 export type TeacherClassListNavigationProps = {
   withDismiss?: boolean;
@@ -455,6 +456,7 @@ class AuthProvider extends React.PureComponent<Props> {
           </>
         </Stack.Navigator>
         <SpinnerLoader show={showLoading} />
+        <NetworkChangeListener />
       </MenuProvider>
     );
   }
