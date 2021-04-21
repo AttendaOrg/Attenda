@@ -29,7 +29,7 @@ const NetworkChangeListener: React.VFC = () => {
   if (isConnected !== true)
     return (
       <View style={styles.container}>
-        <Text style={styles.txt}>No connection</Text>
+        <Text style={styles.txt}>You&apos;re offline</Text>
       </View>
     );
 

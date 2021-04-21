@@ -22,7 +22,7 @@
     "postinstall": "patch-package",
     "test:firebase-api": "cross-env NODE_ENV=testing FIREBASE_AUTH_EMULATOR_HOST='localhost:9099' FIRESTORE_EMULATOR_HOST='localhost:8080' jest --env=node --runInBand",
     "populate": "cross-env NODE_ENV=testing FIREBASE_AUTH_EMULATOR_HOST='localhost:9099' FIRESTORE_EMULATOR_HOST='localhost:8080' ts-node scripts/build.ts",
-    "populate:prod": "cross-env PRESIST=none ts-node scripts/build.ts"
+    "populate:prod": "cross-env PRESIST=none NODE_ENV=testing ts-node scripts/build.ts"
   },
   "config": {
     "react-native-storybook-loader": {

@@ -70,7 +70,7 @@ export default class AnalyticsApi {
 
     this.sessionId = uuid();
     this.userId = randomUid;
-    (async () => {
+    const runProcess = async () => {
       const localUId: string | null = await AsyncStorage.getItem(
         AnalyticsApi.USER_ID_STORE_NAME,
       );
@@ -78,7 +78,9 @@ export default class AnalyticsApi {
       if (typeof localUId === 'string') this.userId = localUId;
       else
         await AsyncStorage.setItem(AnalyticsApi.USER_ID_STORE_NAME, randomUid);
-    })();
+    };
+
+    if (process.env.NODE_ENV !== 'testing') runProcess();
 
     // this.sendPing();
   }
