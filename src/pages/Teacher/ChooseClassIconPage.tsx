@@ -63,6 +63,8 @@ const ChooseClassIconPage: React.FC<Props> = ({
     );
 
   const onIconChange = async (icon: ClassCardIconModel) => {
+    if (await globalContext.throwNetworkError()) return;
+
     globalContext.changeSpinnerLoading(true);
     try {
       await teacherApi.updateClassIcon(classId, icon.iconData);
@@ -80,9 +82,7 @@ const ChooseClassIconPage: React.FC<Props> = ({
           name={n}
           component={() => (
             <ChooseClassIcon
-              onChange={icon => {
-                onIconChange(icon);
-              }}
+              onChange={onIconChange}
               info={classInfo}
               icons={icons.filter(icon => icon.category === n)}
             />

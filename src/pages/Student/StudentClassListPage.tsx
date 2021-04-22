@@ -156,12 +156,13 @@ const StudentClassListPage: React.FC<Props> = ({
     setUnEnrollId(null);
   };
 
-  const onAction = (
+  const onAction = async (
     action: StudentClassAction,
     info: StudentListDataProps,
-  ): void => {
+  ): Promise<void> => {
     const { classId } = info;
 
+    if (await context.throwNetworkError()) return;
     if (classId === null) return;
 
     switch (action) {
@@ -177,8 +178,10 @@ const StudentClassListPage: React.FC<Props> = ({
     }
   };
 
-  const onClassClick = (classInfo: StudentListDataProps) => {
+  const onClassClick = async (classInfo: StudentListDataProps) => {
     const { alreadyGiven, currentSessionId, classId } = classInfo;
+
+    if (await context.throwNetworkError()) return;
 
     const matched = data
       // get the matching class

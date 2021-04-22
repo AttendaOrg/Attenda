@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import {
   StackNavigationOptions,
   StackScreenProps,
@@ -10,6 +10,7 @@ import SingleButtonPopup from '../../components/molecules/SingleButtonPopup';
 import { authApi } from '../../api/AuthApi';
 import { isStrongPassword } from '../../util';
 import { BasicErrors } from '../../api/BaseApi';
+import GlobalContext from '../../context/GlobalContext';
 
 type Props = StackScreenProps<RootStackParamList, 'ChangePassword'>;
 
@@ -19,6 +20,7 @@ export const ChangePasswordNavigationOptions: StackNavigationOptions = {
 };
 
 const ChangePasswordPage: React.FC<Props> = ({ navigation }): JSX.Element => {
+  const globalContext = useContext(GlobalContext);
   const [showChangePasswordPopup, setShowChangePasswordPopup] = useState(false);
   const [currentPasswordError, setCurrentPasswordError] = useState('');
   const [newPasswordError, setNewPasswordError] = useState('');
@@ -84,6 +86,8 @@ const ChangePasswordPage: React.FC<Props> = ({ navigation }): JSX.Element => {
     newPass: string,
     confirmPass: string,
   ) => {
+    if (await globalContext.throwNetworkError()) return;
+
     if (shouldChangePassword(currentPass, newPass, confirmPass)) {
       const [success, error] = await authApi.changePassword(
         currentPass,

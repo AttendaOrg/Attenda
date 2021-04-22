@@ -24,6 +24,8 @@ const ChooseRolePage: React.FC<Props> = ({ navigation }): JSX.Element => {
   const [msg, setMsg] = useState('');
 
   const handleOnDone = async (role: Role) => {
+    if (await globalContext.throwNetworkError()) return;
+
     globalContext.changeSpinnerLoading(true);
     switch (role) {
       case Role.Student: {

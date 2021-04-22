@@ -104,10 +104,15 @@ class TeacherClassListPage extends React.PureComponent<Props, State> {
     }
   };
 
-  onAction = (action: TeacherClassAction, info: TeacherClassModel): void => {
+  onAction = async (
+    action: TeacherClassAction,
+    info: TeacherClassModel,
+  ): Promise<void> => {
     const { navigation } = this.props;
+    const { context } = this;
     const { classId, totalStudent, inviteLink } = info;
 
+    if (await context.throwNetworkError()) return;
     if (classId === null) return;
 
     switch (action) {
@@ -135,10 +140,12 @@ class TeacherClassListPage extends React.PureComponent<Props, State> {
     }
   };
 
-  onClassClick = (classInfo: TeacherClassModel): void => {
+  onClassClick = async (classInfo: TeacherClassModel): Promise<void> => {
+    const { context } = this;
     const { navigation } = this.props;
     const { isLive, currentSessionId, classId, title, section } = classInfo;
 
+    if (await context.throwNetworkError()) return;
     if (classId !== null) {
       if (isLive && currentSessionId !== null)
         navigation.push('CurrentAttendanceSession', {

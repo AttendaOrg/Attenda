@@ -64,6 +64,8 @@ const SignUpPagePage: React.FC<Props> = ({ navigation }): JSX.Element => {
     password: string,
     acceptTerms: boolean,
   ) => {
+    if (await globalContext.throwNetworkError()) return;
+
     globalContext.changeSpinnerLoading(true);
     if (revalidateError(username, email, password, acceptTerms)) {
       // TODO: add validation for network related error and firebase error

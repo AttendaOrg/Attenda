@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import {
   StackNavigationOptions,
   StackScreenProps,
@@ -8,6 +8,7 @@ import JoinClassForm from '../../components/organisms/Student/JoinClassForm';
 import SimpleCloseNavigationOptions from '../../components/templates/SimpleCloseNavigationOption';
 import { HEADER_AB_TEST_NEW } from '../../util/constant';
 import { SimpleHeaderBackNavigationOptions } from '../../components/templates/SimpleHeaderNavigationOptions';
+import GlobalContext from '../../context/GlobalContext';
 
 type Props = StackScreenProps<RootStackParamList, 'JoinClassForm'>;
 
@@ -22,13 +23,15 @@ const JoinClassFormPage: React.FC<Props> = ({
   const {
     params: { classCode: _classCode },
   } = route;
+  const globalContext = useContext(GlobalContext);
 
   return (
     <JoinClassForm
       joinCode={_classCode}
-      onSubmit={(classCode, rollNo) =>
-        navigation.navigate('JoinClassFinal', { classCode, rollNo })
-      }
+      onSubmit={async (classCode, rollNo) => {
+        if (await globalContext.throwNetworkError()) return;
+        navigation.navigate('JoinClassFinal', { classCode, rollNo });
+      }}
     />
   );
 };

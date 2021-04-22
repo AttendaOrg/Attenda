@@ -13,7 +13,7 @@ const NoInternetSnackbar: React.VFC<Props> = ({ onDismiss, visible }) => {
       onDismiss={onDismiss}
       wrapperStyle={{ marginBottom: 25 }}
     >
-      You are offline please connect to the internet and try again.
+      Please check your internet connectivity and try again.
     </Snackbar>
   );
 };

@@ -76,6 +76,7 @@ const EditStudentAttendanceRecordPage: React.FC<Props> = ({
   }, [classId, currentMonth, studentId]);
 
   const onChangeAttendance = async (sessionId: string, status: boolean) => {
+    if (await globalContext.throwNetworkError()) return;
     await teacherApi.editStudentAttendanceReport(
       classId,
       sessionId,
@@ -101,6 +102,7 @@ const EditStudentAttendanceRecordPage: React.FC<Props> = ({
   }, [classId, studentId]);
 
   const onRollChange = async (newRollNo: string) => {
+    if (await globalContext.throwNetworkError()) return;
     await teacherApi.changeStudentRollNo(classId, studentId, newRollNo);
   };
 

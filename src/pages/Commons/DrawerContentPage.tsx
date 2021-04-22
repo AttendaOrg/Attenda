@@ -2,12 +2,11 @@ import {
   DrawerContentComponentProps,
   DrawerContentOptions,
 } from '@react-navigation/drawer';
-import { useNetInfo } from '@react-native-community/netinfo';
 import { DrawerActions } from '@react-navigation/native';
 import Constants from 'expo-constants';
 import firebase from 'firebase';
 import React, { useContext, useEffect, useState } from 'react';
-import { Linking, View, Text } from 'react-native';
+import { Linking } from 'react-native';
 import DrawerContent, {
   DrawerListItems,
 } from '../../components/organisms/Common/DrawerContent';
@@ -22,6 +21,7 @@ type Props = DrawerContentComponentProps<DrawerContentOptions>;
 
 const DrawerContentPage: React.FC<Props> = ({ navigation }): JSX.Element => {
   const [info, setInfo] = useState({ name: '', email: '' });
+  const globalContext = useContext(GlobalContext);
 
   useEffect(() => {
     // TODO: get user profile pic
@@ -33,7 +33,7 @@ const DrawerContentPage: React.FC<Props> = ({ navigation }): JSX.Element => {
     });
   }, []);
 
-  const onListItemCLick = (item: DrawerListItems) => {
+  const onListItemCLick = async (item: DrawerListItems) => {
     switch (item) {
       case DrawerListItems.CLASSES:
         // temporary solution is to close the drawer
@@ -41,6 +41,7 @@ const DrawerContentPage: React.FC<Props> = ({ navigation }): JSX.Element => {
         navigation.dispatch(DrawerActions.closeDrawer());
         break;
       case DrawerListItems.MY_ACCOUNT:
+        if (await globalContext.throwNetworkError()) return;
         navigation.navigate('App', { screen: 'MyAccount' });
         break;
       case DrawerListItems.CONTACT_US:
@@ -80,23 +81,14 @@ const DrawerContentPage: React.FC<Props> = ({ navigation }): JSX.Element => {
     setInfo({ email, name: displayName });
   }
 
-  const { settings } = useContext(GlobalContext);
-
-  const netInfo = useNetInfo;
-
   return (
-    <>
-      <DrawerContent
-        name={name}
-        email={email}
-        avatar={settings.profilePic}
-        onListItemCLick={onListItemCLick}
-        appVersion={Constants?.manifest?.version ?? ''}
-      />
-      <View style={{ position: 'absolute' }}>
-        <Text>Hi:{JSON.stringify(netInfo)}</Text>
-      </View>
-    </>
+    <DrawerContent
+      name={name}
+      email={email}
+      avatar={globalContext.settings.profilePic}
+      onListItemCLick={onListItemCLick}
+      appVersion={Constants?.manifest?.version ?? ''}
+    />
   );
 };
 

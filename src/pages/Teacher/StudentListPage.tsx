@@ -1,5 +1,6 @@
 import React, {
   useCallback,
+  useContext,
   useEffect,
   useLayoutEffect,
   useState,
@@ -21,6 +22,7 @@ import ClassStudentModel from '../../api/TeacherApi/model/ClassStudentModel';
 import MenuOptionsPopover from '../../components/molecules/MenuOptionsPopover';
 import { applyStudentSort, SortBy } from './util/SortStudent';
 import DoubleButtonPopup from '../../components/molecules/DoubleButtonPopup';
+import GlobalContext from '../../context/GlobalContext';
 
 type Props = StackScreenProps<RootStackParamList, 'StudentList'>;
 type OptionsProps = (props: Props) => StackNavigationOptions;
@@ -57,6 +59,7 @@ const StudentListPage: React.FC<Props> = ({
   const {
     params: { classId, totalStudent: estimateTotalStudent = 0 },
   } = route;
+  const globalContext = useContext(GlobalContext);
   const [showChecked, setShowChecked] = useState(false);
   const [showLoading, setShowLoading] = useState(true);
   const [listItems, setListItems] = useState<StudentListData[]>([]);
@@ -194,12 +197,13 @@ const StudentListPage: React.FC<Props> = ({
         showChecked={showChecked}
         onChangeShowChecked={setShowChecked}
         onChangeChecked={onChangeChecked}
-        onProfileClick={rollNo =>
+        onProfileClick={async rollNo => {
+          if (await globalContext.throwNetworkError()) return;
           navigation.navigate('EditStudentAttendanceRecord', {
             studentId: rollNo,
             classId,
-          })
-        }
+          });
+        }}
       />
       <DoubleButtonPopup
         negativeButtonText="Cancel"

@@ -147,18 +147,23 @@ class ClassSettingsPage extends React.PureComponent<Props, State> {
   // #region network calls
   updateClassInfo = async (): Promise<void> => {
     const {
-      currentInfo: {
-        title = '',
-        section = '',
-        description = '',
-        isActiveInvite,
+      state: {
+        currentInfo: {
+          title = '',
+          section = '',
+          description = '',
+          isActiveInvite,
+        },
       },
-    } = this.state;
-    const {
-      route: {
-        params: { classId },
+      props: {
+        route: {
+          params: { classId },
+        },
       },
-    } = this.props;
+      context,
+    } = this;
+
+    if (await context.throwNetworkError()) return;
 
     if (title.length > 0) {
       this.setState(prevState => ({
@@ -201,6 +206,8 @@ class ClassSettingsPage extends React.PureComponent<Props, State> {
   };
 
   validateClassCode = async (classCode: string): Promise<void> => {
+    const { context } = this;
+
     if (classCode.length < 3) {
       this.setState({
         classCodeErrorMessage: `Invite Code must be getter than 3 character`,
@@ -209,6 +216,8 @@ class ClassSettingsPage extends React.PureComponent<Props, State> {
 
       return;
     }
+    if (await context.throwNetworkError()) return;
+
     this.setState({ showSpinner: true });
     const [success, error] = await teacherApi.checkIsValidInviteCode(classCode); // TODO: handle error
 
@@ -237,6 +246,7 @@ class ClassSettingsPage extends React.PureComponent<Props, State> {
       context,
     } = this;
 
+    if (await context.throwNetworkError()) return;
     context.changeSpinnerLoading(true);
     await teacherApi.updateClassCode(classId, currClassCode);
     await this.updateClassInfo();

@@ -58,6 +58,8 @@ const JoinClassFinalPage: React.FC<Props> = ({
   const joinClass = async () => {
     const classId = accInfo?.classId ?? null;
 
+    if (await globalContext.throwNetworkError()) return;
+
     if (classId !== null && classId !== '') {
       globalContext.changeSpinnerLoading(true);
       await studentApi.joinClass(classId, rollNo);
