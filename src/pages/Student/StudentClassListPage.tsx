@@ -4,6 +4,7 @@ import {
   StackNavigationOptions,
   StackScreenProps,
 } from '@react-navigation/stack';
+import { AppState, AppStateStatus } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { RootStackParamList } from '../../App';
 import SimpleHeaderNavigationOptions from '../../components/templates/SimpleHeaderNavigationOptions';
@@ -99,16 +100,30 @@ const StudentClassListPage: React.FC<Props> = ({
     false,
   );
 
-  useEffect(() => {
-    (async () => {
-      const joinCode = await AsyncStorage.getItem('@joinCode');
+  const handleCode = React.useCallback(async () => {
+    const joinCode = await AsyncStorage.getItem('@joinCode');
 
-      if (typeof joinCode === 'string' && joinCode.length > 0) {
-        navigation.push('JoinClassForm', { classCode: joinCode });
-        await AsyncStorage.removeItem('@joinCode');
-      }
-    })();
+    if (typeof joinCode === 'string' && joinCode.length > 0) {
+      navigation.push('JoinClassForm', { classCode: joinCode });
+      await AsyncStorage.removeItem('@joinCode');
+    }
   }, [navigation]);
+
+  const handleAppStateChange = React.useCallback(
+    (nextAppState: AppStateStatus) => {
+      if (nextAppState === 'active') {
+        handleCode();
+      }
+    },
+    [handleCode],
+  );
+
+  useEffect(() => {
+    AppState.addEventListener('change', handleAppStateChange);
+    handleCode();
+
+    return () => AppState.removeEventListener('change', handleAppStateChange);
+  }, [handleAppStateChange, handleCode, navigation]);
 
   useEffect(() => {
     return studentApi.getEnrolledClassListListener(async newList => {
