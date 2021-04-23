@@ -2,6 +2,7 @@ import React from 'react';
 import { Alert } from 'react-native';
 import * as Linking from 'expo-linking';
 import { createStackNavigator } from '@react-navigation/stack';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { CommonActions, NavigationContainer } from '@react-navigation/native';
 import { MenuProvider } from 'react-native-popup-menu';
 import {
@@ -180,9 +181,10 @@ export type RootStackParamList = {
 
 enum WhitelistUrls {
   REST_PASSWORD = 'resetPassword',
+  JOIN_CLASS = 'join',
 }
 
-const WHITELIST_URLS = [WhitelistUrls.REST_PASSWORD];
+const WHITELIST_URLS = [WhitelistUrls.REST_PASSWORD, WhitelistUrls.JOIN_CLASS];
 
 function isValidHttpUrl(string?: string | null): boolean {
   if (string === null || string === undefined) return false;
@@ -207,10 +209,21 @@ const shouldHandleDeepLink = (url: string): boolean => {
   if (url.length <= 0) return false;
 
   const match = WHITELIST_URLS.map(whiteUrl =>
-    whiteUrl.includes(path ?? ''),
+    (path ?? '').includes(whiteUrl),
   ).filter(e => e === true);
 
   return match.length > 0;
+};
+
+const extractJoinCode = (path: string): string => {
+  const paths = path.split('/');
+  const index = paths.indexOf(WhitelistUrls.JOIN_CLASS);
+
+  if (index >= 0) {
+    return paths[index + 1] ?? '';
+  }
+
+  return '';
 };
 
 export const Stack = createStackNavigator<RootStackParamList>();
@@ -352,6 +365,8 @@ class AuthProvider extends React.PureComponent<Props> {
   handleRedirect = (url: string, role?: UserRole | null): boolean => {
     const { navigation } = this.props;
 
+    console.log('Url->', url, role);
+
     // get the current route name
     const navState = navigation.dangerouslyGetState();
     const currentRoutes = navState.routes[0]?.state?.routes ?? [];
@@ -362,17 +377,23 @@ class AuthProvider extends React.PureComponent<Props> {
 
     // below is some case where it is not necessary to navigate
     // if we are already in the destination we don't need to navigate again
-    if (currentRouteName === 'ChangePassword') return false;
+    if (
+      currentRouteName === 'ChangePassword' ||
+      currentRouteName === 'JoinClassForm'
+    )
+      return false;
     if (!isValidHttpUrl(url)) return false;
     if (!shouldHandleRedirect) return false;
 
     const { path = '', queryParams } = Linking.parse(url);
     const code = queryParams?.oobCode as string;
+    const joinCode = extractJoinCode(path ?? '');
 
     const isValidCode = typeof code === 'string' && code.length > 0;
     const shouldRedirectToResetPassword = (path ?? '').includes(
       WhitelistUrls.REST_PASSWORD,
     );
+    const isValidJoin = joinCode.length > 0;
 
     if (shouldRedirectToResetPassword && isValidCode) {
       if (typeof role === 'undefined' || role === null) {
@@ -411,6 +432,8 @@ class AuthProvider extends React.PureComponent<Props> {
 
       return true;
     }
+
+    if (isValidJoin) AsyncStorage.setItem('@joinCode', joinCode);
 
     return false;
   };

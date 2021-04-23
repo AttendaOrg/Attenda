@@ -4,6 +4,7 @@ import {
   StackNavigationOptions,
   StackScreenProps,
 } from '@react-navigation/stack';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { RootStackParamList } from '../../App';
 import SimpleHeaderNavigationOptions from '../../components/templates/SimpleHeaderNavigationOptions';
 import StudentClassList, {
@@ -97,6 +98,17 @@ const StudentClassListPage: React.FC<Props> = ({
   const [showNoSessionStartedPopup, setShowNoSessionStartedPopup] = useState(
     false,
   );
+
+  useEffect(() => {
+    (async () => {
+      const joinCode = await AsyncStorage.getItem('@joinCode');
+
+      if (typeof joinCode === 'string' && joinCode.length > 0) {
+        navigation.push('JoinClassForm', { classCode: joinCode });
+        await AsyncStorage.removeItem('@joinCode');
+      }
+    })();
+  }, [navigation]);
 
   useEffect(() => {
     return studentApi.getEnrolledClassListListener(async newList => {
