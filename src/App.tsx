@@ -1,5 +1,6 @@
 import React from 'react';
 import { Alert } from 'react-native';
+import * as Linking from 'expo-linking';
 import { createStackNavigator } from '@react-navigation/stack';
 import { CommonActions, NavigationContainer } from '@react-navigation/native';
 import { MenuProvider } from 'react-native-popup-menu';
@@ -168,11 +169,48 @@ export type RootStackParamList = {
   };
   // drawer
   MyAccount: undefined;
-  ChangePassword: undefined;
+  ChangePassword: {
+    code?: string;
+  };
   Loading: undefined;
   // developer settings
   EditDebugSettings: undefined;
   DebugSettings: undefined;
+};
+
+enum WhitelistUrls {
+  REST_PASSWORD = 'resetPassword',
+}
+
+const WHITELIST_URLS = [WhitelistUrls.REST_PASSWORD];
+
+function isValidHttpUrl(string?: string | null): boolean {
+  if (string === null || string === undefined) return false;
+  let scheme;
+
+  try {
+    const { scheme: _s } = Linking.parse(string ?? '');
+
+    scheme = _s;
+  } catch (_) {
+    return false;
+  }
+
+  return scheme === 'http' || scheme === 'https' || scheme === 'exp';
+}
+
+const shouldHandleDeepLink = (url: string): boolean => {
+  if (!isValidHttpUrl(url)) return false;
+
+  const { path = '' } = Linking.parse(url);
+
+  if (url.length <= 0) return false;
+
+  const match = WHITELIST_URLS.map(whiteUrl =>
+    whiteUrl.includes(path ?? ''),
+  ).filter(e => e === true);
+
+  return match.length > 0;
 };
 
 export const Stack = createStackNavigator<RootStackParamList>();
@@ -190,6 +228,9 @@ class AuthProvider extends React.PureComponent<Props> {
       props: { navigation },
     } = this;
 
+    const initialUrl = await Linking.getInitialURL();
+    // 'https://www.attenda.org/resetPassword?oobCode=laS5gYZgZq51uheFw4Un7g5WSDnNm9Bdi-wv4Xovp2kE666_fBu2H8';
+
     // TODO: remove this in production
     // wake up the heroku instance
     const success = await analyticsApi.sendPing();
@@ -202,9 +243,19 @@ class AuthProvider extends React.PureComponent<Props> {
         const isSignedIn = user !== null;
         const { context } = this;
 
+        console.log('onAuthStateChanged', user);
+
         context.changeSpinnerLoading(true);
 
         const [role] = await authApi.getUserRole();
+
+        if (shouldHandleDeepLink(initialUrl ?? '')) {
+          if (this.handleRedirect(initialUrl ?? '', role)) {
+            context.changeSpinnerLoading(false);
+
+            return;
+          }
+        }
 
         context.changeSpinnerLoading(false);
 
@@ -283,11 +334,92 @@ class AuthProvider extends React.PureComponent<Props> {
         // eslint-disable-next-line no-console
         console.log('something bad has happened no navigation was triggered');
       });
+
+    Linking.addEventListener('url', this.linkingCb);
   }
 
   componentWillUnmount() {
     if (this.unsubscribe !== null) this.unsubscribe();
+    Linking.removeEventListener('url', this.linkingCb);
   }
+
+  /**
+   *
+   * @param url
+   * @param role
+   * @returns boolean if we navigate in this function the function returns true else it's return false
+   */
+  handleRedirect = (url: string, role?: UserRole | null): boolean => {
+    const { navigation } = this.props;
+
+    // get the current route name
+    const navState = navigation.dangerouslyGetState();
+    const currentRoutes = navState.routes[0]?.state?.routes ?? [];
+    const index = currentRoutes.length - 1;
+    const currentRouteName = (currentRoutes ?? [])[index]?.name;
+
+    const shouldHandleRedirect = shouldHandleDeepLink(url ?? '');
+
+    // below is some case where it is not necessary to navigate
+    // if we are already in the destination we don't need to navigate again
+    if (currentRouteName === 'ChangePassword') return false;
+    if (!isValidHttpUrl(url)) return false;
+    if (!shouldHandleRedirect) return false;
+
+    const { path = '', queryParams } = Linking.parse(url);
+    const code = queryParams?.oobCode as string;
+
+    const isValidCode = typeof code === 'string' && code.length > 0;
+    const shouldRedirectToResetPassword = (path ?? '').includes(
+      WhitelistUrls.REST_PASSWORD,
+    );
+
+    if (shouldRedirectToResetPassword && isValidCode) {
+      if (typeof role === 'undefined' || role === null) {
+        // console.log('valid dispatch SignIn -> ChangePassword');
+
+        if (currentRoutes.length === 0)
+          navigation.dispatch(
+            CommonActions.reset({
+              index: 1,
+              routes: [
+                {
+                  name: 'SignIn',
+                },
+                { name: 'ChangePassword', params: { code } },
+              ],
+            }),
+          );
+        else navigation.navigate('ChangePassword', { code });
+      } else {
+        // console.log('valid dispatch ClassList -> ChangePassword');
+        navigation.dispatch(
+          CommonActions.reset({
+            index: 1,
+            routes: [
+              {
+                name:
+                  role === UserRole.TEACHER
+                    ? 'TeacherClassList'
+                    : 'StudentClassList',
+              },
+              { name: 'ChangePassword', params: { code } },
+            ],
+          }),
+        );
+      }
+
+      return true;
+    }
+
+    return false;
+  };
+
+  linkingCb = (evt: Linking.EventType, role?: UserRole) => {
+    const { url } = evt;
+
+    return this.handleRedirect(url, role);
+  };
 
   render() {
     // eslint-disable-next-line react/destructuring-assignment
@@ -465,6 +597,15 @@ class AuthProvider extends React.PureComponent<Props> {
 AuthProvider.contextType = GlobalContext;
 
 const Drawer = createDrawerNavigator();
+
+// Linking.createURL is available as of expo@40.0.1 and expo-linking@2.0.1. If
+// you are using older versions, you can upgrade or use Linking.makeUrl instead,
+// but note that your deep links in standalone apps will be in the format
+// scheme:/// rather than scheme:// if you use makeUrl.
+// const prefix = Linking.createURL('/');
+// const linking = {
+//   prefixes: [prefix],
+// };
 
 const App = (): JSX.Element => (
   <GlobalContextProvider>

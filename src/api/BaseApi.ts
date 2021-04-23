@@ -42,6 +42,7 @@ export enum BasicErrors {
   INVALID_INPUT,
   MAC_ID_DOES_NOT_MATCH,
   ALREADY_PRESENT_GIVEN,
+  OOB_CODE_NOT_VALID,
 }
 
 export type RealTimeListenerUnSubscriber = () => void;

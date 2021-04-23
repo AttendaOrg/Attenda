@@ -500,6 +500,44 @@ class AuthApi extends BaseApi implements AuthApiInterface {
     }
   };
 
+  verifyPasswordResetEmail = async (
+    obbCode: string,
+    newPassword: string,
+  ): Promise<WithError<boolean>> => {
+    try {
+      const email: string = await firebase
+        .auth()
+        .verifyPasswordResetCode(obbCode);
+
+      await firebase.auth().confirmPasswordReset(obbCode, newPassword);
+
+      const [success, error] = await this.loginWithEmailAndPassword(
+        email,
+        newPassword,
+      );
+
+      console.log(success, error);
+
+      return this.success(success);
+    } catch (e) {
+      const error: firebase.FirebaseError = e;
+
+      switch (error.code) {
+        case 'auth/user-not-found':
+          return this.error(BasicErrors.AUTH_USER_NOT_FOUND);
+        case 'auth/invalid-email':
+          return this.error(BasicErrors.INVALID_EMAIL);
+        case 'auth/invalid-action-code':
+          return this.error(BasicErrors.OOB_CODE_NOT_VALID);
+        default:
+          // console.log(error);
+          break;
+      }
+
+      return this.error(BasicErrors.EXCEPTION);
+    }
+  };
+
   static getProfilePicRef = (userId?: string): firebase.storage.Reference => {
     return firebase
       .storage()
