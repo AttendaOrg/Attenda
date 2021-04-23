@@ -209,11 +209,9 @@ export default class StudentApi extends AuthApi implements StudentApiInterface {
         .firestore()
         .collection(AuthApi.AUTH_ROOT_COLLECTION_NAME)
         .doc(userId)
-        .update(
-          AccountInfo.Update({
-            joinedClassId: chunkUpdate,
-          }),
-        );
+        .update({
+          joinedClassId: chunkUpdate,
+        });
 
       analyticsApi.sendSingle(
         `StudentApi.joinClass - ${AnalyticsApiDocs.ACC_INFO_UPDATE}`,
