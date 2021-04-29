@@ -3,7 +3,7 @@ import {
   StackNavigationOptions,
   StackScreenProps,
 } from '@react-navigation/stack';
-import { Clipboard, Share } from 'react-native';
+import { AppState, AppStateStatus, Clipboard, Share } from 'react-native';
 import { RootStackParamList } from '../../App';
 import SimpleHeaderNavigationOptions from '../../components/templates/SimpleHeaderNavigationOptions';
 import { teacherApi } from '../../api/TeacherApi';
@@ -11,9 +11,10 @@ import TeacherClassModel from '../../api/TeacherApi/model/TeacherClassModel';
 import TeacherClassList, {
   dummyTeacherClassListData,
 } from '../../components/organisms/Teacher/TeacherClassList';
-import AuthApi, { authApi } from '../../api/AuthApi';
+import { authApi } from '../../api/AuthApi';
 import GlobalContext from '../../context/GlobalContext';
 import { TeacherClassAction } from '../../components/molecules/ClassCard/TeacherClassCard';
+import EmailVerificationNotice from '../../components/molecules/EmailVerificationNotice/EmailVerificationNotice';
 
 type Props = StackScreenProps<RootStackParamList, 'TeacherClassList'>;
 type OptionsProps = (props: Props) => StackNavigationOptions;
@@ -49,6 +50,7 @@ export const TeacherClassListNavigationOptions: OptionsProps = SimpleHeaderNavig
 interface State {
   data: TeacherClassModel[];
   loading: boolean;
+  isAccountVerified: boolean;
 }
 
 class TeacherClassListPage extends React.PureComponent<Props, State> {
@@ -61,6 +63,7 @@ class TeacherClassListPage extends React.PureComponent<Props, State> {
     this.state = {
       data: [],
       loading: true,
+      isAccountVerified: true,
     };
   }
 
@@ -68,6 +71,9 @@ class TeacherClassListPage extends React.PureComponent<Props, State> {
     const { context } = this;
 
     this.setState({ loading: true });
+
+    this.checkAccountVerification();
+    AppState.addEventListener('change', this.handleAppStateChange);
 
     this.unSub = teacherApi.getClassListener(newData => {
       this.setState({ data: newData, loading: false });
@@ -83,8 +89,25 @@ class TeacherClassListPage extends React.PureComponent<Props, State> {
   }
 
   componentWillUnmount(): void {
+    AppState.removeEventListener('change', this.handleAppStateChange);
     this.unSub();
   }
+
+  checkAccountVerification = async (): Promise<void> => {
+    const isAccountVerified = await authApi.isAccountVerified();
+
+    this.setState({ isAccountVerified });
+  };
+
+  handleAppStateChange = async (
+    nextAppState: AppStateStatus,
+  ): Promise<void> => {
+    console.log(`nextAppState:->${nextAppState}`);
+
+    if (nextAppState === 'active') {
+      this.checkAccountVerification();
+    }
+  };
 
   unSub = (): void => {
     console.log('not implemented');
@@ -168,20 +191,27 @@ class TeacherClassListPage extends React.PureComponent<Props, State> {
       onAction,
       onClassClick,
       props: { navigation },
-      state: { data, loading },
+      state: { data, loading, isAccountVerified },
     } = this;
     const withLoadingData: TeacherClassModel[] = loading
       ? dummyTeacherClassListData
       : data;
 
     return (
-      <TeacherClassList
-        data={withLoadingData}
-        onAction={onAction}
-        showShimmer={loading}
-        onClassClick={onClassClick}
-        onFabClick={() => navigation.push('CreateClass')}
-      />
+      <>
+        <EmailVerificationNotice
+          show={!isAccountVerified}
+          onResendEmail={() => authApi.sendEmailVerificationCode()}
+        />
+
+        <TeacherClassList
+          data={withLoadingData}
+          onAction={onAction}
+          showShimmer={loading}
+          onClassClick={onClassClick}
+          onFabClick={() => navigation.push('CreateClass')}
+        />
+      </>
     );
   }
 }

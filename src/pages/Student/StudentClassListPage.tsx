@@ -21,6 +21,7 @@ import DoubleButtonPopup from '../../components/molecules/DoubleButtonPopup';
 import { StudentClassAction } from '../../components/molecules/ClassCard/StudentClassCard';
 import { authApi } from '../../api/AuthApi';
 import GlobalContext from '../../context/GlobalContext';
+import EmailVerificationNotice from '../../components/molecules/EmailVerificationNotice/EmailVerificationNotice';
 
 type Props = StackScreenProps<RootStackParamList, 'StudentClassList'>;
 type OptionsProps = (props: Props) => StackNavigationOptions;
@@ -87,6 +88,7 @@ const StudentClassListPage: React.FC<Props> = ({
 }): JSX.Element => {
   const context = useContext(GlobalContext);
   const [loading, setLoading] = useState(true);
+  const [isAccountVerified, setIsAccountVerified] = useState(true);
   const [unEnrollId, setUnEnrollId] = useState<string | null>(null);
   const [data, setData] = useState<TeacherClassModel[]>([]);
   const [percentageModels, setPercentageModels] = useState<ClassStudentModel[]>(
@@ -109,10 +111,17 @@ const StudentClassListPage: React.FC<Props> = ({
     }
   }, [navigation]);
 
+  const checkAccountVerification = async (): Promise<void> => {
+    const accVerified = await authApi.isAccountVerified();
+
+    setIsAccountVerified(accVerified);
+  };
+
   const handleAppStateChange = React.useCallback(
     (nextAppState: AppStateStatus) => {
       if (nextAppState === 'active') {
         handleCode();
+        checkAccountVerification();
       }
     },
     [handleCode],
@@ -121,6 +130,7 @@ const StudentClassListPage: React.FC<Props> = ({
   useEffect(() => {
     AppState.addEventListener('change', handleAppStateChange);
     handleCode();
+    checkAccountVerification();
 
     return () => AppState.removeEventListener('change', handleAppStateChange);
   }, [handleAppStateChange, handleCode, navigation]);
@@ -233,6 +243,10 @@ const StudentClassListPage: React.FC<Props> = ({
 
   return (
     <>
+      <EmailVerificationNotice
+        show={!isAccountVerified}
+        onResendEmail={() => authApi.sendEmailVerificationCode()}
+      />
       <StudentClassList
         showShimmer={loading}
         onFabClick={() => navigation.push('JoinClassForm', {})}
