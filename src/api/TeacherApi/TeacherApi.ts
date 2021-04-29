@@ -863,6 +863,42 @@ export default class TeacherApi extends AuthApi implements TeacherApiInterface {
     }
   };
 
+  getRealtimeStudentInfo = (
+    classId: string,
+    studentId: string,
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+    onDataChange = (_newData: ClassStudentModel) => {},
+  ): RealTimeListenerUnSubscriber => {
+    const error = (msg: string | undefined | number = 'un attach'): void => {
+      console.error(msg);
+    };
+
+    const userId = this.getUserUid();
+
+    if (userId === null) return error;
+
+    const doc = firebase
+      .firestore()
+      .collection(TeacherApi.CLASSES_COLLECTION_NAME)
+      .doc(classId)
+      .collection(TeacherApi.CLASSES_JOINED_STUDENT_COLLECTION_NAME)
+      .doc(studentId);
+
+    return doc.onSnapshot(snapshot => {
+      const data = (snapshot.data() as unknown) as ClassStudentModelInterface;
+      const student = new ClassStudentModel(data);
+
+      onDataChange(student);
+      analyticsApi.sendSingle(
+        `TeacherApi.getStudentInfo - ${AnalyticsApiDocs.JOINED_STUDENTS_READ}`,
+      );
+    });
+
+    // console.log(error);
+
+    return error;
+  };
+
   archiveStudent = async (
     classId: string,
     studentId: string,

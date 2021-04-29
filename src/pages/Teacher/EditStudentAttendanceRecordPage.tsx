@@ -93,10 +93,11 @@ const EditStudentAttendanceRecordPage: React.FC<Props> = ({
   useEffect(() => {
     (async () => {
       globalContext.changeSpinnerLoading(true);
-      const [student] = await teacherApi.getStudentInfo(classId, studentId);
 
-      globalContext.changeSpinnerLoading(false);
-      if (student !== null) setStudentInfo(student);
+      teacherApi.getRealtimeStudentInfo(classId, studentId, student => {
+        globalContext.changeSpinnerLoading(false);
+        if (student !== null) setStudentInfo(student);
+      });
     })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [classId, studentId]);
