@@ -243,11 +243,9 @@ const StudentClassListPage: React.FC<Props> = ({
 
   return (
     <>
-      <EmailVerificationNotice
-        show={!isAccountVerified}
-        onResendEmail={() => authApi.sendEmailVerificationCode()}
-      />
       <StudentClassList
+        onResendEmail={() => authApi.sendEmailVerificationCode()}
+        isEmailVerified={isAccountVerified}
         showShimmer={loading}
         onFabClick={() => navigation.push('JoinClassForm', {})}
         data={newData}

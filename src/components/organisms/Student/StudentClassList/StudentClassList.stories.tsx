@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 import React from 'react';
 import { Platform } from 'react-native';
-import { select, withKnobs } from '@storybook/addon-knobs';
+import { boolean, select, withKnobs } from '@storybook/addon-knobs';
 import { storiesOf } from '@storybook/react-native';
 import { action } from '@storybook/addon-actions';
 import CenterView from '../../../atoms/CenterView';
@@ -23,6 +23,8 @@ export default {
 // Default For Web And android Component
 export const Default = (): JSX.Element => (
   <StudentClassList
+    isEmailVerified={boolean('isEmailVerified', true)}
+    onResendEmail={() => action('onResendEmail')()}
     onClassClick={classId => action('onClassClick')(classId)}
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
@@ -54,6 +56,8 @@ if (Platform.OS !== 'web') {
     .add('Default', Default)
     .add('Empty List', () => (
       <StudentClassList
+        isEmailVerified={boolean('isEmailVerified', true)}
+        onResendEmail={() => action('onResendEmail')()}
         onClassClick={classId => action('onClassClick')(classId)}
         data={[]}
         onFabClick={() => action('onFabClick')()}
@@ -67,6 +71,8 @@ if (Platform.OS !== 'web') {
     ))
     .add('With Data', () => (
       <StudentClassList
+        isEmailVerified={boolean('isEmailVerified', true)}
+        onResendEmail={() => action('onResendEmail')()}
         onClassClick={classId => action('onClassClick')(classId)}
         data={dummyStudentClassListData}
         onFabClick={() => action('onFabClick')()}

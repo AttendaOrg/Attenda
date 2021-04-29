@@ -14,7 +14,6 @@ import TeacherClassList, {
 import { authApi } from '../../api/AuthApi';
 import GlobalContext from '../../context/GlobalContext';
 import { TeacherClassAction } from '../../components/molecules/ClassCard/TeacherClassCard';
-import EmailVerificationNotice from '../../components/molecules/EmailVerificationNotice/EmailVerificationNotice';
 
 type Props = StackScreenProps<RootStackParamList, 'TeacherClassList'>;
 type OptionsProps = (props: Props) => StackNavigationOptions;
@@ -198,20 +197,15 @@ class TeacherClassListPage extends React.PureComponent<Props, State> {
       : data;
 
     return (
-      <>
-        <EmailVerificationNotice
-          show={!isAccountVerified}
-          onResendEmail={() => authApi.sendEmailVerificationCode()}
-        />
-
-        <TeacherClassList
-          data={withLoadingData}
-          onAction={onAction}
-          showShimmer={loading}
-          onClassClick={onClassClick}
-          onFabClick={() => navigation.push('CreateClass')}
-        />
-      </>
+      <TeacherClassList
+        onResendEmail={() => authApi.sendEmailVerificationCode()}
+        isEmailVerified={isAccountVerified}
+        data={withLoadingData}
+        onAction={onAction}
+        showShimmer={loading}
+        onClassClick={onClassClick}
+        onFabClick={() => navigation.push('CreateClass')}
+      />
     );
   }
 }

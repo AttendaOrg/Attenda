@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 import React from 'react';
 import { Platform } from 'react-native';
-import { select, withKnobs } from '@storybook/addon-knobs';
+import { boolean, select, withKnobs } from '@storybook/addon-knobs';
 import { storiesOf } from '@storybook/react-native';
 import { action } from '@storybook/addon-actions';
 import CenterView from '../../../atoms/CenterView';
@@ -22,6 +22,8 @@ export default {
 // Default For Web And android Component
 export const Default = (): JSX.Element => (
   <TeacherClassList
+    isEmailVerified={boolean('isEmailVerified', true)}
+    onResendEmail={() => action('onResendEmail')()}
     onClassClick={classId => action('onClassClick')(classId)}
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
@@ -37,6 +39,8 @@ export const Default = (): JSX.Element => (
 // Default For Web And android Component
 export const WithData = (): JSX.Element => (
   <TeacherClassList
+    isEmailVerified={boolean('isEmailVerified', true)}
+    onResendEmail={() => action('onResendEmail')()}
     onClassClick={classId => action('onClassClick')(classId)}
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore

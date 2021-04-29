@@ -5,16 +5,15 @@ import ErrorEmail from '../../atoms/Icons/ErrorEmail';
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
     padding: 6,
-    flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#fff',
-    borderBottomColor: '#ddd',
-    borderBottomWidth: 1,
+    justifyContent: 'center',
   },
   txt: {
-    paddingHorizontal: 6,
-    flexShrink: 1,
+    marginVertical: 16,
+    textAlign: 'center',
     // flexWrap: 'wrap',
   },
 });
@@ -32,9 +31,11 @@ const EmailVerificationNotice: React.FC<EmailVerificationNoticeProps> = ({
 
   return (
     <View style={styles.container}>
-      <ErrorEmail />
+      <ErrorEmail height={140} width={140} />
+
       <Text style={styles.txt}>
-        Your email is not verified please verify your email.
+        Your email is not verified please verify your email. If you don&apos;t
+        verify your email within 7 days your account will be deleted.
       </Text>
 
       <Button

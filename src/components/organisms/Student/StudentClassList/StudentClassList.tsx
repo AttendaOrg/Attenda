@@ -7,6 +7,7 @@ import { UserRole } from '../../../../api';
 import StudentClassCard, {
   StudentClassAction,
 } from '../../../molecules/ClassCard/StudentClassCard';
+import EmailVerificationNotice from '../../../molecules/EmailVerificationNotice/EmailVerificationNotice';
 
 const styles = StyleSheet.create({
   container: {
@@ -37,6 +38,8 @@ export interface StudentClassListPops {
     classInfo: StudentListDataProps,
   ) => void;
   showShimmer?: boolean;
+  isEmailVerified: boolean;
+  onResendEmail: VoidFunction;
 }
 
 const StudentClassList: React.FC<StudentClassListPops> = ({
@@ -45,7 +48,12 @@ const StudentClassList: React.FC<StudentClassListPops> = ({
   onClassClick,
   showShimmer = false,
   onAction = () => null,
+  isEmailVerified = true,
+  onResendEmail,
 }): JSX.Element => {
+  if (!isEmailVerified)
+    return <EmailVerificationNotice show onResendEmail={onResendEmail} />;
+
   if (data.length === 0)
     return <EmptyClass onFabClick={onFabClick} userRole={UserRole.STUDENT} />;
 
