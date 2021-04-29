@@ -109,7 +109,7 @@ export default class StudentApi extends AuthApi implements StudentApiInterface {
 
   validateClassJoin = async (
     classCode: string,
-    rollNo: string,
+    rollNo?: string,
   ): Promise<WithError<boolean>> => {
     try {
       if (!classCode) return this.error(BasicErrors.INVALID_INPUT);

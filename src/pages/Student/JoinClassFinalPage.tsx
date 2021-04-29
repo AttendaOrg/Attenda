@@ -4,9 +4,6 @@ import {
   StackScreenProps,
 } from '@react-navigation/stack';
 import { RootStackParamList } from '../../App';
-import JoinClassFinal, {
-  JoinClassFinalNoClassFound,
-} from '../../components/organisms/Student/JoinClassFinal';
 import SimpleCloseNavigationOptions from '../../components/templates/SimpleCloseNavigationOption';
 import { HEADER_AB_TEST_NEW } from '../../util/constant';
 import { SimpleHeaderBackNavigationOptions } from '../../components/templates/SimpleHeaderNavigationOptions';
@@ -14,6 +11,7 @@ import { teacherApi } from '../../api/TeacherApi';
 import GlobalContext from '../../context/GlobalContext';
 import { studentApi } from '../../api/StudentApi';
 import TeacherClassModel from '../../api/TeacherApi/model/TeacherClassModel';
+import JoinClass from '../../components/organisms/Student/JoinClass/JoinClass';
 
 type Props = StackScreenProps<RootStackParamList, 'JoinClassFinal'>;
 
@@ -21,42 +19,33 @@ export const JoinClassFinalNavigationOptions: StackNavigationOptions = HEADER_AB
   ? { ...SimpleHeaderBackNavigationOptions, title: 'Join Class' }
   : SimpleCloseNavigationOptions;
 
-interface State {
-  teacher: string;
-  section: string;
-  className: string;
-
-  classId: string;
-}
-
 const JoinClassFinalPage: React.FC<Props> = ({
   navigation,
-  route,
+  route: {
+    params: { preloadClassCode },
+  },
 }): JSX.Element => {
-  const {
-    params: { classCode, rollNo },
-  } = route;
   const globalContext = useContext(GlobalContext);
-  const [accInfo, setAccInfo] = useState<TeacherClassModel | null>(null);
-  const [showNoClassFound, setShowNoClassFound] = useState(false);
+  const [classInfo, setClassInfo] = useState<TeacherClassModel | null>(null);
+  const [noClassFound, setNoClassFound] = useState(false);
 
-  useEffect(() => {
-    (async () => {
-      globalContext.changeSpinnerLoading(true);
+  const loadClassInfo = async (classCode: string) => {
+    globalContext.changeSpinnerLoading(true);
 
-      const [info] = await teacherApi.getClassInfoByCode(classCode);
-      const [success] = await studentApi.validateClassJoin(classCode, rollNo); // TODO: handle error if there validate join class is failed
+    const [info] = await teacherApi.getClassInfoByCode(classCode);
 
-      if (info === null) setShowNoClassFound(true);
+    if (info !== null) {
+      setClassInfo(info);
+      setNoClassFound(false);
+    } else {
+      setNoClassFound(true);
+    }
 
-      if (info !== null) setAccInfo(info);
-      globalContext.changeSpinnerLoading(false);
-    })();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    globalContext.changeSpinnerLoading(false);
+  };
 
-  const joinClass = async () => {
-    const classId = accInfo?.classId ?? null;
+  const joinClass = async (rollNo: string) => {
+    const classId = classInfo?.classId ?? null;
 
     if (await globalContext.throwNetworkError()) return;
 
@@ -69,23 +58,22 @@ const JoinClassFinalPage: React.FC<Props> = ({
     // TODO: handle error if the classId is not found
   };
 
-  if (showNoClassFound)
-    return (
-      <JoinClassFinalNoClassFound
-        classCode={classCode}
-        goBack={() => {
-          if (navigation.canGoBack()) navigation.goBack();
-        }}
-      />
-    );
+  useEffect(() => {
+    (async () => {
+      if (typeof preloadClassCode === 'string' && preloadClassCode.length > 0) {
+        await loadClassInfo(preloadClassCode);
+      }
+    })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [preloadClassCode]);
 
   return (
-    <JoinClassFinal
-      className={accInfo?.title ?? ''}
-      section={accInfo?.section ?? ''}
-      teacher={accInfo?.teacherName ?? ''}
-      onDone={joinClass}
-      disableJoin={!(accInfo?.isActiveInvite ?? true)}
+    <JoinClass
+      resetNoClassFound={() => setNoClassFound(false)}
+      noClassFound={noClassFound}
+      classInfo={classInfo}
+      onJoinClass={joinClass}
+      onGetClassCode={loadClassInfo}
     />
   );
 };

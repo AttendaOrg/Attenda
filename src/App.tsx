@@ -23,9 +23,7 @@ import ChooseRolePage, {
 import StudentClassListPage, {
   StudentClassListNavigationOptions,
 } from './pages/Student/StudentClassListPage';
-import JoinClassFormPage, {
-  JoinClassFormNavigationOptions,
-} from './pages/Student/JoinClassFormPage';
+
 import JoinClassFinalPage, {
   JoinClassFinalNavigationOptions,
 } from './pages/Student/JoinClassFinalPage';
@@ -106,12 +104,8 @@ export type RootStackParamList = {
   SignUp: undefined;
   ChooseRole: undefined;
   StudentClassList: undefined;
-  JoinClassForm: {
-    classCode?: string;
-  };
   JoinClassFinal: {
-    classCode: string;
-    rollNo: string;
+    preloadClassCode?: string;
   };
   /**
    * using Popup instated
@@ -551,12 +545,6 @@ class AuthProvider extends React.PureComponent<Props> {
               name="JoinClassFinal"
               component={JoinClassFinalPage}
               options={JoinClassFinalNavigationOptions}
-            />
-
-            <Stack.Screen
-              name="JoinClassForm"
-              component={JoinClassFormPage}
-              options={JoinClassFormNavigationOptions}
             />
 
             {/* this route is deprecated using popup instead */}

@@ -106,7 +106,7 @@ const StudentClassListPage: React.FC<Props> = ({
     const joinCode = await AsyncStorage.getItem('@joinCode');
 
     if (typeof joinCode === 'string' && joinCode.length > 0) {
-      navigation.push('JoinClassForm', { classCode: joinCode });
+      navigation.push('JoinClassFinal', { preloadClassCode: joinCode });
       await AsyncStorage.removeItem('@joinCode');
     }
   }, [navigation]);
@@ -247,7 +247,7 @@ const StudentClassListPage: React.FC<Props> = ({
         onResendEmail={() => authApi.sendEmailVerificationCode()}
         isEmailVerified={isAccountVerified}
         showShimmer={loading}
-        onFabClick={() => navigation.push('JoinClassForm', {})}
+        onFabClick={() => navigation.push('JoinClassFinal', {})}
         data={newData}
         onAction={onAction}
         onClassClick={onClassClick}

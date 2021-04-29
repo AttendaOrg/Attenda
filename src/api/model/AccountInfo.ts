@@ -33,13 +33,13 @@ export default class AccountInfo implements Partial<AccountInfoProps> {
   static Update(data: Partial<AccountInfoProps>): Partial<AccountInfoProps> {
     const obj: Partial<AccountInfoProps> = {};
 
-    if (typeof data.email === 'string') obj.email = data.email;
-    if (typeof data.name === 'string') obj.name = data.name;
-    if (typeof data.role === 'string') obj.role = data.role;
-    if (typeof data.profilePicUrl === 'string')
-      obj.profilePicUrl = data.profilePicUrl;
-    if (Array.isArray(data.joinedClassId))
+    if (data.email !== undefined) obj.email = data.email;
+    if (data.name !== undefined) obj.name = data.name;
+    if (data.role !== undefined) obj.role = data.role;
+    if (data.joinedClassId !== null || data.joinedClassId !== undefined)
       obj.joinedClassId = data.joinedClassId ?? null;
+    if (data.profilePicUrl !== undefined)
+      obj.profilePicUrl = data.profilePicUrl;
 
     return obj;
   }
