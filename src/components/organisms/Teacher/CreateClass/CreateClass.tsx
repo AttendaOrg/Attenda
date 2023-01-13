@@ -29,6 +29,22 @@ export interface CreateClassPops {
 const CreateClass: React.FC<CreateClassPops> = ({ onDone }): JSX.Element => {
   const [title, setTitle] = useState('');
   const [section, setSection] = useState('');
+  const [titleError, setTitleError] = useState('');
+
+  const validate = (txt?: string): boolean => {
+    if ((txt?.length ?? title.length) > 0) {
+      setTitleError('');
+
+      return true;
+    }
+    setTitleError("Title shouldn't be empty");
+
+    return false;
+  };
+
+  const onPress = () => {
+    if (validate()) onDone(title, section);
+  };
 
   return (
     <View style={styles.container}>
@@ -40,9 +56,13 @@ const CreateClass: React.FC<CreateClassPops> = ({ onDone }): JSX.Element => {
         <Input
           value={title}
           style={styles.inputStyle}
-          onChangeText={setTitle}
+          onChangeText={txt => {
+            setTitle(txt);
+            validate(txt);
+          }}
           containerStyle={inputContainerStyle}
           placeholder="Title"
+          errorMessage={titleError}
         />
 
         <Input
@@ -58,7 +78,7 @@ const CreateClass: React.FC<CreateClassPops> = ({ onDone }): JSX.Element => {
           style={{ width: '40%' }}
           mode="contained"
           color="#2196f3"
-          onPress={() => onDone(title, section)}
+          onPress={onPress}
         >
           Done
         </Button>

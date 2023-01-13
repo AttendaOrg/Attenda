@@ -77,12 +77,16 @@ const DrawerContent: React.FC<DrawerContentPops> = ({
   onListItemCLick,
   appVersion,
 }): JSX.Element => {
+  const imgSource =
+    Boolean(((avatar as unknown) as any).uri) ||
+    require('../../../../../assets/images/user.jpg');
+
   return (
     <View style={styles.container}>
       <View style={styles.backgroundImageContainer}>
         <DrawerBackgroundImageComponent style={styles.backgroundImage} />
         <View style={styles.imageContainer}>
-          <Image source={avatar} style={styles.avatarImage} />
+          <Image source={imgSource} style={styles.avatarImage} />
           <Text style={styles.textName}>{name}</Text>
           <Text style={styles.textEmail}>{email}</Text>
         </View>

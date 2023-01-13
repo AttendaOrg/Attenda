@@ -8,6 +8,7 @@ import {
   TeacherClassAction,
   TeacherClassCard,
 } from '../../../molecules/ClassCard/TeacherClassCard';
+import EmailVerificationNotice from '../../../molecules/EmailVerificationNotice/EmailVerificationNotice';
 import { MenuOptionsPopoverDataProps } from '../../../molecules/MenuOptionsPopover';
 import EmptyClass from '../../Common/EmptyClass';
 
@@ -39,6 +40,8 @@ export interface TeacherClassListPops {
   onAction: (action: TeacherClassAction, classInfo: TeacherClassModel) => void;
   options?: MenuOptionsPopoverDataProps[];
   showShimmer?: boolean;
+  isEmailVerified: boolean;
+  onResendEmail: VoidFunction;
 }
 
 const TeacherClassList: React.FC<TeacherClassListPops> = ({
@@ -47,7 +50,12 @@ const TeacherClassList: React.FC<TeacherClassListPops> = ({
   onClassClick,
   showShimmer = false,
   onAction = () => null,
+  isEmailVerified = true,
+  onResendEmail,
 }): JSX.Element => {
+  if (!isEmailVerified)
+    return <EmailVerificationNotice show onResendEmail={onResendEmail} />;
+
   if (data.length === 0)
     return <EmptyClass onFabClick={onFabClick} userRole={UserRole.TEACHER} />;
 

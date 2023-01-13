@@ -32,6 +32,7 @@ export interface ChangePasswordPops {
   currentPassword?: string;
   newPassword?: string;
   confirmPassword?: string;
+  showCurrentPassword?: boolean;
   onDone: (currentPass: string, newPass: string, confirmPass: string) => void;
   errors?: Errors;
   revalidateError?: (
@@ -43,6 +44,7 @@ export interface ChangePasswordPops {
 
 const ChangePassword: React.FC<ChangePasswordPops> = ({
   onDone,
+  showCurrentPassword = true,
   errors = {
     confirmPasswordError: '',
     currentPasswordError: '',
@@ -94,28 +96,31 @@ const ChangePassword: React.FC<ChangePasswordPops> = ({
     <View style={styles.container}>
       <KeyboardAdjustImageView svgImg={ResetPasswordImageComponent} />
       <View style={{ marginTop: 30 }} />
-      <Input
-        placeholder="Current Password"
-        containerStyle={inputContainerStyle}
-        style={styles.inputStyle}
-        labelStyle={{ margin: 0 }}
-        errorStyle={{ margin: 0 }}
-        onChangeText={updateCurrentPassword}
-        errorMessage={currentPasswordError}
-        textContentType={showPassword ? 'none' : 'password'}
-        secureTextEntry={!showPassword}
-        rightIconContainerStyle={{
-          marginHorizontal: 0,
-          marginVertical: 0,
-          margin: 0,
-        }}
-        rightIcon={
-          <PasswordShowSwitcher
-            show={showPassword}
-            onChange={() => setShowPassword(!showPassword)}
-          />
-        }
-      />
+      {showCurrentPassword && (
+        <Input
+          placeholder="Current Password"
+          containerStyle={inputContainerStyle}
+          style={styles.inputStyle}
+          labelStyle={{ margin: 0 }}
+          errorStyle={{ margin: 0 }}
+          onChangeText={updateCurrentPassword}
+          errorMessage={currentPasswordError}
+          textContentType={showPassword ? 'none' : 'password'}
+          secureTextEntry={!showPassword}
+          rightIconContainerStyle={{
+            marginHorizontal: 0,
+            marginVertical: 0,
+            margin: 0,
+          }}
+          rightIcon={
+            <PasswordShowSwitcher
+              show={showPassword}
+              onChange={() => setShowPassword(!showPassword)}
+            />
+          }
+        />
+      )}
+
       <Input
         placeholder="New Password"
         containerStyle={inputContainerStyle}

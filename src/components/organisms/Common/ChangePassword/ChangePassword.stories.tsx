@@ -1,6 +1,6 @@
 import React from 'react';
 import { Platform } from 'react-native';
-import { text, withKnobs } from '@storybook/addon-knobs';
+import { boolean, text, withKnobs } from '@storybook/addon-knobs';
 import { storiesOf } from '@storybook/react-native';
 import { action } from '@storybook/addon-actions';
 import CenterView from '../../../atoms/CenterView';
@@ -22,6 +22,7 @@ export const Default = (): JSX.Element => (
     currentPassword={text('CurrentPassword', '')}
     newPassword={text('newPassword', '')}
     confirmPassword={text('confirmPassword', '')}
+    showCurrentPassword={boolean('showCurrentPassword', true)}
     onDone={(currentPass, newPass, confirmPass) =>
       action('onDone')(currentPass, newPass, confirmPass)
     }

@@ -1,4 +1,4 @@
-import React, { useEffect, useLayoutEffect, useState } from 'react';
+import React, { useContext, useEffect, useLayoutEffect, useState } from 'react';
 import {
   HeaderTitle,
   StackNavigationOptions,
@@ -19,6 +19,7 @@ import { teacherApi } from '../../api/TeacherApi';
 import ClassStudentModel from '../../api/TeacherApi/model/ClassStudentModel';
 import SessionStudentModel from '../../api/TeacherApi/model/SessionStudentModel';
 import DoubleButtonPopup from '../../components/molecules/DoubleButtonPopup';
+import GlobalContext from '../../context/GlobalContext';
 
 type Props = StackScreenProps<RootStackParamList, 'CurrentAttendanceSession'>;
 type OptionsProps = (props: Props) => StackNavigationOptions;
@@ -76,6 +77,7 @@ const CurrentAttendanceSessionPage: React.FC<Props> = ({
   navigation,
   route,
 }): JSX.Element => {
+  const globalContext = useContext(GlobalContext);
   const [listItems, setListItems] = useState<
     CurrentAttendanceSessionDataProps[]
   >([]);
@@ -86,6 +88,7 @@ const CurrentAttendanceSessionPage: React.FC<Props> = ({
       params: { classId, sessionId },
     } = route;
 
+    if (await globalContext.throwNetworkError()) return;
     // TODO: handle error
     await teacherApi.editStudentAttendanceReport(
       classId,
@@ -218,6 +221,7 @@ const CurrentAttendanceSessionPage: React.FC<Props> = ({
       params: { classId, sessionId },
     } = route;
 
+    if (await globalContext.throwNetworkError()) return;
     await teacherApi.saveClassSession(classId, sessionId);
     await stopHotSpot();
     navigation.navigate('TeacherClassList', { withDismiss: true });
@@ -228,6 +232,7 @@ const CurrentAttendanceSessionPage: React.FC<Props> = ({
       params: { classId, sessionId },
     } = route;
 
+    if (await globalContext.throwNetworkError()) return;
     await teacherApi.discardClassSession(classId, sessionId);
     await stopHotSpot();
 

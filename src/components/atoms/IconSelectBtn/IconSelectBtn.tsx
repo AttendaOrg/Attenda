@@ -21,6 +21,8 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#ddd',
     backgroundColor: '#fff',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   selectedContainer: {
     top: 0,

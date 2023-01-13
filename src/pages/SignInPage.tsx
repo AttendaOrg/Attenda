@@ -12,7 +12,7 @@ import firebase from 'firebase';
 import { RootStackParamList } from '../App';
 import SignIn from '../components/organisms/AppIntro/SignIn';
 import { NoHeaderNavigationOptions } from '../components/templates/SimpleCloseNavigationOption';
-import AuthApi, { authApi } from '../api/AuthApi';
+import { authApi } from '../api/AuthApi';
 import { BasicErrors } from '../api/BaseApi';
 import SingleButtonPopup from '../components/molecules/SingleButtonPopup';
 import GlobalContext, { GlobalContextType } from '../context/GlobalContext';
@@ -135,6 +135,8 @@ const SignInPage: React.FC<Props> = ({ navigation }): JSX.Element => {
   //#endregion
 
   const loginUser = async () => {
+    if (await globalContext.throwNetworkError()) return;
+
     if (await authApi.isLoggedIn()) {
       navigation.push('ChooseRole');
 

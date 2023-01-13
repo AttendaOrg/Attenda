@@ -112,6 +112,18 @@ class AuthApi extends BaseApi implements AuthApiInterface {
     return firebase.auth().currentUser !== null;
   };
 
+  sendEmailVerificationCode = async (): Promise<void> => {
+    await firebase.auth().currentUser?.sendEmailVerification();
+  };
+
+  isAccountVerified = async (): Promise<boolean> => {
+    if (firebase.auth().currentUser?.emailVerified === true) return true;
+
+    await firebase.auth().currentUser?.reload();
+
+    return firebase.auth().currentUser?.emailVerified ?? false;
+  };
+
   getUserUid = (): string | null => {
     return firebase.auth().currentUser?.uid ?? null;
   };
@@ -210,6 +222,7 @@ class AuthApi extends BaseApi implements AuthApiInterface {
         await user?.updateProfile({
           displayName: name,
         });
+        await this.sendEmailVerificationCode();
       } catch (error) {
         return this.error(BasicErrors.AUTH_NAME_CANT_BE_ADDED);
       }
@@ -491,6 +504,44 @@ class AuthApi extends BaseApi implements AuthApiInterface {
           return this.error(BasicErrors.AUTH_USER_NOT_FOUND);
         case 'auth/invalid-email':
           return this.error(BasicErrors.INVALID_EMAIL);
+        default:
+          // console.log(error);
+          break;
+      }
+
+      return this.error(BasicErrors.EXCEPTION);
+    }
+  };
+
+  verifyPasswordResetEmail = async (
+    obbCode: string,
+    newPassword: string,
+  ): Promise<WithError<boolean>> => {
+    try {
+      const email: string = await firebase
+        .auth()
+        .verifyPasswordResetCode(obbCode);
+
+      await firebase.auth().confirmPasswordReset(obbCode, newPassword);
+
+      const [success, error] = await this.loginWithEmailAndPassword(
+        email,
+        newPassword,
+      );
+
+      console.log(success, error);
+
+      return this.success(success);
+    } catch (e) {
+      const error: firebase.FirebaseError = e;
+
+      switch (error.code) {
+        case 'auth/user-not-found':
+          return this.error(BasicErrors.AUTH_USER_NOT_FOUND);
+        case 'auth/invalid-email':
+          return this.error(BasicErrors.INVALID_EMAIL);
+        case 'auth/invalid-action-code':
+          return this.error(BasicErrors.OOB_CODE_NOT_VALID);
         default:
           // console.log(error);
           break;

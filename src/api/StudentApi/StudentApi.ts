@@ -109,7 +109,7 @@ export default class StudentApi extends AuthApi implements StudentApiInterface {
 
   validateClassJoin = async (
     classCode: string,
-    rollNo: string,
+    rollNo?: string,
   ): Promise<WithError<boolean>> => {
     try {
       if (!classCode) return this.error(BasicErrors.INVALID_INPUT);
@@ -209,11 +209,9 @@ export default class StudentApi extends AuthApi implements StudentApiInterface {
         .firestore()
         .collection(AuthApi.AUTH_ROOT_COLLECTION_NAME)
         .doc(userId)
-        .update(
-          AccountInfo.Update({
-            joinedClassId: chunkUpdate,
-          }),
-        );
+        .update({
+          joinedClassId: chunkUpdate,
+        });
 
       analyticsApi.sendSingle(
         `StudentApi.joinClass - ${AnalyticsApiDocs.ACC_INFO_UPDATE}`,

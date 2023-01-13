@@ -1,10 +1,15 @@
-import React, { useCallback, useContext, useEffect, useState } from 'react';
-import { Text, View } from 'react-native';
+import React from 'react';
+import { Dimensions, Text, View } from 'react-native';
 import {
   StackNavigationOptions,
   StackScreenProps,
 } from '@react-navigation/stack';
-import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
+import {
+  NavigationState,
+  SceneRendererProps,
+  TabBar,
+  TabView,
+} from 'react-native-tab-view';
 import { RootStackParamList } from '../../App';
 import ChooseClassIcon from '../../components/organisms/Teacher/ChooseClassIcon/ChooseClassIcon';
 import ClassCardIconModel from '../../api/TeacherApi/model/ClassCardIconModel';
@@ -13,8 +18,6 @@ import { SimpleHeaderBackNavigationOptions } from '../../components/templates/Si
 import TeacherClassModel from '../../api/TeacherApi/model/TeacherClassModel';
 import GlobalContext from '../../context/GlobalContext';
 
-const Tab = createMaterialTopTabNavigator();
-
 type Props = StackScreenProps<RootStackParamList, 'ChooseClassIcon'>;
 
 export const ChooseClassIconNavigationOptions: StackNavigationOptions = {
@@ -22,75 +25,163 @@ export const ChooseClassIconNavigationOptions: StackNavigationOptions = {
   title: 'Choose A Icon',
 };
 
-const ChooseClassIconPage: React.FC<Props> = ({
-  route: {
-    params: { classId },
-  },
-}): JSX.Element => {
-  const [icons, setIcons] = useState<ClassCardIconModel[]>([]);
-  const [classInfo, setClassInfo] = useState<TeacherClassModel | null>(null);
-  const globalContext = useContext(GlobalContext);
+const initialLayout = {
+  width: Dimensions.get('window').width,
+  height: Dimensions.get('window').height,
+};
 
-  useEffect(() => {
-    const main = async () => {
-      const [remoteIcons = []] = await teacherApi.getAllClassCardIcons();
+console.log('initialLayout', initialLayout);
 
-      if (remoteIcons !== null) setIcons(remoteIcons);
+interface State {
+  icons: ClassCardIconModel[];
+  classInfo: TeacherClassModel | null;
+  navigationState: NavigationState<{ key: string; title: string }>;
+}
+
+const renderTabBar = (props: any) => (
+  <TabBar
+    // eslint-disable-next-line react/jsx-props-no-spreading
+    {...props}
+    indicatorStyle={{ backgroundColor: 'blue' }}
+    style={{ backgroundColor: 'white' }}
+    activeColor="black"
+    inactiveColor="grey"
+  />
+);
+
+class ChooseClassIconPage extends React.Component<Props, State> {
+  // eslint-disable-next-line react/static-property-placement
+  context!: React.ContextType<typeof GlobalContext>;
+
+  constructor(props: Props) {
+    super(props);
+
+    this.state = {
+      icons: [],
+      classInfo: null,
+      navigationState: {
+        index: 0,
+        routes: [],
+      },
     };
+  }
 
-    main();
-    console.log('re render');
-  }, []);
+  async componentDidMount(): Promise<void> {
+    const { context } = this;
 
-  const fetchClassInfo = useCallback(async () => {
-    const [remoteClassInfo] = await teacherApi.getClassInfo(classId);
+    context.changeSpinnerLoading(true);
 
-    if (remoteClassInfo !== null) setClassInfo(remoteClassInfo);
-  }, [classId]);
+    await this._fetchClassInfo();
 
-  useEffect(() => {
-    fetchClassInfo();
-    console.log('re render');
-  }, [classId, fetchClassInfo]);
+    const [remoteIcons = []] = await teacherApi.getAllClassCardIcons();
 
-  const categories = Array.from(new Set(icons.map(e => e.category)));
+    if (remoteIcons !== null) {
+      const routes = Array.from(new Set(remoteIcons.map(e => e.category))).map(
+        e => ({
+          key: e,
+          title: e,
+        }),
+      );
 
-  if (categories.length === 0 || classInfo === null)
-    return (
-      <View style={{ justifyContent: 'center', alignItems: 'center', flex: 1 }}>
-        <Text>Loading ...</Text>
-      </View>
-    );
+      this.setState(prevState => ({
+        icons: remoteIcons,
+        navigationState: { ...prevState.navigationState, routes },
+      }));
+    }
 
-  const onIconChange = async (icon: ClassCardIconModel) => {
-    globalContext.changeSpinnerLoading(true);
+    context.changeSpinnerLoading(false);
+  }
+
+  _getClassId = (): string => {
+    const {
+      route: {
+        params: { classId },
+      },
+    } = this.props;
+
+    return classId;
+  };
+
+  _fetchClassInfo = async (): Promise<void> => {
+    const { _getClassId } = this;
+
+    const [classInfo] = await teacherApi.getClassInfo(_getClassId());
+
+    if (classInfo !== null) this.setState({ classInfo });
+  };
+
+  _onIconChange = async (icon: ClassCardIconModel): Promise<void> => {
+    const { context, _fetchClassInfo, _getClassId } = this;
+
+    if (await context.throwNetworkError()) return;
+
+    context.changeSpinnerLoading(true);
     try {
-      await teacherApi.updateClassIcon(classId, icon.iconData);
-      await fetchClassInfo();
+      await teacherApi.updateClassIcon(_getClassId(), icon.iconData);
+      await _fetchClassInfo();
     } catch (error) {
       console.log(error);
     }
-    globalContext.changeSpinnerLoading(false);
+    context.changeSpinnerLoading(false);
   };
 
-  return (
-    <Tab.Navigator>
-      {categories.map(n => (
-        <Tab.Screen
-          name={n}
-          component={() => (
-            <ChooseClassIcon
-              onChange={icon => {
-                onIconChange(icon);
-              }}
-              info={classInfo}
-              icons={icons.filter(icon => icon.category === n)}
-            />
-          )}
-        />
-      ))}
-    </Tab.Navigator>
-  );
-};
+  _renderScene = ({
+    route,
+  }: SceneRendererProps & {
+    route: any;
+  }): JSX.Element => {
+    const {
+      state: { classInfo, icons },
+      _onIconChange,
+    } = this;
+
+    console.log(
+      '__renderScene',
+      icons,
+      route,
+      icons.filter(e => e.category === route.title),
+    );
+
+    if (classInfo === null) return <></>;
+
+    return (
+      <ChooseClassIcon
+        icons={icons.filter(e => e.category === route.title)}
+        info={classInfo}
+        onChange={_onIconChange}
+      />
+    );
+  };
+
+  _onIndexChange = (index: number): void => {
+    this.setState(prevState => ({
+      ...prevState,
+      navigationState: { ...prevState.navigationState, index },
+    }));
+  };
+
+  render(): JSX.Element {
+    const {
+      state: { navigationState },
+      _onIndexChange,
+      _renderScene,
+    } = this;
+
+    console.log('routes', navigationState.routes);
+    if (navigationState.routes.length === 0) return <View />;
+
+    return (
+      <TabView
+        renderTabBar={renderTabBar}
+        navigationState={navigationState}
+        renderScene={_renderScene}
+        onIndexChange={_onIndexChange}
+        initialLayout={initialLayout}
+      />
+    );
+  }
+}
+
+ChooseClassIconPage.contextType = GlobalContext;
 
 export default ChooseClassIconPage;

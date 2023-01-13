@@ -1,4 +1,4 @@
-import React, { useEffect, useLayoutEffect, useState } from 'react';
+import React, { useContext, useEffect, useLayoutEffect, useState } from 'react';
 import { Text } from 'react-native';
 import {
   HeaderTitle,
@@ -17,6 +17,7 @@ import ClassStudentModel from '../../api/TeacherApi/model/ClassStudentModel';
 import { CurrentAttendanceSessionDataProps } from '../../components/organisms/Teacher/CurrentAttendanceSession';
 import { convertDateTime } from '../../util';
 import { lightColor } from '../../util/Colors';
+import GlobalContext from '../../context/GlobalContext';
 
 type Props = StackScreenProps<RootStackParamList, 'EditAttendanceSession'>;
 
@@ -53,7 +54,7 @@ const mergeStudentListWithAttendanceInfo = (
 ): SessionStudentListDataProps[] => {
   // loop through all student registered in a class
 
-  return students.map<CurrentAttendanceSessionDataProps>(student => {
+  return students.map<SessionStudentListDataProps>(student => {
     const found: SessionStudentModel | null = findSessionByStudentId(
       sessions,
       student.studentId ?? '',
@@ -75,6 +76,7 @@ const EditAttendanceSessionPage: React.FC<Props> = ({
   const {
     params: { classId, sessionId, date, totalStudentCount },
   } = route;
+  const globalContext = useContext(GlobalContext);
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -135,6 +137,7 @@ const EditAttendanceSessionPage: React.FC<Props> = ({
   }, [classId, sessionId]);
 
   const onPresentChange = async (studentId: string, present: boolean) => {
+    if (await globalContext.throwNetworkError()) return;
     await teacherApi.editStudentAttendanceReport(
       classId,
       sessionId,

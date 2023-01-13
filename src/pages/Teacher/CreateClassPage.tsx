@@ -21,6 +21,8 @@ const CreateClassPage: React.FC<Props> = ({ navigation }): JSX.Element => {
   const globalContext = useContext(GlobalContext);
 
   const onDoneClick = async (title: string, section: string) => {
+    if (await globalContext.throwNetworkError()) return;
+
     globalContext.changeSpinnerLoading(true);
     const newClass = new TeacherClassModel({
       section,

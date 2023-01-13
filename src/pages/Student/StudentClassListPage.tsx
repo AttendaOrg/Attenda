@@ -4,6 +4,8 @@ import {
   StackNavigationOptions,
   StackScreenProps,
 } from '@react-navigation/stack';
+import { AppState, AppStateStatus } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { RootStackParamList } from '../../App';
 import SimpleHeaderNavigationOptions from '../../components/templates/SimpleHeaderNavigationOptions';
 import StudentClassList, {
@@ -19,6 +21,7 @@ import DoubleButtonPopup from '../../components/molecules/DoubleButtonPopup';
 import { StudentClassAction } from '../../components/molecules/ClassCard/StudentClassCard';
 import { authApi } from '../../api/AuthApi';
 import GlobalContext from '../../context/GlobalContext';
+import EmailVerificationNotice from '../../components/molecules/EmailVerificationNotice/EmailVerificationNotice';
 
 type Props = StackScreenProps<RootStackParamList, 'StudentClassList'>;
 type OptionsProps = (props: Props) => StackNavigationOptions;
@@ -85,6 +88,7 @@ const StudentClassListPage: React.FC<Props> = ({
 }): JSX.Element => {
   const context = useContext(GlobalContext);
   const [loading, setLoading] = useState(true);
+  const [isAccountVerified, setIsAccountVerified] = useState(true);
   const [unEnrollId, setUnEnrollId] = useState<string | null>(null);
   const [data, setData] = useState<TeacherClassModel[]>([]);
   const [percentageModels, setPercentageModels] = useState<ClassStudentModel[]>(
@@ -97,6 +101,39 @@ const StudentClassListPage: React.FC<Props> = ({
   const [showNoSessionStartedPopup, setShowNoSessionStartedPopup] = useState(
     false,
   );
+
+  const handleCode = React.useCallback(async () => {
+    const joinCode = await AsyncStorage.getItem('@joinCode');
+
+    if (typeof joinCode === 'string' && joinCode.length > 0) {
+      navigation.push('JoinClassFinal', { preloadClassCode: joinCode });
+      await AsyncStorage.removeItem('@joinCode');
+    }
+  }, [navigation]);
+
+  const checkAccountVerification = async (): Promise<void> => {
+    const accVerified = await authApi.isAccountVerified();
+
+    setIsAccountVerified(accVerified);
+  };
+
+  const handleAppStateChange = React.useCallback(
+    (nextAppState: AppStateStatus) => {
+      if (nextAppState === 'active') {
+        handleCode();
+        checkAccountVerification();
+      }
+    },
+    [handleCode],
+  );
+
+  useEffect(() => {
+    AppState.addEventListener('change', handleAppStateChange);
+    handleCode();
+    checkAccountVerification();
+
+    return () => AppState.removeEventListener('change', handleAppStateChange);
+  }, [handleAppStateChange, handleCode, navigation]);
 
   useEffect(() => {
     return studentApi.getEnrolledClassListListener(async newList => {
@@ -156,12 +193,13 @@ const StudentClassListPage: React.FC<Props> = ({
     setUnEnrollId(null);
   };
 
-  const onAction = (
+  const onAction = async (
     action: StudentClassAction,
     info: StudentListDataProps,
-  ): void => {
+  ): Promise<void> => {
     const { classId } = info;
 
+    if (await context.throwNetworkError()) return;
     if (classId === null) return;
 
     switch (action) {
@@ -177,8 +215,10 @@ const StudentClassListPage: React.FC<Props> = ({
     }
   };
 
-  const onClassClick = (classInfo: StudentListDataProps) => {
+  const onClassClick = async (classInfo: StudentListDataProps) => {
     const { alreadyGiven, currentSessionId, classId } = classInfo;
+
+    if (await context.throwNetworkError()) return;
 
     const matched = data
       // get the matching class
@@ -204,8 +244,10 @@ const StudentClassListPage: React.FC<Props> = ({
   return (
     <>
       <StudentClassList
+        onResendEmail={() => authApi.sendEmailVerificationCode()}
+        isEmailVerified={isAccountVerified}
         showShimmer={loading}
-        onFabClick={() => navigation.push('JoinClassForm', {})}
+        onFabClick={() => navigation.push('JoinClassFinal', {})}
         data={newData}
         onAction={onAction}
         onClassClick={onClassClick}

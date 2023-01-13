@@ -3,7 +3,7 @@ import {
   StackNavigationOptions,
   StackScreenProps,
 } from '@react-navigation/stack';
-import { Clipboard, Share } from 'react-native';
+import { AppState, AppStateStatus, Clipboard, Share } from 'react-native';
 import { RootStackParamList } from '../../App';
 import SimpleHeaderNavigationOptions from '../../components/templates/SimpleHeaderNavigationOptions';
 import { teacherApi } from '../../api/TeacherApi';
@@ -11,7 +11,7 @@ import TeacherClassModel from '../../api/TeacherApi/model/TeacherClassModel';
 import TeacherClassList, {
   dummyTeacherClassListData,
 } from '../../components/organisms/Teacher/TeacherClassList';
-import AuthApi, { authApi } from '../../api/AuthApi';
+import { authApi } from '../../api/AuthApi';
 import GlobalContext from '../../context/GlobalContext';
 import { TeacherClassAction } from '../../components/molecules/ClassCard/TeacherClassCard';
 
@@ -49,6 +49,7 @@ export const TeacherClassListNavigationOptions: OptionsProps = SimpleHeaderNavig
 interface State {
   data: TeacherClassModel[];
   loading: boolean;
+  isAccountVerified: boolean;
 }
 
 class TeacherClassListPage extends React.PureComponent<Props, State> {
@@ -61,6 +62,7 @@ class TeacherClassListPage extends React.PureComponent<Props, State> {
     this.state = {
       data: [],
       loading: true,
+      isAccountVerified: true,
     };
   }
 
@@ -68,6 +70,9 @@ class TeacherClassListPage extends React.PureComponent<Props, State> {
     const { context } = this;
 
     this.setState({ loading: true });
+
+    this.checkAccountVerification();
+    AppState.addEventListener('change', this.handleAppStateChange);
 
     this.unSub = teacherApi.getClassListener(newData => {
       this.setState({ data: newData, loading: false });
@@ -83,8 +88,25 @@ class TeacherClassListPage extends React.PureComponent<Props, State> {
   }
 
   componentWillUnmount(): void {
+    AppState.removeEventListener('change', this.handleAppStateChange);
     this.unSub();
   }
+
+  checkAccountVerification = async (): Promise<void> => {
+    const isAccountVerified = await authApi.isAccountVerified();
+
+    this.setState({ isAccountVerified });
+  };
+
+  handleAppStateChange = async (
+    nextAppState: AppStateStatus,
+  ): Promise<void> => {
+    console.log(`nextAppState:->${nextAppState}`);
+
+    if (nextAppState === 'active') {
+      this.checkAccountVerification();
+    }
+  };
 
   unSub = (): void => {
     console.log('not implemented');
@@ -104,10 +126,15 @@ class TeacherClassListPage extends React.PureComponent<Props, State> {
     }
   };
 
-  onAction = (action: TeacherClassAction, info: TeacherClassModel): void => {
+  onAction = async (
+    action: TeacherClassAction,
+    info: TeacherClassModel,
+  ): Promise<void> => {
     const { navigation } = this.props;
+    const { context } = this;
     const { classId, totalStudent, inviteLink } = info;
 
+    if (await context.throwNetworkError()) return;
     if (classId === null) return;
 
     switch (action) {
@@ -135,10 +162,12 @@ class TeacherClassListPage extends React.PureComponent<Props, State> {
     }
   };
 
-  onClassClick = (classInfo: TeacherClassModel): void => {
+  onClassClick = async (classInfo: TeacherClassModel): Promise<void> => {
+    const { context } = this;
     const { navigation } = this.props;
     const { isLive, currentSessionId, classId, title, section } = classInfo;
 
+    if (await context.throwNetworkError()) return;
     if (classId !== null) {
       if (isLive && currentSessionId !== null)
         navigation.push('CurrentAttendanceSession', {
@@ -161,7 +190,7 @@ class TeacherClassListPage extends React.PureComponent<Props, State> {
       onAction,
       onClassClick,
       props: { navigation },
-      state: { data, loading },
+      state: { data, loading, isAccountVerified },
     } = this;
     const withLoadingData: TeacherClassModel[] = loading
       ? dummyTeacherClassListData
@@ -169,6 +198,8 @@ class TeacherClassListPage extends React.PureComponent<Props, State> {
 
     return (
       <TeacherClassList
+        onResendEmail={() => authApi.sendEmailVerificationCode()}
+        isEmailVerified={isAccountVerified}
         data={withLoadingData}
         onAction={onAction}
         showShimmer={loading}

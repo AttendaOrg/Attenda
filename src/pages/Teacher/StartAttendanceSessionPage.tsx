@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import {
   StackNavigationOptions,
   StackScreenProps,
@@ -9,6 +9,7 @@ import StartAttendanceSession from '../../components/organisms/Teacher/StartAtte
 import { SimpleHeaderBackNavigationOptions } from '../../components/templates/SimpleHeaderNavigationOptions';
 import { teacherApi } from '../../api/TeacherApi';
 import { requestLocationPermission } from '../../util/permissions';
+import GlobalContext from '../../context/GlobalContext';
 
 type Props = StackScreenProps<RootStackParamList, 'StartAttendanceSession'>;
 
@@ -23,6 +24,7 @@ const StartAttendanceSessionPage: React.FC<Props> = ({
     params: { classId, title, section },
   },
 }): JSX.Element => {
+  const globalContext = useContext(GlobalContext);
   const startSession = async (date: Date) => {
     const { success: macId } = await RnAndroidHotspot.getHotspotMacId();
 
@@ -43,6 +45,7 @@ const StartAttendanceSessionPage: React.FC<Props> = ({
   };
 
   const onStartSession = async (date: Date) => {
+    if (await globalContext.throwNetworkError()) return;
     const {
       success: isHotspotRunning,
     } = await RnAndroidHotspot.isHotspotRunning();

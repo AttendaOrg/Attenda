@@ -21,6 +21,7 @@ type Props = DrawerContentComponentProps<DrawerContentOptions>;
 
 const DrawerContentPage: React.FC<Props> = ({ navigation }): JSX.Element => {
   const [info, setInfo] = useState({ name: '', email: '' });
+  const globalContext = useContext(GlobalContext);
 
   useEffect(() => {
     // TODO: get user profile pic
@@ -32,7 +33,7 @@ const DrawerContentPage: React.FC<Props> = ({ navigation }): JSX.Element => {
     });
   }, []);
 
-  const onListItemCLick = (item: DrawerListItems) => {
+  const onListItemCLick = async (item: DrawerListItems) => {
     switch (item) {
       case DrawerListItems.CLASSES:
         // temporary solution is to close the drawer
@@ -40,6 +41,7 @@ const DrawerContentPage: React.FC<Props> = ({ navigation }): JSX.Element => {
         navigation.dispatch(DrawerActions.closeDrawer());
         break;
       case DrawerListItems.MY_ACCOUNT:
+        if (await globalContext.throwNetworkError()) return;
         navigation.navigate('App', { screen: 'MyAccount' });
         break;
       case DrawerListItems.CONTACT_US:
@@ -79,13 +81,11 @@ const DrawerContentPage: React.FC<Props> = ({ navigation }): JSX.Element => {
     setInfo({ email, name: displayName });
   }
 
-  const { settings } = useContext(GlobalContext);
-
   return (
     <DrawerContent
       name={name}
       email={email}
-      avatar={settings.profilePic}
+      avatar={globalContext.settings.profilePic}
       onListItemCLick={onListItemCLick}
       appVersion={Constants?.manifest?.version ?? ''}
     />

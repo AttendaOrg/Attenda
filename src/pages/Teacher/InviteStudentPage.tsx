@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import {
   StackNavigationOptions,
   StackScreenProps,
@@ -9,6 +9,7 @@ import { withSimpleCloseNavigationOptions } from '../../components/templates/Sim
 import { HEADER_AB_TEST_NEW } from '../../util/constant';
 import { SimpleHeaderBackNavigationOptions } from '../../components/templates/SimpleHeaderNavigationOptions';
 import { teacherApi } from '../../api/TeacherApi';
+import GlobalContext from '../../context/GlobalContext';
 
 type Props = StackScreenProps<RootStackParamList, 'InviteStudent'>;
 
@@ -23,8 +24,10 @@ const InviteStudentPage: React.FC<Props> = ({
   const {
     params: { classId },
   } = route;
+  const globalContext = useContext(GlobalContext);
 
   const onInvite = async (emails: string[]) => {
+    if (await globalContext.throwNetworkError()) return;
     // TODO: handle error
     const [success] = await teacherApi.inviteStudent(classId, emails);
 

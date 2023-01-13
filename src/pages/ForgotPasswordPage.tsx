@@ -50,6 +50,8 @@ const ForgotPasswordPage: React.FC<Props> = ({ navigation }): JSX.Element => {
   };
 
   const handleOnSend = async () => {
+    if (await globalContext.throwNetworkError()) return;
+
     if (hasTriedSubmitting === false) setHasTriedSubmitting(true);
     // if the error validation fails we don't need to call the api
     // because the validation will fail only if we have a invalid

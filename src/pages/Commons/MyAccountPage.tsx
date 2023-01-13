@@ -180,6 +180,8 @@ class MyAccountPage extends React.Component<Props, State> {
   onNameChange = async (newName: string): Promise<boolean> => {
     const { context } = this;
 
+    if (await context.throwNetworkError()) return false;
+
     if (this.revalidateError(newName)) {
       context.changeSpinnerLoading(true);
       // TODO: Do something with the error

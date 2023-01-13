@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { ImageSourcePropType } from 'react-native';
+import { useNetworkError } from '../util/hooks/useNetworkError';
+import { isConnectedToInternet } from '../util/util';
 
 export interface IGlobalContext {
   isSpinnerLoading: boolean;
@@ -10,6 +12,7 @@ export type GlobalContextType = {
   settings: IGlobalContext;
   changeSpinnerLoading: (loading: boolean) => void;
   changeProfilePic: (profilePic?: ImageSourcePropType) => void;
+  throwNetworkError: () => Promise<boolean>;
 };
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -26,6 +29,9 @@ const defaultGlobalSettings: GlobalContextType = {
   changeProfilePic: () => {
     throw new Error('method not implemented');
   },
+  throwNetworkError: () => {
+    throw new Error('method not implemented');
+  },
 };
 
 const GlobalContext = React.createContext<GlobalContextType>(
@@ -33,6 +39,7 @@ const GlobalContext = React.createContext<GlobalContextType>(
 );
 
 export const GlobalContextProvider: React.FC = ({ children }) => {
+  const [showNetworkError, NetworkErrorElm] = useNetworkError();
   const [settings, setSettings] = useState<IGlobalContext>({
     isSpinnerLoading: false,
     profilePic: defaultGlobalSettings.settings.profilePic,
@@ -54,11 +61,25 @@ export const GlobalContextProvider: React.FC = ({ children }) => {
     });
   };
 
+  const throwNetworkError = async (): Promise<boolean> => {
+    if (await isConnectedToInternet()) return false;
+
+    showNetworkError();
+
+    return true;
+  };
+
   return (
     <GlobalContext.Provider
-      value={{ settings, changeSpinnerLoading, changeProfilePic }}
+      value={{
+        settings,
+        changeSpinnerLoading,
+        changeProfilePic,
+        throwNetworkError,
+      }}
     >
       {children}
+      {NetworkErrorElm}
     </GlobalContext.Provider>
   );
 };

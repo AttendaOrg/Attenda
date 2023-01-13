@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import { Alert } from 'react-native';
+import React, { useContext, useState } from 'react';
 import {
   StackNavigationOptions,
   StackScreenProps,
@@ -7,9 +8,10 @@ import { RootStackParamList } from '../../App';
 import ChangePassword from '../../components/organisms/Common/ChangePassword';
 import { SimpleHeaderBackNavigationOptions } from '../../components/templates/SimpleHeaderNavigationOptions';
 import SingleButtonPopup from '../../components/molecules/SingleButtonPopup';
-import { authApi } from '../../api/AuthApi';
+import AuthApi, { authApi } from '../../api/AuthApi';
 import { isStrongPassword } from '../../util';
 import { BasicErrors } from '../../api/BaseApi';
+import GlobalContext from '../../context/GlobalContext';
 
 type Props = StackScreenProps<RootStackParamList, 'ChangePassword'>;
 
@@ -18,11 +20,21 @@ export const ChangePasswordNavigationOptions: StackNavigationOptions = {
   title: 'Change Password',
 };
 
-const ChangePasswordPage: React.FC<Props> = ({ navigation }): JSX.Element => {
+const isValidOobCode = (code?: string) =>
+  typeof code === 'string' && code?.length > 0;
+
+const ChangePasswordPage: React.FC<Props> = ({
+  navigation,
+  route,
+}): JSX.Element => {
+  const globalContext = useContext(GlobalContext);
   const [showChangePasswordPopup, setShowChangePasswordPopup] = useState(false);
   const [currentPasswordError, setCurrentPasswordError] = useState('');
   const [newPasswordError, setNewPasswordError] = useState('');
   const [confirmPasswordError, setConfirmPasswordError] = useState('');
+  const {
+    params: { code },
+  } = route;
 
   const revalidateError = (
     currentPassword: string,
@@ -79,12 +91,91 @@ const ChangePasswordPage: React.FC<Props> = ({ navigation }): JSX.Element => {
     return true;
   };
 
+  /**
+   * check if we should call api to change the password
+   * @param oobCode
+   * @param newPass
+   * @param confirmPass
+   */
+  const shouldChangePasswordWithCode = (
+    oobCode: string,
+    newPass: string,
+    confirmPass: string,
+  ): boolean => {
+    revalidateError('', newPass, confirmPass);
+    if (newPass === '') return false;
+    if (oobCode === '') return false;
+    if (confirmPass === '') return false;
+    if (newPass !== confirmPass) return false;
+    if (newPass === oobCode) return false;
+    if (!isStrongPassword(newPass)) return false;
+
+    return true;
+  };
+
   const changePassword = async (
     currentPass: string,
     newPass: string,
     confirmPass: string,
   ) => {
-    if (shouldChangePassword(currentPass, newPass, confirmPass)) {
+    if (await globalContext.throwNetworkError()) return;
+
+    globalContext.changeSpinnerLoading(true);
+
+    if (
+      isValidOobCode(code) &&
+      shouldChangePasswordWithCode(code ?? '', newPass, confirmPass)
+    ) {
+      const [success, err] = await authApi.verifyPasswordResetEmail(
+        code ?? '',
+        newPass,
+      );
+
+      switch (err) {
+        case BasicErrors.OOB_CODE_NOT_VALID:
+          await Alert.alert(
+            'Error',
+            'Password rest code is expired or not valid',
+            [
+              {
+                text: 'Resend email',
+                onPress: () =>
+                  navigation.reset({
+                    index: 0,
+                    routes: [
+                      {
+                        name: 'SignIn',
+                      },
+                      {
+                        name: 'ForgotPassword',
+                      },
+                    ],
+                  }),
+              },
+            ],
+            {
+              cancelable: true,
+              onDismiss: () => {
+                navigation.reset({
+                  index: 0,
+                  routes: [
+                    {
+                      name: 'SignIn',
+                    },
+                    {
+                      name: 'ForgotPassword',
+                    },
+                  ],
+                });
+              },
+            },
+          );
+
+          break;
+        default:
+          break;
+      }
+    } else if (shouldChangePassword(currentPass, newPass, confirmPass)) {
       const [success, error] = await authApi.changePassword(
         currentPass,
         newPass,
@@ -103,11 +194,13 @@ const ChangePasswordPage: React.FC<Props> = ({ navigation }): JSX.Element => {
 
       if (success === true) setShowChangePasswordPopup(true);
     }
+    globalContext.changeSpinnerLoading(false);
   };
 
   return (
     <>
       <ChangePassword
+        showCurrentPassword={typeof code !== 'string'}
         onDone={changePassword}
         revalidateError={revalidateError}
         errors={{
