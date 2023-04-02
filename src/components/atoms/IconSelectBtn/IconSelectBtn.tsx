@@ -1,4 +1,4 @@
-import SvgUri from 'expo-svg-uri-reborn';
+// import SvgUri from 'expo-svg-uri-reborn';
 import React from 'react';
 import {
   ImageURISource,
@@ -80,7 +80,7 @@ const IconSelectBtn: React.FC<IconSelectBtnPops> = ({
         ]}
       >
         <View style={{ height: 50, width: 50 }}>
-          <SvgUri height={50} width={50} source={s} />
+          {/* <SvgUri height={50} width={50} source={s} />*/}
         </View>
       </View>
       <View

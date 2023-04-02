@@ -80,7 +80,7 @@ class BaseApi {
 
   static defaultOptions: BaseApiOptions = {
     host: DEFAULT_HOST,
-    useEmulator: defaultUseEmulator,
+    useEmulator: false, // defaultUseEmulator,
     persistence: true,
   };
 

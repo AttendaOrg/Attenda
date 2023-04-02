@@ -93,6 +93,8 @@ import ChooseClassIconPage, {
 } from './pages/Teacher/ChooseClassIconPage';
 import { analyticsApi } from './api/analytics';
 import NetworkChangeListener from './pages/Commons/NetworkChangeListener';
+// eslint-disable-next-line no-restricted-imports
+import { GestureHandlerRootView } from 'react-native-gesture-handler'; // eslint-disable-line
 
 export type TeacherClassListNavigationProps = {
   withDismiss?: boolean;
@@ -242,7 +244,7 @@ class AuthProvider extends React.PureComponent<Props> {
     // wake up the heroku instance
     const success = await analyticsApi.sendPing();
 
-    if (!success) Alert.alert("Couldn't start the heroku instance");
+    // if (!success) Alert.alert("Couldn't start the heroku instance");
 
     this.unsubscribe = firebase
       .auth()
@@ -619,17 +621,19 @@ const Drawer = createDrawerNavigator();
 // };
 
 const App = (): JSX.Element => (
-  <GlobalContextProvider>
-    <NavigationContainer>
-      <Drawer.Navigator
-        drawerStyle={{}}
-        // eslint-disable-next-line react/jsx-props-no-spreading
-        drawerContent={props => <DrawerContentPage {...props} />}
-      >
-        <Drawer.Screen name="App" component={AuthProvider} />
-      </Drawer.Navigator>
-    </NavigationContainer>
-  </GlobalContextProvider>
+  <GestureHandlerRootView style={{ flex: 1 }}>
+    <GlobalContextProvider>
+      <NavigationContainer>
+        <Drawer.Navigator
+          drawerStyle={{}}
+          // eslint-disable-next-line react/jsx-props-no-spreading
+          drawerContent={props => <DrawerContentPage {...props} />}
+        >
+          <Drawer.Screen name="App" component={AuthProvider} />
+        </Drawer.Navigator>
+      </NavigationContainer>
+    </GlobalContextProvider>
+  </GestureHandlerRootView>
 );
 
 export default App;
