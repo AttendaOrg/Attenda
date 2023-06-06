@@ -88,7 +88,7 @@ class TeacherClassListPage extends React.PureComponent<Props, State> {
   }
 
   componentWillUnmount(): void {
-    AppState.removeEventListener('change', this.handleAppStateChange);
+    AppState?.removeEventListener('change', this.handleAppStateChange);
     this.unSub();
   }
 

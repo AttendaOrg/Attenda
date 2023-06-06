@@ -12,6 +12,7 @@ function loadStories() {
   require('../src/components/molecules/ClassCard/ClassCard.stories');
   require('../src/components/molecules/ClassDetails/ClassDetails.stories');
   require('../src/components/molecules/DoubleButtonPopup/DoubleButtonPopup.stories');
+  require('../src/components/molecules/EmailVerificationNotice/EmailVerificationNotice.stories');
   require('../src/components/molecules/ImagePopup/ImagePopup.stories');
   require('../src/components/molecules/OauthProvider/OauthProvider.stories');
   require('../src/components/molecules/ProfileImage/ProfileImage.stories');
@@ -36,6 +37,7 @@ function loadStories() {
   require('../src/components/organisms/Common/MyAccount/MyAccount.stories');
   require('../src/components/organisms/Student/AttendanceRecord/AttendanceRecord.stories');
   require('../src/components/organisms/Student/GiveResponse/GiveResponse.stories');
+  require('../src/components/organisms/Student/JoinClass/JoinClass.stories');
   require('../src/components/organisms/Student/JoinClassFinal/JoinClassFinal.stories');
   require('../src/components/organisms/Student/JoinClassForm/JoinClassForm.stories');
   require('../src/components/organisms/Student/StudentClassList/StudentClassList.stories');
@@ -66,6 +68,7 @@ const stories = [
   '../src/components/molecules/ClassCard/ClassCard.stories',
   '../src/components/molecules/ClassDetails/ClassDetails.stories',
   '../src/components/molecules/DoubleButtonPopup/DoubleButtonPopup.stories',
+  '../src/components/molecules/EmailVerificationNotice/EmailVerificationNotice.stories',
   '../src/components/molecules/ImagePopup/ImagePopup.stories',
   '../src/components/molecules/OauthProvider/OauthProvider.stories',
   '../src/components/molecules/ProfileImage/ProfileImage.stories',
@@ -90,6 +93,7 @@ const stories = [
   '../src/components/organisms/Common/MyAccount/MyAccount.stories',
   '../src/components/organisms/Student/AttendanceRecord/AttendanceRecord.stories',
   '../src/components/organisms/Student/GiveResponse/GiveResponse.stories',
+  '../src/components/organisms/Student/JoinClass/JoinClass.stories',
   '../src/components/organisms/Student/JoinClassFinal/JoinClassFinal.stories',
   '../src/components/organisms/Student/JoinClassForm/JoinClassForm.stories',
   '../src/components/organisms/Student/StudentClassList/StudentClassList.stories',

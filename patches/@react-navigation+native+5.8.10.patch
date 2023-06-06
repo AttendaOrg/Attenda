@@ -1,0 +1,17 @@
+diff --git a/node_modules/@react-navigation/native/src/useLinking.native.tsx b/node_modules/@react-navigation/native/src/useLinking.native.tsx
+index 8a3b281..b2da4a1 100644
+--- a/node_modules/@react-navigation/native/src/useLinking.native.tsx
++++ b/node_modules/@react-navigation/native/src/useLinking.native.tsx
+@@ -28,9 +28,10 @@ export default function useLinking(
+     subscribe = (listener) => {
+       const callback = ({ url }: { url: string }) => listener(url);
+ 
+-      Linking.addEventListener('url', callback);
++      const sub = Linking.addEventListener('url', callback);
++      return sub.remove()
+ 
+-      return () => Linking.removeEventListener('url', callback);
++      // return () => Linking.removeEventListener('url', callback);
+     },
+     getStateFromPath = getStateFromPathDefault,
+   }: LinkingOptions

@@ -242,7 +242,7 @@ class AuthProvider extends React.PureComponent<Props> {
     // wake up the heroku instance
     const success = await analyticsApi.sendPing();
 
-    if (!success) Alert.alert("Couldn't start the heroku instance");
+    // if (!success) Alert.alert("Couldn't start the heroku instance");
 
     this.unsubscribe = firebase
       .auth()
@@ -347,7 +347,7 @@ class AuthProvider extends React.PureComponent<Props> {
 
   componentWillUnmount() {
     if (this.unsubscribe !== null) this.unsubscribe();
-    Linking.removeEventListener('url', this.linkingCb);
+    // Linking.removeEventListener('url', this.linkingCb);
   }
 
   /**
@@ -617,6 +617,7 @@ const Drawer = createDrawerNavigator();
 // const linking = {
 //   prefixes: [prefix],
 // };
+console.log('NavigationContainer', NavigationContainer, GlobalContextProvider);
 
 const App = (): JSX.Element => (
   <GlobalContextProvider>

@@ -14,5 +14,6 @@
   },
   "exclude": [
     "functions"
-  ]
+  ],
+  "extends": "expo/tsconfig.base"
 }

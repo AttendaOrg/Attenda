@@ -23,7 +23,7 @@ configure(() => {
 const StorybookUIRoot = getStorybookUI({
   asyncStorage: null,
   port: 7007,
-  host: '192.168.0.107',
+  host: '192.168.0.104',
 });
 
 // If you are using React Native vanilla and after installation you don't see your app name here, write it manually.
